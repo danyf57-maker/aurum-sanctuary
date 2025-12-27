@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useMemo } from 'react';
@@ -24,7 +25,7 @@ type SentimentChartProps = {
 
 const chartConfig = {
   score: {
-    label: "Sentiment Score",
+    label: "Score de Sentiment",
     color: "hsl(var(--primary))",
   },
 } satisfies ChartConfig;
@@ -44,8 +45,8 @@ export function SentimentChart({ entries }: SentimentChartProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="font-headline">Mood Summary</CardTitle>
-        <CardDescription>A timeline of your entry sentiments.</CardDescription>
+        <CardTitle className="font-headline">Résumé de l'humeur</CardTitle>
+        <CardDescription>Une chronologie des sentiments de vos entrées.</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="h-[250px] w-full">
@@ -61,7 +62,7 @@ export function SentimentChart({ entries }: SentimentChartProps) {
               <XAxis
                 dataKey="date"
                 tickFormatter={(value) =>
-                  new Date(value).toLocaleDateString("en-US", {
+                  new Date(value).toLocaleDateString("fr-FR", {
                     month: "short",
                     day: "numeric",
                   })

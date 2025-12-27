@@ -21,9 +21,18 @@ function SentimentIcon({ sentiment }: { sentiment: string }) {
 }
 
 export function JournalCard({ entry, style, className }: JournalCardProps) {
-  const formattedDate = new Intl.DateTimeFormat('en-US', {
+  const formattedDate = new Intl.DateTimeFormat('fr-FR', {
     dateStyle: 'long',
   }).format(new Date(entry.createdAt));
+
+  const translatedSentiment = (sentiment: string) => {
+    switch(sentiment.toLowerCase()) {
+      case 'positive': return 'Positif';
+      case 'negative': return 'Négatif';
+      case 'neutral': return 'Neutre';
+      default: return sentiment;
+    }
+  }
 
   return (
     <Card className={`flex flex-col transition-all hover:shadow-md ${className}`} style={style}>
@@ -32,7 +41,7 @@ export function JournalCard({ entry, style, className }: JournalCardProps) {
             <CardTitle className="text-base font-medium font-body text-muted-foreground">{formattedDate}</CardTitle>
             <div className="flex items-center gap-2 flex-shrink-0">
                 <SentimentIcon sentiment={entry.sentiment} />
-                <span className="text-sm font-semibold capitalize text-muted-foreground">{entry.sentiment}</span>
+                <span className="text-sm font-semibold capitalize text-muted-foreground">{translatedSentiment(entry.sentiment)}</span>
             </div>
         </div>
       </CardHeader>

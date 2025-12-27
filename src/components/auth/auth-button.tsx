@@ -26,7 +26,7 @@ export function AuthButton() {
   
   const handleSignOut = async () => {
     await signOut();
-    toast({ title: "You have been signed out." });
+    toast({ title: "Vous avez été déconnecté." });
     router.push('/');
   };
 
@@ -56,7 +56,7 @@ export function AuthButton() {
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleSignOut}>
             <LogOut className="mr-2 h-4 w-4" />
-            <span>Log out</span>
+            <span>Déconnexion</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -66,7 +66,7 @@ export function AuthButton() {
   return (
     <>
       <Button onClick={() => setIsAuthDialogOpen(true)} >
-        Sign In
+        Connexion
       </Button>
       <AuthDialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen} />
     </>

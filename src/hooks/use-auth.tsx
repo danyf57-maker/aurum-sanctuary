@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect, createContext, useContext, ReactNode } from 'react';
@@ -31,7 +32,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             createdAt: serverTimestamp(),
           });
         }
-        // Set user after checking/creating doc to ensure data is available
         setUser(firebaseUser);
       } else {
         setUser(null);
@@ -42,13 +42,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => unsubscribe();
   }, []);
 
-  // While loading, we show a splash screen to avoid hydration mismatch
   if (loading) {
     return (
       <div className="w-full h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4 animate-pulse">
             <Logo className="h-12 w-12 text-primary" />
-            <p className="text-muted-foreground">Waking the Sanctuary...</p>
+            <p className="text-muted-foreground">Réveil du Sanctuaire...</p>
         </div>
       </div>
     );

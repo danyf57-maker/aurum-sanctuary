@@ -42,7 +42,7 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
     const { error } = await signInWithGoogle();
     if (error) {
       toast({
-        title: 'Sign-in Error',
+        title: 'Erreur de connexion',
         description: error,
         variant: 'destructive',
       });
@@ -59,13 +59,13 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
     if (success) {
       setEmailSent(true);
       toast({
-        title: 'Check your inbox',
-        description: `A sign-in link has been sent to ${email}.`,
+        title: 'Vérifiez votre boîte de réception',
+        description: `Un lien de connexion a été envoyé à ${email}.`,
       });
     }
     if (error) {
        toast({
-        title: 'Error sending link',
+        title: 'Erreur lors de l\'envoi du lien',
         description: error,
         variant: 'destructive',
       });
@@ -77,9 +77,9 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="font-headline text-2xl text-center">Enter the Sanctuary</DialogTitle>
+          <DialogTitle className="font-headline text-2xl text-center">Entrez dans le Sanctuaire</DialogTitle>
           <DialogDescription className="text-center">
-            Sign in to preserve your golden thoughts.
+            Connectez-vous pour préserver vos pensées dorées.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
@@ -89,7 +89,7 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
             disabled={!!isLoading}
           >
             {isLoading === 'google' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <GoogleIcon className="mr-2" />}
-            Sign in with Google
+            Se connecter avec Google
           </Button>
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
@@ -97,7 +97,7 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
             </div>
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-popover px-2 text-muted-foreground">
-                Or continue with email
+                Ou continuer avec l'email
               </span>
             </div>
           </div>
@@ -107,7 +107,7 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="name@example.com"
+                  placeholder="nom@exemple.com"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -115,7 +115,7 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
                 />
                 <Button type="submit" disabled={!!isLoading || emailSent}>
                   {isLoading === 'email' && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {emailSent ? 'Link Sent!' : 'Send Sign-in Link'}
+                  {emailSent ? 'Lien envoyé!' : 'Envoyer le lien de connexion'}
                 </Button>
               </div>
             </form>

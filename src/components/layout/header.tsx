@@ -10,7 +10,7 @@ export function Header() {
           <Link href="/" className="mr-6 flex items-center space-x-2">
             <Logo className="h-6 w-6 text-primary" />
             <span className="font-bold font-headline sm:inline-block">
-              Aurum Sanctuary
+              Sanctuaire d'Aurum
             </span>
           </Link>
           <nav className="flex items-center gap-6 text-sm">
@@ -18,7 +18,7 @@ export function Header() {
               href="/sanctuary"
               className="transition-colors hover:text-foreground/80 text-foreground/60"
             >
-              Sanctuary
+              Sanctuaire
             </Link>
           </nav>
         </div>

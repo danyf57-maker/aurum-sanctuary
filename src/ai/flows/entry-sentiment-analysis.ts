@@ -14,7 +14,7 @@ import {z} from 'genkit';
 const EntrySentimentInputSchema = z.object({
   entryText: z
     .string()
-    .describe('The text content of the journal entry to analyze.'),
+    .describe('Le contenu textuel de l\'entrée de journal à analyser.'),
 });
 export type EntrySentimentInput = z.infer<typeof EntrySentimentInputSchema>;
 
@@ -22,14 +22,14 @@ const EntrySentimentOutputSchema = z.object({
   sentiment:
     z.string()
     .describe(
-      'The overall sentiment of the journal entry, such as positive, negative, or neutral.'
+      'Le sentiment général de l\'entrée de journal, tel que positif, négatif ou neutre.'
     ),
   score:
     z.number()
-    .describe('A numerical score representing the sentiment intensity.'),
+    .describe('Un score numérique représentant l\'intensité du sentiment.'),
   analysis:
     z.string()
-    .describe('A detailed analysis of the sentiment expressed in the entry.'),
+    .describe('Une analyse détaillée du sentiment exprimé dans l\'entrée.'),
 });
 export type EntrySentimentOutput = z.infer<typeof EntrySentimentOutputSchema>;
 
@@ -43,12 +43,13 @@ const sentimentAnalysisPrompt = ai.definePrompt({
   name: 'sentimentAnalysisPrompt',
   input: {schema: EntrySentimentInputSchema},
   output: {schema: EntrySentimentOutputSchema},
-  prompt: `You are a sentiment analysis expert.
+  prompt: `Vous êtes un expert en analyse de sentiments.
 
-  Analyze the following journal entry and determine its sentiment.
-  Provide a sentiment (positive, negative, or neutral), a sentiment score (-1 to 1), and a brief analysis.
+  Analysez l'entrée de journal suivante et déterminez son sentiment.
+  Fournissez un sentiment (positif, négatif ou neutre), un score de sentiment (-1 à 1) et une brève analyse.
+  Répondez en anglais pour les valeurs de sentiment (positive, negative, neutral).
 
-  Journal Entry: {{{entryText}}}
+  Entrée de journal: {{{entryText}}}
   `,
 });
 

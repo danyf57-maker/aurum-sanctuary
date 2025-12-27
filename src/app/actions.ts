@@ -8,9 +8,9 @@ import { db } from "@/lib/firebase/server-config";
 import { collection, addDoc, Timestamp } from "firebase-admin/firestore";
 
 const formSchema = z.object({
-  content: z.string().min(10, { message: "Your entry must be at least 10 characters long." }),
+  content: z.string().min(10, { message: "Votre entrée doit comporter au moins 10 caractères." }),
   tags: z.string().optional(),
-  userId: z.string().min(1, { message: "You must be logged in to save an entry." }),
+  userId: z.string().min(1, { message: "Vous devez être connecté pour enregistrer une entrée." }),
 });
 
 export type FormState = {
@@ -57,7 +57,7 @@ export async function saveJournalEntry(
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
-      message: "Validation failed.",
+      message: "La validation a échoué.",
     };
   }
 
@@ -76,7 +76,7 @@ export async function saveJournalEntry(
     });
   } catch (error) {
     console.error("Error saving entry:", error);
-    return { message: "An unexpected error occurred while saving your entry. Please try again." };
+    return { message: "Une erreur inattendue est survenue lors de l'enregistrement de votre entrée. Veuillez réessayer." };
   }
 
   revalidatePath("/sanctuary");

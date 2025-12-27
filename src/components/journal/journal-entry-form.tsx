@@ -17,7 +17,7 @@ function SubmitButton() {
   const { pending } = useFormStatus();
   return (
     <Button type="submit" disabled={pending} className="w-full sm:w-auto">
-      {pending ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...</> : "Save to Sanctuary"}
+      {pending ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Enregistrement...</> : "Sauvegarder au Sanctuaire"}
     </Button>
   );
 }
@@ -34,7 +34,7 @@ export function JournalEntryForm() {
     if (state.message && state.errors) {
       const errorMsg = state.errors.content?.[0] || state.errors.userId?.[0] || state.message;
       toast({
-        title: "Could not save entry",
+        title: "Impossible d'enregistrer l'entrée",
         description: errorMsg,
         variant: "destructive",
       });
@@ -57,12 +57,12 @@ export function JournalEntryForm() {
       <input type="hidden" name="userId" value={user?.uid ?? ''} />
       <div className="space-y-2">
         <Label htmlFor="content" className="text-lg">
-          What's on your mind?
+          Qu'avez-vous en tête ?
         </Label>
         <Textarea
           id="content"
           name="content"
-          placeholder="Pour your thoughts here..."
+          placeholder="Versez vos pensées ici..."
           className="min-h-[300px] text-base bg-card"
           required
         />
@@ -73,15 +73,15 @@ export function JournalEntryForm() {
         )}
       </div>
       <div className="space-y-2">
-        <Label htmlFor="tags">Tags</Label>
+        <Label htmlFor="tags">Étiquettes</Label>
         <Input
           id="tags"
           name="tags"
-          placeholder="e.g., gratitude, work, reflection"
+          placeholder="ex: gratitude, travail, réflexion"
           className="bg-card"
         />
         <p className="text-sm text-muted-foreground">
-          Separate tags with a comma.
+          Séparez les étiquettes par une virgule.
         </p>
       </div>
       <div className="flex justify-end">

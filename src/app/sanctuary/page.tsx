@@ -32,16 +32,16 @@ function SanctuaryContent() {
         if (isSignInWithEmailLink(auth, window.location.href)) {
             let email = window.localStorage.getItem('emailForSignIn');
             if (!email) {
-                email = window.prompt('Please provide your email for confirmation');
+                email = window.prompt('Veuillez fournir votre email pour confirmation');
             }
             if(email) {
                 signInWithEmailLink(auth, email, window.location.href)
                     .then(() => {
                         window.localStorage.removeItem('emailForSignIn');
-                        toast({ title: "Successfully signed in!"});
+                        toast({ title: "Connecté avec succès!"});
                     })
                     .catch((error) => {
-                        toast({ title: "Sign-in Error", description: error.message, variant: "destructive" });
+                        toast({ title: "Erreur de connexion", description: error.message, variant: "destructive" });
                     });
             }
         }
@@ -86,12 +86,12 @@ function SanctuaryContent() {
     if (!user) {
         return (
             <div className="container max-w-4xl py-20 text-center animate-fade-in">
-                <h2 className="text-3xl font-bold font-headline">This space is sacred.</h2>
+                <h2 className="text-3xl font-bold font-headline">Cet espace est sacré.</h2>
                 <p className="mt-4 text-lg text-muted-foreground">
-                    Please sign in to access your private sanctuary.
+                    Veuillez vous connecter pour accéder à votre sanctuaire privé.
                 </p>
                 <Button asChild className="mt-6">
-                    <Link href="/">Write an Entry to Begin</Link>
+                    <Link href="/">Rédiger une entrée pour commencer</Link>
                 </Button>
             </div>
         );
@@ -102,7 +102,7 @@ function SanctuaryContent() {
             <header className="mb-8 animate-fade-in">
                 <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
                     <h1 className="text-4xl font-bold font-headline tracking-tight">
-                        Your Sanctuary
+                        Votre Sanctuaire
                     </h1>
                     <TagFilter tags={tags} />
                 </div>
@@ -127,10 +127,10 @@ function SanctuaryContent() {
                         data-ai-hint={placeholderImages['sanctuary-empty'].hint}
                         className="max-w-sm w-full h-auto rounded-lg mb-8 opacity-80"
                     />
-                    <h3 className="text-xl font-semibold">Your sanctuary awaits.</h3>
-                    <p className="text-muted-foreground mt-2">Your saved entries will appear here once you write them.</p>
+                    <h3 className="text-xl font-semibold">Votre sanctuaire attend.</h3>
+                    <p className="text-muted-foreground mt-2">Vos entrées sauvegardées apparaîtront ici une fois que vous les aurez écrites.</p>
                     <Button asChild className="mt-4">
-                        <Link href="/">Write Your First Entry</Link>
+                        <Link href="/">Rédigez votre première entrée</Link>
                     </Button>
                 </div>
             )}

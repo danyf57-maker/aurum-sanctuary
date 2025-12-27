@@ -36,10 +36,10 @@ export function TagFilter({ tags }: TagFilterProps) {
     <div className="flex items-center gap-2">
       <Select value={currentTag ?? 'all'} onValueChange={onSelectTag}>
         <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Filter by tag..." />
+          <SelectValue placeholder="Filtrer par étiquette..." />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">All Tags</SelectItem>
+          <SelectItem value="all">Toutes les étiquettes</SelectItem>
           {tags.map((tag) => (
             <SelectItem key={tag} value={tag} className="capitalize">
               {tag}
@@ -50,7 +50,7 @@ export function TagFilter({ tags }: TagFilterProps) {
       {currentTag && (
         <Button variant="ghost" size="icon" onClick={() => onSelectTag('all')}>
           <X className="h-4 w-4" />
-          <span className="sr-only">Clear filter</span>
+          <span className="sr-only">Effacer le filtre</span>
         </Button>
       )}
     </div>
