@@ -1,3 +1,4 @@
+
 "use server";
 
 import { revalidatePath } from "next/cache";
@@ -5,11 +6,16 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { db } from "@/lib/firebase/server-config";
 import { collection, addDoc, Timestamp } from "firebase-admin/firestore";
+import slugify from "slugify";
+
+// A simple hardcoded ID for our special user, Alma.
+const ALMA_USER_ID = process.env.ALMA_USER_ID || "alma_user_placeholder_id";
 
 const formSchema = z.object({
   content: z.string().min(10, { message: "Votre entrée doit comporter au moins 10 caractères." }),
   tags: z.string().optional(),
   userId: z.string().min(1, { message: "Vous devez être connecté pour enregistrer une entrée." }),
+  publishAsPost: z.boolean(),
 });
 
 export type FormState = {
@@ -18,8 +24,26 @@ export type FormState = {
     content?: string[];
     tags?: string[];
     userId?: string[];
+    publishAsPost?: string[];
   };
 };
+
+// Helper function to create a unique slug
+function createSlug(text: string) {
+    const slug = slugify(text, {
+        lower: true,
+        strict: true,
+        remove: /[*+~.()'"!:@]/g,
+    });
+    // Append a unique identifier to avoid collisions
+    return `${slug}-${Date.now().toString(36)}`;
+}
+
+// Helper function to generate a title from the content
+function generateTitle(content: string) {
+    const words = content.split(/\s+/);
+    return words.slice(0, 8).join(' ') + (words.length > 8 ? '...' : '');
+}
 
 async function addEntryOnServer(entryData: {
   userId: string;
@@ -28,32 +52,48 @@ async function addEntryOnServer(entryData: {
   createdAt: Date;
   sentiment: string;
   sentimentScore: number;
-}) {
+}, publishAsPost: boolean) {
   const entriesCollection = collection(db, "entries");
+  const publicPostsCollection = collection(db, "publicPosts");
+
   try {
-    const docRef = await addDoc(entriesCollection, {
+    // Save the private journal entry
+    const privateDocRef = await addDoc(entriesCollection, {
       ...entryData,
       createdAt: Timestamp.fromDate(entryData.createdAt),
     });
-    return { id: docRef.id };
+
+    // If "publish" is checked and the user is Alma, save to publicPosts as well
+    if (publishAsPost && entryData.userId === ALMA_USER_ID) {
+        const title = generateTitle(entryData.content);
+        const slug = createSlug(title);
+
+        await addDoc(publicPostsCollection, {
+            userId: entryData.userId,
+            title: title,
+            content: entryData.content,
+            tags: entryData.tags,
+            slug: slug,
+            publishedAt: Timestamp.fromDate(entryData.createdAt),
+            isPublic: true,
+        });
+    }
+
+    return { id: privateDocRef.id };
   } catch (error: any) {
-    console.error("Error adding document: ", error);
+    console.error("Error adding document(s): ", error);
     return { error: error.message };
   }
 }
 
-// Fonction pour appeler notre nouvelle route API
 async function analyzeEntrySentiment(entryText: string) {
-  // Ceci s'exécute sur le serveur, donc nous avons besoin de l'URL absolue
   const apiUrl = process.env.NODE_ENV === 'production'
     ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/analyze`
     : 'http://localhost:9002/api/analyze';
 
   const response = await fetch(apiUrl, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ entryText }),
   });
 
@@ -65,7 +105,6 @@ async function analyzeEntrySentiment(entryText: string) {
   return response.json();
 }
 
-
 export async function saveJournalEntry(
   prevState: FormState,
   formData: FormData
@@ -74,6 +113,7 @@ export async function saveJournalEntry(
     content: formData.get("content"),
     tags: formData.get("tags"),
     userId: formData.get("userId"),
+    publishAsPost: formData.get("publishAsPost") === "on",
   });
 
   if (!validatedFields.success) {
@@ -83,7 +123,7 @@ export async function saveJournalEntry(
     };
   }
 
-  const { content, tags, userId } = validatedFields.data;
+  const { content, tags, userId, publishAsPost } = validatedFields.data;
 
   try {
     const sentimentResult = await analyzeEntrySentiment(content);
@@ -95,12 +135,16 @@ export async function saveJournalEntry(
       createdAt: new Date(),
       sentiment: sentimentResult.sentiment,
       sentimentScore: sentimentResult.score,
-    });
+    }, publishAsPost);
+
   } catch (error) {
     console.error("Error saving entry:", error);
     return { message: "Une erreur inattendue est survenue lors de l'enregistrement de votre entrée. Veuillez réessayer." };
   }
 
+  if (publishAsPost && userId === ALMA_USER_ID) {
+      revalidatePath("/blog");
+  }
   revalidatePath("/sanctuary");
   redirect("/sanctuary");
 }

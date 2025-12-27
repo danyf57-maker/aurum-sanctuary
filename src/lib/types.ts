@@ -1,4 +1,5 @@
 
+
 export type JournalEntry = {
   id: string;
   userId: string;
@@ -7,4 +8,15 @@ export type JournalEntry = {
   createdAt: Date;
   sentiment: string;
   sentimentScore: number;
+};
+
+export type PublicPost = {
+  id: string;
+  userId: string;
+  title: string;
+  content: string;
+  slug: string;
+  tags: string[];
+  publishedAt: Date;
+  isPublic: boolean;
 };

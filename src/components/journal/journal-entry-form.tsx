@@ -1,8 +1,8 @@
 
 "use client";
 
-import { useEffect, useRef, useState, useActionState } from "react";
-import { useFormStatus } from "react-dom";
+import { useEffect, useRef, useState } from "react";
+import { useFormStatus, useActionState } from "react-dom";
 import { Loader2 } from 'lucide-react';
 import { useAuth } from "@/hooks/use-auth";
 import { saveJournalEntry, type FormState } from "@/app/actions";
@@ -10,8 +10,12 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { AuthDialog } from "@/components/auth/auth-dialog";
+
+const ALMA_USER_ID = process.env.NEXT_PUBLIC_ALMA_USER_ID || "alma_user_placeholder_id";
+
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -47,7 +51,6 @@ export function JournalEntryForm() {
       setIsAuthDialogOpen(true);
       return;
     }
-    // A bit of a hack since server actions can't access client-side auth context
     formData.set("userId", user.uid);
     dispatch(formData);
   };
@@ -64,6 +67,8 @@ export function JournalEntryForm() {
     target.style.height = 'auto';
     target.style.height = `${target.scrollHeight}px`;
   };
+
+  const isAlma = user?.uid === ALMA_USER_ID;
 
   return (
     <>
@@ -85,14 +90,24 @@ export function JournalEntryForm() {
           </p>
         )}
       </div>
-      <div className="space-y-3 opacity-80 focus-within:opacity-100 transition-opacity">
-        <Label htmlFor="tags" className="sr-only">Étiquettes</Label>
-        <Input
-          id="tags"
-          name="tags"
-          placeholder="Ajouter des étiquettes... (ex: gratitude, travail)"
-          className="bg-transparent border-0 border-b rounded-none px-0 focus:ring-0 focus-visible:ring-0"
-        />
+      <div className="space-y-4 opacity-80 focus-within:opacity-100 transition-opacity">
+        <div>
+          <Label htmlFor="tags" className="sr-only">Étiquettes</Label>
+          <Input
+            id="tags"
+            name="tags"
+            placeholder="Ajouter des étiquettes... (ex: gratitude, travail)"
+            className="bg-transparent border-0 border-b rounded-none px-0 focus:ring-0 focus-visible:ring-0"
+          />
+        </div>
+        {isAlma && (
+          <div className="flex items-center space-x-2 pt-2">
+            <Checkbox id="publishAsPost" name="publishAsPost" />
+            <Label htmlFor="publishAsPost" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              Publier sur le blog public en tant qu'Alma
+            </Label>
+          </div>
+        )}
       </div>
       <div className="flex justify-end">
         <SubmitButton />

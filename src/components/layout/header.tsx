@@ -38,6 +38,12 @@ export function Header() {
             >
               Écrire
             </Link>
+             <Link
+              href="/blog"
+              className="transition-colors hover:text-foreground/80 text-foreground/60"
+            >
+              Blog
+            </Link>
           </nav>
         </div>
         <div className="flex flex-1 items-center justify-end space-x-2">
