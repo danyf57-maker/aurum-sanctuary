@@ -9,17 +9,9 @@ export function Header() {
   const pathname = usePathname();
   const isHomepage = pathname === '/';
 
+  // Do not render the header on the homepage
   if (isHomepage) {
-    return (
-      <header className="absolute top-0 left-0 right-0 z-50 p-4">
-        <div className="container mx-auto flex justify-between items-center">
-          <Link href="/" className="text-sm font-bold tracking-widest text-stone-700 uppercase">
-            Aurum
-          </Link>
-          <AuthButton />
-        </div>
-      </header>
-    );
+    return null;
   }
 
   return (
