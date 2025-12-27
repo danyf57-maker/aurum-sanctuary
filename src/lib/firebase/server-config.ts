@@ -1,7 +1,4 @@
-"use client";
-
 import { initializeApp, getApps, getApp, FirebaseApp } from "firebase/app";
-import { getAuth, Auth } from "firebase/auth";
 import { getFirestore, Firestore } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -13,14 +10,7 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Initialize Firebase
-let app: FirebaseApp;
-if (typeof window !== 'undefined') {
-    app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-}
+let app: FirebaseApp = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig, "server");
+const db: Firestore = getFirestore(app);
 
-// It's safe to use empty objects on the server
-const auth: Auth = typeof window !== 'undefined' ? getAuth(app!) : ({} as Auth);
-const db: Firestore = typeof window !== 'undefined' ? getFirestore(app!) : ({} as Firestore);
-
-export { app, auth, db };
+export { app, db };

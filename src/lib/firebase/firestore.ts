@@ -1,10 +1,18 @@
 import { collection, addDoc, query, where, getDocs, orderBy, Timestamp } from "firebase/firestore";
-import { db } from "./config";
+import { db as clientDb } from "./config";
+import { db as serverDb } from "./server-config";
 import type { JournalEntry } from '@/lib/types';
 
-const entriesCollection = collection(db, "entries");
+// A helper function to determine if we are on the server
+function isServer() {
+  return typeof window === 'undefined';
+}
+
+const entriesCollectionName = "entries";
 
 export async function addEntry(entryData: Omit<JournalEntry, 'id'>) {
+  const db = serverDb;
+  const entriesCollection = collection(db, entriesCollectionName);
   try {
     const docRef = await addDoc(entriesCollection, {
       ...entryData,
@@ -18,6 +26,8 @@ export async function addEntry(entryData: Omit<JournalEntry, 'id'>) {
 }
 
 export async function getEntries(userId: string, tag?: string | null): Promise<JournalEntry[]> {
+  const db = isServer() ? serverDb : clientDb;
+  const entriesCollection = collection(db, entriesCollectionName);
   try {
     let q;
     if (tag) {
@@ -52,6 +62,8 @@ export async function getEntries(userId: string, tag?: string | null): Promise<J
 }
 
 export async function getUniqueTags(userId: string): Promise<string[]> {
+    const db = isServer() ? serverDb : clientDb;
+    const entriesCollection = collection(db, entriesCollectionName);
     try {
         const q = query(entriesCollection, where("userId", "==", userId));
         const querySnapshot = await getDocs(q);
