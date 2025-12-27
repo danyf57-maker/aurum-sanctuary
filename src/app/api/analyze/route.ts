@@ -1,18 +1,19 @@
 import { NextResponse } from 'next/server';
+import {z} from 'zod';
 
-// Définir la structure de la sortie attendue de l'API Deepseek
-interface DeepseekResponse {
-  sentiment: 'positif' | 'négatif' | 'neutre';
-  score: number;
-  analysis: string;
-}
+// Define the expected structure of the output from the AI model
+const AnalysisResultSchema = z.object({
+  sentiment: z.enum(['positif', 'négatif', 'neutre']),
+  score: z.number().min(-1).max(1),
+  analysis: z.string(),
+});
 
 export async function POST(request: Request) {
   try {
     const { entryText } = await request.json();
 
     if (!entryText) {
-      return NextResponse.json({ error: 'Le texte de l\'entrée est manquant' }, { status: 400 });
+      return NextResponse.json({ error: "Le texte de l'entrée est manquant" }, { status: 400 });
     }
     
     if (!process.env.DEEPSEEK_API_KEY) {
@@ -47,21 +48,30 @@ export async function POST(request: Request) {
     }
 
     const result = await deepseekResponse.json();
-    const analysisResult: DeepseekResponse = JSON.parse(result.choices[0].message.content);
+    const parsedContent = JSON.parse(result.choices[0].message.content);
+    
+    // Validate the response from the AI model
+    const analysisResult = AnalysisResultSchema.parse(parsedContent);
 
-    // Mapper les valeurs françaises aux valeurs anglaises attendues par le reste de l'application
-    let sentimentEn = 'neutral';
-    if (analysisResult.sentiment === 'positif') sentimentEn = 'positive';
-    if (analysisResult.sentiment === 'négatif') sentimentEn = 'negative';
+    // Map French sentiment values to English values expected by the rest of the application
+    const sentimentMap = {
+        'positif': 'positive',
+        'négatif': 'negative',
+        'neutre': 'neutral'
+    };
 
     return NextResponse.json({
-        sentiment: sentimentEn,
+        sentiment: sentimentMap[analysisResult.sentiment],
         score: analysisResult.score,
         analysis: analysisResult.analysis,
     });
 
   } catch (error: any) {
-    console.error('Erreur dans la route API d\'analyse:', error);
+    console.error("Erreur dans la route API d'analyse:", error);
+    // Handle Zod validation errors
+    if (error instanceof z.ZodError) {
+        return NextResponse.json({ error: "La réponse de l'API d'IA n'a pas le format attendu.", details: error.issues }, { status: 500 });
+    }
     return NextResponse.json({ error: error.message || 'Une erreur interne est survenue' }, { status: 500 });
   }
 }

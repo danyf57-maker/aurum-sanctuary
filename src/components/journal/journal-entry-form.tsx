@@ -14,7 +14,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { AuthDialog } from "@/components/auth/auth-dialog";
 
-const ALMA_USER_ID = process.env.NEXT_PUBLIC_ALMA_USER_ID || "alma_user_placeholder_id";
+const ALMA_USER_ID = "alma_user_placeholder_id";
 
 
 function SubmitButton() {

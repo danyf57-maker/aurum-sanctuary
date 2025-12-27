@@ -9,7 +9,7 @@ import { collection, addDoc, Timestamp } from "firebase-admin/firestore";
 import slugify from "slugify";
 
 // A simple hardcoded ID for our special user, Alma.
-const ALMA_USER_ID = process.env.ALMA_USER_ID || "alma_user_placeholder_id";
+const ALMA_USER_ID = "alma_user_placeholder_id";
 
 const formSchema = z.object({
   content: z.string().min(10, { message: "Votre entrée doit comporter au moins 10 caractères." }),
@@ -87,9 +87,9 @@ async function addEntryOnServer(entryData: {
 }
 
 async function analyzeEntrySentiment(entryText: string) {
-  const apiUrl = process.env.NODE_ENV === 'production'
-    ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/analyze`
-    : 'http://localhost:9002/api/analyze';
+  // We need to use the full URL for server-side fetch
+  const host = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:9002';
+  const apiUrl = `${host}/api/analyze`;
 
   const response = await fetch(apiUrl, {
     method: 'POST',
@@ -139,6 +139,9 @@ export async function saveJournalEntry(
 
   } catch (error) {
     console.error("Error saving entry:", error);
+    if (error instanceof Error) {
+        return { message: error.message };
+    }
     return { message: "Une erreur inattendue est survenue lors de l'enregistrement de votre entrée. Veuillez réessayer." };
   }
 
