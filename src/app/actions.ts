@@ -4,7 +4,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { analyzeEntrySentiment } from "@/ai/flows/entry-sentiment-analysis";
-import { addEntry } from "@/lib/firebase/firestore";
+import { db } from "@/lib/firebase/server-config";
+import { collection, addDoc, Timestamp } from "firebase-admin/firestore";
 
 const formSchema = z.object({
   content: z.string().min(10, { message: "Your entry must be at least 10 characters long." }),
@@ -20,6 +21,28 @@ export type FormState = {
     userId?: string[];
   };
 };
+
+async function addEntryOnServer(entryData: {
+  userId: string;
+  content: string;
+  tags: string[];
+  createdAt: Date;
+  sentiment: string;
+  sentimentScore: number;
+}) {
+  const entriesCollection = collection(db, "entries");
+  try {
+    const docRef = await addDoc(entriesCollection, {
+      ...entryData,
+      createdAt: Timestamp.fromDate(entryData.createdAt),
+    });
+    return { id: docRef.id };
+  } catch (error: any) {
+    console.error("Error adding document: ", error);
+    return { error: error.message };
+  }
+}
+
 
 export async function saveJournalEntry(
   prevState: FormState,
@@ -43,7 +66,7 @@ export async function saveJournalEntry(
   try {
     const sentimentResult = await analyzeEntrySentiment({ entryText: content });
 
-    await addEntry({
+    await addEntryOnServer({
       userId,
       content,
       tags: tags ? tags.split(",").map((tag) => tag.trim().toLowerCase()).filter(Boolean) : [],

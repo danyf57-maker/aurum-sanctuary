@@ -1,32 +1,13 @@
 import { collection, addDoc, query, where, getDocs, orderBy, Timestamp } from "firebase/firestore";
-import { db as clientDb } from "./config";
-import { db as adminDb } from './server-config';
+import { db } from "./config";
 import type { JournalEntry } from '@/lib/types';
-
-// A helper function to determine if we are on the server
-function isServer() {
-  return typeof window === 'undefined';
-}
 
 const entriesCollectionName = "entries";
 
-export async function addEntry(entryData: Omit<JournalEntry, 'id'>) {
-  // Always use admin DB for writes from server actions
-  const entriesCollection = collection(adminDb, entriesCollectionName);
-  try {
-    const docRef = await addDoc(entriesCollection, {
-      ...entryData,
-      createdAt: Timestamp.fromDate(entryData.createdAt),
-    });
-    return { id: docRef.id };
-  } catch (error: any) {
-    console.error("Error adding document: ", error);
-    return { error: error.message };
-  }
-}
+// This function is now client-side only.
+// The addEntry logic is handled by the server action directly.
 
 export async function getEntries(userId: string, tag?: string | null): Promise<JournalEntry[]> {
-  const db = isServer() ? adminDb : clientDb;
   const entriesCollection = collection(db, entriesCollectionName);
   try {
     let q;
@@ -62,7 +43,6 @@ export async function getEntries(userId: string, tag?: string | null): Promise<J
 }
 
 export async function getUniqueTags(userId: string): Promise<string[]> {
-    const db = isServer() ? adminDb : clientDb;
     const entriesCollection = collection(db, entriesCollectionName);
     try {
         const q = query(entriesCollection, where("userId", "==", userId));
