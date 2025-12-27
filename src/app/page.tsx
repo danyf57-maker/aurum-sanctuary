@@ -54,7 +54,8 @@ export default function LandingPage() {
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       {/* Hero Section */}
-      <section className="flex flex-col items-center justify-center flex-grow text-center px-4 py-20 md:py-32">
+      <section className="relative flex flex-col items-center justify-center flex-grow text-center px-4 py-20 md:py-32">
+        
         <motion.div
           initial="hidden"
           animate="visible"

@@ -1,8 +1,27 @@
+"use client";
+
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Logo } from '@/components/icons';
 import { AuthButton } from '@/components/auth/auth-button';
 
 export function Header() {
+  const pathname = usePathname();
+  const isHomepage = pathname === '/';
+
+  if (isHomepage) {
+    return (
+      <header className="absolute top-0 left-0 right-0 z-50 p-4">
+        <div className="container mx-auto flex justify-between items-center">
+          <Link href="/" className="text-sm font-bold tracking-widest text-stone-700 uppercase">
+            Aurum
+          </Link>
+          <AuthButton />
+        </div>
+      </header>
+    );
+  }
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 max-w-screen-2xl items-center">
