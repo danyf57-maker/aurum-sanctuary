@@ -34,8 +34,9 @@ export async function sendPasswordlessLink(email: string) {
     await sendSignInLinkToEmail(firebaseAuth, email, actionCodeSettings);
     window.localStorage.setItem('emailForSignIn', email);
     return { success: true }
-  } catch (error: any) {
+  } catch (error: any)
     console.error('Error sending passwordless link:', error);
+    // @ts-ignore
     return { error: error.message };
   }
 }

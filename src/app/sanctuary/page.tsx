@@ -91,7 +91,7 @@ function SanctuaryContent() {
                     Veuillez vous connecter pour accéder à votre sanctuaire privé.
                 </p>
                 <Button asChild className="mt-6">
-                    <Link href="/">Rédiger une entrée pour commencer</Link>
+                    <Link href="/sanctuary/write">Rédiger une entrée pour commencer</Link>
                 </Button>
             </div>
         );
@@ -130,7 +130,7 @@ function SanctuaryContent() {
                     <h3 className="text-xl font-semibold">Votre sanctuaire attend.</h3>
                     <p className="text-muted-foreground mt-2">Vos entrées sauvegardées apparaîtront ici une fois que vous les aurez écrites.</p>
                     <Button asChild className="mt-4">
-                        <Link href="/">Rédigez votre première entrée</Link>
+                        <Link href="/sanctuary/write">Rédigez votre première entrée</Link>
                     </Button>
                 </div>
             )}
