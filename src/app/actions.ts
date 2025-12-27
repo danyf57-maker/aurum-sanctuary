@@ -3,7 +3,6 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { analyzeEntrySentiment } from "@/ai/flows/entry-sentiment-analysis";
 import { db } from "@/lib/firebase/server-config";
 import { collection, addDoc, Timestamp } from "firebase-admin/firestore";
 
@@ -43,6 +42,29 @@ async function addEntryOnServer(entryData: {
   }
 }
 
+// Fonction pour appeler notre nouvelle route API
+async function analyzeEntrySentiment(entryText: string) {
+  // Ceci s'exécute sur le serveur, donc nous avons besoin de l'URL absolue
+  const apiUrl = process.env.NODE_ENV === 'production'
+    ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/analyze`
+    : 'http://localhost:9002/api/analyze';
+
+  const response = await fetch(apiUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ entryText }),
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.json();
+    throw new Error(errorBody.error || "Échec de l'analyse des sentiments");
+  }
+
+  return response.json();
+}
+
 
 export async function saveJournalEntry(
   prevState: FormState,
@@ -64,7 +86,7 @@ export async function saveJournalEntry(
   const { content, tags, userId } = validatedFields.data;
 
   try {
-    const sentimentResult = await analyzeEntrySentiment({ entryText: content });
+    const sentimentResult = await analyzeEntrySentiment(content);
 
     await addEntryOnServer({
       userId,
