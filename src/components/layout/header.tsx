@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -9,7 +10,7 @@ export function Header() {
   const pathname = usePathname();
   const isHomepage = pathname === '/';
 
-  // Do not render the header on the homepage
+  // Do not render the header on the homepage to allow for a custom hero header
   if (isHomepage) {
     return null;
   }
