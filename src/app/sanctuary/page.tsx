@@ -29,23 +29,28 @@ function SanctuaryContent() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Handle passwordless sign-in
-        if (isSignInWithEmailLink(auth, window.location.href)) {
-            let email = window.localStorage.getItem('emailForSignIn');
-            if (!email) {
-                email = window.prompt('Veuillez fournir votre email pour confirmation');
+        // Handle passwordless sign-in. This should only run on the client.
+        const handlePasswordlessSignIn = () => {
+            if (isSignInWithEmailLink(auth, window.location.href)) {
+                let email = window.localStorage.getItem('emailForSignIn');
+                if (!email) {
+                    email = window.prompt('Veuillez fournir votre email pour confirmation');
+                }
+                if(email) {
+                    signInWithEmailLink(auth, email, window.location.href)
+                        .then(() => {
+                            window.localStorage.removeItem('emailForSignIn');
+                            toast({ title: "Connecté avec succès!"});
+                            // Optionally, redirect to a cleaner URL
+                            window.history.replaceState({}, document.title, window.location.pathname);
+                        })
+                        .catch((error) => {
+                            toast({ title: "Erreur de connexion", description: error.message, variant: "destructive" });
+                        });
+                }
             }
-            if(email) {
-                signInWithEmailLink(auth, email, window.location.href)
-                    .then(() => {
-                        window.localStorage.removeItem('emailForSignIn');
-                        toast({ title: "Connecté avec succès!"});
-                    })
-                    .catch((error) => {
-                        toast({ title: "Erreur de connexion", description: error.message, variant: "destructive" });
-                    });
-            }
-        }
+        };
+        handlePasswordlessSignIn();
     }, [toast]);
     
     useEffect(() => {
