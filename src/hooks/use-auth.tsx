@@ -5,7 +5,6 @@ import React, { useState, useEffect, createContext, useContext, ReactNode } from
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { auth as firebaseAuth, db } from '@/lib/firebase/config';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
-import { Logo } from '@/components/icons';
 
 interface AuthContextType {
   user: FirebaseUser | null;
@@ -53,18 +52,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     return () => unsubscribe();
   }, []);
-  
-  if (loading) {
-    return (
-      <div className="w-full h-screen flex items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-4 animate-pulse">
-            <Logo className="h-12 w-12 text-primary" />
-            <p className="text-muted-foreground">Réveil du Sanctuaire...</p>
-        </div>
-      </div>
-    );
-  }
-
 
   return (
     <AuthContext.Provider value={{ user, loading }}>
