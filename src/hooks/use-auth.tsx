@@ -20,7 +20,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(firebaseAuth, async (firebaseUser) => {
       if (firebaseUser) {
-        setUser(firebaseUser);
         const userRef = doc(db, "users", firebaseUser.uid);
         const userSnap = await getDoc(userRef);
         if (!userSnap.exists()) {
@@ -32,6 +31,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             createdAt: serverTimestamp(),
           });
         }
+        // Set user after checking/creating doc to ensure data is available
+        setUser(firebaseUser);
       } else {
         setUser(null);
       }
@@ -41,6 +42,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => unsubscribe();
   }, []);
 
+  // While loading, we show a splash screen to avoid hydration mismatch
   if (loading) {
     return (
       <div className="w-full h-screen flex items-center justify-center bg-background">
