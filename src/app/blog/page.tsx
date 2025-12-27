@@ -16,7 +16,10 @@ function BlogCard({ post }: { post: PublicPost }) {
     return (
         <Card className="flex flex-col transition-all hover:shadow-lg hover:-translate-y-1 bg-card/50">
             <CardHeader>
-                <p className="text-sm text-muted-foreground">{formattedDate}</p>
+                <div className="flex justify-between items-center">
+                    <p className="text-sm text-muted-foreground">{formattedDate}</p>
+                    <Badge variant="outline" className="border-primary text-primary">Journal d'Alma</Badge>
+                </div>
                 <h3 className="text-2xl font-headline font-semibold pt-2">
                     <Link href={`/blog/${post.slug}`} className="hover:text-primary transition-colors">
                         {post.title}
@@ -64,8 +67,8 @@ export default async function BlogPage() {
                         </div>
                     ) : (
                         <div className="text-center py-20 border-2 border-dashed rounded-lg flex flex-col items-center">
-                            <h3 className="text-xl font-semibold">Le journal est encore silencieux.</h3>
-                            <p className="text-muted-foreground mt-2">Les articles publiés par Alma apparaîtront ici bientôt.</p>
+                            <h3 className="text-xl font-semibold">Le silence règne encore.</h3>
+                            <p className="text-muted-foreground mt-2">Alma n'a pas encore partagé ses pensées. Revenez bientôt pour découvrir son voyage intérieur.</p>
                         </div>
                     )}
                 </div>

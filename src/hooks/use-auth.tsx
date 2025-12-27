@@ -7,18 +7,18 @@ import { auth as firebaseAuth, db } from '@/lib/firebase/config';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 
 interface AuthContextType {
-  user: FirebaseUser | null;
+  user: (FirebaseUser & { uid: string }) | null;
   loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({ user: null, loading: true });
 
-const ALMA_USER_ID = "alma_user_placeholder_id";
+export const ALMA_USER_ID = "ALMA_SPECIAL_USER_ID";
 const ALMA_EMAIL = "alma@aurum.com";
 
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<FirebaseUser | null>(null);
+  const [user, setUser] = useState<AuthContextType['user']>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -27,22 +27,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const isAlma = firebaseUser.email === ALMA_EMAIL;
         const uid = isAlma ? ALMA_USER_ID : firebaseUser.uid;
 
-        const userRef = doc(db, "users", uid);
+        // Ensure the user object has the correct UID for Alma
+        const finalUser = { ...firebaseUser, uid: uid };
+
+        const userRef = doc(db, "users", finalUser.uid);
         const userSnap = await getDoc(userRef);
 
         if (!userSnap.exists()) {
-          await setDoc(doc(db, "users", uid), {
-            uid: uid,
-            email: firebaseUser.email,
-            displayName: firebaseUser.displayName,
-            photoURL: firebaseUser.photoURL,
-            createdAt: serverTimestamp(),
-          });
+          try {
+            await setDoc(userRef, {
+              uid: finalUser.uid,
+              email: finalUser.email,
+              displayName: finalUser.displayName,
+              photoURL: finalUser.photoURL,
+              createdAt: serverTimestamp(),
+            });
+          } catch (error) {
+             console.error("Error creating user document:", error);
+          }
         }
         
-        // Ensure the user object has the correct UID for Alma
-        const finalUser = { ...firebaseUser, uid: uid };
-        setUser(finalUser as FirebaseUser);
+        setUser(finalUser);
 
       } else {
         setUser(null);

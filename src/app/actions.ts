@@ -7,9 +7,7 @@ import { z } from "zod";
 import { db } from "@/lib/firebase/server-config";
 import { collection, addDoc, Timestamp } from "firebase-admin/firestore";
 import slugify from "slugify";
-
-// A simple hardcoded ID for our special user, Alma.
-const ALMA_USER_ID = "alma_user_placeholder_id";
+import { ALMA_USER_ID } from "@/hooks/use-auth";
 
 const formSchema = z.object({
   content: z.string().min(10, { message: "Votre entrée doit comporter au moins 10 caractères." }),

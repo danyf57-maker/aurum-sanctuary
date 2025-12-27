@@ -4,7 +4,7 @@
 import { useEffect, useRef, useState, useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { Loader2 } from 'lucide-react';
-import { useAuth } from "@/hooks/use-auth";
+import { useAuth, ALMA_USER_ID } from "@/hooks/use-auth";
 import { saveJournalEntry, type FormState } from "@/app/actions";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,9 +13,6 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { AuthDialog } from "@/components/auth/auth-dialog";
-
-const ALMA_USER_ID = "alma_user_placeholder_id";
-
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -102,7 +99,7 @@ export function JournalEntryForm() {
         </div>
         {isAlma && (
           <div className="flex items-center space-x-2 pt-2">
-            <Checkbox id="publishAsPost" name="publishAsPost" />
+            <Checkbox id="publishAsPost" name="publishAsPost" defaultChecked={true} />
             <Label htmlFor="publishAsPost" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
               Publier sur le blog public en tant qu'Alma
             </Label>
