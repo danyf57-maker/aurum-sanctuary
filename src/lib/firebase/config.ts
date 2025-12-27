@@ -17,7 +17,13 @@ const firebaseConfig = {
 let app: FirebaseApp;
 if (typeof window !== 'undefined') {
     app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+} else {
+    // On the server, we need a different approach.
+    // However, this config is client-side only.
+    // So we can create a placeholder or ensure it's not used server-side.
+    app = {} as FirebaseApp;
 }
+
 
 // It's safe to use empty objects on the server
 const auth: Auth = typeof window !== 'undefined' ? getAuth(app!) : ({} as Auth);

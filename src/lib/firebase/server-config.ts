@@ -1,5 +1,5 @@
-import { initializeApp, getApps, getApp, FirebaseApp } from "firebase/app";
-import { getFirestore, Firestore } from "firebase/firestore";
+import { initializeApp, getApps, getApp, FirebaseApp, cert, ServiceAccount } from "firebase-admin/app";
+import { getFirestore, Firestore } from "firebase-admin/firestore";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -10,7 +10,15 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-let app: FirebaseApp = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig, "server");
+// This is a workaround for Vercel when serializing service account credentials
+const serviceAccount: ServiceAccount = JSON.parse(
+  process.env.FIREBASE_SERVICE_ACCOUNT_KEY as string
+);
+
+let app: FirebaseApp = getApps().find(app => app.name === 'server') || initializeApp({
+    credential: cert(serviceAccount)
+}, 'server');
+
 const db: Firestore = getFirestore(app);
 
 export { app, db };
