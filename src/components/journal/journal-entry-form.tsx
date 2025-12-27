@@ -16,7 +16,7 @@ import { AuthDialog } from "@/components/auth/auth-dialog";
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
-    <Button type="submit" disabled={pending} className="w-full sm:w-auto">
+    <Button type="submit" disabled={pending} variant="ghost" className="w-full sm:w-auto text-muted-foreground hover:text-foreground">
       {pending ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Enregistrement...</> : "Sauvegarder au Sanctuaire"}
     </Button>
   );
@@ -29,6 +29,7 @@ export function JournalEntryForm() {
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (state.message && state.errors) {
@@ -50,39 +51,48 @@ export function JournalEntryForm() {
     formData.set("userId", user.uid);
     dispatch(formData);
   };
+  
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, []);
+
+  const handleInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
+    const target = e.currentTarget;
+    target.style.height = 'auto';
+    target.style.height = `${target.scrollHeight}px`;
+  };
 
   return (
     <>
-    <form ref={formRef} action={handleFormSubmit} className="space-y-6">
+    <form ref={formRef} action={handleFormSubmit} className="w-full max-w-2xl mx-auto space-y-8">
       <input type="hidden" name="userId" value={user?.uid ?? ''} />
-      <div className="space-y-2">
-        <Label htmlFor="content" className="text-lg">
-          Qu'avez-vous en tête ?
-        </Label>
+      <div>
         <Textarea
+          ref={textareaRef}
           id="content"
           name="content"
-          placeholder="Versez vos pensées ici..."
-          className="min-h-[300px] text-base bg-card"
+          placeholder="Écrivez ici..."
+          className="bg-transparent border-none shadow-none resize-none overflow-hidden min-h-[60vh] p-0 font-headline text-2xl leading-relaxed text-stone-800 placeholder:text-stone-300 focus:ring-0 focus:outline-none focus-visible:ring-0"
           required
+          onInput={handleInput}
         />
         {state.errors?.content && (
-          <p className="text-sm font-medium text-destructive">
+          <p className="text-sm font-medium text-destructive mt-2">
             {state.errors.content[0]}
           </p>
         )}
       </div>
-      <div className="space-y-2">
-        <Label htmlFor="tags">Étiquettes</Label>
+      <div className="space-y-3 opacity-80 focus-within:opacity-100 transition-opacity">
+        <Label htmlFor="tags" className="sr-only">Étiquettes</Label>
         <Input
           id="tags"
           name="tags"
-          placeholder="ex: gratitude, travail, réflexion"
-          className="bg-card"
+          placeholder="Ajouter des étiquettes... (ex: gratitude, travail)"
+          className="bg-transparent border-0 border-b rounded-none px-0 focus:ring-0 focus-visible:ring-0"
         />
-        <p className="text-sm text-muted-foreground">
-          Séparez les étiquettes par une virgule.
-        </p>
       </div>
       <div className="flex justify-end">
         <SubmitButton />
