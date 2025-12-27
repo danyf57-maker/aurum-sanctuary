@@ -1,3 +1,4 @@
+
 // This component is a client component to handle auth state and data fetching.
 "use client";
 import { useEffect, useState, Suspense } from "react";

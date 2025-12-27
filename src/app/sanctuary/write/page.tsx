@@ -1,3 +1,4 @@
+
 import { JournalEntryForm } from '@/components/journal/journal-entry-form';
 
 export default function WritePage() {
