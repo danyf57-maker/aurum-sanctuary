@@ -1,9 +1,8 @@
-"use client";
+import { initializeApp, getApps, getApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
-import { initializeApp, getApps, getApp, FirebaseApp } from "firebase/app";
-import { getAuth, Auth } from "firebase/auth";
-import { getFirestore, Firestore } from "firebase/firestore";
-
+// This is the public, client-side config
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -13,20 +12,9 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Initialize Firebase
-let app: FirebaseApp;
-if (typeof window !== 'undefined') {
-    app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-} else {
-    // On the server, we need a different approach.
-    // However, this config is client-side only.
-    // So we can create a placeholder or ensure it's not used server-side.
-    app = {} as FirebaseApp;
-}
+// Initialize Firebase for the client
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-
-// It's safe to use empty objects on the server
-const auth: Auth = typeof window !== 'undefined' ? getAuth(app!) : ({} as Auth);
-const db: Firestore = typeof window !== 'undefined' ? getFirestore(app!) : ({} as Firestore);
-
-export { app, auth, db };
+export { app, auth, db, firebaseConfig };

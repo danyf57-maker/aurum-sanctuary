@@ -1,24 +1,24 @@
 import { initializeApp, getApps, getApp, FirebaseApp, cert, ServiceAccount } from "firebase-admin/app";
-import { getFirestore, Firestore } from "firebase-admin/firestore";
-
-const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-};
+import { getFirestore as getAdminFirestore, Firestore } from "firebase-admin/firestore";
 
 // This is a workaround for Vercel when serializing service account credentials
 const serviceAccount: ServiceAccount = JSON.parse(
   process.env.FIREBASE_SERVICE_ACCOUNT_KEY as string
 );
 
-let app: FirebaseApp = getApps().find(app => app.name === 'server') || initializeApp({
-    credential: cert(serviceAccount)
-}, 'server');
+function getAdminApp(): FirebaseApp {
+    if (getApps().some(app => app.name === 'admin')) {
+        return getApp('admin');
+    }
+    return initializeApp({
+        credential: cert(serviceAccount)
+    }, 'admin');
+}
 
-const db: Firestore = getFirestore(app);
+function getDb(): Firestore {
+    return getAdminFirestore(getAdminApp());
+}
 
-export { app, db };
+const db: Firestore = getDb();
+
+export { getAdminApp, db };
