@@ -22,7 +22,7 @@ export function Header() {
           <Link href="/" className="mr-6 flex items-center space-x-2">
             <Image src="/logoAurum.png" alt="Aurum Logo" width={80} height={24} className="h-6 w-auto" />
             <span className="font-bold font-headline sm:inline-block">
-              Sanctuaire d'Aurum
+              Sanctuaire
             </span>
           </Link>
           <nav className="flex items-center gap-6 text-sm">
