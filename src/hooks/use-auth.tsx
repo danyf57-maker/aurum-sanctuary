@@ -28,12 +28,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const uid = isAlma ? ALMA_USER_ID : firebaseUser.uid;
 
         // Ensure the user object has the correct UID for Alma
-        const finalUser = { ...firebaseUser, uid };
+        const finalUser = { ...firebaseUser.toJSON(), uid } as FirebaseUser & { uid: string };
 
-        const userRef = doc(db, "users", finalUser.uid);
-        
-        // Only interact with Firestore for non-Alma users or if Alma's doc doesn't exist
+        // Only interact with Firestore for non-Alma users
         if (!isAlma) {
+            const userRef = doc(db, "users", finalUser.uid);
             const userSnap = await getDoc(userRef);
 
             if (!userSnap.exists()) {
