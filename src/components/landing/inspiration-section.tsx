@@ -33,7 +33,7 @@ export function InspirationSection() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.5 }}
-          transition={{ duration: 0.7 }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
         >
           <h2 className="text-4xl md:text-5xl font-headline text-stone-800 tracking-tight">Pages volées au quotidien.</h2>
           <p className="mt-6 text-lg text-stone-600">
@@ -76,7 +76,7 @@ export function InspirationSection() {
         </motion.div>
         
         <div className="text-center mt-16">
-            <Button asChild size="lg" className="bg-stone-800 hover:bg-stone-900 text-white">
+            <Button asChild size="lg" className="bg-stone-600 text-white px-8 py-3 rounded-full uppercase text-sm tracking-wide hover:bg-stone-700">
                 <Link href="/sanctuary/write">
                     Ouvrir votre propre journal
                 </Link>
