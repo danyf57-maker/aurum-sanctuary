@@ -40,7 +40,7 @@ export default function LandingPage() {
     <>
       <div className="flex flex-col min-h-screen bg-background text-foreground">
         <header className="absolute top-0 left-0 right-0 z-10 p-8">
-            <span className="text-sm font-bold tracking-widest text-stone-700 uppercase">AURUM</span>
+            <Logo className="h-6 w-auto text-stone-700" />
         </header>
         <section className="relative flex flex-col items-center justify-center flex-grow text-center px-4">
           <motion.div
