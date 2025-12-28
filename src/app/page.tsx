@@ -40,7 +40,7 @@ export default function LandingPage() {
     <>
       <div className="flex flex-col min-h-screen bg-background text-foreground">
         <header className="absolute top-0 left-0 right-0 z-10 p-8">
-            <Image src="/logoAurum.png" alt="Aurum Logo" width={80} height={24} className="h-6 w-auto text-stone-700" />
+            <Image src="/logoAurum.png" alt="Aurum Logo" width={80} height={24} className="h-6 w-auto" />
         </header>
         <section className="relative flex flex-col items-center justify-center flex-grow text-center px-4">
           <motion.div
@@ -130,7 +130,7 @@ export default function LandingPage() {
 
       <footer className="py-16">
           <div className="container mx-auto flex flex-col items-center gap-4">
-              <Image src="/logoAurum.png" alt="Aurum Logo" width={96} height={28} className="h-8 w-auto text-stone-300" />
+              <Image src="/logoAurum.png" alt="Aurum Logo" width={96} height={28} className="h-8 w-auto" />
               <p className="text-sm text-stone-400 font-body">© 2025 Aurum. Un espace pour vous.</p>
           </div>
       </footer>
