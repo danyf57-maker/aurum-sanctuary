@@ -28,23 +28,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const uid = isAlma ? ALMA_USER_ID : firebaseUser.uid;
 
         // Ensure the user object has the correct UID for Alma
-        const finalUser = { ...firebaseUser, uid: uid };
+        const finalUser = { ...firebaseUser, uid };
 
         const userRef = doc(db, "users", finalUser.uid);
-        const userSnap = await getDoc(userRef);
+        
+        // Only interact with Firestore for non-Alma users or if Alma's doc doesn't exist
+        if (!isAlma) {
+            const userSnap = await getDoc(userRef);
 
-        if (!userSnap.exists()) {
-          try {
-            await setDoc(userRef, {
-              uid: finalUser.uid,
-              email: finalUser.email,
-              displayName: finalUser.displayName,
-              photoURL: finalUser.photoURL,
-              createdAt: serverTimestamp(),
-            });
-          } catch (error) {
-             console.error("Error creating user document:", error);
-          }
+            if (!userSnap.exists()) {
+              try {
+                await setDoc(userRef, {
+                  uid: finalUser.uid,
+                  email: finalUser.email,
+                  displayName: finalUser.displayName,
+                  photoURL: finalUser.photoURL,
+                  createdAt: serverTimestamp(),
+                });
+              } catch (error) {
+                 console.error("Error creating user document:", error);
+              }
+            }
         }
         
         setUser(finalUser);
