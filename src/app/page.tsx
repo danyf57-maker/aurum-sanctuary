@@ -1,9 +1,8 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { Feather, BrainCircuit, Archive, ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { HeroSection } from '@/components/landing/hero-section';
 import { InspirationSection } from '@/components/landing/inspiration-section';
+import { Logo } from '@/components/icons';
 
 const FeatureCard = ({ icon: Icon, title, children }: { icon: React.ElementType, title: string, children: React.ReactNode }) => (
     <div className="flex flex-col items-center text-center">
@@ -58,7 +57,7 @@ export default async function LandingPage() {
 
       <footer className="py-16">
           <div className="container mx-auto flex flex-col items-center gap-4">
-              <Image src="/logoAurum.png" alt="Aurum Logo" width={96} height={28} className="h-8 w-auto" />
+              <Logo className="h-8 w-auto text-stone-400" />
               <p className="text-sm text-stone-400 font-body">© 2025 Aurum. Un espace pour vous.</p>
           </div>
       </footer>
