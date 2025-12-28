@@ -1,3 +1,4 @@
+
 "use client";
 
 import { motion } from 'framer-motion';
@@ -23,29 +24,6 @@ const mockData = [
   }
 ];
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.2,
-      delayChildren: 0.3,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
-  visible: {
-    y: 0,
-    opacity: 1,
-    transition: {
-      duration: 0.6,
-      ease: [0.6, 0.05, -0.01, 0.9],
-    },
-  },
-};
-
 export function InspirationSection() {
   return (
     <section className="py-32 bg-stone-50/70">
@@ -65,13 +43,20 @@ export function InspirationSection() {
 
         <motion.div
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-          variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
+          transition={{ staggerChildren: 0.2 }}
         >
           {mockData.map((item, index) => (
-            <motion.div key={index} variants={itemVariants} className="group relative">
+            <motion.div 
+              key={index} 
+              className="group relative"
+              initial={{ y: 20, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.6, ease: [0.6, 0.05, -0.01, 0.9], delay: index * 0.1 }}
+              viewport={{ once: true }}
+            >
               <div className="h-full bg-white/60 p-8 rounded-lg shadow-sm hover:shadow-md hover:-translate-y-1 transition-transform duration-300 border border-stone-100">
                 <p className="text-sm text-stone-400 mb-4">{item.date}</p>
                 <p className="font-headline italic text-stone-800 text-lg leading-relaxed mb-6">
