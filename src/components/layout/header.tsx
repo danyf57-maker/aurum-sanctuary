@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { AuthButton } from '@/components/auth/auth-button';
-import { Logo } from '@/components/icons';
+import Image from 'next/image';
 
 export function Header() {
   const pathname = usePathname();
@@ -20,7 +20,7 @@ export function Header() {
       <div className="container flex h-14 max-w-screen-2xl items-center">
         <div className="mr-4 flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <Logo className="h-6 w-auto" />
+            <Image src="/logoAurum.png" alt="Logo Aurum" width={24} height={24} />
             <span className="font-bold font-headline sm:inline-block">
               Sanctuaire
             </span>

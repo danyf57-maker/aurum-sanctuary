@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import { AuthDialog } from '@/components/auth/auth-dialog';
 import { Button } from '@/components/ui/button';
-import { Logo } from '@/components/icons';
+import Image from 'next/image';
 
 const fadeIn = (delay = 0, duration = 0.8) => ({
   hidden: { opacity: 0, y: 20 },
@@ -28,7 +28,7 @@ export function HeroSection() {
     <>
       <div className="flex flex-col min-h-screen bg-background text-foreground">
         <header className="absolute top-0 left-0 right-0 z-10 p-8">
-            <Logo className="h-6 w-auto" />
+            <Image src="/logoAurum.png" alt="Logo Aurum" width={24} height={24} />
         </header>
         <section className="relative flex flex-col items-center justify-center flex-grow text-center px-4">
           <motion.div

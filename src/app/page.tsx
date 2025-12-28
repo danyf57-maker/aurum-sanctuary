@@ -1,8 +1,9 @@
 import Link from 'next/link';
-import { Feather, BrainCircuit, Archive, ArrowRight } from 'lucide-react';
+import { Feather, BrainCircuit, Archive } from 'lucide-react';
 import { HeroSection } from '@/components/landing/hero-section';
 import { InspirationSection } from '@/components/landing/inspiration-section';
 import { Logo } from '@/components/icons';
+import Image from 'next/image';
 
 const FeatureCard = ({ icon: Icon, title, children }: { icon: React.ElementType, title: string, children: React.ReactNode }) => (
     <div className="flex flex-col items-center text-center">
@@ -15,7 +16,7 @@ const FeatureCard = ({ icon: Icon, title, children }: { icon: React.ElementType,
 );
 
 
-export default async function LandingPage() {
+export default function LandingPage() {
   return (
     <>
       <HeroSection />
@@ -57,7 +58,7 @@ export default async function LandingPage() {
 
       <footer className="py-16">
           <div className="container mx-auto flex flex-col items-center gap-4">
-              <Logo className="h-8 w-auto text-stone-400" />
+              <Image src="/logoAurum.png" alt="Logo Aurum" width={32} height={32} className="text-stone-400" />
               <p className="text-sm text-stone-400 font-body">© 2025 Aurum. Un espace pour vous.</p>
           </div>
       </footer>

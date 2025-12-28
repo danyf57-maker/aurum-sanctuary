@@ -7,18 +7,18 @@ import Link from 'next/link';
 
 const mockData = [
   {
-    date: "Mardi, 23h42",
+    date: "Mardi, 14h02",
     userText: "Ils ont applaudi ma présentation. Pourquoi j'ai l'impression d'avoir volé leur admiration ? J'attends qu'ils découvrent que je n'ai aucune idée de ce que je fais.",
     aiInsight: "Le succès ne chasse pas la peur, il la met en lumière. Ce vertige est la preuve de ta compétence, pas de ton imposture."
   },
   {
-    date: "Dimanche, 3h04",
-    userText: "3h du matin. La liste des tâches tourne en boucle. Si je dors maintenant, j'ai peur d'oublier l'essentiel pour demain.",
+    date: "Dimanche, 03h15",
+    userText: "La liste des tâches tourne en boucle. Si je dors maintenant, j'ai peur d'oublier l'essentiel pour demain. Mon cerveau refuse le bouton off.",
     aiInsight: "Ta mémoire est faillible, ce Sanctuaire ne l'est pas. Dépose tout ici. Ton esprit a la permission de s'éteindre."
   },
   {
-    date: "Vendredi, 18h51",
-    userText: "J'ai dit 'ça va super' à tout le monde aujourd'hui. Je crois que je ne sais même plus ce que je ressens vraiment sous le masque.",
+    date: "Lundi, 19h30",
+    userText: "J'ai dit 'ça va super' douze fois aujourd'hui. Je crois que je ne sais même plus ce que je ressens vraiment sous le masque.",
     aiInsight: "La dissonance émotionnelle est épuisante. Ici, tu n'as pas de public. Dis-nous la vérité."
   }
 ];
@@ -72,20 +72,20 @@ export function InspirationSection() {
         >
           {mockData.map((item, index) => (
             <motion.div key={index} variants={itemVariants} className="group relative">
-              <div className="h-full bg-white/60 p-8 rounded-lg shadow-sm hover:shadow-2xl hover:shadow-stone-200/50 transition-shadow duration-500 hover:-translate-y-2 transform">
+              <div className="h-full bg-white/60 p-8 rounded-lg shadow-sm hover:shadow-md hover:-translate-y-1 transition-transform duration-300 border border-stone-100">
                 <p className="text-sm text-stone-400 mb-4">{item.date}</p>
-                <p className="font-headline italic text-stone-700 text-lg leading-relaxed mb-6">
+                <p className="font-headline italic text-stone-800 text-lg leading-relaxed mb-6">
                   "{item.userText}"
                 </p>
                 <div className="h-px w-1/4 bg-amber-400 mb-6"></div>
                 <div className="flex items-start gap-3">
                   <Sparkles className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
-                  <p className="font-body text-amber-800/90 text-sm">{item.aiInsight}</p>
+                  <p className="font-body text-sm text-amber-700">{item.aiInsight}</p>
                 </div>
                  <div className="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                   <Button variant="ghost" size="sm" asChild>
+                   <Button variant="link" size="sm" asChild className="text-amber-700">
                        <Link href="/blog">
-                           Lire <ArrowRight className="ml-2 h-4 w-4" />
+                           Lire l'entrée <ArrowRight className="ml-1 h-4 w-4" />
                        </Link>
                    </Button>
                 </div>
