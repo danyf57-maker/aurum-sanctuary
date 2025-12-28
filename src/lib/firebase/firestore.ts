@@ -1,4 +1,4 @@
-import { collection, query, where, getDocs, orderBy, Timestamp, limit } from "firebase/firestore";
+import { collection, query, where, getDocs, orderBy, Timestamp, limit as firestoreLimit } from "firebase/firestore";
 import { db } from "./config";
 import type { JournalEntry, PublicPost } from '@/lib/types';
 
@@ -59,14 +59,20 @@ export async function getUniqueTags(userId: string): Promise<string[]> {
     }
 }
 
-export async function getPublicPosts(): Promise<PublicPost[]> {
+export async function getPublicPosts(limit?: number): Promise<PublicPost[]> {
   const postsCollection = collection(db, publicPostsCollectionName);
   try {
-    const q = query(
-      postsCollection,
+    const constraints = [
       where("isPublic", "==", true),
-      orderBy("publishedAt", "desc")
-    );
+      orderBy("publishedAt", "desc"),
+    ];
+
+    if (limit) {
+      constraints.push(firestoreLimit(limit));
+    }
+
+    const q = query(postsCollection, ...constraints);
+    
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map(doc => {
       const data = doc.data();
@@ -85,7 +91,7 @@ export async function getPublicPosts(): Promise<PublicPost[]> {
 export async function getPublicPostBySlug(slug: string): Promise<PublicPost | null> {
     const postsCollection = collection(db, publicPostsCollectionName);
     try {
-        const q = query(postsCollection, where("slug", "==", slug), limit(1));
+        const q = query(postsCollection, where("slug", "==", slug), firestoreLimit(1));
         const querySnapshot = await getDocs(q);
         if (querySnapshot.empty) {
             return null;

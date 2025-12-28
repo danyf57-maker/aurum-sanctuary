@@ -1,26 +1,10 @@
-
-"use client";
-
-import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
-import { ChevronDown, Feather, BrainCircuit, Archive } from 'lucide-react';
-import { AuthDialog } from '@/components/auth/auth-dialog';
+import { Feather, BrainCircuit, Archive, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
-const fadeIn = (delay = 0, duration = 0.8) => ({
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      delay,
-      duration,
-      ease: 'easeOut',
-    },
-  },
-});
+import { HeroSection } from '@/components/landing/hero-section';
+import { getPublicPosts } from '@/lib/firebase/firestore';
+import { BlogCard } from '@/components/blog/blog-card';
 
 const FeatureCard = ({ icon: Icon, title, children }: { icon: React.ElementType, title: string, children: React.ReactNode }) => (
     <div className="flex flex-col items-center text-center">
@@ -33,67 +17,12 @@ const FeatureCard = ({ icon: Icon, title, children }: { icon: React.ElementType,
 );
 
 
-export default function LandingPage() {
-  const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
+export default async function LandingPage() {
+  const latestPosts = await getPublicPosts(3);
 
   return (
     <>
-      <div className="flex flex-col min-h-screen bg-background text-foreground">
-        <header className="absolute top-0 left-0 right-0 z-10 p-8">
-            <Image src="/logoAurum.png" alt="Aurum Logo" width={80} height={24} className="h-6 w-auto" />
-        </header>
-        <section className="relative flex flex-col items-center justify-center flex-grow text-center px-4">
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            className="flex flex-col items-center"
-          >
-            <motion.div
-              variants={fadeIn(0)}
-              className="w-16 h-0.5 bg-amber-600 mx-auto mb-6"
-            />
-            <motion.h1
-              variants={fadeIn(0.2)}
-              className="text-5xl md:text-6xl font-headline italic text-stone-700 leading-tight"
-            >
-              Le silence qui vous écoute.
-            </motion.h1>
-            <motion.p
-              variants={fadeIn(0.4)}
-              className="mt-6 text-lg text-stone-500 max-w-2xl mx-auto"
-            >
-              Un espace intime pour déposer ce qui vous traverse.
-              <br />
-              Sans jugement. Sans bruit. Sans objectif de performance.
-            </motion.p>
-            <motion.div
-              variants={fadeIn(0.6)}
-              className="mt-10 flex flex-col sm:flex-row items-center gap-4"
-            >
-              <Button
-                size="lg"
-                onClick={() => setIsAuthDialogOpen(true)}
-                className="bg-stone-600 text-white px-8 py-3 rounded-full uppercase text-sm tracking-wide hover:bg-stone-700"
-              >
-                Ouvrir mon sanctuaire
-              </Button>
-              <Button
-                asChild
-                size="lg"
-                variant="outline"
-                className="border-stone-400 text-stone-700 px-8 py-3 rounded-full uppercase text-sm tracking-wide bg-transparent hover:bg-stone-100 hover:text-stone-800"
-              >
-                <Link href="/sanctuary/write">Essayer sans compte</Link>
-              </Button>
-            </motion.div>
-            <motion.div variants={fadeIn(0.8)} className="absolute bottom-10">
-              <a href="#manifesto" aria-label="Scroll down">
-                <ChevronDown className="h-6 w-6 text-stone-400" />
-              </a>
-            </motion.div>
-          </motion.div>
-        </section>
-      </div>
+      <HeroSection />
 
       <section id="manifesto" className="py-32 bg-stone-50">
           <div className="container max-w-2xl mx-auto text-center">
@@ -127,6 +56,33 @@ export default function LandingPage() {
               </div>
           </div>
       </section>
+      
+      {latestPosts.length > 0 && (
+        <section className="py-32 bg-stone-50">
+          <div className="container mx-auto">
+            <div className="max-w-2xl mx-auto text-center mb-12">
+              <h2 className="text-4xl font-headline text-stone-800">Le Journal d'Alma</h2>
+              <p className="mt-4 text-lg text-stone-600">
+                Une invitation au voyage intérieur. Laissez-vous inspirer par les réflexions d'Alma et découvrez la puissance de l'écriture.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {latestPosts.map(post => (
+                <BlogCard key={post.id} post={post} />
+              ))}
+            </div>
+             <div className="text-center mt-12">
+              <Button asChild variant="outline" size="lg">
+                <Link href="/blog">
+                  Explorer le blog
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </section>
+      )}
+
 
       <footer className="py-16">
           <div className="container mx-auto flex flex-col items-center gap-4">
@@ -134,8 +90,6 @@ export default function LandingPage() {
               <p className="text-sm text-stone-400 font-body">© 2025 Aurum. Un espace pour vous.</p>
           </div>
       </footer>
-
-      <AuthDialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen} />
     </>
   );
 }
