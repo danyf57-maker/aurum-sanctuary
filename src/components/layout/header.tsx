@@ -4,7 +4,13 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { AuthButton } from '@/components/auth/auth-button';
-import Image from 'next/image';
+
+const Logo = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props}>
+        <path d="M12.41,8.37a2.4,2.4,0,0,0-3.32,2.83,2.4,2.4,0,0,0,3.32-2.83m-1.2,3.32A1.2,1.2,0,1,1,12,10.5,1.2,1.2,0,0,1,11.21,11.69" />
+        <path d="M19.5,12a7.5,7.5,0,1,0-9,7.21,1,1,0,0,0,1.41-1.41A5.5,5.5,0,1,1,17,12a1,1,0,0,0,0-2,7.42,7.42,0,0,0-1.55.2V7.5a1,1,0,0,0-2,0v1.1a7.5,7.5,0,0,0-7.42,6.4,1,1,0,0,0,1,1.1H8.5a1,1,0,0,0,1-1,5.5,5.5,0,0,1,10,0,1,1,0,0,0,1,1h.33A1,1,0,0,0,22,15a7.5,7.5,0,0,0-2.5-5.54" />
+    </svg>
+)
 
 export function Header() {
   const pathname = usePathname();
@@ -20,7 +26,7 @@ export function Header() {
       <div className="container flex h-14 max-w-screen-2xl items-center">
         <div className="mr-4 flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <Image src="/logoAurum.png" alt="Logo Aurum" width={24} height={24} />
+            <Logo className="h-6 w-6 text-foreground" />
             <span className="font-bold font-headline sm:inline-block">
               Sanctuaire
             </span>

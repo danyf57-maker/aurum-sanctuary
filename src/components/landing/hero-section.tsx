@@ -7,7 +7,13 @@ import { motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import { AuthDialog } from '@/components/auth/auth-dialog';
 import { Button } from '@/components/ui/button';
-import Image from 'next/image';
+
+const Logo = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props}>
+        <path d="M12.41,8.37a2.4,2.4,0,0,0-3.32,2.83,2.4,2.4,0,0,0,3.32-2.83m-1.2,3.32A1.2,1.2,0,1,1,12,10.5,1.2,1.2,0,0,1,11.21,11.69" />
+        <path d="M19.5,12a7.5,7.5,0,1,0-9,7.21,1,1,0,0,0,1.41-1.41A5.5,5.5,0,1,1,17,12a1,1,0,0,0,0-2,7.42,7.42,0,0,0-1.55.2V7.5a1,1,0,0,0-2,0v1.1a7.5,7.5,0,0,0-7.42,6.4,1,1,0,0,0,1,1.1H8.5a1,1,0,0,0,1-1,5.5,5.5,0,0,1,10,0,1,1,0,0,0,1,1h.33A1,1,0,0,0,22,15a7.5,7.5,0,0,0-2.5-5.54" />
+    </svg>
+)
 
 const fadeIn = (delay = 0, duration = 0.8) => ({
   hidden: { opacity: 0, y: 20 },
@@ -29,7 +35,7 @@ export function HeroSection() {
     <>
       <div className="flex flex-col min-h-screen bg-background text-foreground">
         <header className="absolute top-0 left-0 right-0 z-10 p-8">
-            <Image src="/logoAurum.png" alt="Logo Aurum" width={24} height={24} />
+            <Logo className="h-6 w-6 text-foreground" />
         </header>
         <section className="relative flex flex-col items-center justify-center flex-grow text-center px-4">
           <motion.div
