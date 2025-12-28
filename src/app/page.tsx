@@ -3,12 +3,17 @@ import Link from 'next/link';
 import { Feather, BrainCircuit, Archive } from 'lucide-react';
 import { HeroSection } from '@/components/landing/hero-section';
 import { InspirationSection } from '@/components/landing/inspiration-section';
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from "@/components/ui/accordion"
 
 const Logo = (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props}>
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
-        <path d="M14.29 6.71c-1.42-1.42-3.73-1.42-5.15 0-1.21 1.21-1.42 3.19-0.54 4.67 2.11 3.65 2.58 5.62 1.99 6.21-0.59 0.59-2.56 0.12-6.21-1.99-1.48-0.88-3.46-0.67-4.67 0.54-1.42 1.42-1.42 3.73 0 5.15 1.21 1.21 3.19 1.42 4.67 0.54 3.65-2.11 5.62-2.58 6.21-1.99 0.59 0.59 0.12 2.56-1.99 6.21-0.88 1.48-0.67 3.46 0.54 4.67 1.42 1.42 3.73 1.42 5.15 0 1.21-1.21 1.42-3.19 0.54-4.67-2.11-3.65-2.58-5.62-1.99-6.21 0.59-0.59 2.56-0.12 6.21 1.99 1.48 0.88 3.46 0.67 4.67-0.54 1.42-1.42 1.42-3.73 0-5.15-1.21-1.21-3.19-1.42-4.67-0.54-3.65 2.11-5.62 2.58-6.21 1.99-0.59-0.59-0.12-2.56 1.99-6.21 0.88-1.48 0.67-3.46-0.54-4.67z" opacity="0"/>
-        <path d="M16.9 8.28c-.46-1.2-1.52-2.04-2.8-2.28-1.57-.29-3.13.41-4.11 1.6-1.12 1.36-1.39 3.2-.68 4.8.52 1.18 1.44 2.1 2.65 2.62 1.5.64 3.16.48 4.49-.49.98-.72 1.63-1.88 1.76-3.14.15-1.49-.49-2.99-1.59-3.95-.27-.24-.55-.45-.82-.66zM12.01 16.01c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5c1.28 0 2.4.68 3.05 1.71-.31.25-.6.54-.86.86-1.1 1.1-1.74 2.6-1.59 4.21.1 1.05.58 2.02 1.33 2.72-.88.65-1.98 1.01-3.11 1.01-1.02 0-1.99-.36-2.78-1z"/>
+        <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8Z"/>
+        <path d="M12 7.1c-2.81 0-5.09 2.28-5.09 5.09s2.28 5.09 5.09 5.09a4.84 4.84 0 0 0 3.8-1.82 1 1 0 0 0-1.41-1.41 2.86 2.86 0 0 1-2.39 1.13c-1.59 0-2.89-1.3-2.89-2.89s1.3-2.89 2.89-2.89a2.86 2.86 0 0 1 2.39 1.13 1 1 0 0 0 1.41-1.41A4.84 4.84 0 0 0 12 7.1Z" />
     </svg>
 )
 
@@ -20,6 +25,34 @@ const FeatureCard = ({ icon: Icon, title, children }: { icon: React.ElementType,
         <h3 className="text-2xl font-headline text-stone-700 mb-3">{title}</h3>
         <p className="text-stone-600 max-w-xs">{children}</p>
     </div>
+);
+
+const FaqSection = () => (
+    <section className="py-32 bg-stone-50">
+        <div className="container max-w-3xl mx-auto">
+            <h2 className="text-4xl font-headline text-stone-800 mb-12 text-center">Questions Fréquentes</h2>
+            <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="item-1">
+                    <AccordionTrigger className="text-lg font-headline">Est-ce que mes données sont lues par l'IA ?</AccordionTrigger>
+                    <AccordionContent className="text-base text-stone-600 leading-relaxed">
+                        Votre vie privée est notre priorité absolue. Les entrées sont chiffrées et stockées de manière sécurisée. L'IA analyse le texte de manière anonymisée pour extraire le sentiment, mais elle n'a aucune mémoire à long terme de vos écrits. Personne, pas même notre équipe, ne peut lire vos entrées.
+                    </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="item-2">
+                    <AccordionTrigger className="text-lg font-headline">Comment Aurum aide à la santé mentale ?</AccordionTrigger>
+                    <AccordionContent className="text-base text-stone-600 leading-relaxed">
+                        Aurum est conçu pour alléger votre charge mentale. En vous offrant un espace pour l'introspection et le "shadow work" (travail sur soi), vous pouvez identifier des schémas de pensée. L'analyse de sentiment vous aide à prendre conscience de votre paysage émotionnel. Beaucoup l'utilisent comme un journal de gratitude pour cultiver une perspective positive.
+                    </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="item-3">
+                    <AccordionTrigger className="text-lg font-headline">Est-ce gratuit ?</AccordionTrigger>
+                    <AccordionContent className="text-base text-stone-600 leading-relaxed">
+                        Oui, la fonctionnalité principale d'écriture est entièrement gratuite et illimitée, même sans compte. Un compte gratuit vous permet de sauvegarder vos entrées et de suivre vos progrès. Nous prévoyons des fonctionnalités premium optionnelles à l'avenir, mais le cœur de l'expérience restera accessible à tous.
+                    </AccordionContent>
+                </AccordionItem>
+            </Accordion>
+        </div>
+    </section>
 );
 
 
@@ -62,6 +95,8 @@ export default function LandingPage() {
       </section>
       
       <InspirationSection />
+
+      <FaqSection />
 
       <footer className="py-16">
           <div className="container mx-auto flex flex-col items-center gap-4">

@@ -8,16 +8,19 @@ import Link from 'next/link';
 
 const mockData = [
   {
+    topic: "Syndrome de l'Imposteur",
     date: "Mardi, 14h02",
     userText: "Ils ont applaudi ma présentation. Pourquoi j'ai l'impression d'avoir volé leur admiration ? J'attends qu'ils découvrent que je n'ai aucune idée de ce que je fais.",
     aiInsight: "Le succès ne chasse pas la peur, il la met en lumière. Ce vertige est la preuve de ta compétence, pas de ton imposture."
   },
   {
+    topic: "Anxiété & Insomnie",
     date: "Dimanche, 03h15",
     userText: "La liste des tâches tourne en boucle. Si je dors maintenant, j'ai peur d'oublier l'essentiel pour demain. Mon cerveau refuse le bouton off.",
     aiInsight: "Ta mémoire est faillible, ce Sanctuaire ne l'est pas. Dépose tout ici. Ton esprit a la permission de s'éteindre."
   },
   {
+    topic: "Fatigue Émotionnelle",
     date: "Lundi, 19h30",
     userText: "J'ai dit 'ça va super' douze fois aujourd'hui. Je crois que je ne sais même plus ce que je ressens vraiment sous le masque.",
     aiInsight: "La dissonance émotionnelle est épuisante. Ici, tu n'as pas de public. Dis-nous la vérité."
@@ -54,6 +57,7 @@ export function InspirationSection() {
               viewport={{ once: true }}
             >
               <div className="h-full bg-white/60 p-8 rounded-lg shadow-sm hover:shadow-md hover:-translate-y-1 transition-transform duration-300 border border-stone-100">
+                 <h3 className="text-xs uppercase tracking-widest text-stone-400 mb-2 font-sans">{item.topic}</h3>
                 <p className="text-sm text-stone-400 mb-4">{item.date}</p>
                 <p className="font-headline italic text-stone-800 text-lg leading-relaxed mb-6">
                   "{item.userText}"
