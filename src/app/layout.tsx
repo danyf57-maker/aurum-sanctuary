@@ -16,7 +16,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" suppressHydrationWarning>
+    <html lang="fr">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -26,6 +26,7 @@ export default function RootLayout({
         className={cn(
           "min-h-screen bg-background font-body antialiased"
         )}
+        suppressHydrationWarning={true}
       >
         <AuthProvider>
           <div className="relative flex min-h-screen flex-col bg-background">
