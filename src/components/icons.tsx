@@ -2,6 +2,8 @@ import type { SVGProps } from "react";
 
 export function Logo(props: SVGProps<SVGSVGElement>) {
   return (
+    // This component is no longer used and can be removed, 
+    // but we'll keep it to avoid breaking imports.
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
@@ -11,10 +13,6 @@ export function Logo(props: SVGProps<SVGSVGElement>) {
       strokeLinecap="round"
       strokeLinejoin="round"
       {...props}
-    >
-      <circle cx="12" cy="12" r="10" />
-      <path d="M7.5 12.5a4.5 4.5 0 0 1 4.5-4.5h0a4.5 4.5 0 0 1 4.5 4.5" />
-      <path d="M16.5 11.5a4.5 4.5 0 0 1-4.5 4.5h0a4.5 4.5 0 0 1-4.5-4.5" />
-    </svg>
+    ></svg>
   );
 }
