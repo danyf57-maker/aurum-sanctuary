@@ -3,8 +3,7 @@ import Image from 'next/image';
 import { Feather, BrainCircuit, Archive, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { HeroSection } from '@/components/landing/hero-section';
-import { getPublicPosts } from '@/lib/firebase/firestore';
-import { BlogCard } from '@/components/blog/blog-card';
+import { InspirationSection } from '@/components/landing/inspiration-section';
 
 const FeatureCard = ({ icon: Icon, title, children }: { icon: React.ElementType, title: string, children: React.ReactNode }) => (
     <div className="flex flex-col items-center text-center">
@@ -18,8 +17,6 @@ const FeatureCard = ({ icon: Icon, title, children }: { icon: React.ElementType,
 
 
 export default async function LandingPage() {
-  const latestPosts = await getPublicPosts(3);
-
   return (
     <>
       <HeroSection />
@@ -57,32 +54,7 @@ export default async function LandingPage() {
           </div>
       </section>
       
-      {latestPosts.length > 0 && (
-        <section className="py-32 bg-stone-50">
-          <div className="container mx-auto">
-            <div className="max-w-2xl mx-auto text-center mb-12">
-              <h2 className="text-4xl font-headline text-stone-800">Le Journal d'Alma</h2>
-              <p className="mt-4 text-lg text-stone-600">
-                Une invitation au voyage intérieur. Laissez-vous inspirer par les réflexions d'Alma et découvrez la puissance de l'écriture.
-              </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {latestPosts.map(post => (
-                <BlogCard key={post.id} post={post} />
-              ))}
-            </div>
-             <div className="text-center mt-12">
-              <Button asChild variant="outline" size="lg">
-                <Link href="/blog">
-                  Explorer le blog
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </section>
-      )}
-
+      <InspirationSection />
 
       <footer className="py-16">
           <div className="container mx-auto flex flex-col items-center gap-4">
