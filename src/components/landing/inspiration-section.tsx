@@ -50,7 +50,7 @@ export function InspirationSection() {
               className="group relative"
               initial={{ y: 20, opacity: 0 }}
               whileInView={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.6, ease: [0.6, 0.05, -0.01, 0.9], delay: index * 0.1 }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: index * 0.1 }}
               viewport={{ once: true }}
             >
               <div className="h-full bg-white/60 p-8 rounded-lg shadow-sm hover:shadow-md hover:-translate-y-1 transition-transform duration-300 border border-stone-100">
