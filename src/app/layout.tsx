@@ -6,7 +6,7 @@ import { Header } from '@/components/layout/header';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'Le Sanctuaire d\'Aurum',
+  title: 'Le Sanctuaire',
   description: 'Un lieu tranquille pour vos pensées en or.',
 };
 
