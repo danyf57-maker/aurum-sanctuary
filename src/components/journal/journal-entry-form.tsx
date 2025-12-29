@@ -18,7 +18,7 @@ function SubmitButton() {
   const { pending } = useFormStatus();
   return (
     <Button type="submit" disabled={pending} className="w-full sm:w-auto bg-stone-600 text-white hover:bg-stone-700">
-      {pending ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Analyse et Sauvegarde...</> : "Sauvegarder au Sanctuaire"}
+      {pending ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Analyse en cours...</> : "Sauvegarder au Sanctuaire"}
     </Button>
   );
 }

@@ -1,3 +1,4 @@
+
 import { collection, query, where, getDocs, orderBy, Timestamp, limit as firestoreLimit } from "firebase/firestore";
 import { db } from "./config";
 import type { JournalEntry, PublicPost } from '@/lib/types';
@@ -103,26 +104,7 @@ export async function getPublicPosts(limit?: number): Promise<PublicPost[]> {
     const q = query(postsCollection, ...constraints);
     
     const querySnapshot = await getDocs(q);
-
-    if (querySnapshot.empty) {
-        // Si la base de données est vide, on renvoie les articles de départ.
-        const baseDate = new Date();
-        return almaInitialPosts.map((post, index) => {
-            const postDate = new Date(baseDate.getTime() - index * 24 * 60 * 60 * 1000); // 1 jour d'intervalle
-            return {
-                id: `initial-${index}`,
-                title: post.title,
-                content: post.content,
-                tags: post.tags,
-                slug: createSlug(post.title),
-                publishedAt: postDate,
-                userId: "ALMA_SPECIAL_USER_ID",
-                isPublic: true,
-            };
-        }).slice(0, limit);
-    }
-    
-    return querySnapshot.docs.map(doc => {
+    const firestorePosts = querySnapshot.docs.map(doc => {
       const data = doc.data();
       return {
         id: doc.id,
@@ -130,6 +112,26 @@ export async function getPublicPosts(limit?: number): Promise<PublicPost[]> {
         publishedAt: (data.publishedAt as Timestamp).toDate(),
       } as PublicPost;
     });
+
+    if (firestorePosts.length > 0) {
+      return firestorePosts;
+    }
+
+    // Si la base de données est vide, on renvoie les articles de départ.
+    const baseDate = new Date();
+    return almaInitialPosts.map((post, index) => {
+        const postDate = new Date(baseDate.getTime() - index * 24 * 60 * 60 * 1000); // 1 jour d'intervalle
+        return {
+            id: `initial-${index}`,
+            title: post.title,
+            content: post.content,
+            tags: post.tags,
+            slug: createSlug(post.title),
+            publishedAt: postDate,
+            userId: "ALMA_SPECIAL_USER_ID",
+            isPublic: true,
+        };
+    }).slice(0, limit);
   } catch (error) {
     console.error("Error getting public posts: ", error);
     // En cas d'erreur, on peut toujours renvoyer les articles de départ.
@@ -151,7 +153,25 @@ export async function getPublicPosts(limit?: number): Promise<PublicPost[]> {
 }
 
 export async function getPublicPostBySlug(slug: string): Promise<PublicPost | null> {
-    // D'abord, on cherche dans les articles de départ
+    const postsCollection = collection(db, publicPostsCollectionName);
+    try {
+        const q = query(postsCollection, where("slug", "==", slug), firestoreLimit(1));
+        const querySnapshot = await getDocs(q);
+        
+        if (!querySnapshot.empty) {
+            const doc = querySnapshot.docs[0];
+            const data = doc.data();
+            return {
+                id: doc.id,
+                ...data,
+                publishedAt: (data.publishedAt as Timestamp).toDate(),
+            } as PublicPost;
+        }
+    } catch (error) {
+        console.error("Error getting post by slug from firestore: ", error);
+    }
+    
+    // Si rien dans firestore, on cherche dans les articles de départ
     const initialPost = almaInitialPosts.find(p => createSlug(p.title) === slug);
     if(initialPost) {
         return {
@@ -166,22 +186,5 @@ export async function getPublicPostBySlug(slug: string): Promise<PublicPost | nu
         }
     }
 
-    const postsCollection = collection(db, publicPostsCollectionName);
-    try {
-        const q = query(postsCollection, where("slug", "==", slug), firestoreLimit(1));
-        const querySnapshot = await getDocs(q);
-        if (querySnapshot.empty) {
-            return null;
-        }
-        const doc = querySnapshot.docs[0];
-        const data = doc.data();
-        return {
-            id: doc.id,
-            ...data,
-            publishedAt: (data.publishedAt as Timestamp).toDate(),
-        } as PublicPost;
-    } catch (error) {
-        console.error("Error getting post by slug: ", error);
-        return null;
-    }
+    return null;
 }
