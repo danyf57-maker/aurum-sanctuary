@@ -23,7 +23,7 @@ const fadeIn = (delay = 0, duration = 0.8) => ({
     transition: {
       delay,
       duration,
-      ease: 'easeOut',
+      ease: [0.6, 0.05, -0.01, 0.9],
     },
   },
 });

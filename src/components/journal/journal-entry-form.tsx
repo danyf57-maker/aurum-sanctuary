@@ -1,8 +1,8 @@
 
 "use client";
 
-import { useEffect, useRef, useState, useActionState } from "react";
-import { useFormStatus } from "react-dom";
+import { useEffect, useRef, useState } from "react";
+import { useFormState, useFormStatus } from "react-dom";
 import { Loader2 } from 'lucide-react';
 import { useAuth, ALMA_USER_ID } from "@/hooks/use-auth";
 import { saveJournalEntry, type FormState } from "@/app/actions";
@@ -25,7 +25,7 @@ function SubmitButton() {
 
 export function JournalEntryForm() {
   const initialState: FormState = { message: "", errors: {} };
-  const [state, dispatch] = useActionState(saveJournalEntry, initialState);
+  const [state, dispatch] = useFormState(saveJournalEntry, initialState);
   const { user } = useAuth();
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
