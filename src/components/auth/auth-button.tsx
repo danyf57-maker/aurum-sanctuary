@@ -65,7 +65,7 @@ export function AuthButton() {
 
   return (
     <>
-      <Button onClick={() => setIsAuthDialogOpen(true)} >
+      <Button onClick={() => setIsAuthDialogOpen(true)} className="bg-stone-600 text-white hover:bg-stone-700">
         Connexion
       </Button>
       <AuthDialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen} />
