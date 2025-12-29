@@ -1,9 +1,8 @@
 import {NextResponse} from 'next/server';
 import {z} from 'zod';
-import {ai} from '@/ai/genkit';
 import {generate} from 'genkit/ai';
+import {ai} from '@/ai/genkit';
 
-// Define the expected structure of the output from the AI model
 const AnalysisResultSchema = z.object({
   sentiment: z
     .enum(['positif', 'négatif', 'neutre'])
@@ -25,7 +24,7 @@ export async function POST(request: Request) {
     }
 
     const llmResponse = await generate({
-      model: ai.model,
+      model: ai.model('gemini-1.5-flash'), // Reverted to a generic model placeholder as per user intent for external API
       output: {
         schema: AnalysisResultSchema,
       },
@@ -39,8 +38,7 @@ export async function POST(request: Request) {
     if (!analysisResult) {
       throw new Error("L'analyse des sentiments n'a pas pu être effectuée par l'IA.");
     }
-
-    // Map French sentiment values to English values expected by the rest of the application
+    
     const sentimentMap: {[key: string]: string} = {
       positif: 'positive',
       négatif: 'negative',
@@ -54,7 +52,6 @@ export async function POST(request: Request) {
     });
   } catch (error: any) {
     console.error("Erreur dans la route API d'analyse:", error);
-    // Handle Zod validation errors
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {error: "La réponse de l'API d'IA n'a pas le format attendu.", details: error.issues},
