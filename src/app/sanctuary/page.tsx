@@ -17,6 +17,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { auth } from "@/lib/firebase/config";
 import placeholderImages from '@/lib/placeholder-images.json';
+import { PenSquare } from "lucide-react";
 
 function SanctuaryContent() {
     const { user, loading: authLoading } = useAuth();
@@ -105,11 +106,22 @@ function SanctuaryContent() {
 
     return (
         <div className="container max-w-7xl py-8 md:py-12">
-            <header className="mb-8 animate-fade-in">
-                <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-                    <h1 className="text-4xl font-bold font-headline tracking-tight">
-                        Votre Sanctuaire
-                    </h1>
+            <header className="mb-12 animate-fade-in">
+                <div className="flex flex-col sm:flex-row justify-between sm:items-start gap-4">
+                    <div>
+                        <h1 className="text-4xl font-bold font-headline tracking-tight">
+                           Bonjour, {user.displayName || 'cher explorateur'}.
+                        </h1>
+                        <p className="mt-2 text-muted-foreground">Bienvenue dans votre sanctuaire.</p>
+                    </div>
+                    <Button asChild>
+                        <Link href="/sanctuary/write">
+                            <PenSquare className="mr-2 h-4 w-4" />
+                            Rédiger une entrée
+                        </Link>
+                    </Button>
+                </div>
+                 <div className="mt-8">
                     <TagFilter tags={tags} />
                 </div>
             </header>
@@ -134,7 +146,7 @@ function SanctuaryContent() {
                         className="max-w-sm w-full h-auto rounded-lg mb-8 opacity-80"
                     />
                     <h3 className="text-xl font-semibold">Votre sanctuaire attend.</h3>
-                    <p className="text-muted-foreground mt-2">Vos entrées sauvegardées apparaîtront ici une fois que vous les aurez écrites.</p>
+                    <p className="text-muted-foreground mt-2">Le voyage de mille lieues commence par un seul mot.</p>
                     <Button asChild className="mt-4">
                         <Link href="/sanctuary/write">Rédigez votre première entrée</Link>
                     </Button>

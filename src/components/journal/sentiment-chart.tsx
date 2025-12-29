@@ -39,14 +39,24 @@ export function SentimentChart({ entries }: SentimentChartProps) {
     .sort((a, b) => a.date - b.date), [entries]);
 
   if (chartData.length < 2) {
-    return null;
+    return (
+         <Card>
+            <CardHeader>
+                <CardTitle className="font-headline">Résumé de l'humeur</CardTitle>
+                <CardDescription>Écrivez au moins deux entrées pour voir l'évolution de vos sentiments.</CardDescription>
+            </CardHeader>
+             <CardContent className="h-[250px] w-full flex items-center justify-center">
+                 <p className="text-muted-foreground text-sm">Pas assez de données pour le graphique.</p>
+            </CardContent>
+        </Card>
+    );
   }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="font-headline">Résumé de l'humeur</CardTitle>
-        <CardDescription>Une chronologie des sentiments de vos entrées.</CardDescription>
+        <CardTitle className="font-headline">Votre Paysage Émotionnel</CardTitle>
+        <CardDescription>Une chronologie des sentiments qui traversent vos écrits.</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="h-[250px] w-full">
