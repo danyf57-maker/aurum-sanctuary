@@ -34,20 +34,26 @@ const FaqSection = () => (
             <Accordion type="single" collapsible className="w-full">
                 <AccordionItem value="item-1">
                     <AccordionTrigger className="text-lg font-headline">Est-ce que mes données sont lues par l'IA ?</AccordionTrigger>
-                    <AccordionContent className="text-base text-stone-600 leading-relaxed">
-                        Votre vie privée est notre priorité absolue. Les entrées sont chiffrées et stockées de manière sécurisée. L'IA analyse le texte de manière anonymisée pour extraire le sentiment, mais elle n'a aucune mémoire à long terme de vos écrits. Personne, pas même notre équipe, ne peut lire vos entrées.
+                    <AccordionContent>
+                        <p className="text-base text-stone-600 leading-relaxed">
+                            Votre vie privée est notre priorité absolue. Les entrées sont chiffrées et stockées de manière sécurisée. L'IA analyse le texte de manière anonymisée pour extraire le sentiment, mais elle n'a aucune mémoire à long terme de vos écrits. Personne, pas même notre équipe, ne peut lire vos entrées.
+                        </p>
                     </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="item-2">
                     <AccordionTrigger className="text-lg font-headline">Comment Aurum aide à la santé mentale ?</AccordionTrigger>
-                    <AccordionContent className="text-base text-stone-600 leading-relaxed">
-                        Aurum est conçu pour alléger votre charge mentale. En vous offrant un espace pour l'introspection et le "shadow work" (travail sur soi), vous pouvez identifier des schémas de pensée. L'analyse de sentiment vous aide à prendre conscience de votre paysage émotionnel. Beaucoup l'utilisent comme un journal de gratitude pour cultiver une perspective positive.
+                    <AccordionContent>
+                       <p className="text-base text-stone-600 leading-relaxed">
+                         Aurum est conçu pour alléger votre charge mentale. En vous offrant un espace pour l'introspection et le "shadow work" (travail sur soi), vous pouvez identifier des schémas de pensée. L'analyse de sentiment vous aide à prendre conscience de votre paysage émotionnel. Beaucoup l'utilisent comme un journal de gratitude pour cultiver une perspective positive.
+                       </p>
                     </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="item-3">
                     <AccordionTrigger className="text-lg font-headline">Est-ce gratuit ?</AccordionTrigger>
-                    <AccordionContent className="text-base text-stone-600 leading-relaxed">
-                        Oui, la fonctionnalité principale d'écriture est entièrement gratuite et illimitée, même sans compte. Un compte gratuit vous permet de sauvegarder vos entrées et de suivre vos progrès. Nous prévoyons des fonctionnalités premium optionnelles à l'avenir, mais le cœur de l'expérience restera accessible à tous.
+                    <AccordionContent>
+                        <p className="text-base text-stone-600 leading-relaxed">
+                            Oui, la fonctionnalité principale d'écriture est entièrement gratuite et illimitée, même sans compte. Un compte gratuit vous permet de sauvegarder vos entrées et de suivre vos progrès. Nous prévoyons des fonctionnalités premium optionnelles à l'avenir, mais le cœur de l'expérience restera accessible à tous.
+                        </p>
                     </AccordionContent>
                 </AccordionItem>
             </Accordion>

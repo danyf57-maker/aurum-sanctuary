@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import { getPublicPosts } from '@/lib/firebase/firestore';
 import { BlogCard } from '@/components/blog/blog-card';
