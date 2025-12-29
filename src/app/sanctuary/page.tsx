@@ -17,7 +17,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { auth } from "@/lib/firebase/config";
 import placeholderImages from '@/lib/placeholder-images.json';
-import { PenSquare } from "lucide-react";
+import { PenSquare, Plus } from "lucide-react";
 
 function SanctuaryContent() {
     const { user, loading: authLoading } = useAuth();
@@ -105,21 +105,16 @@ function SanctuaryContent() {
     }
 
     return (
+        <>
         <div className="container max-w-7xl py-8 md:py-12">
             <header className="mb-12 animate-fade-in">
                 <div className="flex flex-col sm:flex-row justify-between sm:items-start gap-4">
                     <div>
                         <h1 className="text-4xl font-bold font-headline tracking-tight">
-                           Bonjour, {user.displayName || 'cher explorateur'}.
+                           Votre Journal
                         </h1>
-                        <p className="mt-2 text-muted-foreground">Bienvenue dans votre sanctuaire.</p>
+                        <p className="mt-2 text-muted-foreground">Bienvenue dans votre sanctuaire, {user.displayName || 'cher explorateur'}.</p>
                     </div>
-                    <Button asChild className="bg-stone-600 text-white hover:bg-stone-700">
-                        <Link href="/sanctuary/write">
-                            <PenSquare className="mr-2 h-4 w-4" />
-                            Rédiger une entrée
-                        </Link>
-                    </Button>
                 </div>
                  <div className="mt-8">
                     <TagFilter tags={tags} />
@@ -147,12 +142,15 @@ function SanctuaryContent() {
                     />
                     <h3 className="text-xl font-semibold">Votre sanctuaire attend.</h3>
                     <p className="text-muted-foreground mt-2">Le voyage de mille lieues commence par un seul mot.</p>
-                    <Button asChild className="mt-4 bg-stone-600 text-white hover:bg-stone-700">
-                        <Link href="/sanctuary/write">Rédigez votre première entrée</Link>
-                    </Button>
                 </div>
             )}
         </div>
+        <Button asChild className="fixed bottom-8 right-8 h-16 w-16 rounded-full shadow-lg bg-stone-600 text-white hover:bg-stone-700">
+            <Link href="/sanctuary/write" aria-label="Rédiger une nouvelle entrée">
+                <PenSquare className="h-6 w-6" />
+            </Link>
+        </Button>
+        </>
     );
 }
 
