@@ -17,7 +17,7 @@ import { AuthDialog } from "@/components/auth/auth-dialog";
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
-    <Button type="submit" disabled={pending} variant="ghost" className="w-full sm:w-auto text-muted-foreground hover:text-foreground">
+    <Button type="submit" disabled={pending} className="w-full sm:w-auto bg-stone-600 text-white hover:bg-stone-700">
       {pending ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Enregistrement...</> : "Sauvegarder au Sanctuaire"}
     </Button>
   );
