@@ -97,7 +97,7 @@ function SanctuaryContent() {
                 <p className="mt-4 text-lg text-muted-foreground">
                     Veuillez vous connecter pour accéder à votre sanctuaire privé.
                 </p>
-                <Button asChild className="mt-6">
+                <Button asChild className="mt-6 bg-stone-600 text-white hover:bg-stone-700">
                     <Link href="/sanctuary/write">Rédiger une entrée pour commencer</Link>
                 </Button>
             </div>
@@ -114,7 +114,7 @@ function SanctuaryContent() {
                         </h1>
                         <p className="mt-2 text-muted-foreground">Bienvenue dans votre sanctuaire.</p>
                     </div>
-                    <Button asChild>
+                    <Button asChild className="bg-stone-600 text-white hover:bg-stone-700">
                         <Link href="/sanctuary/write">
                             <PenSquare className="mr-2 h-4 w-4" />
                             Rédiger une entrée
@@ -147,7 +147,7 @@ function SanctuaryContent() {
                     />
                     <h3 className="text-xl font-semibold">Votre sanctuaire attend.</h3>
                     <p className="text-muted-foreground mt-2">Le voyage de mille lieues commence par un seul mot.</p>
-                    <Button asChild className="mt-4">
+                    <Button asChild className="mt-4 bg-stone-600 text-white hover:bg-stone-700">
                         <Link href="/sanctuary/write">Rédigez votre première entrée</Link>
                     </Button>
                 </div>
