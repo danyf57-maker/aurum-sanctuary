@@ -17,7 +17,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { auth } from "@/lib/firebase/config";
 import placeholderImages from '@/lib/placeholder-images.json';
-import { PenSquare, Plus } from "lucide-react";
+import { PenSquare } from "lucide-react";
 
 function SanctuaryContent() {
     const { user, loading: authLoading } = useAuth();
@@ -28,31 +28,39 @@ function SanctuaryContent() {
     const [entries, setEntries] = useState<JournalEntry[]>([]);
     const [tags, setTags] = useState<string[]>([]);
     const [loading, setLoading] = useState(true);
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        // This ensures the component has mounted on the client.
+        setIsClient(true);
+    }, []);
 
     useEffect(() => {
         // Handle passwordless sign-in. This should only run on the client.
-        const handlePasswordlessSignIn = () => {
-            if (isSignInWithEmailLink(auth, window.location.href)) {
-                let email = window.localStorage.getItem('emailForSignIn');
-                if (!email) {
-                    email = window.prompt('Veuillez fournir votre email pour confirmation');
+        if (isClient) {
+            try {
+                if (isSignInWithEmailLink(auth, window.location.href)) {
+                    let email = window.localStorage.getItem('emailForSignIn');
+                    if (!email) {
+                        email = window.prompt('Veuillez fournir votre email pour confirmation');
+                    }
+                    if (email) {
+                        signInWithEmailLink(auth, email, window.location.href)
+                            .then(() => {
+                                window.localStorage.removeItem('emailForSignIn');
+                                toast({ title: "Connecté avec succès!" });
+                                window.history.replaceState({}, document.title, window.location.pathname);
+                            })
+                            .catch((error) => {
+                                toast({ title: "Erreur de connexion", description: error.message, variant: "destructive" });
+                            });
+                    }
                 }
-                if(email) {
-                    signInWithEmailLink(auth, email, window.location.href)
-                        .then(() => {
-                            window.localStorage.removeItem('emailForSignIn');
-                            toast({ title: "Connecté avec succès!"});
-                            // Optionally, redirect to a cleaner URL
-                            window.history.replaceState({}, document.title, window.location.pathname);
-                        })
-                        .catch((error) => {
-                            toast({ title: "Erreur de connexion", description: error.message, variant: "destructive" });
-                        });
-                }
+            } catch (error) {
+                console.error("Failed to check for email link sign in", error);
             }
-        };
-        handlePasswordlessSignIn();
-    }, [toast]);
+        }
+    }, [isClient, toast]);
     
     useEffect(() => {
         async function fetchData() {
