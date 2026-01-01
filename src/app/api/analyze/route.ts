@@ -1,63 +1,76 @@
-import {NextResponse} from 'next/server';
-import {z} from 'zod';
-import {generate} from 'genkit/ai';
-import {ai} from '@/ai/genkit';
+import { NextRequest, NextResponse } from 'next/server';
 
-const AnalysisResultSchema = z.object({
-  sentiment: z
-    .enum(['positif', 'négatif', 'neutre'])
-    .describe("Le sentiment général du texte, qui peut être 'positif', 'négatif' ou 'neutre'."),
-  score: z
-    .number()
-    .min(-1)
-    .max(1)
-    .describe('Un score de sentiment compris entre -1 (très négatif) et 1 (très positif).'),
-  analysis: z.string().describe('Une brève explication en français de l’analyse des sentiments.'),
-});
-
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const {entryText} = await request.json();
+    const { content } = await request.json();
 
-    if (!entryText) {
-      return NextResponse.json({error: "Le texte de l'entrée est manquant"}, {status: 400});
-    }
-
-    const llmResponse = await generate({
-      model: ai.model('gemini-1.5-flash'), // Reverted to a generic model placeholder as per user intent for external API
-      output: {
-        schema: AnalysisResultSchema,
-      },
-      prompt: `Analysez le sentiment de l'entrée de journal suivante.
-                    Répondez avec un objet JSON contenant les clés "sentiment" ("positif", "négatif", ou "neutre"), "score" (un nombre de -1 à 1), et "analysis" (une brève explication en français).
-                    L'entrée de journal est : "${entryText}"`,
-    });
-
-    const analysisResult = llmResponse.output;
-
-    if (!analysisResult) {
-      throw new Error("L'analyse des sentiments n'a pas pu être effectuée par l'IA.");
-    }
-    
-    const sentimentMap: {[key: string]: string} = {
-      positif: 'positive',
-      négatif: 'negative',
-      neutre: 'neutral',
-    };
-
-    return NextResponse.json({
-      sentiment: sentimentMap[analysisResult.sentiment] || 'neutral',
-      score: analysisResult.score,
-      analysis: analysisResult.analysis,
-    });
-  } catch (error: any) {
-    console.error("Erreur dans la route API d'analyse:", error);
-    if (error instanceof z.ZodError) {
+    if (!content) {
       return NextResponse.json(
-        {error: "La réponse de l'API d'IA n'a pas le format attendu.", details: error.issues},
-        {status: 500}
+        { error: 'Le contenu est requis' },
+        { status: 400 }
       );
     }
-    return NextResponse.json({error: error.message || 'Une erreur interne est survenue'}, {status: 500});
+
+    const apiKey = process.env.DEEPSEEK_API_KEY;
+    if (!apiKey) {
+      console.error('Clé API Deepseek non configurée');
+      return NextResponse.json(
+        { error: 'Clé API Deepseek non configurée' },
+        { status: 500 }
+      );
+    }
+
+    const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: 'deepseek-chat',
+        messages: [
+          {
+            role: 'system',
+            content: 'Tu es un assistant empathique spécialisé dans l\'analyse des émotions. Analyse le texte suivant et retourne UNIQUEMENT un objet JSON avec: {"sentiment": "positive/negative/neutral", "mood": "calme/anxieux/joyeux/triste/etc", "insight": "une phrase courte et bienveillante sur ce que ressent la personne"}'
+          },
+          {
+            role: 'user',
+            content: content
+          }
+        ],
+        temperature: 0.7,
+        response_format: { type: 'json_object' }
+      })
+    });
+
+    if (!response.ok) {
+      const error = await response.text();
+      console.error('Deepseek API error:', error);
+      return NextResponse.json(
+        { error: 'Erreur lors de l\'analyse par l\'API Deepseek' },
+        { status: response.status }
+      );
+    }
+
+    const data = await response.json();
+    const analysisText = data.choices[0]?.message?.content;
+    
+    if (!analysisText) {
+      return NextResponse.json(
+        { error: 'Réponse invalide de l\'API d\'analyse' },
+        { status: 500 }
+      );
+    }
+
+    // L'API est censée retourner un JSON valide
+    const analysis = JSON.parse(analysisText);
+
+    return NextResponse.json(analysis);
+  } catch (error) {
+    console.error('Error analyzing entry:', error);
+    return NextResponse.json(
+      { error: 'Erreur interne lors de l\'analyse' },
+      { status: 500 }
+      );
   }
 }

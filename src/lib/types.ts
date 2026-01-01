@@ -7,7 +7,8 @@ export type JournalEntry = {
   tags: string[];
   createdAt: Date;
   sentiment: string;
-  sentimentScore: number;
+  mood: string;
+  insight: string;
 };
 
 export type PublicPost = {

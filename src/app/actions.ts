@@ -49,7 +49,8 @@ async function addEntryOnServer(entryData: {
   tags: string[];
   createdAt: Date;
   sentiment: string;
-  sentimentScore: number;
+  mood: string;
+  insight: string;
 }, publishAsPost: boolean) {
   const entriesCollection = collection(db, "entries");
   const publicPostsCollection = collection(db, "publicPosts");
@@ -84,7 +85,7 @@ async function addEntryOnServer(entryData: {
   }
 }
 
-async function analyzeEntrySentiment(entryText: string) {
+async function analyzeEntrySentiment(content: string) {
   // We need to use the full URL for server-side fetch
   const host = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:9002';
   const apiUrl = `${host}/api/analyze`;
@@ -92,7 +93,7 @@ async function analyzeEntrySentiment(entryText: string) {
   const response = await fetch(apiUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ entryText }),
+    body: JSON.stringify({ content }),
   });
 
   if (!response.ok) {
@@ -124,15 +125,16 @@ export async function saveJournalEntry(
   const { content, tags, userId, publishAsPost } = validatedFields.data;
 
   try {
-    const sentimentResult = await analyzeEntrySentiment(content);
+    const analysisResult = await analyzeEntrySentiment(content);
 
     await addEntryOnServer({
       userId,
       content,
       tags: tags ? tags.split(",").map((tag) => tag.trim().toLowerCase()).filter(Boolean) : [],
       createdAt: new Date(),
-      sentiment: sentimentResult.sentiment,
-      sentimentScore: sentimentResult.score,
+      sentiment: analysisResult.sentiment,
+      mood: analysisResult.mood,
+      insight: analysisResult.insight,
     }, publishAsPost);
 
   } catch (error) {

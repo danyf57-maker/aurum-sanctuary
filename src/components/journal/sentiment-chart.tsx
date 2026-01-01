@@ -4,15 +4,7 @@
 import { useMemo } from 'react';
 import { JournalEntry } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import {
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-} from "recharts";
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts";
 import {
   ChartContainer,
   ChartTooltipContent,
@@ -24,26 +16,44 @@ type SentimentChartProps = {
 };
 
 const chartConfig = {
-  score: {
-    label: "Score de Sentiment",
-    color: "hsl(var(--primary))",
+  count: {
+    label: "Nombre d'entrées",
+  },
+  positive: {
+    label: "Positif",
+    color: "hsl(var(--chart-2))",
+  },
+  neutral: {
+    label: "Neutre",
+    color: "hsl(var(--chart-3))",
+  },
+  negative: {
+    label: "Négatif",
+    color: "hsl(var(--chart-5))",
   },
 } satisfies ChartConfig;
 
 export function SentimentChart({ entries }: SentimentChartProps) {
-  const chartData = useMemo(() => entries
-    .map((entry) => ({
-      date: new Date(entry.createdAt).getTime(),
-      score: entry.sentimentScore,
-    }))
-    .sort((a, b) => a.date - b.date), [entries]);
+  const chartData = useMemo(() => {
+    const moodCounts: { [key: string]: number } = {};
+    entries.forEach(entry => {
+      const mood = entry.mood?.toLowerCase() || 'inconnu';
+      moodCounts[mood] = (moodCounts[mood] || 0) + 1;
+    });
 
-  if (chartData.length < 2) {
+    return Object.keys(moodCounts).map(mood => ({
+      mood: mood.charAt(0).toUpperCase() + mood.slice(1),
+      count: moodCounts[mood],
+    }));
+
+  }, [entries]);
+
+  if (entries.length < 1) {
     return (
          <Card>
             <CardHeader>
-                <CardTitle className="font-headline">Résumé de l'humeur</CardTitle>
-                <CardDescription>Écrivez au moins deux entrées pour voir l'évolution de vos sentiments.</CardDescription>
+                <CardTitle className="font-headline">Votre Paysage Émotionnel</CardTitle>
+                <CardDescription>Écrivez votre première entrée pour commencer à dessiner la carte de vos émotions.</CardDescription>
             </CardHeader>
              <CardContent className="h-[250px] w-full flex items-center justify-center">
                  <p className="text-muted-foreground text-sm">Pas assez de données pour le graphique.</p>
@@ -56,11 +66,11 @@ export function SentimentChart({ entries }: SentimentChartProps) {
     <Card>
       <CardHeader>
         <CardTitle className="font-headline">Votre Paysage Émotionnel</CardTitle>
-        <CardDescription>Une chronologie des sentiments qui traversent vos écrits.</CardDescription>
+        <CardDescription>Un aperçu des humeurs qui se dessinent le plus souvent dans vos écrits.</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="h-[250px] w-full">
-            <LineChart
+            <BarChart
               accessibilityLayer
               data={chartData}
               margin={{
@@ -68,22 +78,16 @@ export function SentimentChart({ entries }: SentimentChartProps) {
                 right: 12,
               }}
             >
-              <CartesianGrid vertical={false} />
               <XAxis
-                dataKey="date"
-                tickFormatter={(value) =>
-                  new Date(value).toLocaleDateString("fr-FR", {
-                    month: "short",
-                    day: "numeric",
-                  })
-                }
+                dataKey="mood"
                 tickLine={false}
                 axisLine={false}
                 dy={10}
+                className="capitalize"
               />
               <YAxis
-                dataKey="score"
-                domain={[-1, 1]}
+                dataKey="count"
+                allowDecimals={false}
                 tickLine={false}
                 axisLine={false}
               />
@@ -91,14 +95,13 @@ export function SentimentChart({ entries }: SentimentChartProps) {
                 cursor={false}
                 content={<ChartTooltipContent indicator="dot" />}
               />
-              <Line
-                dataKey="score"
-                type="monotone"
-                stroke="var(--color-score)"
-                strokeWidth={2}
-                dot={true}
+              <Bar
+                dataKey="count"
+                name="Nombre d'entrées"
+                radius={8}
+                fill="hsl(var(--primary))"
               />
-            </LineChart>
+            </BarChart>
         </ChartContainer>
       </CardContent>
     </Card>
