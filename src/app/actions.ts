@@ -2,7 +2,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { z } from "zod";
 import { db } from "@/lib/firebase/server-config";
 import { collection, addDoc, Timestamp } from "firebase-admin/firestore";
@@ -90,18 +89,24 @@ async function analyzeEntrySentiment(content: string) {
   const host = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:9002';
   const apiUrl = `${host}/api/analyze`;
 
-  const response = await fetch(apiUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ content }),
-  });
+  try {
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content }),
+    });
 
-  if (!response.ok) {
-    const errorBody = await response.json();
-    throw new Error(errorBody.error || "Échec de l'analyse des sentiments");
+    if (!response.ok) {
+      const errorBody = await response.json();
+      console.error("Sentiment analysis API error:", errorBody);
+      throw new Error(errorBody.error || "Échec de l'analyse des sentiments");
+    }
+
+    return response.json();
+  } catch (error) {
+     console.error("Fetch to sentiment analysis failed:", error);
+     throw error;
   }
-
-  return response.json();
 }
 
 export async function saveJournalEntry(
@@ -148,6 +153,9 @@ export async function saveJournalEntry(
   if (publishAsPost && userId === ALMA_USER_ID) {
       revalidatePath("/blog");
   }
+  revalidatePath("/dashboard");
   revalidatePath("/sanctuary");
-  redirect("/sanctuary");
+
+  // No redirect, component will handle UI changes
+  return {};
 }

@@ -23,9 +23,22 @@ function SubmitButton() {
   );
 }
 
-export function JournalEntryForm() {
+interface JournalEntryFormProps {
+    onSave?: () => void;
+}
+
+export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
   const initialState: FormState = { message: "", errors: {} };
-  const [state, dispatch] = useActionState(saveJournalEntry, initialState);
+  
+  const formAction = async (prevState: FormState, formData: FormData) => {
+    const result = await saveJournalEntry(prevState, formData);
+    if (!result.errors && !result.message) {
+        if(onSave) onSave();
+    }
+    return result;
+  };
+
+  const [state, dispatch] = useActionState(formAction, initialState);
   const { user } = useAuth();
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
@@ -33,13 +46,25 @@ export function JournalEntryForm() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    if (state.message && state.errors) {
-      const errorMsg = state.errors.content?.[0] || state.errors.userId?.[0] || state.message;
+    if (state.message) {
       toast({
         title: "Impossible d'enregistrer l'entrée",
-        description: errorMsg,
+        description: state.message,
         variant: "destructive",
       });
+    } else if (state.errors) {
+        const errorMsg = state.errors.content?.[0] || state.errors.userId?.[0] || "Une erreur est survenue.";
+         toast({
+            title: "Erreur de validation",
+            description: errorMsg,
+            variant: "destructive",
+        });
+    } else if (formRef.current) {
+        // Successful save, clear the form
+        formRef.current.reset();
+        if(textareaRef.current) {
+            textareaRef.current.style.height = 'auto';
+        }
     }
   }, [state, toast]);
   
@@ -53,7 +78,6 @@ export function JournalEntryForm() {
   };
   
   useEffect(() => {
-    // This effect should only run on the client after mount
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
@@ -78,7 +102,7 @@ export function JournalEntryForm() {
           id="content"
           name="content"
           placeholder="Écrivez ici..."
-          className="bg-transparent border-none shadow-none resize-none overflow-hidden min-h-[60vh] p-0 font-headline text-2xl leading-relaxed text-stone-800 placeholder:text-stone-300 focus:ring-0 focus:outline-none focus-visible:ring-0"
+          className="bg-transparent border-none shadow-none resize-none overflow-hidden min-h-[30vh] p-0 font-body text-xl leading-relaxed text-stone-800 placeholder:text-stone-300 focus:ring-0 focus:outline-none focus-visible:ring-0"
           required
           onInput={handleInput}
         />

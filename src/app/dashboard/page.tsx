@@ -9,7 +9,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { JournalCard } from '@/components/journal/journal-card';
 import { SentimentChart } from '@/components/journal/sentiment-chart';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Book, Smile } from 'lucide-react';
+import { Book, Smile, PenSquare } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { JournalEntryDialog } from '@/components/journal/journal-entry-dialog';
 
 function getMostCommonMood(entries: JournalEntry[]): string {
     if (entries.length === 0) return 'N/A';
@@ -27,6 +29,7 @@ export default function DashboardPage() {
     const { user, loading: authLoading } = useAuth();
     const [entries, setEntries] = useState<JournalEntry[]>([]);
     const [loading, setLoading] = useState(true);
+    const [isFormOpen, setIsFormOpen] = useState(false);
 
     useEffect(() => {
         if (!authLoading) {
@@ -68,11 +71,29 @@ export default function DashboardPage() {
 
     return (
         <div className="container max-w-7xl py-8 md:py-12">
+            <JournalEntryDialog open={isFormOpen} onOpenChange={setIsFormOpen} onSave={() => {
+                // Refresh entries after save
+                setLoading(true);
+                 if (user) {
+                    getEntries(user.uid).then(userEntries => {
+                        setEntries(userEntries);
+                        setLoading(false);
+                    });
+                }
+            }}/>
             <header className="mb-12">
-                <h1 className="text-4xl font-bold font-headline tracking-tight">
-                    Tableau de bord
-                </h1>
-                <p className="mt-2 text-muted-foreground">Ravi de vous revoir, {user.displayName || 'cher explorateur'}.</p>
+                <div className="flex flex-col sm:flex-row justify-between sm:items-start gap-4">
+                    <div>
+                        <h1 className="text-4xl font-bold font-headline tracking-tight">
+                            Tableau de bord
+                        </h1>
+                        <p className="mt-2 text-muted-foreground">Ravi de vous revoir, {user.displayName || 'cher explorateur'}.</p>
+                    </div>
+                    <Button onClick={() => setIsFormOpen(true)}>
+                        <PenSquare className="mr-2 h-4 w-4" />
+                        Nouvelle entrée
+                    </Button>
+                </div>
             </header>
 
             <div className="space-y-12">
@@ -124,6 +145,9 @@ export default function DashboardPage() {
                         <div className="text-center py-20 border-2 border-dashed rounded-lg flex flex-col items-center">
                             <h3 className="text-xl font-semibold">Aucune entrée pour le moment.</h3>
                             <p className="text-muted-foreground mt-2">Votre voyage commence avec le premier mot que vous écrivez.</p>
+                             <Button onClick={() => setIsFormOpen(true)} className="mt-6">
+                                Rédiger ma première entrée
+                            </Button>
                         </div>
                     )}
                 </section>
