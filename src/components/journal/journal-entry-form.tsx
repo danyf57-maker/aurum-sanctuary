@@ -30,12 +30,13 @@ interface JournalEntryFormProps {
 export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
   const initialState: FormState = { message: "", errors: {} };
   
-  const formAction = async (prevState: FormState, formData: FormData) => {
+  const formAction = async (prevState: FormState, formData: FormData): Promise<FormState> => {
     const result = await saveJournalEntry(prevState, formData);
-    if (!result.errors && !result.message) {
+    if (result && !result.errors && !result.message) {
         if(onSave) onSave();
+        if(formRef.current) formRef.current.reset();
     }
-    return result;
+    return result || { message: "Une erreur inattendue est survenue."};
   };
 
   const [state, dispatch] = useActionState(formAction, initialState);
@@ -46,41 +47,44 @@ export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    if (state.message) {
+    if (state?.message) {
       toast({
         title: "Impossible d'enregistrer l'entrée",
         description: state.message,
         variant: "destructive",
       });
-    } else if (state.errors) {
+    } else if (state?.errors) {
         const errorMsg = state.errors.content?.[0] || state.errors.userId?.[0] || "Une erreur est survenue.";
          toast({
             title: "Erreur de validation",
             description: errorMsg,
             variant: "destructive",
         });
-    } else if (formRef.current) {
+    } else if (state && !state.errors && !state.message) {
         // Successful save, clear the form
-        formRef.current.reset();
+        if(formRef.current) formRef.current.reset();
         if(textareaRef.current) {
             textareaRef.current.style.height = 'auto';
         }
     }
   }, [state, toast]);
   
-  const handleFormSubmit = (formData: FormData) => {
+  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     if (!user) {
       setIsAuthDialogOpen(true);
       return;
     }
+    const formData = new FormData(event.currentTarget);
     formData.set("userId", user.uid);
     dispatch(formData);
   };
   
   useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    const ta = textareaRef.current;
+    if (ta) {
+      ta.style.height = 'auto';
+      ta.style.height = `${ta.scrollHeight}px`;
     }
   }, []);
 
@@ -94,7 +98,7 @@ export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
 
   return (
     <>
-    <form ref={formRef} action={handleFormSubmit} className="w-full max-w-2xl mx-auto space-y-8">
+    <form ref={formRef} action={(formData) => dispatch(formData)} onSubmit={handleFormSubmit} className="w-full max-w-2xl mx-auto space-y-8">
       <input type="hidden" name="userId" value={user?.uid ?? ''} />
       <div>
         <Textarea
@@ -106,7 +110,7 @@ export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
           required
           onInput={handleInput}
         />
-        {state.errors?.content && (
+        {state?.errors?.content && (
           <p className="text-sm font-medium text-destructive mt-2">
             {state.errors.content[0]}
           </p>

@@ -31,7 +31,7 @@ function SanctuaryContent() {
     const [isClient, setIsClient] = useState(false);
 
     useEffect(() => {
-        // This ensures the component has mounted on the client.
+        // This ensures the component has mounted on the client before running browser-specific code.
         setIsClient(true);
     }, []);
 
@@ -40,6 +40,8 @@ function SanctuaryContent() {
         if (isClient && isSignInWithEmailLink(auth, window.location.href)) {
             let email = window.localStorage.getItem('emailForSignIn');
             if (!email) {
+                // The an unprotected item in localStorage is easily accessed and can be removed by users.
+                // If this is the case, we ask the user for their email again.
                 email = window.prompt('Veuillez fournir votre email pour confirmation');
             }
             if (email) {
@@ -47,11 +49,13 @@ function SanctuaryContent() {
                     .then(() => {
                         window.localStorage.removeItem('emailForSignIn');
                         toast({ title: "Connecté avec succès!" });
-                        // Redirect handled by useAuth hook now
+                        // Redirect is handled by useAuth hook now
                     })
                     .catch((error) => {
                         toast({ title: "Erreur de connexion", description: error.message, variant: "destructive" });
                     });
+            } else {
+                 toast({ title: "Erreur de connexion", description: "L'e-mail n'a pas été trouvé pour terminer la connexion.", variant: "destructive" });
             }
         }
     }, [isClient, toast]);
