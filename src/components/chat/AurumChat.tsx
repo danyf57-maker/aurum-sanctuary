@@ -1,8 +1,9 @@
+
 'use client';
 
 import { useEffect, useRef, useState, useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
-import { Bot, Loader2, Send, User } from 'lucide-react';
+import { Bot, Loader2, Send, User, ShieldAlert } from 'lucide-react';
 import { submitAurumMessage } from '@/app/actions/chat';
 import { type ChatMessage } from '@/lib/ai/types';
 import { Button } from '@/components/ui/button';
@@ -10,12 +11,16 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/hooks/use-auth';
+import { useToast } from '@/hooks/use-toast';
 
-// Utiliser l'état initial défini dans l'action si disponible, sinon un état par défaut.
+
 const initialState = {
     response: '',
     history: [],
+    error: undefined,
 };
 
 function SubmitButton() {  
@@ -29,25 +34,42 @@ function SubmitButton() {
 }
 
 export function AurumChat() {
+  const { user } = useAuth();
+  const { toast } = useToast();
   const [state, formAction, isPending] = useActionState(submitAurumMessage, initialState);
   const [history, setHistory] = useState<ChatMessage[]>([]);
   const formRef = useRef<HTMLFormElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [idToken, setIdToken] = useState<string | null>(null);
 
   useEffect(() => {
-    // Mettre à jour l'historique local lorsque l'action serveur réussit
-    if (state && state.history.length > history.length) {
-      setHistory(state.history);
-      formRef.current?.reset(); // Vider le textarea
-      if(textareaRef.current) {
-        textareaRef.current.style.height = 'auto'; // Reset textarea height
+    async function getToken() {
+      if (user) {
+        const token = await user.getIdToken();
+        setIdToken(token);
       }
     }
-  }, [state, history.length]);
+    getToken();
+  }, [user]);
 
   useEffect(() => {
-    // Scroll vers le bas à chaque nouveau message
+    if (state.error) {
+       toast({
+        title: "Erreur",
+        description: state.error,
+        variant: "destructive",
+      });
+    } else if (state && state.history.length > history.length) {
+      setHistory(state.history);
+      formRef.current?.reset();
+      if(textareaRef.current) {
+        textareaRef.current.style.height = 'auto';
+      }
+    }
+  }, [state, history.length, toast]);
+
+  useEffect(() => {
     if (scrollAreaRef.current) {
       scrollAreaRef.current.scrollTo({
         top: scrollAreaRef.current.scrollHeight,
@@ -68,6 +90,26 @@ export function AurumChat() {
       formRef.current?.requestSubmit();
     }
   };
+  
+  if (!user) {
+    return (
+      <Card className="w-full max-w-3xl">
+        <CardHeader>
+          <CardTitle>Accès non autorisé</CardTitle>
+          <CardDescription>Vous devez être connecté pour discuter avec Aurum.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Alert variant="destructive">
+            <ShieldAlert className="h-4 w-4" />
+            <AlertTitle>Connexion requise</AlertTitle>
+            <AlertDescription>
+              Veuillez vous connecter pour accéder à cette fonctionnalité.
+            </AlertDescription>
+          </Alert>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="w-full max-w-3xl h-[85vh] flex flex-col shadow-2xl shadow-stone-200/50">
@@ -99,6 +141,7 @@ export function AurumChat() {
                 </div>
                 {msg.role === 'user' && (
                     <Avatar className="h-8 w-8 border">
+                        <AvatarImage src={user.photoURL ?? undefined} alt={user.displayName ?? "User"} />
                         <AvatarFallback><User size={16}/></AvatarFallback>
                     </Avatar>
                 )}
@@ -124,12 +167,13 @@ export function AurumChat() {
           className="w-full flex items-end gap-2"
         >
           <input type="hidden" name="history" value={JSON.stringify(history)} />
+          {idToken && <input type="hidden" name="idToken" value={idToken} />}
           <Textarea
             ref={textareaRef}
             name="message"
             placeholder="Écrivez ce qui vous traverse l'esprit..."
             required
-            disabled={isPending}
+            disabled={isPending || !idToken}
             className="flex-1 resize-none max-h-48"
             rows={1}
             onInput={handleTextareaInput}

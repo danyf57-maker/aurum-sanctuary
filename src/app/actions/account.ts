@@ -3,6 +3,8 @@
 
 import { db } from "@/lib/firebase/server-config";
 import { auth as adminAuth } from "firebase-admin";
+import { checkRateLimit } from '@/lib/ratelimit';
+import { logAuditEvent } from '@/lib/audit';
 
 // Helper function to get all documents from a collection for a user
 async function getUserCollection(userId: string, collectionName: string) {
@@ -16,6 +18,14 @@ export async function exportUserData(userId: string): Promise<{ data: any | null
         return { data: null, error: "ID utilisateur non fourni." };
     }
 
+    // Rate limiting
+    const rateLimit = await checkRateLimit(userId, 'exportUserData');
+    if (!rateLimit.allowed) {
+        await logAuditEvent(userId, 'RATE_LIMIT_EXCEEDED', { action: 'exportUserData' });
+        const resetDate = new Date(rateLimit.resetAt).toLocaleDateString('fr-FR');
+        return { data: null, error: `Limite d'exports atteinte. Réessayez après le ${resetDate}.` };
+    }
+
     try {
         const userDoc = await db.collection('users').doc(userId).get();
         const userProfile = userDoc.exists ? userDoc.data() : {};
@@ -26,6 +36,9 @@ export async function exportUserData(userId: string): Promise<{ data: any | null
             userProfile,
             journalEntries,
         };
+
+        // Audit logging
+        await logAuditEvent(userId, 'DATA_EXPORTED');
 
         return { data: exportData, error: null };
 
@@ -41,6 +54,14 @@ export async function deleteUserAccount(userId: string): Promise<{ success: bool
         return { success: false, error: "ID utilisateur non fourni." };
     }
     
+    // Rate limiting
+    const rateLimit = await checkRateLimit(userId, 'deleteUserAccount');
+    if (!rateLimit.allowed) {
+        await logAuditEvent(userId, 'RATE_LIMIT_EXCEEDED', { action: 'deleteUserAccount' });
+         const resetDate = new Date(rateLimit.resetAt).toLocaleDateString('fr-FR');
+        return { success: false, error: `Trop de tentatives de suppression. Réessayez après le ${resetDate}.` };
+    }
+
     const batch = db.batch();
 
     try {
@@ -55,24 +76,28 @@ export async function deleteUserAccount(userId: string): Promise<{ success: bool
         postsSnapshot.forEach(doc => {
             batch.delete(doc.ref);
         });
+        
+        // 3. Delete rate limits doc
+        const rateLimitRef = db.collection('rateLimits').doc(userId);
+        batch.delete(rateLimitRef);
 
-        // 3. Delete user profile document
+        // 4. Delete user profile document
         const userDocRef = db.collection('users').doc(userId);
         batch.delete(userDocRef);
 
         // Commit all Firestore deletions
         await batch.commit();
         
-        // 4. Delete user from Firebase Authentication
+        // 5. Delete user from Firebase Authentication
         await adminAuth().deleteUser(userId);
 
-        // Revalidation is not needed as user will be logged out and redirected.
+        // Audit logging
+        await logAuditEvent(userId, 'ACCOUNT_DELETED');
 
         return { success: true, error: null };
 
     } catch (error: any) {
         console.error("Error deleting user account:", error);
-        // This could be a Firestore or an Auth error.
         return { success: false, error: "Une erreur est survenue lors de la suppression de votre compte." };
     }
 }

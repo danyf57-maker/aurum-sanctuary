@@ -1,0 +1,48 @@
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+    
+    // USERS: Les utilisateurs peuvent lire leur propre profil et le créer/mettre à jour.
+    match /users/{userId} {
+      allow read, update, create: if isSignedIn() && isOwner(userId);
+      // La suppression est gérée côté serveur via une action sécurisée
+      allow delete: if false; 
+    }
+
+    // ENTRIES: Les utilisateurs peuvent créer, lire, mettre à jour et supprimer LEURS propres entrées.
+    match /entries/{entryId} {
+      allow read, update, delete: if isSignedIn() && isOwner(resource.data.userId);
+      allow create: if isSignedIn() && isOwner(request.resource.data.userId);
+    }
+    
+    // PUBLIC POSTS (Blog d'Alma): Lecture publique, écriture réservée au serveur/admin.
+    // L'ID d'Alma est une constante vérifiée dans l'action serveur.
+    match /publicPosts/{postId} {
+      allow read: if true;
+      allow create, update, delete: if false; // Géré par les actions serveur
+    }
+    
+    // RATE LIMITS: L'utilisateur ne peut lire et écrire que son propre document de limites.
+    // L'écriture est gérée par les actions serveur qui valident la logique.
+    match /rateLimits/{userId} {
+       allow read, write: if isSignedIn() && isOwner(userId);
+       // Personne d'autre ne peut voir les limites d'un utilisateur.
+    }
+    
+    // AUDIT LOGS: Personne ne peut lire/écrire côté client. Géré uniquement par le serveur.
+    match /auditLogs/{logId} {
+        allow read, write: if false;
+    }
+  }
+}
