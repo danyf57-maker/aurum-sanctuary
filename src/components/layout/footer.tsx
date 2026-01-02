@@ -12,7 +12,7 @@ export function Footer() {
   return (
     <footer className="bg-stone-100 dark:bg-stone-900 border-t border-stone-200 dark:border-stone-800">
       <div className="container max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-4">
             <div className="flex items-center gap-2">
                 <Logo className="h-8 w-8 text-amber-600" />
@@ -20,13 +20,19 @@ export function Footer() {
             </div>
             <p className="text-muted-foreground text-sm">Le silence qui vous écoute.</p>
           </div>
-          <div className="md:col-span-2 grid grid-cols-2 sm:grid-cols-3 gap-8">
+          <div className="md:col-span-3 grid grid-cols-2 sm:grid-cols-4 gap-8">
             <div>
               <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Ressources</h3>
               <ul className="mt-4 space-y-2">
                 <li><Link href="/blog" className="text-sm text-muted-foreground hover:text-foreground">Le Journal d'Alma</Link></li>
                 <li><Link href="/sanctuary/chat" className="text-sm text-muted-foreground hover:text-foreground">Discuter avec Aurum</Link></li>
                 <li><Link href="/#manifesto" className="text-sm text-muted-foreground hover:text-foreground">Notre Manifeste</Link></li>
+              </ul>
+            </div>
+             <div>
+              <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Offres</h3>
+              <ul className="mt-4 space-y-2">
+                <li><Link href="/pricing" className="text-sm text-muted-foreground hover:text-foreground">Abonnements</Link></li>
               </ul>
             </div>
             <div>
