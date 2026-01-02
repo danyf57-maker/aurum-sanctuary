@@ -1,30 +1,56 @@
 
-import { collection, query, where, getDocs, orderBy, Timestamp, limit as firestoreLimit } from "firebase/firestore";
+import { collection, query, where, getDocs, orderBy, Timestamp, limit as firestoreLimit, getDoc, doc } from "firebase/firestore";
 import { db } from "./config";
-import type { JournalEntry, PublicPost } from '@/lib/types';
+import type { JournalEntry, PublicPost, UserProfile } from '@/lib/types';
 import slugify from "slugify";
 
 const entriesCollectionName = "entries";
 const publicPostsCollectionName = "publicPosts";
+const usersCollectionName = "users";
 
-export async function getEntries(userId: string, tag?: string | null): Promise<JournalEntry[]> {
+
+export async function getUserProfile(userId: string): Promise<UserProfile | null> {
+    if (!userId) return null;
+    const userDocRef = doc(db, usersCollectionName, userId);
+    try {
+        const docSnap = await getDoc(userDocRef);
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            return {
+                ...data,
+                createdAt: (data.createdAt as Timestamp)?.toDate(),
+                insights: data.insights ? {
+                    ...data.insights,
+                    lastUpdatedAt: (data.insights.lastUpdatedAt as Timestamp)?.toDate(),
+                } : undefined,
+            } as UserProfile;
+        }
+        return null;
+    } catch (error) {
+        console.error("Error getting user profile: ", error);
+        return null;
+    }
+}
+
+
+export async function getEntries(userId: string, tag?: string | null, limit?: number): Promise<JournalEntry[]> {
   const entriesCollection = collection(db, entriesCollectionName);
   try {
     let q;
+    const queryConstraints = [
+        where("userId", "==", userId),
+        orderBy("createdAt", "desc")
+    ];
+
     if (tag) {
-        q = query(
-            entriesCollection,
-            where("userId", "==", userId),
-            where("tags", "array-contains", tag),
-            orderBy("createdAt", "desc")
-        );
-    } else {
-        q = query(
-            entriesCollection, 
-            where("userId", "==", userId),
-            orderBy("createdAt", "desc")
-        );
+        queryConstraints.unshift(where("tags", "array-contains", tag));
     }
+    
+    if (limit) {
+        queryConstraints.push(firestoreLimit(limit));
+    }
+
+    q = query(entriesCollection, ...queryConstraints);
     
     const querySnapshot = await getDocs(q);
     const entries: JournalEntry[] = querySnapshot.docs.map(doc => {

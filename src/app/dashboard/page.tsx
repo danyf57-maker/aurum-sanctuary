@@ -1,10 +1,11 @@
+
 'use client';
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { redirect } from 'next/navigation';
-import { getEntries } from '@/lib/firebase/firestore';
-import { JournalEntry } from '@/lib/types';
+import { getEntries, getUserProfile } from '@/lib/firebase/firestore';
+import { JournalEntry, UserProfile } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { JournalCard } from '@/components/journal/journal-card';
 import { SentimentChart } from '@/components/journal/sentiment-chart';
@@ -12,6 +13,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Book, Smile, PenSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { JournalEntryDialog } from '@/components/journal/journal-entry-dialog';
+import { InsightsSection } from '@/components/dashboard/InsightsSection';
 
 function getMostCommonMood(entries: JournalEntry[]): string {
     if (entries.length === 0) return 'N/A';
@@ -26,23 +28,30 @@ function getMostCommonMood(entries: JournalEntry[]): string {
 
 
 export default function DashboardPage() {
-    const { user, loading: authLoading } = useAuth();
+    const { user: authUser, loading: authLoading } = useAuth();
     const [entries, setEntries] = useState<JournalEntry[]>([]);
+    const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
     const [loading, setLoading] = useState(true);
     const [isFormOpen, setIsFormOpen] = useState(false);
 
     useEffect(() => {
         if (!authLoading) {
-            if (!user) {
+            if (!authUser) {
                 redirect('/');
             } else {
-                getEntries(user.uid).then(userEntries => {
+                const fetchData = async () => {
+                    const [userEntries, profile] = await Promise.all([
+                        getEntries(authUser.uid),
+                        getUserProfile(authUser.uid)
+                    ]);
                     setEntries(userEntries);
+                    setUserProfile(profile);
                     setLoading(false);
-                });
+                };
+                fetchData();
             }
         }
-    }, [user, authLoading]);
+    }, [authUser, authLoading]);
 
     if (authLoading || loading) {
         return (
@@ -53,6 +62,7 @@ export default function DashboardPage() {
                         <Skeleton className="h-28 w-full" />
                         <Skeleton className="h-28 w-full" />
                     </div>
+                     <Skeleton className="h-64 w-full" />
                     <Skeleton className="h-[350px] w-full" />
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {[...Array(3)].map((_, i) => ( <Skeleton key={i} className="h-[220px] w-full" /> ))}
@@ -62,7 +72,7 @@ export default function DashboardPage() {
         );
     }
     
-    if (!user) {
+    if (!authUser || !userProfile) {
         // This is a fallback, the useEffect hook should have already redirected.
         return null;
     }
@@ -72,10 +82,9 @@ export default function DashboardPage() {
     return (
         <div className="container max-w-7xl py-8 md:py-12">
             <JournalEntryDialog open={isFormOpen} onOpenChange={setIsFormOpen} onSave={() => {
-                // Refresh entries after save
                 setLoading(true);
-                 if (user) {
-                    getEntries(user.uid).then(userEntries => {
+                 if (authUser) {
+                    getEntries(authUser.uid).then(userEntries => {
                         setEntries(userEntries);
                         setLoading(false);
                     });
@@ -87,7 +96,7 @@ export default function DashboardPage() {
                         <h1 className="text-4xl font-bold font-headline tracking-tight">
                             Tableau de bord
                         </h1>
-                        <p className="mt-2 text-muted-foreground">Ravi de vous revoir, {user.displayName || 'cher explorateur'}.</p>
+                        <p className="mt-2 text-muted-foreground">Ravi de vous revoir, {authUser.displayName || 'cher explorateur'}.</p>
                     </div>
                     <Button onClick={() => setIsFormOpen(true)}>
                         <PenSquare className="mr-2 h-4 w-4" />
@@ -128,6 +137,8 @@ export default function DashboardPage() {
                         </Card>
                     </div>
                 </section>
+                
+                <InsightsSection user={userProfile} />
                 
                 <section>
                     <SentimentChart entries={entries} />

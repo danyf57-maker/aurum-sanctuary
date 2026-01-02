@@ -21,3 +21,19 @@ export type PublicPost = {
   publishedAt: Date;
   isPublic: boolean;
 };
+
+export type UserInsights = {
+  mainTheme: string;
+  recurringPatterns: string;
+  gentleAdvice: string;
+  lastUpdatedAt: Date;
+}
+
+export type UserProfile = {
+    uid: string;
+    email?: string | null;
+    displayName?: string | null;
+    photoURL?: string | null;
+    createdAt: Date;
+    insights?: UserInsights;
+}

@@ -4,9 +4,11 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { db } from "@/lib/firebase/server-config";
-import { collection, addDoc, Timestamp } from "firebase-admin/firestore";
+import { collection, addDoc, Timestamp, doc, updateDoc } from "firebase-admin/firestore";
 import slugify from "slugify";
 import { ALMA_USER_ID } from "@/hooks/use-auth";
+import { generateInsights } from "@/lib/ai/deepseek";
+import { getEntries as getEntriesForUser } from "@/lib/firebase/firestore";
 
 const formSchema = z.object({
   content: z.string().min(10, { message: "Votre entrée doit comporter au moins 10 caractères." }),
@@ -158,4 +160,36 @@ export async function saveJournalEntry(
 
   // No redirect, component will handle UI changes
   return {};
+}
+
+export async function generateUserInsights(userId: string) {
+    if (!userId) {
+        return { error: 'ID utilisateur manquant.' };
+    }
+
+    try {
+        const entries = await getEntriesForUser(userId, null, 30); // Use last 30 entries for insights
+
+        if (entries.length < 3) {
+            return { error: 'Pas assez de données pour générer des insights significatifs. Continuez à écrire !' };
+        }
+
+        const insights = await generateInsights(entries);
+        
+        const userDocRef = doc(db, 'users', userId);
+        
+        await updateDoc(userDocRef, {
+            insights: {
+                ...insights,
+                lastUpdatedAt: Timestamp.now()
+            }
+        });
+
+        revalidatePath('/dashboard');
+        return { success: true };
+
+    } catch (error: any) {
+        console.error("Error generating user insights:", error);
+        return { error: error.message || "Une erreur est survenue lors de la génération des insights." };
+    }
 }
