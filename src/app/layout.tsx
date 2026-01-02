@@ -4,8 +4,10 @@ import './globals.css';
 import { cn } from '@/lib/utils';
 import { AuthProvider } from '@/hooks/use-auth';
 import { Header } from '@/components/layout/header';
+import { Footer } from '@/components/layout/footer';
 import { Toaster } from '@/components/ui/toaster';
 import { GoogleOneTap } from '@/components/auth/google-one-tap';
+import { CookieConsent } from '@/components/legal/CookieConsent';
 
 export const metadata: Metadata = {
   title: 'Aurum | Journal Intime IA & Sanctuaire de Santé Mentale',
@@ -58,8 +60,10 @@ export default function RootLayout({
             <GoogleOneTap />
             <Header />
             <main className="flex-1">{children}</main>
+            <Footer />
           </div>
           <Toaster />
+          <CookieConsent />
         </AuthProvider>
       </body>
     </html>

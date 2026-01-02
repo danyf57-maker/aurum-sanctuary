@@ -1,7 +1,9 @@
+
 'use client';
 
 import React, { useState } from 'react';
-import { LogOut, User as UserIcon } from 'lucide-react';
+import Link from 'next/link';
+import { LogOut, User as UserIcon, Database } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -53,6 +55,13 @@ export function AuthButton() {
               </p>
             </div>
           </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <Link href="/account/data">
+                <Database className="mr-2 h-4 w-4" />
+                <span>Mes données</span>
+            </Link>
+          </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleSignOut}>
             <LogOut className="mr-2 h-4 w-4" />
