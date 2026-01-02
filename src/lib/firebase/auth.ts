@@ -28,7 +28,7 @@ export async function signOut() {
 
 export async function sendPasswordlessLink(email: string) {
   const actionCodeSettings = {
-    url: `${window.location.origin}/sanctuary`,
+    url: `${window.location.origin}/dashboard`,
     handleCodeInApp: true,
   };
   try {

@@ -37,27 +37,21 @@ function SanctuaryContent() {
 
     useEffect(() => {
         // Handle passwordless sign-in. This should only run on the client.
-        if (isClient) {
-            try {
-                if (isSignInWithEmailLink(auth, window.location.href)) {
-                    let email = window.localStorage.getItem('emailForSignIn');
-                    if (!email) {
-                        email = window.prompt('Veuillez fournir votre email pour confirmation');
-                    }
-                    if (email) {
-                        signInWithEmailLink(auth, email, window.location.href)
-                            .then(() => {
-                                window.localStorage.removeItem('emailForSignIn');
-                                toast({ title: "Connecté avec succès!" });
-                                window.history.replaceState({}, document.title, window.location.pathname);
-                            })
-                            .catch((error) => {
-                                toast({ title: "Erreur de connexion", description: error.message, variant: "destructive" });
-                            });
-                    }
-                }
-            } catch (error) {
-                console.error("Failed to check for email link sign in", error);
+        if (isClient && isSignInWithEmailLink(auth, window.location.href)) {
+            let email = window.localStorage.getItem('emailForSignIn');
+            if (!email) {
+                email = window.prompt('Veuillez fournir votre email pour confirmation');
+            }
+            if (email) {
+                signInWithEmailLink(auth, email, window.location.href)
+                    .then(() => {
+                        window.localStorage.removeItem('emailForSignIn');
+                        toast({ title: "Connecté avec succès!" });
+                        // Redirect handled by useAuth hook now
+                    })
+                    .catch((error) => {
+                        toast({ title: "Erreur de connexion", description: error.message, variant: "destructive" });
+                    });
             }
         }
     }, [isClient, toast]);
