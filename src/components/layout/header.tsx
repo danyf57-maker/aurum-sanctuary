@@ -44,6 +44,12 @@ export function Header() {
             >
               Dashboard
             </Link>
+            <Link
+              href="/sanctuary/chat"
+              className="transition-colors hover:text-foreground/80 text-foreground/60"
+            >
+              Discuter avec Aurum
+            </Link>
              <Link
               href="/blog"
               className="transition-colors hover:text-foreground/80 text-foreground/60"
