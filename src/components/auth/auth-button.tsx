@@ -3,7 +3,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { LogOut, User as UserIcon, Database } from 'lucide-react';
+import { LogOut, User as UserIcon, Database, UserCircle2 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -57,6 +57,12 @@ export function AuthButton() {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
+            <Link href="/account/profile">
+                <UserCircle2 className="mr-2 h-4 w-4" />
+                <span>Mon Profil</span>
+            </Link>
+          </DropdownMenuItem>
+           <DropdownMenuItem asChild>
             <Link href="/account/data">
                 <Database className="mr-2 h-4 w-4" />
                 <span>Mes données</span>

@@ -1,10 +1,10 @@
 
-
 "use client";
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { AuthButton } from '@/components/auth/auth-button';
+import { MobileNav } from './mobile-nav';
 
 const Logo = (props: React.SVGProps<SVGSVGElement>) => (
      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props}>
@@ -24,7 +24,7 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 max-w-screen-2xl items-center">
-        <div className="mr-4 flex">
+        <div className="mr-4 hidden md:flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
             <Logo className="h-6 w-6 text-amber-600" />
             <span className="font-bold font-headline sm:inline-block">
@@ -58,6 +58,9 @@ export function Header() {
             </Link>
           </nav>
         </div>
+        
+        <MobileNav />
+        
         <div className="flex flex-1 items-center justify-end space-x-2">
           <AuthButton />
         </div>
