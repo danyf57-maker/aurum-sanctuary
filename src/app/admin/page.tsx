@@ -1,14 +1,16 @@
 
 'use client';
 
+import { useEffect } from 'react';
 import { useAuth, ALMA_USER_ID } from '@/hooks/use-auth';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { BarChart, LineChart, Users, BookOpen, MessageCircle, TrendingUp, AlertTriangle } from 'lucide-react';
+import { LineChart, Users, BookOpen, MessageCircle, TrendingUp, AlertTriangle } from 'lucide-react';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { Bar, CartesianGrid, XAxis, YAxis, Line, ResponsiveContainer } from 'recharts';
+import { CartesianGrid, XAxis, YAxis, Line, ResponsiveContainer } from 'recharts';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const chartConfig = {
   users: { label: 'Utilisateurs', color: 'hsl(var(--chart-1))' },
@@ -42,19 +44,36 @@ const mockChartData = [
 
 function AdminDashboard() {
     const { user, loading } = useAuth();
+    const router = useRouter();
+
+    useEffect(() => {
+        // Redirige uniquement côté client une fois que l'authentification est vérifiée
+        if (!loading && (!user || user.uid !== ALMA_USER_ID)) {
+            router.push('/');
+        }
+    }, [user, loading, router]);
     
-    if (loading) {
+    // Affiche un état de chargement pendant la vérification de l'authentification
+    if (loading || !user || user.uid !== ALMA_USER_ID) {
         return (
-            <div className="flex h-screen items-center justify-center">
-                <div className="h-10 w-48 bg-muted rounded-md animate-pulse"></div>
-            </div>
-        )
+             <div className="min-h-screen bg-muted/40">
+                <main className="container max-w-7xl py-12">
+                     <header className="mb-8">
+                        <Skeleton className="h-9 w-1/3" />
+                        <Skeleton className="h-5 w-1/2 mt-2" />
+                    </header>
+                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                        {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-28 w-full" />)}
+                    </div>
+                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                        <Skeleton className="h-[350px] w-full" />
+                        <Skeleton className="h-[350px] w-full" />
+                    </div>
+                </main>
+             </div>
+        );
     }
-
-    if (!user || user.uid !== ALMA_USER_ID) {
-        redirect('/');
-    }
-
+    
     return (
         <div className="min-h-screen bg-muted/40">
             <main className="container max-w-7xl py-12">
@@ -164,3 +183,5 @@ function AdminDashboard() {
 }
 
 export default AdminDashboard;
+
+    
