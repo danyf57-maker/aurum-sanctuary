@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { AuthButton } from '@/components/auth/auth-button';
 import { MobileNav } from './mobile-nav';
+import { useAuth, ALMA_USER_ID } from '@/hooks/use-auth';
 
 const Logo = (props: React.SVGProps<SVGSVGElement>) => (
      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props}>
@@ -14,11 +15,33 @@ const Logo = (props: React.SVGProps<SVGSVGElement>) => (
 
 export function Header() {
   const pathname = usePathname();
+  const { user } = useAuth();
   const isHomepage = pathname === '/';
 
   // Do not render the header on the homepage to allow for a custom hero header
   if (isHomepage) {
     return null;
+  }
+
+  const isAdminPage = pathname.startsWith('/admin');
+  if (isAdminPage) {
+      return (
+         <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+            <div className="container flex h-14 max-w-screen-2xl items-center">
+                 <div className="mr-4 hidden md:flex">
+                    <Link href="/" className="mr-6 flex items-center space-x-2">
+                        <Logo className="h-6 w-6 text-amber-600" />
+                        <span className="font-bold font-headline sm:inline-block">
+                        Aurum <span className="text-muted-foreground font-normal text-sm">/ Admin</span>
+                        </span>
+                    </Link>
+                </div>
+                <div className="flex flex-1 items-center justify-end space-x-2">
+                    <AuthButton />
+                </div>
+            </div>
+        </header>
+      )
   }
 
   return (
@@ -56,6 +79,14 @@ export function Header() {
             >
               Blog
             </Link>
+            {user?.uid === ALMA_USER_ID && (
+                 <Link
+                    href="/admin"
+                    className="text-amber-600 transition-colors hover:text-amber-500"
+                    >
+                    Admin
+                </Link>
+            )}
           </nav>
         </div>
         

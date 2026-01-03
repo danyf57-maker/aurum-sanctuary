@@ -7,6 +7,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { useAuth, ALMA_USER_ID } from '@/hooks/use-auth';
 
 const Logo = (props: React.SVGProps<SVGSVGElement>) => (
      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props}>
@@ -17,6 +18,7 @@ const Logo = (props: React.SVGProps<SVGSVGElement>) => (
 export function MobileNav() {
   const [open, setOpen] = React.useState(false);
   const pathname = usePathname();
+  const { user } = useAuth();
 
   return (
     <div className="md:hidden">
@@ -53,6 +55,11 @@ export function MobileNav() {
               <MobileLink href="/blog" onOpenChange={setOpen} active={pathname.startsWith('/blog')}>
                 Blog
               </MobileLink>
+               {user?.uid === ALMA_USER_ID && (
+                 <MobileLink href="/admin" onOpenChange={setOpen} active={pathname.startsWith('/admin')} className="text-amber-600">
+                    Admin
+                </MobileLink>
+              )}
             </div>
           </div>
         </SheetContent>
@@ -84,7 +91,7 @@ function MobileLink({
         router.push(href.toString());
         onOpenChange?.(false);
       }}
-      className={`text-lg font-medium transition-colors hover:text-primary ${active ? 'text-primary' : 'text-foreground/70'}`}
+      className={`text-lg font-medium transition-colors hover:text-primary ${active ? 'text-primary' : 'text-foreground/70'} ${className}`}
       {...props}
     >
       {children}
