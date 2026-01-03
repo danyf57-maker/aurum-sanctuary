@@ -1,4 +1,4 @@
-// This component is a client component to handle auth state and data fetching.
+
 "use client";
 import React, { useEffect, useState, Suspense } from "react";
 import Link from 'next/link';
@@ -18,9 +18,8 @@ import { auth } from "@/lib/firebase/config";
 import placeholderImages from '@/lib/placeholder-images.json';
 import { PenSquare } from "lucide-react";
 
-export const dynamic = 'force-dynamic';
-
-function SanctuaryContent() {
+// This page is now a single, robust client component.
+function SanctuaryPageContent() {
     const { user, loading: authLoading } = useAuth();
     const searchParams = useSearchParams();
     const { toast } = useToast();
@@ -154,11 +153,10 @@ function SanctuaryContent() {
     );
 }
 
-
 export default function SanctuaryPage() {
     return (
-        <Suspense fallback={<div>Chargement...</div>}>
-            <SanctuaryContent />
+        <Suspense fallback={<div className="container max-w-7xl py-8 md:py-12"><div className="mb-8 flex justify-between items-center"><Skeleton className="h-10 w-[200px]" /></div><div className="space-y-12"><Skeleton className="h-[350px] w-full" /><div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">{[...Array(3)].map((_, i) => ( <Skeleton key={i} className="h-[220px] w-full" /> ))}</div></div></div>}>
+            <SanctuaryPageContent />
         </Suspense>
     )
 }
