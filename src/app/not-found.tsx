@@ -1,8 +1,6 @@
-import { Suspense } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle } from 'lucide-react';
-import NotFoundSearch from './NotFoundSearch';
 
 function NotFound() {
   return (
@@ -19,9 +17,6 @@ function NotFound() {
           Retour à l'accueil
         </Link>
       </Button>
-      <Suspense fallback={null}>
-        <NotFoundSearch />
-      </Suspense>
     </div>
   );
 }
