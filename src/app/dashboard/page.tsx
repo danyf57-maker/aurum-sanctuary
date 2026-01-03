@@ -15,6 +15,8 @@ import { Button } from '@/components/ui/button';
 import { JournalEntryDialog } from '@/components/journal/journal-entry-dialog';
 import { InsightsSection } from '@/components/dashboard/InsightsSection';
 
+export const dynamic = 'force-dynamic';
+
 function getMostCommonMood(entries: JournalEntry[]): string {
     if (entries.length === 0) return 'N/A';
     const moodCounts = entries.reduce((acc, entry) => {
