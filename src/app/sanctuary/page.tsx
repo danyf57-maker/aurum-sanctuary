@@ -1,3 +1,4 @@
+
 // This component is a client component to handle auth state and data fetching.
 "use client";
 import { useEffect, useState, Suspense } from "react";
@@ -17,6 +18,8 @@ import { useToast } from "@/hooks/use-toast";
 import { auth } from "@/lib/firebase/config";
 import placeholderImages from '@/lib/placeholder-images.json';
 import { PenSquare } from "lucide-react";
+
+export const dynamic = 'force-dynamic';
 
 function SanctuaryContent() {
     const { user, loading: authLoading } = useAuth();
