@@ -1,35 +1,29 @@
-
-'use client';
-
 import { Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle } from 'lucide-react';
+import NotFoundSearch from './NotFoundSearch';
 
-function NotFoundContent() {
-  const searchParams = useSearchParams();
-  // Vous pouvez utiliser les searchParams ici si nécessaire.
-  // Par exemple : const invalidQuery = searchParams.get('some_param');
-
+function NotFound() {
   return (
-    <div className="container max-w-2xl mx-auto py-20 md:py-28 text-center animate-fade-in">
-        <AlertTriangle className="mx-auto h-16 w-16 text-amber-500 mb-8" />
-        <h1 className="text-4xl font-bold font-headline">Page Non Trouvée</h1>
-        <p className="mt-4 text-muted-foreground">
-            Désolé, la page que vous cherchez semble s'être égarée dans le silence.
-        </p>
-        <Button asChild className="mt-8">
-            <Link href="/">Retourner à l'accueil</Link>
-        </Button>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-amber-50 to-orange-100 px-4">
+      <AlertTriangle className="w-16 h-16 text-amber-600 mb-6" />
+      <h1 className="text-4xl font-serif font-bold text-gray-900 mb-4">
+        Page non trouvée
+      </h1>
+      <p className="text-lg text-gray-600 mb-8 max-w-md text-center">
+        Désolé, cette page n'existe pas.
+      </p>
+      <Button asChild variant="default" size="lg">
+        <Link href="/">
+          Retour à l'accueil
+        </Link>
+      </Button>
+      <Suspense fallback={null}>
+        <NotFoundSearch />
+      </Suspense>
     </div>
   );
 }
 
-export default function NotFound() {
-  return (
-    <Suspense fallback={<div>Chargement...</div>}>
-      <NotFoundContent />
-    </Suspense>
-  );
-}
+export default NotFound;
