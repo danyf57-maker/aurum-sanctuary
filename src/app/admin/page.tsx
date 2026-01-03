@@ -12,6 +12,8 @@ import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '
 import { CartesianGrid, XAxis, YAxis, Line, ResponsiveContainer } from 'recharts';
 import { Skeleton } from '@/components/ui/skeleton';
 
+export const dynamic = 'force-dynamic';
+
 const chartConfig = {
   users: { label: 'Utilisateurs', color: 'hsl(var(--chart-1))' },
 } satisfies ChartConfig;
