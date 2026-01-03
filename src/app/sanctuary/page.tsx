@@ -1,6 +1,6 @@
 // This component is a client component to handle auth state and data fetching.
 "use client";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
@@ -20,7 +20,7 @@ import { PenSquare } from "lucide-react";
 
 export const dynamic = 'force-dynamic';
 
-export default function SanctuaryPage() {
+function SanctuaryContent() {
     const { user, loading: authLoading } = useAuth();
     const searchParams = useSearchParams();
     const { toast } = useToast();
@@ -32,17 +32,13 @@ export default function SanctuaryPage() {
     const [isClient, setIsClient] = useState(false);
 
     useEffect(() => {
-        // This ensures the component has mounted on the client before running browser-specific code.
         setIsClient(true);
     }, []);
 
     useEffect(() => {
-        // Handle passwordless sign-in. This should only run on the client.
         if (isClient && isSignInWithEmailLink(auth, window.location.href)) {
             let email = window.localStorage.getItem('emailForSignIn');
             if (!email) {
-                // The an unprotected item in localStorage is easily accessed and can be removed by users.
-                // If this is the case, we ask the user for their email again.
                 email = window.prompt('Veuillez fournir votre email pour confirmation');
             }
             if (email) {
@@ -50,7 +46,6 @@ export default function SanctuaryPage() {
                     .then(() => {
                         window.localStorage.removeItem('emailForSignIn');
                         toast({ title: "Connecté avec succès!" });
-                        // Redirect is handled by useAuth hook now
                     })
                     .catch((error) => {
                         toast({ title: "Erreur de connexion", description: error.message, variant: "destructive" });
@@ -72,13 +67,11 @@ export default function SanctuaryPage() {
                 setEntries(userEntries);
                 setTags(userTags);
                 setLoading(false);
-            } else {
+            } else if (!authLoading) {
                 setLoading(false);
             }
         }
-        if (!authLoading) {
-            fetchData();
-        }
+        fetchData();
     }, [user, authLoading, tag]);
 
     if (authLoading || (loading && user)) {
@@ -159,4 +152,13 @@ export default function SanctuaryPage() {
         </Button>
         </>
     );
+}
+
+
+export default function SanctuaryPage() {
+    return (
+        <Suspense fallback={<div>Chargement...</div>}>
+            <SanctuaryContent />
+        </Suspense>
+    )
 }
