@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { AuthDialog } from "@/components/auth/auth-dialog";
+import { event as trackEvent } from '@/lib/gtag';
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -33,6 +34,10 @@ export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
   const formAction = async (prevState: FormState, formData: FormData): Promise<FormState> => {
     const result = await saveJournalEntry(prevState, formData);
     if (result && !result.errors && !result.message) {
+        trackEvent({ action: 'entry_created', category: 'engagement' });
+        if(result.isFirstEntry) {
+          trackEvent({ action: 'first_entry', category: 'milestone' });
+        }
         if(onSave) onSave();
         if(formRef.current) formRef.current.reset();
     }

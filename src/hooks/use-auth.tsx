@@ -6,6 +6,7 @@ import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { auth as firebaseAuth, db } from '@/lib/firebase/config';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
+import { event as trackEvent } from '@/lib/gtag';
 
 // Déclare le type étendu pour inclure getIdToken
 interface CustomFirebaseUser extends FirebaseUser {
@@ -42,6 +43,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         
         const isNewUser = firebaseUser.metadata.creationTime === firebaseUser.metadata.lastSignInTime;
 
+        if (isNewUser) {
+          trackEvent({ action: 'sign_up', category: 'engagement', label: firebaseUser.providerId || 'email' });
+        }
+        trackEvent({ action: 'login', category: 'engagement', label: firebaseUser.providerId || 'email' });
+
 
         // Only interact with Firestore for non-Alma users
         if (!isAlma) {
@@ -59,6 +65,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                   // Nouveaux champs pour Stripe
                   stripeCustomerId: null,
                   subscriptionStatus: 'free',
+                  entryCount: 0,
                 }, { merge: true });
               } catch (error) {
                  console.error("Error creating user document:", error);
@@ -92,11 +99,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const isServerAction = typeof url === 'string' && url.includes('?_rsc') || (config?.body instanceof FormData);
 
         if (user && isServerAction) {
-            const token = await user.getIdToken();
-            const headers = new Headers(config?.headers);
-            headers.set('Authorization', `Bearer ${token}`);
-            const newConfig = { ...config, headers };
-            return originalFetch(url, newConfig);
+            try {
+              const token = await user.getIdToken();
+              const headers = new Headers(config?.headers);
+              headers.set('Authorization', `Bearer ${token}`);
+              const newConfig = { ...config, headers };
+              return originalFetch(url, newConfig);
+            } catch (e) {
+               console.error("Could not get ID token.", e)
+            }
         }
 
         return originalFetch(url, config);

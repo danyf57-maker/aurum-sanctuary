@@ -36,4 +36,5 @@ export type UserProfile = {
     photoURL?: string | null;
     createdAt: Date;
     insights?: UserInsights;
+    entryCount?: number;
 }

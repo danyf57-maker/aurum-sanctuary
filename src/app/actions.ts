@@ -4,7 +4,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { db } from "@/lib/firebase/server-config";
-import { collection, addDoc, Timestamp, doc, updateDoc } from "firebase-admin/firestore";
+import { collection, addDoc, Timestamp, doc, updateDoc, getDoc } from "firebase-admin/firestore";
 import slugify from "slugify";
 import { ALMA_USER_ID } from "@/hooks/use-auth";
 import { generateInsights } from "@/lib/ai/deepseek";
@@ -25,6 +25,7 @@ export type FormState = {
     userId?: string[];
     publishAsPost?: string[];
   };
+  isFirstEntry?: boolean;
 };
 
 // Helper function to create a unique slug
@@ -130,8 +131,15 @@ export async function saveJournalEntry(
   }
 
   const { content, tags, userId, publishAsPost } = validatedFields.data;
+  let isFirstEntry = false;
 
   try {
+    const userDocRef = doc(db, 'users', userId);
+    const userDoc = await getDoc(userDocRef);
+    const userData = userDoc.data();
+    const entryCount = userData?.entryCount || 0;
+    isFirstEntry = entryCount === 0;
+
     const analysisResult = await analyzeEntrySentiment(content);
 
     await addEntryOnServer({
@@ -143,6 +151,12 @@ export async function saveJournalEntry(
       mood: analysisResult.mood,
       insight: analysisResult.insight,
     }, publishAsPost);
+
+    // Update entry count
+    await updateDoc(userDocRef, {
+        entryCount: entryCount + 1,
+    });
+
 
   } catch (error) {
     console.error("Error saving entry:", error);
@@ -159,7 +173,7 @@ export async function saveJournalEntry(
   revalidatePath("/sanctuary");
 
   // No redirect, component will handle UI changes
-  return {};
+  return { isFirstEntry: isFirstEntry };
 }
 
 export async function generateUserInsights(userId: string) {

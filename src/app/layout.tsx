@@ -8,11 +8,15 @@ import { Footer } from '@/components/layout/footer';
 import { Toaster } from '@/components/ui/toaster';
 import { GoogleOneTap } from '@/components/auth/google-one-tap';
 import { CookieConsent } from '@/components/legal/CookieConsent';
+import { GtagManager } from '@/components/analytics/GtagManager';
+import Script from 'next/script';
 
 export const metadata: Metadata = {
   title: 'Aurum | Journal Intime IA & Sanctuaire de Santé Mentale',
   description: 'Allégez votre charge mentale avec Aurum. Un journal sécurisé qui utilise l\'IA pour transformer vos pensées en clarté. Essayez sans compte.',
 };
+
+const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "G-XXXXXXXXXX";
 
 export default function RootLayout({
   children,
@@ -55,7 +59,26 @@ export default function RootLayout({
         )}
         suppressHydrationWarning={true}
       >
+        <Script
+          strategy="afterInteractive"
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+        />
+        <Script
+          id="gtag-init"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${GA_MEASUREMENT_ID}', {
+                page_path: window.location.pathname,
+              });
+            `,
+          }}
+        />
         <AuthProvider>
+          <GtagManager />
           <div className="relative flex min-h-screen flex-col bg-background">
             <GoogleOneTap />
             <Header />
