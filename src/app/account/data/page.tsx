@@ -11,6 +11,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Download, Trash2, Loader2 } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+
 export default function AccountDataPage() {
     const { user, loading: authLoading } = useAuth();
     const { toast } = useToast();
