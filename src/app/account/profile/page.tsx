@@ -13,6 +13,8 @@ import { Separator } from '@/components/ui/separator';
 import { User, Mail, Calendar, Bell, Palette, Moon, Sun, Monitor, CreditCard } from 'lucide-react';
 import { createPortalSession } from '@/app/actions/stripe';
 
+export const dynamic = 'force-dynamic';
+
 export default function ProfilePage() {
     const { user, loading } = useAuth();
 
