@@ -1,4 +1,3 @@
-
 // This component is a client component to handle auth state and data fetching.
 "use client";
 import { useEffect, useState, Suspense } from "react";
@@ -162,7 +161,7 @@ function SanctuaryContent() {
 
 export default function SanctuaryPage() {
     return (
-        <Suspense>
+        <Suspense fallback={<div>Chargement...</div>}>
             <SanctuaryContent />
         </Suspense>
     );
