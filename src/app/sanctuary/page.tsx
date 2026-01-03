@@ -164,8 +164,19 @@ function SanctuaryContent() {
 
 export default function SanctuaryPage() {
     return (
-        <Suspense fallback={<div>Chargement...</div>}>
+        <Suspense fallback={<div className="container max-w-7xl py-8 md:py-12">
+            <div className="mb-8 flex justify-between items-center">
+                <Skeleton className="h-10 w-[200px]" />
+            </div>
+            <div className="space-y-12">
+                <Skeleton className="h-[350px] w-full" />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {[...Array(3)].map((_, i) => ( <Skeleton key={i} className="h-[220px] w-full" /> ))}
+                </div>
+            </div>
+        </div>}>
             <SanctuaryContent />
         </Suspense>
     );
 }
+ 
