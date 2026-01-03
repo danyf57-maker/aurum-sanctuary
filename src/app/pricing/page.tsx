@@ -1,9 +1,21 @@
 
+'use client';
+
 import { Check, X, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import { createCheckoutSession } from '@/app/actions/stripe';
+import { useAuth } from '@/hooks/use-auth';
+import { useRouter } from 'next/navigation';
+import { useFormStatus } from 'react-dom';
+import { Loader2 } from 'lucide-react';
+import { useState } from 'react';
+
+// REMPLACEZ-LES PAR VOS VRAIS PRICE ID STRIPE
+const PRICE_ID_PRO = "price_xxxxxxxxxxxxxxxxx"; 
+const PRICE_ID_PREMIUM = "price_yyyyyyyyyyyyyyyyy";
 
 const plans = [
     {
@@ -20,7 +32,8 @@ const plans = [
         ],
         cta: "Commencer gratuitement",
         isRecommended: false,
-        href: "/sanctuary/write"
+        href: "/sanctuary/write",
+        priceId: null,
     },
     {
         name: "Pro",
@@ -36,7 +49,7 @@ const plans = [
         ],
         cta: "Choisir Pro",
         isRecommended: true,
-        href: "#"
+        priceId: PRICE_ID_PRO,
     },
     {
         name: "Premium",
@@ -52,7 +65,7 @@ const plans = [
         ],
         cta: "Passer Premium",
         isRecommended: false,
-        href: "#"
+        priceId: PRICE_ID_PREMIUM,
     }
 ];
 
@@ -63,7 +76,34 @@ const Feature = ({ text, included }: { text: string, included: boolean }) => (
     </li>
 );
 
+function SubscribeButton({ priceId, cta, isRecommended }: { priceId: string | null, cta: string, isRecommended: boolean }) {
+    const { pending } = useFormStatus();
+    const [isCurrentPlan, setIsCurrentPlan] = useState(false); // Logique à implémenter
+
+    return (
+        <Button
+            type="submit"
+            className={cn("w-full", { "bg-stone-600 text-white hover:bg-stone-700": !isRecommended })}
+            size="lg"
+            disabled={pending || isCurrentPlan}
+        >
+            {pending ? <Loader2 className="animate-spin" /> : isCurrentPlan ? 'Plan Actuel' : cta}
+        </Button>
+    );
+}
+
 export default function PricingPage() {
+    const { user } = useAuth();
+    const router = useRouter();
+
+    const handleFormAction = async (formData: FormData) => {
+        if (!user) {
+            router.push('/sanctuary/write'); // ou afficher un modal de connexion
+            return;
+        }
+        await createCheckoutSession(formData);
+    };
+
     return (
         <div className="bg-stone-50/50 min-h-screen">
             <section className="py-24 md:py-32">
@@ -105,9 +145,16 @@ export default function PricingPage() {
                                     </ul>
                                 </CardContent>
                                 <CardFooter>
-                                    <Button asChild className={cn("w-full", { "bg-stone-600 text-white hover:bg-stone-700": !plan.isRecommended })} size="lg">
-                                        <Link href={plan.href}>{plan.cta}</Link>
-                                    </Button>
+                                    {plan.priceId ? (
+                                        <form action={handleFormAction} className="w-full">
+                                            <input type="hidden" name="priceId" value={plan.priceId} />
+                                            <SubscribeButton priceId={plan.priceId} cta={plan.cta} isRecommended={plan.isRecommended} />
+                                        </form>
+                                    ) : (
+                                        <Button asChild className="w-full bg-stone-600 text-white hover:bg-stone-700" size="lg">
+                                            <Link href={plan.href!}>{plan.cta}</Link>
+                                        </Button>
+                                    )}
                                 </CardFooter>
                             </Card>
                         ))}

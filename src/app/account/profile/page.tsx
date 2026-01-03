@@ -10,7 +10,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
-import { User, Mail, Calendar, Bell, Palette, Moon, Sun, Monitor } from 'lucide-react';
+import { User, Mail, Calendar, Bell, Palette, Moon, Sun, Monitor, CreditCard } from 'lucide-react';
+import { createPortalSession } from '@/app/actions/stripe';
 
 export default function ProfilePage() {
     const { user, loading } = useAuth();
@@ -62,7 +63,7 @@ export default function ProfilePage() {
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-1">
+                <div className="lg:col-span-1 space-y-8">
                     <Card>
                         <CardHeader>
                             <CardTitle>Informations</CardTitle>
@@ -80,6 +81,20 @@ export default function ProfilePage() {
                                 <Calendar className="h-5 w-5 text-muted-foreground"/>
                                 <span className="text-sm">Membre depuis le {registrationDate}</span>
                             </div>
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Abonnement</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                           <p className="text-sm text-muted-foreground">Vous êtes sur le plan Essentiel.</p>
+                           <form action={createPortalSession}>
+                             <Button>
+                                <CreditCard className="mr-2 h-4 w-4" />
+                                Gérer l'abonnement
+                             </Button>
+                           </form>
                         </CardContent>
                     </Card>
                 </div>
