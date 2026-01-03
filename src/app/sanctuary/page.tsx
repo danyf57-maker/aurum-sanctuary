@@ -1,24 +1,26 @@
 
 "use client";
-import React, { useEffect, useState, Suspense } from "react";
+
+import React, { useEffect, useState, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { signInWithEmailLink, isSignInWithEmailLink } from 'firebase/auth';
-import { JournalCard } from "@/components/journal/journal-card";
-import { SentimentChart } from "@/components/journal/sentiment-chart";
-import { TagFilter } from "@/components/journal/tag-filter";
-import { Button } from "@/components/ui/button";
-import { getEntries, getUniqueTags } from "@/lib/firebase/firestore";
-import { useAuth } from "@/hooks/use-auth";
-import { JournalEntry } from "@/lib/types";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useToast } from "@/hooks/use-toast";
-import { auth } from "@/lib/firebase/config";
+import { JournalCard } from '@/components/journal/journal-card';
+import { SentimentChart } from '@/components/journal/sentiment-chart';
+import { TagFilter } from '@/components/journal/tag-filter';
+import { Button } from '@/components/ui/button';
+import { getEntries, getUniqueTags } from '@/lib/firebase/firestore';
+import { useAuth } from '@/hooks/use-auth';
+import { JournalEntry } from '@/lib/types';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useToast } from '@/hooks/use-toast';
+import { auth } from '@/lib/firebase/config';
 import placeholderImages from '@/lib/placeholder-images.json';
-import { PenSquare } from "lucide-react";
+import { PenSquare } from 'lucide-react';
 
-// This page is now a single, robust client component.
+export const dynamic = 'force-dynamic';
+
 function SanctuaryPageContent() {
     const { user, loading: authLoading } = useAuth();
     const searchParams = useSearchParams();
