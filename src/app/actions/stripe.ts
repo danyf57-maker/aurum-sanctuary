@@ -19,7 +19,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: '2024-06-20',
 });
 
-async function getUserId(): Promise<string> {
+async function getUserIdFromToken(): Promise<string | null> {
     const authorization = headers().get('Authorization');
     if (authorization?.startsWith('Bearer ')) {
         const idToken = authorization.split('Bearer ')[1];
@@ -28,10 +28,10 @@ async function getUserId(): Promise<string> {
             return decodedToken.uid;
         } catch (error) {
             console.error("Error verifying ID token:", error);
-            throw new Error("Utilisateur non authentifié.");
+            return null;
         }
     }
-    throw new Error("En-tête d'autorisation manquant ou mal formé.");
+    return null;
 }
 
 async function getOrCreateStripeCustomer(userId: string, email: string | undefined): Promise<string> {
@@ -50,7 +50,7 @@ async function getOrCreateStripeCustomer(userId: string, email: string | undefin
         },
     });
 
-    await userRef.update({ stripeCustomerId: customer.id });
+    await userRef.set({ stripeCustomerId: customer.id }, { merge: true });
     return customer.id;
 }
 
@@ -62,14 +62,15 @@ export async function createCheckoutSession(formData: FormData) {
         throw new Error("ID de plan invalide.");
     }
     
-    const authorization = headers().get('Authorization');
-    if (!authorization?.startsWith('Bearer ')) {
-         throw new Error("Non authentifié");
+    const userId = await getUserIdFromToken();
+
+    if (!userId) {
+         throw new Error("Utilisateur non authentifié. L'en-tête d'autorisation est manquant ou invalide.");
     }
-    const idToken = authorization.split('Bearer ')[1];
-    const decodedToken = await adminAuth().verifyIdToken(idToken);
-    const userId = decodedToken.uid;
-    const userEmail = decodedToken.email;
+    
+    // We need to fetch the user's email from Firebase Auth, not just the action
+    const userRecord = await adminAuth().getUser(userId);
+    const userEmail = userRecord.email;
 
     const stripeCustomerId = await getOrCreateStripeCustomer(userId, userEmail);
     const host = headers().get('origin') || 'http://localhost:9002';
@@ -91,20 +92,34 @@ export async function createCheckoutSession(formData: FormData) {
 }
 
 export async function createPortalSession() {
-     const authorization = headers().get('Authorization');
-    if (!authorization?.startsWith('Bearer ')) {
-         throw new Error("Non authentifié");
+     const userId = await getUserIdFromToken();
+    
+    if (!userId) {
+         throw new Error("Utilisateur non authentifié. L'en-tête d'autorisation est manquant ou invalide.");
     }
-    const idToken = authorization.split('Bearer ')[1];
-    const decodedToken = await adminAuth().verifyIdToken(idToken);
-    const userId = decodedToken.uid;
     
     const userRef = db.collection('users').doc(userId);
     const userSnap = await userRef.get();
     const userData = userSnap.data();
     
     if (!userData?.stripeCustomerId) {
-        throw new Error("Client Stripe non trouvé pour cet utilisateur.");
+        // Before throwing, let's try to create it in case the user exists but the customer ID was never set.
+        const userRecord = await adminAuth().getUser(userId);
+        const stripeCustomerId = await getOrCreateStripeCustomer(userId, userRecord.email);
+        
+        if (!stripeCustomerId) {
+          throw new Error("Client Stripe non trouvé et impossible de le créer pour cet utilisateur.");
+        }
+        
+         const host = headers().get('origin') || 'http://localhost:9002';
+         const portalSession = await stripe.billingPortal.sessions.create({
+            customer: stripeCustomerId,
+            return_url: `${host}/account/profile`,
+         });
+
+        if (portalSession.url) redirect(portalSession.url);
+        else throw new Error("Impossible de créer la session du portail client Stripe.");
+        return;
     }
 
     const host = headers().get('origin') || 'http://localhost:9002';

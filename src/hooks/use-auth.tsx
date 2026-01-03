@@ -59,7 +59,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                   // Nouveaux champs pour Stripe
                   stripeCustomerId: null,
                   subscriptionStatus: 'free',
-                });
+                }, { merge: true });
               } catch (error) {
                  console.error("Error creating user document:", error);
               }
@@ -80,22 +80,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => unsubscribe();
   }, [router]);
 
-  // Intercepteur de fetch pour ajouter le token d'authentification
+  // Intercepteur de fetch pour ajouter le token d'authentification pour les Server Actions
   useEffect(() => {
     const originalFetch = window.fetch;
+    
+    // @ts-ignore
     window.fetch = async (...args) => {
         const [url, config] = args;
+        
+        // Les Server Actions sont des requêtes POST sans URL spécifique mais avec un body FormData.
+        const isServerAction = typeof url === 'string' && url.includes('?_rsc') || (config?.body instanceof FormData);
 
-        const isApiRoute = (typeof url === 'string' && url.startsWith('/api/')) ||
-                           (url instanceof Request && url.url.includes('/api/'));
-
-        // On n'ajoute le token que pour les appels à nos propres actions serveur (implicitement pas les API externes)
-        // et on ne veut pas l'ajouter pour les appels API externes, car on ne veut pas leaker le token.
-        // Ici on suppose que les actions serveur n'appellent pas d'API externes qui requièrent un fetch.
-        // Une approche plus fine serait de vérifier le domaine.
-        const isServerAction = config?.body instanceof FormData;
-
-        if (user && (isServerAction || !isApiRoute)) {
+        if (user && isServerAction) {
             const token = await user.getIdToken();
             const headers = new Headers(config?.headers);
             headers.set('Authorization', `Bearer ${token}`);
