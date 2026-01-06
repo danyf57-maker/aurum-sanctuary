@@ -5,11 +5,10 @@ import { cn } from '@/lib/utils';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Toaster } from '@/components/ui/toaster';
-import { GoogleOneTap } from '@/components/auth/google-one-tap';
-import { CookieConsent } from '@/components/legal/CookieConsent';
-import Script from 'next/script';
+import { AuthProvider } from '@/providers/auth-provider'; // Importer le nouveau AuthProvider
 import { Suspense } from 'react';
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
+import { CookieConsent } from '@/components/legal/CookieConsent';
 
 export const metadata: Metadata = {
   title: 'Aurum | Journal Intime IA & Sanctuaire de Santé Mentale',
@@ -52,7 +51,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Literata:opsz,wght@7..72,400;700&display=swap" rel="stylesheet" />
-        <script src="https://accounts.google.com/gsi/client" async defer></script>
+        {/* Le script GSI est maintenant dans GoogleAnalytics.tsx */}
       </head>
       <body
         className={cn(
@@ -60,14 +59,15 @@ export default function RootLayout({
         )}
         suppressHydrationWarning={true}
       >
-        <div className="relative flex min-h-screen flex-col bg-background">
-          <GoogleOneTap />
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
-        </div>
-        <Toaster />
-        <CookieConsent />
+        <AuthProvider> {/* Envelopper toute l'application avec AuthProvider */}
+          <div className="relative flex min-h-screen flex-col bg-background">
+            <Header />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </div>
+          <Toaster />
+          <CookieConsent />
+        </AuthProvider>
       </body>
     </html>
   );
