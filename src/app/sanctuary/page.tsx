@@ -15,6 +15,8 @@ import { JournalEntry } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import placeholderImages from '@/lib/placeholder-images.json';
 import { PenSquare } from 'lucide-react';
+import { redirect } from 'next/navigation';
+import { useToast } from '@/hooks/use-toast';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,30 +24,41 @@ function SanctuaryPageContent() {
     const { user, loading: authLoading } = useAuth();
     const searchParams = useSearchParams();
     const tag = searchParams.get('tag');
+    const { toast } = useToast();
 
     const [entries, setEntries] = useState<JournalEntry[]>([]);
     const [tags, setTags] = useState<string[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        if (authLoading) {
+            return; // Attendre la fin du chargement de l'authentification
+        }
+        if (!user) {
+            redirect('/');
+            return;
+        }
+
+        setLoading(true);
         async function fetchData() {
-            if (user) {
-                setLoading(true);
+            try {
                 const [userEntries, userTags] = await Promise.all([
                     getEntries(user.uid, tag),
                     getUniqueTags(user.uid)
                 ]);
                 setEntries(userEntries);
                 setTags(userTags);
-                setLoading(false);
-            } else if (!authLoading) {
+            } catch (error) {
+                console.error("Failed to fetch sanctuary data:", error);
+                toast({ title: "Erreur", description: "Impossible de charger votre journal.", variant: "destructive" });
+            } finally {
                 setLoading(false);
             }
         }
         fetchData();
-    }, [user, authLoading, tag]);
+    }, [user, authLoading, tag, toast]);
 
-    if (authLoading || (loading && user)) {
+    if (authLoading || loading) {
         return (
             <div className="container max-w-7xl py-8 md:py-12">
                 <div className="mb-8 flex justify-between items-center">
@@ -62,17 +75,8 @@ function SanctuaryPageContent() {
     }
     
     if (!user) {
-        return (
-            <div className="container max-w-4xl py-20 text-center animate-fade-in">
-                <h2 className="text-3xl font-bold font-headline">Cet espace est sacré.</h2>
-                <p className="mt-4 text-lg text-muted-foreground">
-                    Veuillez vous connecter pour accéder à votre sanctuaire privé.
-                </p>
-                <Button asChild className="mt-6 bg-stone-600 text-white hover:bg-stone-700">
-                    <Link href="/sanctuary/write">Rédiger une entrée pour commencer</Link>
-                </Button>
-            </div>
-        );
+        // Redirection déjà gérée, mais sécurité supplémentaire
+        return null;
     }
 
     return (
@@ -126,9 +130,12 @@ function SanctuaryPageContent() {
 }
 
 export default function SanctuaryPage() {
+    // Utiliser Suspense pour gérer le chargement des searchParams côté client
     return (
         <Suspense fallback={<div className="container max-w-7xl py-8 md:py-12"><div className="mb-8 flex justify-between items-center"><Skeleton className="h-10 w-[200px]" /></div><div className="space-y-12"><Skeleton className="h-[350px] w-full" /><div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">{[...Array(3)].map((_, i) => ( <Skeleton key={i} className="h-[220px] w-full" /> ))}</div></div></div>}>
             <SanctuaryPageContent />
         </Suspense>
     )
 }
+
+    

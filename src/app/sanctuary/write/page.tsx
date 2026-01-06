@@ -1,13 +1,14 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { JournalEntryForm } from '@/components/journal/journal-entry-form';
 import { AurumChat } from '@/components/chat/AurumChat';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BookText, MessageSquare } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function WritePage() {
     const { user, loading } = useAuth();
@@ -17,14 +18,16 @@ export default function WritePage() {
         return (
             <div className="container max-w-4xl mx-auto py-20">
                 <div className="space-y-4">
-                    <div className="h-10 w-1/3 bg-muted rounded-md animate-pulse"></div>
-                    <div className="h-96 w-full bg-muted rounded-md animate-pulse"></div>
+                    <Skeleton className="h-10 w-1/3" />
+                    <Skeleton className="h-96 w-full bg-muted rounded-md animate-pulse" />
                 </div>
             </div>
         )
     }
 
     if (!user) {
+        // Pour les utilisateurs non connectés, on affiche directement le formulaire
+        // La logique de demande de connexion est gérée dans le formulaire lui-même
         return (
             <div className="flex flex-col flex-1 items-center justify-center py-8 md:py-12 animate-fade-in bg-stone-50/50">
                 <JournalEntryForm />
@@ -32,6 +35,7 @@ export default function WritePage() {
         );
     }
     
+    // Pour les utilisateurs connectés, on affiche l'interface à onglets
     return (
         <div className="container max-w-4xl mx-auto py-12 md:py-16">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -63,3 +67,5 @@ export default function WritePage() {
         </div>
     );
 }
+
+    

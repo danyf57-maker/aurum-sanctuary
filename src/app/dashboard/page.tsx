@@ -46,7 +46,7 @@ export default function DashboardPage() {
     }, []);
 
     useEffect(() => {
-        if (isClient && !authUser && isSignInWithEmailLink(auth, window.location.href)) {
+        if (isClient && !authLoading && !authUser && isSignInWithEmailLink(auth, window.location.href)) {
             let email = window.localStorage.getItem('emailForSignIn');
             if (!email) {
                 email = window.prompt('Veuillez fournir votre email pour confirmer la connexion.');
@@ -57,35 +57,46 @@ export default function DashboardPage() {
                     .then((result) => {
                         window.localStorage.removeItem('emailForSignIn');
                         toast({ title: "Connexion réussie", description: `Bienvenue, ${result.user.displayName || 'cher explorateur'}.` });
-                        // AuthProvider will handle user state update and redirection logic
+                        // Auth hook will handle user state update, this just finalizes link auth
                     })
                     .catch((error) => {
                         toast({ title: "Erreur de connexion", description: "Le lien de connexion est peut-être expiré ou invalide.", variant: "destructive" });
-                        setLoading(false);
+                    })
+                    .finally(() => {
+                       // setLoading(false) is handled in the other useEffect
                     });
             }
         }
-    }, [isClient, toast, authUser]);
+    }, [isClient, toast, authUser, authLoading]);
 
     useEffect(() => {
-        if (!authLoading) {
-            if (!authUser) {
-                redirect('/');
-            } else {
-                setLoading(true);
-                const fetchData = async () => {
-                    const [userEntries, profile] = await Promise.all([
-                        getEntries(authUser.uid),
-                        getUserProfile(authUser.uid)
-                    ]);
-                    setEntries(userEntries);
-                    setUserProfile(profile);
-                    setLoading(false);
-                };
-                fetchData();
-            }
+        if (authLoading) {
+            return; // Wait for auth to finish loading
         }
-    }, [authUser, authLoading]);
+        if (!authUser) {
+            redirect('/');
+            return;
+        }
+
+        setLoading(true);
+        const fetchData = async () => {
+            try {
+                const [userEntries, profile] = await Promise.all([
+                    getEntries(authUser.uid),
+                    getUserProfile(authUser.uid)
+                ]);
+                setEntries(userEntries);
+                setUserProfile(profile);
+            } catch (error) {
+                console.error("Failed to fetch user data:", error);
+                toast({ title: "Erreur", description: "Impossible de charger vos données.", variant: "destructive" });
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, [authUser, authLoading, toast]);
+
 
     if (authLoading || loading) {
         return (
@@ -200,3 +211,5 @@ export default function DashboardPage() {
         </div>
     );
 }
+
+    
