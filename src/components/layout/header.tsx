@@ -55,22 +55,22 @@ export function Header() {
           </Link>
           <nav className="flex items-center gap-6 text-sm">
             <Link
-              href="/sanctuary"
-              className="transition-colors hover:text-foreground/80 text-foreground/60"
-            >
-              Journal
-            </Link>
-            <Link
               href="/dashboard"
               className="transition-colors hover:text-foreground/80 text-foreground/60"
             >
-              Dashboard
+              Mon Sanctuaire
             </Link>
             <Link
-              href="/sanctuary/chat"
+              href="/sanctuary"
               className="transition-colors hover:text-foreground/80 text-foreground/60"
             >
-              Discuter avec Aurum
+              Historique
+            </Link>
+             <Link
+              href="/sanctuary/write"
+              className="transition-colors hover:text-foreground/80 text-foreground/60"
+            >
+              Mon Journal
             </Link>
              <Link
               href="/blog"
