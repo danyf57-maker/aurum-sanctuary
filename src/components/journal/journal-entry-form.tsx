@@ -1,8 +1,8 @@
 
 "use client";
 
-import { useEffect, useRef, useState, useActionState } from "react";
-import { useFormStatus } from "react-dom";
+import { useEffect, useRef, useState } from "react";
+import { useFormStatus, useFormState } from "react-dom";
 import { Loader2 } from 'lucide-react';
 import { useAuth, ALMA_USER_ID } from "@/hooks/use-auth";
 import { saveJournalEntry, type FormState } from "@/app/actions";
@@ -35,11 +35,20 @@ export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
     if (result && !result.errors && !result.message) {
         if(onSave) onSave();
         if(formRef.current) formRef.current.reset();
+        if(textareaRef.current) {
+            textareaRef.current.style.height = 'auto';
+        }
+        toast({
+          title: "Entrée enregistrée",
+          description: state?.isFirstEntry 
+            ? "Félicitations pour votre première entrée ! Bienvenue dans votre sanctuaire."
+            : "Votre pensée a été préservée en toute sécurité.",
+        });
     }
     return result || { message: "Une erreur inattendue est survenue."};
   };
 
-  const [state, dispatch] = useActionState(formAction, initialState);
+  const [state, dispatch] = useFormState(formAction, initialState);
   const { user } = useAuth();
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
@@ -60,12 +69,6 @@ export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
             description: errorMsg,
             variant: "destructive",
         });
-    } else if (state && !state.errors && !state.message) {
-        // Successful save, clear the form
-        if(formRef.current) formRef.current.reset();
-        if(textareaRef.current) {
-            textareaRef.current.style.height = 'auto';
-        }
     }
   }, [state, toast]);
   
@@ -98,7 +101,7 @@ export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
 
   return (
     <>
-    <form ref={formRef} action={(formData) => dispatch(formData)} onSubmit={handleFormSubmit} className="w-full max-w-2xl mx-auto space-y-8">
+    <form ref={formRef} action={dispatch} onSubmit={handleFormSubmit} className="w-full max-w-2xl mx-auto space-y-8">
       <input type="hidden" name="userId" value={user?.uid ?? ''} />
       <div>
         <Textarea
