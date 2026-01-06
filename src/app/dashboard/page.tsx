@@ -14,6 +14,9 @@ import { Book, Smile, PenSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { JournalEntryDialog } from '@/components/journal/journal-entry-dialog';
 import { InsightsSection } from '@/components/dashboard/InsightsSection';
+import { isSignInWithEmailLink, signInWithEmailLink } from 'firebase/auth';
+import { auth } from '@/lib/firebase/config';
+import { useToast } from '@/hooks/use-toast';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,16 +34,45 @@ function getMostCommonMood(entries: JournalEntry[]): string {
 
 export default function DashboardPage() {
     const { user: authUser, loading: authLoading } = useAuth();
+    const { toast } = useToast();
     const [entries, setEntries] = useState<JournalEntry[]>([]);
     const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
     const [loading, setLoading] = useState(true);
     const [isFormOpen, setIsFormOpen] = useState(false);
+    const [isClient, setIsClient] = useState(false);
+
+     useEffect(() => {
+        setIsClient(true);
+    }, []);
+
+    useEffect(() => {
+        if (isClient && !authUser && isSignInWithEmailLink(auth, window.location.href)) {
+            let email = window.localStorage.getItem('emailForSignIn');
+            if (!email) {
+                email = window.prompt('Veuillez fournir votre email pour confirmer la connexion.');
+            }
+            if (email) {
+                setLoading(true);
+                signInWithEmailLink(auth, email, window.location.href)
+                    .then((result) => {
+                        window.localStorage.removeItem('emailForSignIn');
+                        toast({ title: "Connexion réussie", description: `Bienvenue, ${result.user.displayName || 'cher explorateur'}.` });
+                        // AuthProvider will handle user state update and redirection logic
+                    })
+                    .catch((error) => {
+                        toast({ title: "Erreur de connexion", description: "Le lien de connexion est peut-être expiré ou invalide.", variant: "destructive" });
+                        setLoading(false);
+                    });
+            }
+        }
+    }, [isClient, toast, authUser]);
 
     useEffect(() => {
         if (!authLoading) {
             if (!authUser) {
                 redirect('/');
             } else {
+                setLoading(true);
                 const fetchData = async () => {
                     const [userEntries, profile] = await Promise.all([
                         getEntries(authUser.uid),

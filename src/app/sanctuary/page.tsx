@@ -5,7 +5,6 @@ import React, { useEffect, useState, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
-import { signInWithEmailLink, isSignInWithEmailLink } from 'firebase/auth';
 import { JournalCard } from '@/components/journal/journal-card';
 import { SentimentChart } from '@/components/journal/sentiment-chart';
 import { TagFilter } from '@/components/journal/tag-filter';
@@ -14,8 +13,6 @@ import { getEntries, getUniqueTags } from '@/lib/firebase/firestore';
 import { useAuth } from '@/hooks/use-auth';
 import { JournalEntry } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useToast } from '@/hooks/use-toast';
-import { auth } from '@/lib/firebase/config';
 import placeholderImages from '@/lib/placeholder-images.json';
 import { PenSquare } from 'lucide-react';
 
@@ -24,39 +21,12 @@ export const dynamic = 'force-dynamic';
 function SanctuaryPageContent() {
     const { user, loading: authLoading } = useAuth();
     const searchParams = useSearchParams();
-    const { toast } = useToast();
     const tag = searchParams.get('tag');
 
     const [entries, setEntries] = useState<JournalEntry[]>([]);
     const [tags, setTags] = useState<string[]>([]);
     const [loading, setLoading] = useState(true);
-    const [isClient, setIsClient] = useState(false);
 
-    useEffect(() => {
-        setIsClient(true);
-    }, []);
-
-    useEffect(() => {
-        if (isClient && isSignInWithEmailLink(auth, window.location.href)) {
-            let email = window.localStorage.getItem('emailForSignIn');
-            if (!email) {
-                email = window.prompt('Veuillez fournir votre email pour confirmation');
-            }
-            if (email) {
-                signInWithEmailLink(auth, email, window.location.href)
-                    .then(() => {
-                        window.localStorage.removeItem('emailForSignIn');
-                        toast({ title: "Connecté avec succès!" });
-                    })
-                    .catch((error) => {
-                        toast({ title: "Erreur de connexion", description: error.message, variant: "destructive" });
-                    });
-            } else {
-                 toast({ title: "Erreur de connexion", description: "L'e-mail n'a pas été trouvé pour terminer la connexion.", variant: "destructive" });
-            }
-        }
-    }, [isClient, toast]);
-    
     useEffect(() => {
         async function fetchData() {
             if (user) {
