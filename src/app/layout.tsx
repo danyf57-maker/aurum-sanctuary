@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Toaster } from '@/components/ui/toaster';
-import { AuthProvider } from '@/providers/auth-provider'; // Importer le nouveau AuthProvider
+import { AuthProvider } from '@/providers/auth-provider';
 import { Suspense } from 'react';
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
 import { CookieConsent } from '@/components/legal/CookieConsent';
@@ -41,9 +41,6 @@ export default function RootLayout({
   return (
     <html lang="fr">
        <head>
-        <Suspense fallback={null}>
-          <GoogleAnalytics />
-        </Suspense>
         <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -59,7 +56,10 @@ export default function RootLayout({
         )}
         suppressHydrationWarning={true}
       >
-        <AuthProvider> {/* Envelopper toute l'application avec AuthProvider */}
+        <AuthProvider>
+          <Suspense fallback={null}>
+            <GoogleAnalytics />
+          </Suspense>
           <div className="relative flex min-h-screen flex-col bg-background">
             <Header />
             <main className="flex-1">{children}</main>
