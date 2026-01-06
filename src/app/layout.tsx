@@ -9,6 +9,8 @@ import { Toaster } from '@/components/ui/toaster';
 import { GoogleOneTap } from '@/components/auth/google-one-tap';
 import { CookieConsent } from '@/components/legal/CookieConsent';
 import Script from 'next/script';
+import { Suspense } from 'react';
+import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
 
 export const metadata: Metadata = {
   title: 'Aurum | Journal Intime IA & Sanctuaire de Santé Mentale',
@@ -40,7 +42,10 @@ export default function RootLayout({
   
   return (
     <html lang="fr">
-      <head>
+       <head>
+        <Suspense fallback={null}>
+          <GoogleAnalytics />
+        </Suspense>
         <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
