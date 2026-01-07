@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect, useState }S from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { redirect } from 'next/navigation';
 import { getEntries, getUserProfile } from '@/lib/firebase/firestore';
