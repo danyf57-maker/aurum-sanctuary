@@ -35,8 +35,8 @@ function getMostCommonMood(entries: JournalEntry[]): string {
 export default function DashboardPage() {
     const { user: authUser, loading: authLoading } = useAuth();
     const { toast } = useToast();
-    const [entries, setEntries] = useState<JournalEntry[] | null>(null);
-    const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+    const [data, setData] = useState<{entries: JournalEntry[], profile: UserProfile | null} | null>(null);
+    const [loading, setLoading] = useState(true);
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [isClient, setIsClient] = useState(false);
 
@@ -65,6 +65,7 @@ export default function DashboardPage() {
 
     useEffect(() => {
         if (authLoading) {
+            setLoading(true);
             return;
         }
         if (!authUser) {
@@ -72,26 +73,27 @@ export default function DashboardPage() {
             return;
         }
 
+        setLoading(true);
         const fetchData = async () => {
             try {
                 const [userEntries, profile] = await Promise.all([
                     getEntries(authUser.uid),
                     getUserProfile(authUser.uid)
                 ]);
-                setEntries(userEntries);
-                setUserProfile(profile);
+                setData({ entries: userEntries, profile });
             } catch (error) {
                 console.error("Failed to fetch user data:", error);
                 toast({ title: "Erreur", description: "Impossible de charger vos données.", variant: "destructive" });
-                setEntries([]); // Set to empty array on error to stop loading
-                setUserProfile({} as UserProfile);
+                setData({ entries: [], profile: null });
+            } finally {
+                setLoading(false);
             }
         };
         fetchData();
     }, [authUser, authLoading, toast]);
 
 
-    if (authLoading || entries === null || userProfile === null) {
+    if (loading) {
         return (
             <div className="container max-w-7xl py-8 md:py-12">
                 <div className="space-y-12">
@@ -110,24 +112,27 @@ export default function DashboardPage() {
         );
     }
     
-    if (!authUser) {
+    if (!authUser || !data) {
         return null;
     }
     
+    const { entries, profile } = data;
     const mostCommonMood = getMostCommonMood(entries);
 
     return (
         <div className="container max-w-7xl py-8 md:py-12">
             <JournalEntryDialog open={isFormOpen} onOpenChange={setIsFormOpen} onSave={() => {
-                setEntries(null);
-                setUserProfile(null);
+                setLoading(true);
                  if (authUser) {
-                    getEntries(authUser.uid).then(userEntries => {
-                        setEntries(userEntries);
-                    });
-                     getUserProfile(authUser.uid).then(profile => {
-                        setUserProfile(profile);
-                    });
+                    const fetchData = async () => {
+                        const [userEntries, profile] = await Promise.all([
+                            getEntries(authUser.uid),
+                            getUserProfile(authUser.uid)
+                        ]);
+                        setData({ entries: userEntries, profile });
+                        setLoading(false);
+                    };
+                    fetchData();
                 }
             }}/>
             <header className="mb-12">
@@ -178,7 +183,7 @@ export default function DashboardPage() {
                     </div>
                 </section>
                 
-                <InsightsSection user={userProfile} />
+                {profile && <InsightsSection user={profile} />}
                 
                 <section>
                     <SentimentChart entries={entries} />
@@ -188,7 +193,7 @@ export default function DashboardPage() {
                     <h2 className="text-2xl font-headline font-semibold mb-4">Historique des Entrées</h2>
                     {entries.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {entries.map((entry, i) => (
+                            {entries.slice(0, 3).map((entry, i) => (
                                 <JournalCard key={entry.id} entry={entry} style={{ animationDelay: `${i * 50}ms` }} className="animate-fade-in" />
                             ))}
                         </div>
@@ -206,5 +211,3 @@ export default function DashboardPage() {
         </div>
     );
 }
-
-    

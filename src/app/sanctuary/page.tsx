@@ -28,9 +28,11 @@ function SanctuaryPageContent() {
 
     const [entries, setEntries] = useState<JournalEntry[] | null>(null);
     const [tags, setTags] = useState<string[]>([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         if (authLoading) {
+            setLoading(true);
             return;
         }
         if (!user) {
@@ -38,6 +40,7 @@ function SanctuaryPageContent() {
             return;
         }
 
+        setLoading(true);
         async function fetchData() {
             try {
                 const [userEntries, userTags] = await Promise.all([
@@ -50,12 +53,14 @@ function SanctuaryPageContent() {
                 console.error("Failed to fetch sanctuary data:", error);
                 toast({ title: "Erreur", description: "Impossible de charger votre journal.", variant: "destructive" });
                 setEntries([]);
+            } finally {
+                setLoading(false);
             }
         }
         fetchData();
     }, [user, authLoading, tag, toast]);
 
-    if (authLoading || entries === null) {
+    if (loading) {
         return (
             <div className="container max-w-7xl py-8 md:py-12">
                 <div className="mb-8 flex justify-between items-center">
@@ -71,7 +76,7 @@ function SanctuaryPageContent() {
         );
     }
     
-    if (!user) {
+    if (!user || !entries) {
         return null;
     }
 
@@ -132,5 +137,3 @@ export default function SanctuaryPage() {
         </Suspense>
     )
 }
-
-    
