@@ -26,20 +26,18 @@ function SanctuaryPageContent() {
     const tag = searchParams.get('tag');
     const { toast } = useToast();
 
-    const [entries, setEntries] = useState<JournalEntry[]>([]);
+    const [entries, setEntries] = useState<JournalEntry[] | null>(null);
     const [tags, setTags] = useState<string[]>([]);
-    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         if (authLoading) {
-            return; // Attendre la fin du chargement de l'authentification
+            return;
         }
         if (!user) {
             redirect('/');
             return;
         }
 
-        setLoading(true);
         async function fetchData() {
             try {
                 const [userEntries, userTags] = await Promise.all([
@@ -51,14 +49,13 @@ function SanctuaryPageContent() {
             } catch (error) {
                 console.error("Failed to fetch sanctuary data:", error);
                 toast({ title: "Erreur", description: "Impossible de charger votre journal.", variant: "destructive" });
-            } finally {
-                setLoading(false);
+                setEntries([]);
             }
         }
         fetchData();
     }, [user, authLoading, tag, toast]);
 
-    if (authLoading || loading) {
+    if (authLoading || entries === null) {
         return (
             <div className="container max-w-7xl py-8 md:py-12">
                 <div className="mb-8 flex justify-between items-center">
@@ -75,7 +72,6 @@ function SanctuaryPageContent() {
     }
     
     if (!user) {
-        // Redirection déjà gérée, mais sécurité supplémentaire
         return null;
     }
 
@@ -130,7 +126,6 @@ function SanctuaryPageContent() {
 }
 
 export default function SanctuaryPage() {
-    // Utiliser Suspense pour gérer le chargement des searchParams côté client
     return (
         <Suspense fallback={<div className="container max-w-7xl py-8 md:py-12"><div className="mb-8 flex justify-between items-center"><Skeleton className="h-10 w-[200px]" /></div><div className="space-y-12"><Skeleton className="h-[350px] w-full" /><div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">{[...Array(3)].map((_, i) => ( <Skeleton key={i} className="h-[220px] w-full" /> ))}</div></div></div>}>
             <SanctuaryPageContent />

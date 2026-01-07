@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState }S from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { redirect } from 'next/navigation';
 import { getEntries, getUserProfile } from '@/lib/firebase/firestore';
@@ -35,9 +35,8 @@ function getMostCommonMood(entries: JournalEntry[]): string {
 export default function DashboardPage() {
     const { user: authUser, loading: authLoading } = useAuth();
     const { toast } = useToast();
-    const [entries, setEntries] = useState<JournalEntry[]>([]);
+    const [entries, setEntries] = useState<JournalEntry[] | null>(null);
     const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-    const [loading, setLoading] = useState(true);
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [isClient, setIsClient] = useState(false);
 
@@ -52,18 +51,13 @@ export default function DashboardPage() {
                 email = window.prompt('Veuillez fournir votre email pour confirmer la connexion.');
             }
             if (email) {
-                setLoading(true);
                 signInWithEmailLink(auth, email, window.location.href)
                     .then((result) => {
                         window.localStorage.removeItem('emailForSignIn');
                         toast({ title: "Connexion réussie", description: `Bienvenue, ${result.user.displayName || 'cher explorateur'}.` });
-                        // Auth hook will handle user state update, this just finalizes link auth
                     })
                     .catch((error) => {
                         toast({ title: "Erreur de connexion", description: "Le lien de connexion est peut-être expiré ou invalide.", variant: "destructive" });
-                    })
-                    .finally(() => {
-                       // setLoading(false) is handled in the other useEffect
                     });
             }
         }
@@ -71,14 +65,13 @@ export default function DashboardPage() {
 
     useEffect(() => {
         if (authLoading) {
-            return; // Wait for auth to finish loading
+            return;
         }
         if (!authUser) {
             redirect('/');
             return;
         }
 
-        setLoading(true);
         const fetchData = async () => {
             try {
                 const [userEntries, profile] = await Promise.all([
@@ -90,15 +83,15 @@ export default function DashboardPage() {
             } catch (error) {
                 console.error("Failed to fetch user data:", error);
                 toast({ title: "Erreur", description: "Impossible de charger vos données.", variant: "destructive" });
-            } finally {
-                setLoading(false);
+                setEntries([]); // Set to empty array on error to stop loading
+                setUserProfile({} as UserProfile);
             }
         };
         fetchData();
     }, [authUser, authLoading, toast]);
 
 
-    if (authLoading || loading) {
+    if (authLoading || entries === null || userProfile === null) {
         return (
             <div className="container max-w-7xl py-8 md:py-12">
                 <div className="space-y-12">
@@ -117,8 +110,7 @@ export default function DashboardPage() {
         );
     }
     
-    if (!authUser || !userProfile) {
-        // This is a fallback, the useEffect hook should have already redirected.
+    if (!authUser) {
         return null;
     }
     
@@ -127,11 +119,14 @@ export default function DashboardPage() {
     return (
         <div className="container max-w-7xl py-8 md:py-12">
             <JournalEntryDialog open={isFormOpen} onOpenChange={setIsFormOpen} onSave={() => {
-                setLoading(true);
+                setEntries(null);
+                setUserProfile(null);
                  if (authUser) {
                     getEntries(authUser.uid).then(userEntries => {
                         setEntries(userEntries);
-                        setLoading(false);
+                    });
+                     getUserProfile(authUser.uid).then(profile => {
+                        setUserProfile(profile);
                     });
                 }
             }}/>
