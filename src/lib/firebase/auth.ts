@@ -27,8 +27,8 @@ export async function signOut() {
 }
 
 export async function sendPasswordlessLink(email: string) {
-  // Utiliser le domaine d'authentification autorisé par Firebase
-  const url = `https://${firebaseConfig.authDomain}/dashboard`;
+  // Construire l'URL de redirection en utilisant l'origine actuelle.
+  const url = `${window.location.origin}/dashboard`;
 
   const actionCodeSettings = {
     url: url,
