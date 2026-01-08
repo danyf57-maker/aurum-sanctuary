@@ -27,7 +27,8 @@ export async function signOut() {
 }
 
 export async function sendPasswordlessLink(email: string) {
-  // Construire l'URL de redirection en utilisant l'origine actuelle.
+  // Construire l'URL de redirection complète en utilisant l'origine actuelle.
+  // C'est nécessaire pour que Firebase valide le domaine.
   const url = `${window.location.origin}/dashboard`;
 
   const actionCodeSettings = {
