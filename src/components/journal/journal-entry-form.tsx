@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useFormStatus, useFormState } from "react-dom";
+import { useFormStatus, useActionState } from "react";
 import { Loader2 } from 'lucide-react';
 import { useAuth, ALMA_USER_ID } from "@/hooks/use-auth";
 import { saveJournalEntry, type FormState } from "@/app/actions";
@@ -48,7 +48,7 @@ export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
     return result || { message: "Une erreur inattendue est survenue."};
   };
 
-  const [state, dispatch] = useFormState(formAction, initialState);
+  const [state, dispatch] = useActionState(formAction, initialState);
   const { user } = useAuth();
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
