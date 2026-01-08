@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { JournalEntryForm } from '@/components/journal/journal-entry-form';
 import { AurumChat } from '@/components/chat/AurumChat';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
