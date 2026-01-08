@@ -3,9 +3,8 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   signOut as firebaseSignOut,
-  sendSignInLinkToEmail,
 } from 'firebase/auth';
-import { auth as firebaseAuth, firebaseConfig } from './config';
+import { auth as firebaseAuth } from './config';
 
 const googleProvider = new GoogleAuthProvider();
 
@@ -23,24 +22,5 @@ export async function signOut() {
     await firebaseSignOut(firebaseAuth);
   } catch (error: any) {
     console.error('Error signing out:', error.message);
-  }
-}
-
-export async function sendPasswordlessLink(email: string) {
-  // Utilise l'authDomain du projet Firebase, qui est toujours autorisé.
-  const continueUrl = `https://${firebaseConfig.authDomain}/dashboard`;
-
-  const actionCodeSettings = {
-    url: continueUrl,
-    handleCodeInApp: true,
-  };
-  try {
-    await sendSignInLinkToEmail(firebaseAuth, email, actionCodeSettings);
-    window.localStorage.setItem('emailForSignIn', email);
-    return { success: true }
-  } catch (error: any) {
-    console.error('Error sending passwordless link:', error);
-    // @ts-ignore
-    return { error: error.message };
   }
 }

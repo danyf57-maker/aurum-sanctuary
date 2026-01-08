@@ -14,8 +14,6 @@ import { Book, Smile, PenSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { JournalEntryDialog } from '@/components/journal/journal-entry-dialog';
 import { InsightsSection } from '@/components/dashboard/InsightsSection';
-import { isSignInWithEmailLink, signInWithEmailLink } from 'firebase/auth';
-import { auth } from '@/lib/firebase/config';
 import { useToast } from '@/hooks/use-toast';
 
 export const dynamic = 'force-dynamic';
@@ -38,31 +36,7 @@ export default function DashboardPage() {
     const [data, setData] = useState<{entries: JournalEntry[], profile: UserProfile | null} | null>(null);
     const [loading, setLoading] = useState(true);
     const [isFormOpen, setIsFormOpen] = useState(false);
-    const [isClient, setIsClient] = useState(false);
-
-     useEffect(() => {
-        setIsClient(true);
-    }, []);
-
-    useEffect(() => {
-        if (isClient && !authLoading && !authUser && isSignInWithEmailLink(auth, window.location.href)) {
-            let email = window.localStorage.getItem('emailForSignIn');
-            if (!email) {
-                email = window.prompt('Veuillez fournir votre email pour confirmer la connexion.');
-            }
-            if (email) {
-                signInWithEmailLink(auth, email, window.location.href)
-                    .then((result) => {
-                        window.localStorage.removeItem('emailForSignIn');
-                        toast({ title: "Connexion réussie", description: `Bienvenue, ${result.user.displayName || 'cher explorateur'}.` });
-                    })
-                    .catch((error) => {
-                        toast({ title: "Erreur de connexion", description: "Le lien de connexion est peut-être expiré ou invalide.", variant: "destructive" });
-                    });
-            }
-        }
-    }, [isClient, toast, authUser, authLoading]);
-
+    
     useEffect(() => {
         if (authLoading) {
             setLoading(true);

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Mail, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -10,10 +10,8 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { signInWithGoogle, sendPasswordlessLink } from '@/lib/firebase/auth';
+import { signInWithGoogle } from '@/lib/firebase/auth';
 
 interface AuthDialogProps {
   open: boolean;
@@ -33,12 +31,10 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
 
 export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
   const { toast } = useToast();
-  const [email, setEmail] = useState('');
-  const [isLoading, setIsLoading] = useState< 'google' | 'email' | false>(false);
-  const [emailSent, setEmailSent] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleGoogleSignIn = async () => {
-    setIsLoading('google');
+    setIsLoading(true);
     const { error } = await signInWithGoogle();
     if (error) {
       toast({
@@ -48,27 +44,6 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
       });
     } else {
       onOpenChange(false);
-    }
-    setIsLoading(false);
-  };
-
-  const handleEmailSignIn = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading('email');
-    const { success, error } = await sendPasswordlessLink(email);
-    if (success) {
-      setEmailSent(true);
-      toast({
-        title: 'Vérifiez votre boîte de réception',
-        description: `Un lien de connexion a été envoyé à ${email}.`,
-      });
-    }
-    if (error) {
-       toast({
-        title: 'Erreur lors de l\'envoi du lien',
-        description: error,
-        variant: 'destructive',
-      });
     }
     setIsLoading(false);
   };
@@ -86,39 +61,12 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
           <Button
             variant="outline"
             onClick={handleGoogleSignIn}
-            disabled={!!isLoading}
+            disabled={isLoading}
+            className="w-full"
           >
-            {isLoading === 'google' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <GoogleIcon className="mr-2" />}
+            {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <GoogleIcon className="mr-2" />}
             Se connecter avec Google
           </Button>
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-popover px-2 text-muted-foreground">
-                Ou continuer avec l'email
-              </span>
-            </div>
-          </div>
-            <form onSubmit={handleEmailSignIn}>
-              <div className="grid gap-2">
-                <Label htmlFor="email" className="sr-only">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="nom@exemple.com"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  disabled={!!isLoading || emailSent}
-                />
-                <Button type="submit" disabled={!!isLoading || emailSent}>
-                  {isLoading === 'email' && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {emailSent ? 'Lien envoyé!' : 'Envoyer le lien de connexion'}
-                </Button>
-              </div>
-            </form>
         </div>
       </DialogContent>
     </Dialog>
