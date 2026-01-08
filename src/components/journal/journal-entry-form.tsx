@@ -1,7 +1,8 @@
 
 "use client";
 
-import { useEffect, useRef, useState, useActionState, useFormStatus } from "react";
+import { useEffect, useRef, useState, useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { Loader2 } from 'lucide-react';
 import { useAuth, ALMA_USER_ID } from "@/hooks/use-auth";
 import { saveJournalEntry, type FormState } from "@/app/actions";
