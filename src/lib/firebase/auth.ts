@@ -5,7 +5,7 @@ import {
   signOut as firebaseSignOut,
   sendSignInLinkToEmail,
 } from 'firebase/auth';
-import { auth as firebaseAuth } from './config';
+import { auth as firebaseAuth, firebaseConfig } from './config';
 
 const googleProvider = new GoogleAuthProvider();
 
@@ -27,8 +27,11 @@ export async function signOut() {
 }
 
 export async function sendPasswordlessLink(email: string) {
+  // Utiliser le domaine d'authentification autorisé par Firebase
+  const url = `https://${firebaseConfig.authDomain}/dashboard`;
+
   const actionCodeSettings = {
-    url: `${window.location.origin}/dashboard`,
+    url: url,
     handleCodeInApp: true,
   };
   try {
