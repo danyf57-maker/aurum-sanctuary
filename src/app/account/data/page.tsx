@@ -3,13 +3,14 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/hooks/use-auth';
-import { redirect } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { exportUserData, deleteUserAccount } from '@/app/actions/account';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Download, Trash2, Loader2 } from 'lucide-react';
+import { Download, Trash2, Loader2, ShieldAlert } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,7 +32,20 @@ export default function AccountDataPage() {
     }
 
     if (!user) {
-        redirect('/sanctuary/write');
+       return (
+             <div className="container max-w-2xl mx-auto py-20 md:py-28 text-center">
+                 <Alert variant="destructive">
+                    <ShieldAlert className="h-4 w-4" />
+                    <AlertTitle>Accès restreint</AlertTitle>
+                    <AlertDescription>
+                       Vous devez être connecté pour gérer vos données.
+                    </AlertDescription>
+                </Alert>
+                 <Button asChild className="mt-6">
+                    <Link href="/sanctuary/write">Retourner à l'écriture</Link>
+                </Button>
+            </div>
+        );
     }
 
     const handleDownload = async () => {
@@ -134,3 +148,5 @@ export default function AccountDataPage() {
         </div>
     );
 }
+
+    

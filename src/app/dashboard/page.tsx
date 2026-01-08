@@ -3,18 +3,19 @@
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/use-auth';
-import { redirect } from 'next/navigation';
 import { getEntries, getUserProfile } from '@/lib/firebase/firestore';
 import { JournalEntry, UserProfile } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { JournalCard } from '@/components/journal/journal-card';
 import { SentimentChart } from '@/components/journal/sentiment-chart';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Book, Smile, PenSquare } from 'lucide-react';
+import { Book, Smile, PenSquare, ShieldAlert } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { JournalEntryDialog } from '@/components/journal/journal-entry-dialog';
 import { InsightsSection } from '@/components/dashboard/InsightsSection';
 import { useToast } from '@/hooks/use-toast';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
@@ -43,7 +44,8 @@ export default function DashboardPage() {
             return;
         }
         if (!authUser) {
-            redirect('/');
+            setLoading(false); // Pas d'utilisateur, on arrête de charger
+            setData({ entries: [], profile: null });
             return;
         }
 
@@ -67,7 +69,7 @@ export default function DashboardPage() {
     }, [authUser, authLoading, toast]);
 
 
-    if (loading) {
+    if (authLoading || loading) {
         return (
             <div className="container max-w-7xl py-8 md:py-12">
                 <div className="space-y-12">
@@ -87,7 +89,20 @@ export default function DashboardPage() {
     }
     
     if (!authUser || !data) {
-        return null;
+        return (
+             <div className="container max-w-2xl mx-auto py-20 md:py-28 text-center">
+                 <Alert variant="destructive">
+                    <ShieldAlert className="h-4 w-4" />
+                    <AlertTitle>Accès restreint</AlertTitle>
+                    <AlertDescription>
+                       Vous devez être connecté pour accéder à votre tableau de bord.
+                    </AlertDescription>
+                </Alert>
+                <Button asChild className="mt-6">
+                    <Link href="/sanctuary/write">Commencer à écrire</Link>
+                </Button>
+            </div>
+        );
     }
     
     const { entries, profile } = data;
@@ -185,3 +200,5 @@ export default function DashboardPage() {
         </div>
     );
 }
+
+    

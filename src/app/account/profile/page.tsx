@@ -2,16 +2,16 @@
 'use client';
 
 import { useAuth } from '@/hooks/use-auth';
-import { redirect } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
-import { User, Mail, Calendar, Bell, Palette, Moon, Sun, Monitor, CreditCard } from 'lucide-react';
+import { User, Mail, Calendar, Bell, Palette, Moon, Sun, Monitor, CreditCard, ShieldAlert } from 'lucide-react';
 import { createPortalSession } from '@/app/actions/stripe';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
@@ -34,7 +34,20 @@ export default function ProfilePage() {
     }
     
     if (!user) {
-        redirect('/sanctuary/write');
+         return (
+             <div className="container max-w-2xl mx-auto py-20 md:py-28 text-center">
+                 <Alert variant="destructive">
+                    <ShieldAlert className="h-4 w-4" />
+                    <AlertTitle>Accès restreint</AlertTitle>
+                    <AlertDescription>
+                       Vous devez être connecté pour accéder à votre profil.
+                    </AlertDescription>
+                </Alert>
+                <Button asChild className="mt-6">
+                    <Link href="/sanctuary/write">Retourner à l'écriture</Link>
+                </Button>
+            </div>
+        );
     }
 
     const registrationDate = user.metadata.creationTime 
@@ -143,3 +156,5 @@ export default function ProfilePage() {
         </div>
     );
 }
+
+    

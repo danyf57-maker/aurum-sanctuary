@@ -14,9 +14,9 @@ import { useAuth } from '@/hooks/use-auth';
 import { JournalEntry } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import placeholderImages from '@/lib/placeholder-images.json';
-import { PenSquare } from 'lucide-react';
-import { redirect } from 'next/navigation';
+import { PenSquare, ShieldAlert } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 export const dynamic = 'force-dynamic';
 
@@ -36,7 +36,9 @@ function SanctuaryPageContent() {
             return;
         }
         if (!user) {
-            redirect('/');
+            setLoading(false);
+            setEntries([]);
+            setTags([]);
             return;
         }
 
@@ -60,7 +62,7 @@ function SanctuaryPageContent() {
         fetchData();
     }, [user, authLoading, tag, toast]);
 
-    if (loading) {
+    if (loading || authLoading) {
         return (
             <div className="container max-w-7xl py-8 md:py-12">
                 <div className="mb-8 flex justify-between items-center">
@@ -76,8 +78,21 @@ function SanctuaryPageContent() {
         );
     }
     
-    if (!user || !entries) {
-        return null;
+    if (!user) {
+        return (
+             <div className="container max-w-2xl mx-auto py-20 md:py-28 text-center">
+                 <Alert variant="destructive">
+                    <ShieldAlert className="h-4 w-4" />
+                    <AlertTitle>Accès restreint</AlertTitle>
+                    <AlertDescription>
+                       Vous devez être connecté pour voir votre historique.
+                    </AlertDescription>
+                </Alert>
+                 <Button asChild className="mt-6">
+                    <Link href="/sanctuary/write">Commencer à écrire</Link>
+                </Button>
+            </div>
+        )
     }
 
     return (
@@ -97,7 +112,7 @@ function SanctuaryPageContent() {
                 </div>
             </header>
 
-            {entries.length > 0 ? (
+            {entries && entries.length > 0 ? (
                 <div className="space-y-12">
                     <div className="animate-fade-in" style={{ animationDelay: '150ms' }}><SentimentChart entries={entries} /></div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -137,3 +152,5 @@ export default function SanctuaryPage() {
         </Suspense>
     )
 }
+
+    
