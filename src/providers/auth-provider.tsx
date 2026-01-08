@@ -2,18 +2,43 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
+import { onAuthStateChanged, getRedirectResult, User as FirebaseUser } from 'firebase/auth';
 import { auth as firebaseAuth, db } from '@/lib/firebase/config';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { AuthContext, CustomFirebaseUser, ALMA_USER_ID, ALMA_EMAIL } from '@/contexts/auth-context';
+import { useToast } from '@/hooks/use-toast';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<(CustomFirebaseUser & { uid: string }) | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const { toast } = useToast();
 
   useEffect(() => {
+    const handleRedirectResult = async () => {
+      try {
+        const result = await getRedirectResult(firebaseAuth);
+        if (result) {
+           toast({
+              title: "Connexion réussie",
+              description: "Bienvenue sur Aurum.",
+            });
+        }
+      } catch (error: any) {
+        console.error("Erreur lors de la redirection Google:", error);
+        toast({
+          title: "Erreur de connexion",
+          description: "Impossible de se connecter avec Google.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    handleRedirectResult();
+
     const unsubscribe = onAuthStateChanged(firebaseAuth, async (firebaseUser) => {
       if (firebaseUser) {
         const isAlma = firebaseUser.email === ALMA_EMAIL;
@@ -54,11 +79,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } else {
         setUser(null);
       }
-      setLoading(false);
+      // On ne met plus setLoading(false) ici pour attendre getRedirectResult
     });
 
     return () => unsubscribe();
-  }, [router]);
+  }, [router, toast]);
   
   useEffect(() => {
     if (typeof window === 'undefined') return;

@@ -1,7 +1,7 @@
 
 import {
   GoogleAuthProvider,
-  signInWithPopup,
+  signInWithRedirect,
   signOut as firebaseSignOut,
 } from 'firebase/auth';
 import { auth as firebaseAuth } from './config';
@@ -10,8 +10,10 @@ const googleProvider = new GoogleAuthProvider();
 
 export async function signInWithGoogle() {
   try {
-    const result = await signInWithPopup(firebaseAuth, googleProvider);
-    return { user: result.user };
+    // signInWithRedirect ne retourne pas de résultat directement.
+    // La gestion de l'utilisateur se fait via onAuthStateChanged après la redirection.
+    await signInWithRedirect(firebaseAuth, googleProvider);
+    return {}; // Pas d'utilisateur à retourner ici
   } catch (error: any) {
     return { error: error.message };
   }

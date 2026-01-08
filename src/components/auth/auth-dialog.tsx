@@ -42,10 +42,10 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
         description: error,
         variant: 'destructive',
       });
-    } else {
-      onOpenChange(false);
-    }
-    setIsLoading(false);
+       setIsLoading(false);
+    } 
+    // Avec signInWithRedirect, la page va recharger. Pas besoin de fermer le dialogue ici.
+    // onOpenChange(false);
   };
 
   return (
