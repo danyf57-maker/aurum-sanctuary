@@ -1,8 +1,7 @@
 
 "use client";
 
-import { useEffect, useRef, useState, useActionState } from "react";
-import { useFormStatus } from "react-dom";
+import { useEffect, useRef, useState } from "react";
 import { Loader2 } from 'lucide-react';
 import { useAuth, ALMA_USER_ID } from "@/hooks/use-auth";
 import { saveJournalEntry, type FormState } from "@/app/actions";
@@ -14,11 +13,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { AuthDialog } from "@/components/auth/auth-dialog";
 
-function SubmitButton() {
-  const { pending } = useFormStatus();
+function SubmitButton({ isSubmitting }: { isSubmitting: boolean }) {
   return (
-    <Button type="submit" disabled={pending} className="w-full sm:w-auto bg-stone-600 text-white hover:bg-stone-700">
-      {pending ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Analyse en cours...</> : "Sauvegarder au Sanctuaire"}
+    <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto bg-stone-600 text-white hover:bg-stone-700">
+      {isSubmitting ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Analyse en cours...</> : "Sauvegarder au Sanctuaire"}
     </Button>
   );
 }
@@ -28,59 +26,48 @@ interface JournalEntryFormProps {
 }
 
 export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
-  const initialState: FormState = { message: "", errors: {} };
-  
-  const formAction = async (prevState: FormState, formData: FormData): Promise<FormState> => {
-    const result = await saveJournalEntry(prevState, formData);
-    if (result && !result.errors && !result.message) {
-        if(onSave) onSave();
-        if(formRef.current) formRef.current.reset();
-        if(textareaRef.current) {
-            textareaRef.current.style.height = 'auto';
-        }
-        toast({
-          title: "Entrée enregistrée",
-          description: state?.isFirstEntry 
-            ? "Félicitations pour votre première entrée ! Bienvenue dans votre sanctuaire."
-            : "Votre pensée a été préservée en toute sécurité.",
-        });
-    }
-    return result || { message: "Une erreur inattendue est survenue."};
-  };
-
-  const [state, dispatch] = useActionState(formAction, initialState);
   const { user } = useAuth();
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
-  const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-  useEffect(() => {
-    if (state?.message) {
-      toast({
-        title: "Impossible d'enregistrer l'entrée",
-        description: state.message,
-        variant: "destructive",
-      });
-    } else if (state?.errors) {
-        const errorMsg = state.errors.content?.[0] || state.errors.userId?.[0] || "Une erreur est survenue.";
-         toast({
-            title: "Erreur de validation",
-            description: errorMsg,
-            variant: "destructive",
-        });
-    }
-  }, [state, toast]);
   
-  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
+
+  const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!user) {
       setIsAuthDialogOpen(true);
       return;
     }
+
+    setIsSubmitting(true);
     const formData = new FormData(event.currentTarget);
-    formData.set("userId", user.uid);
-    dispatch(formData);
+    
+    // Server action expects a "previous state" argument, even if we don't use it here.
+    const result: FormState = await saveJournalEntry({} as FormState, formData);
+    setIsSubmitting(false);
+
+    if (result && !result.errors && !result.message) {
+      if(onSave) onSave();
+      if(formRef.current) formRef.current.reset();
+      if(textareaRef.current) {
+          textareaRef.current.style.height = 'auto';
+      }
+      toast({
+        title: "Entrée enregistrée",
+        description: result.isFirstEntry 
+          ? "Félicitations pour votre première entrée ! Bienvenue dans votre sanctuaire."
+          : "Votre pensée a été préservée en toute sécurité.",
+      });
+    } else {
+       const errorMsg = result.errors?.content?.[0] || result.errors?.userId?.[0] || result.message || "Une erreur est survenue.";
+       toast({
+          title: "Erreur de validation",
+          description: errorMsg,
+          variant: "destructive",
+      });
+    }
   };
   
   useEffect(() => {
@@ -113,11 +100,6 @@ export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
           required
           onInput={handleInput}
         />
-        {state?.errors?.content && (
-          <p className="text-sm font-medium text-destructive mt-2">
-            {state.errors.content[0]}
-          </p>
-        )}
       </div>
       <div className="space-y-4 opacity-80 focus-within:opacity-100 transition-opacity">
         <div>
@@ -139,7 +121,7 @@ export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
         )}
       </div>
       <div className="flex justify-end">
-        <SubmitButton />
+        <SubmitButton isSubmitting={isSubmitting} />
       </div>
     </form>
     <AuthDialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen} />
