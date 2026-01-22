@@ -101,7 +101,7 @@ export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
 
   return (
     <>
-    <form ref={formRef} action={dispatch} onSubmit={handleFormSubmit} className="w-full max-w-2xl mx-auto space-y-8">
+    <form ref={formRef} onSubmit={handleFormSubmit} className="w-full max-w-2xl mx-auto space-y-8">
       <input type="hidden" name="userId" value={user?.uid ?? ''} />
       <div>
         <Textarea
