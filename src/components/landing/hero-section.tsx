@@ -39,8 +39,8 @@ export function HeroSection() {
 
   return (
     <>
-      <section className="relative bg-background">
-        <div className="flex flex-col min-h-screen text-foreground">
+      <section className="relative">
+        <div className="flex flex-col min-h-screen">
             <header className="absolute top-0 left-0 right-0 z-10 p-8">
                 <Link href="/" aria-label="Accueil d'Aurum">
                     <Logo className="h-6 w-6 text-amber-600" />
