@@ -5,8 +5,7 @@ import Link from 'next/link';
 import { ChevronDown } from 'lucide-react';
 import { AuthDialog } from '@/components/auth/auth-dialog';
 import { Button } from '@/components/ui/button';
-import Image from 'next/image';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 const Logo = (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props}>
@@ -18,43 +17,10 @@ const Logo = (props: React.SVGProps<SVGSVGElement>) => (
 export function HeroSection() {
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
 
-  const { scrollY } = useScroll();
-  // L'animation se produit sur les 500 premiers pixels de défilement
-  const gifOpacity = useTransform(scrollY, [0, 500], [0, 1]);
-  const imageOpacity = useTransform(scrollY, [0, 500], [1, 0]);
-
   return (
     <>
-      <section className="relative flex flex-col items-center justify-center h-[120vh] text-white">
+      <section className="relative flex flex-col items-center justify-center min-h-screen bg-background text-foreground">
         
-        {/* Arrière-plan Parallaxe */}
-        <div className="absolute inset-0 overflow-hidden">
-          {/* Image Statique */}
-           <motion.div className="absolute inset-0" style={{ opacity: imageOpacity }}>
-              <Image
-                src="https://uqqrrojzftyagzvwgzsc.supabase.co/storage/v1/object/public/Image1/imagelivre1.png"
-                alt="Un livre ouvert sur une table en bois"
-                fill
-                className="object-cover"
-                priority
-              />
-          </motion.div>
-          
-          {/* GIF Animé */}
-          <motion.div className="absolute inset-0" style={{ opacity: gifOpacity }}>
-            <Image
-              src="https://uqqrrojzftyagzvwgzsc.supabase.co/storage/v1/object/public/public-assets/Image%20paralaxe1.webp"
-              alt="Animation d'un livre dont les pages tournent"
-              fill
-              className="object-cover"
-              unoptimized
-            />
-          </motion.div>
-          
-          {/* Superposition Sombre */}
-          <div className="absolute inset-0 bg-black/50"></div>
-        </div>
-
         {/* Header */}
         <header className="absolute top-0 left-0 right-0 z-10 p-8">
             <Link href="/" aria-label="Accueil d'Aurum">
@@ -64,7 +30,10 @@ export function HeroSection() {
         
         {/* Contenu principal */}
         <div className="relative z-10 px-4 text-center">
-            <div
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
                 className="flex flex-col items-center"
             >
                 <div
@@ -76,13 +45,13 @@ export function HeroSection() {
                 Le Sanctuaire
                 </h1>
                 <h2
-                className="text-4xl md:text-5xl font-headline text-white/80 leading-tight mt-2"
+                className="text-4xl md:text-5xl font-headline text-foreground/80 leading-tight mt-2"
                 >
                 Le silence qui vous écoute.
                 </h2>
 
                 <p
-                className="mt-6 text-lg text-white/80 max-w-2xl mx-auto"
+                className="mt-6 text-lg text-muted-foreground max-w-2xl mx-auto"
                 >
                 Un espace intime pour déposer ce qui vous traverse.
                 <br />
@@ -101,17 +70,16 @@ export function HeroSection() {
                     asChild
                     size="lg"
                     variant="outline"
-                    className="bg-transparent border-white/50 text-white hover:bg-white/10 hover:border-white"
                 >
                     <Link href="/sanctuary/write">Essayer sans compte</Link>
                 </Button>
                 </div>
-            </div>
+            </motion.div>
         </div>
          {/* Chevron */}
         <div className="absolute bottom-10 z-10">
             <a href="#manifesto" aria-label="Scroll down">
-                <ChevronDown className="h-6 w-6 text-white/70" />
+                <ChevronDown className="h-6 w-6 text-muted-foreground" />
             </a>
         </div>
       </section>
