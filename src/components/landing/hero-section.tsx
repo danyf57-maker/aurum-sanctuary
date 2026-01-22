@@ -19,17 +19,29 @@ export function HeroSection() {
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
   const { scrollY } = useScroll();
   
-  // Animate from opacity 0 to 1 between 0 and 500 pixels scrolled
+  // Cross-fade animation for the images
   const gifOpacity = useTransform(scrollY, [0, 500], [0, 1]);
-  // Animate from opacity 1 to 0 between 0 and 500 pixels scrolled
   const imageOpacity = useTransform(scrollY, [0, 500], [1, 0]);
+  
+  // Parallax & scale animations for background
+  const backgroundY = useTransform(scrollY, [0, 1200], [0, 150]);
+  const backgroundScale = useTransform(scrollY, [0, 1200], [1, 1.1]);
+
+  // Fade out animation for foreground content
+  const textOpacity = useTransform(scrollY, [0, 400], [1, 0]);
 
   return (
     <>
-      <section className="relative flex items-center justify-center h-[120vh] text-white">
+      <section className="relative flex items-center justify-center h-[120vh] text-white overflow-hidden">
         
         {/* Background images container */}
-        <div className="absolute inset-0 z-0 overflow-hidden">
+        <motion.div 
+            className="absolute inset-0 z-0"
+            style={{ 
+                y: backgroundY,
+                scale: backgroundScale,
+            }}
+        >
             {/* Static Image */}
              <motion.div 
               className="absolute inset-0"
@@ -59,7 +71,7 @@ export function HeroSection() {
 
              {/* Dark overlay */}
             <div className="absolute inset-0 bg-black/50"></div>
-        </div>
+        </motion.div>
 
         {/* Header */}
         <header className="absolute top-0 left-0 right-0 z-20 p-8">
@@ -69,7 +81,10 @@ export function HeroSection() {
         </header>
         
         {/* Main Content */}
-        <div className="relative z-10 px-4 text-center">
+        <motion.div 
+            className="relative z-10 px-4 text-center"
+            style={{ opacity: textOpacity }}
+        >
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -117,13 +132,16 @@ export function HeroSection() {
                 </Button>
                 </div>
             </motion.div>
-        </div>
+        </motion.div>
          {/* Chevron */}
-        <div className="absolute bottom-10 z-10">
+        <motion.div 
+            className="absolute bottom-10 z-10"
+            style={{ opacity: textOpacity }}
+        >
             <a href="#manifesto" aria-label="Scroll down">
                 <ChevronDown className="h-6 w-6 text-white/70" />
             </a>
-        </div>
+        </motion.div>
       </section>
       <AuthDialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen} />
     </>
