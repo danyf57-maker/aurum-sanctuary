@@ -11,7 +11,7 @@ import { useAuth, ALMA_USER_ID } from '@/hooks/use-auth';
 
 const Logo = (props: React.SVGProps<SVGSVGElement>) => (
      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props}>
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2Zm-1.93 5.54c1.47-1.12 3.4-1.33 5.05-.53 1.5.71 2.55 2.19 2.85 3.86.32 1.83-.35 3.68-1.5 4.9-1.28 1.34-3.21 1.9-5.01 1.45-1.57-.39-2.92-1.42-3.69-2.88-.08-.16-.14-.32-.2-.48-.42-1.09-.59-2.3-.49-3.51.11-1.3.57-2.54 1.34-3.58.12-.16-.25-.31.39-.46.33-.35.7-.66 1.1-.91v.02zM12 17.5c-3.03 0-5.5-2.47-5.5-5.5s2.47-5.5 5.5-5.5 5.5 2.47 5.5 5.5-2.47 5.5-5.5 5.5z"/>
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2Zm-1.93 5.54c1.47-1.12 3.4-1.33 5.05-.53 1.5.71 2.55 2.19 2.85 3.86.32 1.83-.35 3.68-1.5 4.9-1.28 1.34-3.21 1.9-5.01 1.45-1.57-.39-2.92-1.42-3.69-2.88-.08-.16-.14-.32-.2-.48-.42-1.09-.59-2.3-.49-3.51.11-1.3.57-2.54 1.34-3.58.12-.16.25-.31.39-.46.33-.35.7-.66 1.1-.91v.02zM12 17.5c-3.03 0-5.5-2.47-5.5-5.5s2.47-5.5 5.5-5.5 5.5 2.47 5.5 5.5-2.47 5.5-5.5 5.5z"/>
     </svg>
 )
 
@@ -44,13 +44,13 @@ export function MobileNav() {
           <div className="my-4 h-[calc(100vh-8rem)] pb-10 pl-6">
             <div className="flex flex-col space-y-3">
               <MobileLink href="/dashboard" onOpenChange={setOpen} active={pathname === '/dashboard'}>
-                Mon Sanctuaire
+                Tableau de Bord
               </MobileLink>
                <MobileLink href="/sanctuary" onOpenChange={setOpen} active={pathname.startsWith('/sanctuary')}>
-                Historique
+                Journal
               </MobileLink>
               <MobileLink href="/sanctuary/write" onOpenChange={setOpen} active={pathname === '/sanctuary/write'}>
-                Mon Journal
+                Écrire
               </MobileLink>
               <MobileLink href="/blog" onOpenChange={setOpen} active={pathname.startsWith('/blog')}>
                 Blog
