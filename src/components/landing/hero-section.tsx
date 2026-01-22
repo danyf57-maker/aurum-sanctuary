@@ -6,6 +6,7 @@ import { ChevronDown } from 'lucide-react';
 import { AuthDialog } from '@/components/auth/auth-dialog';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
+import { motion, useScroll, useTransform } from 'framer-motion';
 
 const Logo = (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props}>
@@ -17,34 +18,51 @@ const Logo = (props: React.SVGProps<SVGSVGElement>) => (
 export function HeroSection() {
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
 
+  const { scrollY } = useScroll();
+  // L'animation se produit sur les 300 premiers pixels de défilement
+  const gifOpacity = useTransform(scrollY, [0, 300], [0, 1]);
+  const imageOpacity = useTransform(scrollY, [0, 300], [1, 0]);
+
   return (
     <>
       <section className="relative flex flex-col items-center justify-center min-h-screen text-white">
         
-        {/* Arrière-plan Parallaxe - Correction du z-index */}
+        {/* Arrière-plan Parallaxe */}
         <div className="absolute inset-0 overflow-hidden">
           {/* Image Statique */}
-          <Image
-            src="https://uqqrrojzftyagzvwgzsc.supabase.co/storage/v1/object/public/Image1/imagelivre1.png"
-            alt="Un livre ouvert sur une table en bois"
-            fill
-            className="object-cover"
-            priority
-          />
-          {/* Le GIF sera ré-intégré une fois que l'image statique fonctionnera */}
+           <motion.div className="absolute inset-0" style={{ opacity: imageOpacity }}>
+              <Image
+                src="https://uqqrrojzftyagzvwgzsc.supabase.co/storage/v1/object/public/Image1/imagelivre1.png"
+                alt="Un livre ouvert sur une table en bois"
+                fill
+                className="object-cover"
+                priority
+              />
+          </motion.div>
+          
+          {/* GIF Animé */}
+          <motion.div className="absolute inset-0" style={{ opacity: gifOpacity }}>
+            <Image
+              src="https://uqqrrojzftyagzvwgzsc.supabase.co/storage/v1/object/public/public-assets/Image%20paralaxe1.webp"
+              alt="Animation d'un livre dont les pages tournent"
+              fill
+              className="object-cover"
+              unoptimized
+            />
+          </motion.div>
           
           {/* Superposition Sombre */}
           <div className="absolute inset-0 bg-black/50"></div>
         </div>
 
-        {/* Header - Ajout de z-10 pour être au-dessus de l'arrière-plan */}
+        {/* Header */}
         <header className="absolute top-0 left-0 right-0 z-10 p-8">
             <Link href="/" aria-label="Accueil d'Aurum">
                 <Logo className="h-6 w-6 text-amber-600" />
             </Link>
         </header>
         
-        {/* Contenu principal - Ajout de z-10 */}
+        {/* Contenu principal */}
         <div className="relative z-10 px-4 text-center">
             <div
                 className="flex flex-col items-center"
@@ -90,7 +108,7 @@ export function HeroSection() {
                 </div>
             </div>
         </div>
-         {/* Chevron - Ajout de z-10 */}
+         {/* Chevron */}
         <div className="absolute bottom-10 z-10">
             <a href="#manifesto" aria-label="Scroll down">
                 <ChevronDown className="h-6 w-6 text-white/70" />
