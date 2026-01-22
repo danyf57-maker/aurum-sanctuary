@@ -2,10 +2,11 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ChevronDown } from 'lucide-react';
 import { AuthDialog } from '@/components/auth/auth-dialog';
 import { Button } from '@/components/ui/button';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 
 const Logo = (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props}>
@@ -16,19 +17,58 @@ const Logo = (props: React.SVGProps<SVGSVGElement>) => (
 
 export function HeroSection() {
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
+  const { scrollY } = useScroll();
+  
+  // Animate from opacity 0 to 1 between 0 and 500 pixels scrolled
+  const gifOpacity = useTransform(scrollY, [0, 500], [0, 1]);
+  // Animate from opacity 1 to 0 between 0 and 500 pixels scrolled
+  const imageOpacity = useTransform(scrollY, [0, 500], [1, 0]);
 
   return (
     <>
-      <section className="relative flex flex-col items-center justify-center min-h-screen bg-background text-foreground">
+      <section className="relative flex items-center justify-center h-[120vh] text-white">
         
+        {/* Background images container */}
+        <div className="absolute inset-0 z-0 overflow-hidden">
+            {/* Static Image */}
+             <motion.div 
+              className="absolute inset-0"
+              style={{ opacity: imageOpacity }}
+             >
+                <Image
+                    src="https://uqqrrojzftyagzvwgzsc.supabase.co/storage/v1/object/public/Image1/imagelivre1.png"
+                    alt="Sanctuaire paisible"
+                    fill
+                    className="object-cover"
+                    priority
+                />
+            </motion.div>
+
+            {/* GIF that fades in */}
+            <motion.div 
+             className="absolute inset-0"
+             style={{ opacity: gifOpacity }}
+            >
+                <Image
+                    src="https://uqqrrojzftyagzvwgzsc.supabase.co/storage/v1/object/public/public-assets/Image%20paralaxe1.webp"
+                    alt="Animation de sanctuaire"
+                    fill
+                    className="object-cover"
+                />
+            </motion.div>
+
+             {/* Dark overlay */}
+            <div className="absolute inset-0 bg-black/50"></div>
+        </div>
+
         {/* Header */}
-        <header className="absolute top-0 left-0 right-0 z-10 p-8">
+        <header className="absolute top-0 left-0 right-0 z-20 p-8">
             <Link href="/" aria-label="Accueil d'Aurum">
-                <Logo className="h-6 w-6 text-amber-600" />
+                <Logo className="h-6 w-6 text-amber-500" />
             </Link>
         </header>
         
-        {/* Contenu principal */}
+        {/* Main Content */}
         <div className="relative z-10 px-4 text-center">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -40,18 +80,18 @@ export function HeroSection() {
                 className="w-16 h-0.5 bg-primary mx-auto mb-6"
                 />
                 <h1
-                className="text-5xl md:text-6xl font-headline italic leading-tight"
+                className="text-5xl md:text-6xl font-headline italic leading-tight text-white"
                 >
                 Le Sanctuaire
                 </h1>
                 <h2
-                className="text-4xl md:text-5xl font-headline text-foreground/80 leading-tight mt-2"
+                className="text-4xl md:text-5xl font-headline text-white/80 leading-tight mt-2"
                 >
                 Le silence qui vous écoute.
                 </h2>
 
                 <p
-                className="mt-6 text-lg text-muted-foreground max-w-2xl mx-auto"
+                className="mt-6 text-lg text-white/80 max-w-2xl mx-auto"
                 >
                 Un espace intime pour déposer ce qui vous traverse.
                 <br />
@@ -63,6 +103,7 @@ export function HeroSection() {
                 <Button
                     size="lg"
                     onClick={() => setIsAuthDialogOpen(true)}
+                    className="bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 text-white"
                 >
                     Ouvrir mon sanctuaire
                 </Button>
@@ -70,6 +111,7 @@ export function HeroSection() {
                     asChild
                     size="lg"
                     variant="outline"
+                    className="bg-transparent border-white/50 text-white hover:bg-white/10 hover:text-white"
                 >
                     <Link href="/sanctuary/write">Essayer sans compte</Link>
                 </Button>
@@ -79,7 +121,7 @@ export function HeroSection() {
          {/* Chevron */}
         <div className="absolute bottom-10 z-10">
             <a href="#manifesto" aria-label="Scroll down">
-                <ChevronDown className="h-6 w-6 text-muted-foreground" />
+                <ChevronDown className="h-6 w-6 text-white/70" />
             </a>
         </div>
       </section>
