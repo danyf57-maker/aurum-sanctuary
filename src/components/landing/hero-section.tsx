@@ -19,13 +19,13 @@ export function HeroSection() {
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
 
   const { scrollY } = useScroll();
-  // L'animation se produit sur les 300 premiers pixels de défilement
-  const gifOpacity = useTransform(scrollY, [0, 300], [0, 1]);
-  const imageOpacity = useTransform(scrollY, [0, 300], [1, 0]);
+  // L'animation se produit sur les 500 premiers pixels de défilement
+  const gifOpacity = useTransform(scrollY, [0, 500], [0, 1]);
+  const imageOpacity = useTransform(scrollY, [0, 500], [1, 0]);
 
   return (
     <>
-      <section className="relative flex flex-col items-center justify-center min-h-screen text-white">
+      <section className="relative flex flex-col items-center justify-center h-[120vh] text-white">
         
         {/* Arrière-plan Parallaxe */}
         <div className="absolute inset-0 overflow-hidden">
