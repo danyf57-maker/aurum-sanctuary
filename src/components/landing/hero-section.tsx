@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { motion, useScroll, useTransform } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import { AuthDialog } from '@/components/auth/auth-dialog';
 import { Button } from '@/components/ui/button';
@@ -15,103 +14,63 @@ const Logo = (props: React.SVGProps<SVGSVGElement>) => (
     </svg>
 )
 
-const fadeIn = (delay = 0, duration = 0.8) => ({
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      delay,
-      duration,
-      ease: "easeOut",
-    },
-  },
-});
-
 export function HeroSection() {
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
-  const { scrollYProgress } = useScroll();
-
-  const staticImageOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
-  const gifOpacity = useTransform(scrollYProgress, [0, 0.2], [0, 1]);
 
   return (
     <>
       <section className="relative flex flex-col items-center justify-center min-h-screen text-white">
         
-        {/* Arrière-plan Parallaxe */}
-        <div className="absolute inset-0 overflow-hidden -z-10">
+        {/* Arrière-plan Parallaxe - Correction du z-index */}
+        <div className="absolute inset-0 overflow-hidden">
           {/* Image Statique */}
-          <motion.div
-            style={{ opacity: staticImageOpacity }}
-            className="absolute inset-0"
-          >
-            <Image
-              src="https://uqqrrojzftyagzvwgzsc.supabase.co/storage/v1/object/public/Image1/imagelivre1.png"
-              alt="Un livre ouvert sur une table en bois"
-              fill
-              className="object-cover"
-              priority
-            />
-          </motion.div>
-          
-          {/* GIF au Défilement */}
-          <motion.div
-            style={{ opacity: gifOpacity }}
-            className="absolute inset-0"
-          >
-            <Image
-              src="https://uqqrrojzftyagzvwgzsc.supabase.co/storage/v1/object/public/public-assets/Image%20paralaxe1.webp"
-              alt="Animation abstraite de particules dorées"
-              fill
-              className="object-cover"
-            />
-          </motion.div>
+          <Image
+            src="https://uqqrrojzftyagzvwgzsc.supabase.co/storage/v1/object/public/Image1/imagelivre1.png"
+            alt="Un livre ouvert sur une table en bois"
+            fill
+            className="object-cover"
+            priority
+          />
+          {/* Le GIF sera ré-intégré une fois que l'image statique fonctionnera */}
           
           {/* Superposition Sombre */}
           <div className="absolute inset-0 bg-black/50"></div>
         </div>
 
+        {/* Header - Ajout de z-10 pour être au-dessus de l'arrière-plan */}
         <header className="absolute top-0 left-0 right-0 z-10 p-8">
             <Link href="/" aria-label="Accueil d'Aurum">
                 <Logo className="h-6 w-6 text-amber-600" />
             </Link>
         </header>
         
-        {/* Contenu principal */}
-        <div className="relative px-4 text-center">
-            <motion.div
-                initial="hidden"
-                animate="visible"
+        {/* Contenu principal - Ajout de z-10 */}
+        <div className="relative z-10 px-4 text-center">
+            <div
                 className="flex flex-col items-center"
             >
-                <motion.div
-                variants={fadeIn(0)}
+                <div
                 className="w-16 h-0.5 bg-primary mx-auto mb-6"
                 />
-                <motion.h1
-                variants={fadeIn(0.2)}
+                <h1
                 className="text-5xl md:text-6xl font-headline italic leading-tight"
                 >
                 Le Sanctuaire
-                </motion.h1>
-                <motion.h2
-                variants={fadeIn(0.3)}
+                </h1>
+                <h2
                 className="text-4xl md:text-5xl font-headline text-white/80 leading-tight mt-2"
                 >
                 Le silence qui vous écoute.
-                </motion.h2>
+                </h2>
 
-                <motion.p
-                variants={fadeIn(0.4)}
+                <p
                 className="mt-6 text-lg text-white/80 max-w-2xl mx-auto"
                 >
                 Un espace intime pour déposer ce qui vous traverse.
                 <br />
                 Sans jugement. Sans bruit. Sans objectif de performance.
-                </motion.p>
-                <motion.div
-                variants={fadeIn(0.6)}
+                </p>
+                <div
                 className="mt-10 flex flex-col sm:flex-row items-center gap-4"
                 >
                 <Button
@@ -128,14 +87,15 @@ export function HeroSection() {
                 >
                     <Link href="/sanctuary/write">Essayer sans compte</Link>
                 </Button>
-                </motion.div>
-            </motion.div>
+                </div>
+            </div>
         </div>
-        <motion.div variants={fadeIn(0.8)} className="absolute bottom-10">
+         {/* Chevron - Ajout de z-10 */}
+        <div className="absolute bottom-10 z-10">
             <a href="#manifesto" aria-label="Scroll down">
                 <ChevronDown className="h-6 w-6 text-white/70" />
             </a>
-        </motion.div>
+        </div>
       </section>
       <AuthDialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen} />
     </>
