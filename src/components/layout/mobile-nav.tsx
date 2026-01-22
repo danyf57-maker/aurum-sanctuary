@@ -1,4 +1,3 @@
-
 'use client';
 
 import * as React from 'react';
@@ -6,7 +5,7 @@ import Link, { LinkProps } from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
 import { useAuth, ALMA_USER_ID } from '@/hooks/use-auth';
 
 const Logo = (props: React.SVGProps<SVGSVGElement>) => (
@@ -33,6 +32,7 @@ export function MobileNav() {
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="pr-0">
+          <SheetTitle className="sr-only">Menu de navigation principal</SheetTitle>
           <MobileLink
             href="/"
             className="flex items-center"
@@ -41,7 +41,7 @@ export function MobileNav() {
             <Logo className="mr-2 h-6 w-6 text-amber-600" />
             <span className="font-bold font-headline">Aurum</span>
           </MobileLink>
-          <div className="my-4 h-[calc(100vh-8rem)] pb-10 pl-6">
+          <div className="my-4 h-[calc(100vh-8rem)] pb-10">
             <div className="flex flex-col space-y-3">
               <MobileLink href="/dashboard" onOpenChange={setOpen} active={pathname === '/dashboard'}>
                 Tableau de Bord
