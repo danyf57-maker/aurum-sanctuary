@@ -2,10 +2,11 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import { AuthDialog } from '@/components/auth/auth-dialog';
 import { Button } from '@/components/ui/button';
+import Image from 'next/image';
 
 const Logo = (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props}>
@@ -29,6 +30,12 @@ const fadeIn = (delay = 0, duration = 0.8) => ({
 
 export function HeroSection() {
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
+  const { scrollYProgress } = useScroll();
+
+  // L'image statique disparaîtra entre 0% et 20% du défilement.
+  const staticImageOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
+  // Le GIF apparaîtra entre 0% et 20% du défilement.
+  const gifOpacity = useTransform(scrollYProgress, [0, 0.2], [0, 1]);
 
   return (
     <>
@@ -39,63 +46,97 @@ export function HeroSection() {
                     <Logo className="h-6 w-6 text-amber-600" />
                 </Link>
             </header>
-            <div className="relative flex flex-col items-center justify-center flex-grow text-center px-4">
-            <motion.div
-                initial="hidden"
-                animate="visible"
-                className="flex flex-col items-center"
-            >
-                <motion.div
-                variants={fadeIn(0)}
-                className="w-16 h-0.5 bg-primary mx-auto mb-6"
-                />
-                <motion.h1
-                variants={fadeIn(0.2)}
-                className="text-5xl md:text-6xl font-headline italic text-foreground leading-tight"
-                >
-                Le Sanctuaire
-                </motion.h1>
-                <motion.h2
-                variants={fadeIn(0.3)}
-                className="text-4xl md:text-5xl font-headline text-muted-foreground leading-tight mt-2"
-                >
-                Le silence qui vous écoute.
-                </motion.h2>
 
-                <motion.p
-                variants={fadeIn(0.4)}
-                className="mt-6 text-lg text-muted-foreground max-w-2xl mx-auto"
-                >
-                Un espace intime pour déposer ce qui vous traverse.
-                <br />
-                Sans jugement. Sans bruit. Sans objectif de performance.
-                </motion.p>
-                <motion.div
-                variants={fadeIn(0.6)}
-                className="mt-10 flex flex-col sm:flex-row items-center gap-4"
-                >
-                <Button
-                    size="lg"
-                    onClick={() => setIsAuthDialogOpen(true)}
-                    className="bg-stone-600 text-white hover:bg-stone-700"
-                >
-                    Ouvrir mon sanctuaire
-                </Button>
-                <Button
-                    asChild
-                    size="lg"
-                    variant="outline"
-                    className="border-stone-300 text-stone-600 bg-transparent hover:text-stone-800"
-                >
-                    <Link href="/sanctuary/write">Essayer sans compte</Link>
-                </Button>
-                </motion.div>
-                <motion.div variants={fadeIn(0.8)} className="absolute bottom-10">
-                <a href="#manifesto" aria-label="Scroll down">
-                    <ChevronDown className="h-6 w-6 text-muted-foreground/70" />
-                </a>
-                </motion.div>
-            </motion.div>
+            {/* Arrière-plan Parallaxe */}
+            <div className="absolute inset-0 overflow-hidden -z-10">
+              {/* Image Statique */}
+              <motion.div
+                style={{ opacity: staticImageOpacity }}
+                className="absolute inset-0"
+              >
+                <Image
+                  src="https://uqqrrojzftyagzvwgzsc.supabase.co/storage/v1/object/public/Image1/imagelivre1.png"
+                  alt="Un livre ouvert sur une table en bois"
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              </motion.div>
+              
+              {/* GIF au Défilement */}
+              <motion.div
+                style={{ opacity: gifOpacity }}
+                className="absolute inset-0"
+              >
+                <Image
+                  src="https://uqqrrojzftyagzvwgzsc.supabase.co/storage/v1/object/public/public-assets/Image%20paralaxe1.webp"
+                  alt="Animation abstraite de particules dorées"
+                  fill
+                  className="object-cover"
+                />
+              </motion.div>
+              
+              {/* Superposition Sombre */}
+              <div className="absolute inset-0 bg-black/50"></div>
+            </div>
+
+
+            <div className="relative flex flex-col items-center justify-center flex-grow text-center px-4 text-white">
+              <motion.div
+                  initial="hidden"
+                  animate="visible"
+                  className="flex flex-col items-center"
+              >
+                  <motion.div
+                  variants={fadeIn(0)}
+                  className="w-16 h-0.5 bg-primary mx-auto mb-6"
+                  />
+                  <motion.h1
+                  variants={fadeIn(0.2)}
+                  className="text-5xl md:text-6xl font-headline italic leading-tight"
+                  >
+                  Le Sanctuaire
+                  </motion.h1>
+                  <motion.h2
+                  variants={fadeIn(0.3)}
+                  className="text-4xl md:text-5xl font-headline text-white/80 leading-tight mt-2"
+                  >
+                  Le silence qui vous écoute.
+                  </motion.h2>
+
+                  <motion.p
+                  variants={fadeIn(0.4)}
+                  className="mt-6 text-lg text-white/80 max-w-2xl mx-auto"
+                  >
+                  Un espace intime pour déposer ce qui vous traverse.
+                  <br />
+                  Sans jugement. Sans bruit. Sans objectif de performance.
+                  </motion.p>
+                  <motion.div
+                  variants={fadeIn(0.6)}
+                  className="mt-10 flex flex-col sm:flex-row items-center gap-4"
+                  >
+                  <Button
+                      size="lg"
+                      onClick={() => setIsAuthDialogOpen(true)}
+                  >
+                      Ouvrir mon sanctuaire
+                  </Button>
+                  <Button
+                      asChild
+                      size="lg"
+                      variant="outline"
+                      className="bg-transparent border-white/50 text-white hover:bg-white/10 hover:border-white"
+                  >
+                      <Link href="/sanctuary/write">Essayer sans compte</Link>
+                  </Button>
+                  </motion.div>
+                  <motion.div variants={fadeIn(0.8)} className="absolute bottom-10">
+                  <a href="#manifesto" aria-label="Scroll down">
+                      <ChevronDown className="h-6 w-6 text-white/70" />
+                  </a>
+                  </motion.div>
+              </motion.div>
             </div>
         </div>
       </section>
