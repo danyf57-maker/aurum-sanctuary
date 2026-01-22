@@ -39,7 +39,7 @@ export default function RootLayout({
   };
   
   return (
-    <html lang="fr">
+    <html lang="fr" suppressHydrationWarning={true}>
        <head>
         <script
             type="application/ld+json"
@@ -54,7 +54,6 @@ export default function RootLayout({
         className={cn(
           "min-h-screen bg-background font-body antialiased"
         )}
-        suppressHydrationWarning={true}
       >
         <AuthProvider>
           <Suspense fallback={null}>
