@@ -33,71 +33,74 @@ export function HeroSection() {
 
   return (
     <>
-      <div className="flex flex-col min-h-screen bg-background text-foreground">
-        <header className="absolute top-0 left-0 right-0 z-10 p-8">
-            <Link href="/" aria-label="Accueil d'Aurum">
-                <Logo className="h-6 w-6 text-foreground" />
-            </Link>
-        </header>
-        <section className="relative flex flex-col items-center justify-center flex-grow text-center px-4">
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            className="flex flex-col items-center"
-          >
+      <section className="parallax-bg relative">
+        <div className="absolute inset-0 bg-black/50 z-0"></div>
+        <div className="relative z-10 flex flex-col min-h-screen text-white">
+            <header className="absolute top-0 left-0 right-0 z-10 p-8">
+                <Link href="/" aria-label="Accueil d'Aurum">
+                    <Logo className="h-6 w-6 text-white" />
+                </Link>
+            </header>
+            <div className="relative flex flex-col items-center justify-center flex-grow text-center px-4">
             <motion.div
-              variants={fadeIn(0)}
-              className="w-16 h-0.5 bg-amber-600 mx-auto mb-6"
-            />
-            <motion.h1
-              variants={fadeIn(0.2)}
-              className="text-5xl md:text-6xl font-headline italic text-stone-700 leading-tight"
+                initial="hidden"
+                animate="visible"
+                className="flex flex-col items-center"
             >
-              Le Sanctuaire
-            </motion.h1>
-             <motion.h2
-              variants={fadeIn(0.3)}
-              className="text-4xl md:text-5xl font-headline text-stone-600 leading-tight mt-2"
-            >
-              Le silence qui vous écoute.
-            </motion.h2>
+                <motion.div
+                variants={fadeIn(0)}
+                className="w-16 h-0.5 bg-amber-400 mx-auto mb-6"
+                />
+                <motion.h1
+                variants={fadeIn(0.2)}
+                className="text-5xl md:text-6xl font-headline italic text-white leading-tight"
+                >
+                Le Sanctuaire
+                </motion.h1>
+                <motion.h2
+                variants={fadeIn(0.3)}
+                className="text-4xl md:text-5xl font-headline text-stone-200 leading-tight mt-2"
+                >
+                Le silence qui vous écoute.
+                </motion.h2>
 
-            <motion.p
-              variants={fadeIn(0.4)}
-              className="mt-6 text-lg text-stone-500 max-w-2xl mx-auto"
-            >
-              Un espace intime pour déposer ce qui vous traverse.
-              <br />
-              Sans jugement. Sans bruit. Sans objectif de performance.
-            </motion.p>
-            <motion.div
-              variants={fadeIn(0.6)}
-              className="mt-10 flex flex-col sm:flex-row items-center gap-4"
-            >
-              <Button
-                size="lg"
-                onClick={() => setIsAuthDialogOpen(true)}
-                className="bg-stone-600 text-white px-8 py-3 rounded-full uppercase text-sm tracking-wide hover:bg-stone-700"
-              >
-                Ouvrir mon sanctuaire
-              </Button>
-              <Button
-                asChild
-                size="lg"
-                variant="outline"
-                className="border-stone-400 text-stone-700 px-8 py-3 rounded-full uppercase text-sm tracking-wide bg-transparent hover:bg-stone-100 hover:text-stone-800"
-              >
-                <Link href="/sanctuary/write">Essayer sans compte</Link>
-              </Button>
+                <motion.p
+                variants={fadeIn(0.4)}
+                className="mt-6 text-lg text-stone-300 max-w-2xl mx-auto"
+                >
+                Un espace intime pour déposer ce qui vous traverse.
+                <br />
+                Sans jugement. Sans bruit. Sans objectif de performance.
+                </motion.p>
+                <motion.div
+                variants={fadeIn(0.6)}
+                className="mt-10 flex flex-col sm:flex-row items-center gap-4"
+                >
+                <Button
+                    size="lg"
+                    onClick={() => setIsAuthDialogOpen(true)}
+                    className="bg-white/90 text-stone-800 px-8 py-3 rounded-full uppercase text-sm tracking-wide hover:bg-white"
+                >
+                    Ouvrir mon sanctuaire
+                </Button>
+                <Button
+                    asChild
+                    size="lg"
+                    variant="outline"
+                    className="border-white/50 text-white px-8 py-3 rounded-full uppercase text-sm tracking-wide bg-transparent hover:bg-white/10 hover:text-white"
+                >
+                    <Link href="/sanctuary/write">Essayer sans compte</Link>
+                </Button>
+                </motion.div>
+                <motion.div variants={fadeIn(0.8)} className="absolute bottom-10">
+                <a href="#manifesto" aria-label="Scroll down">
+                    <ChevronDown className="h-6 w-6 text-white/70" />
+                </a>
+                </motion.div>
             </motion.div>
-            <motion.div variants={fadeIn(0.8)} className="absolute bottom-10">
-              <a href="#manifesto" aria-label="Scroll down">
-                <ChevronDown className="h-6 w-6 text-stone-400" />
-              </a>
-            </motion.div>
-          </motion.div>
-        </section>
-      </div>
+            </div>
+        </div>
+      </section>
       <AuthDialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen} />
     </>
   );
