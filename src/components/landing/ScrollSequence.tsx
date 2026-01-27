@@ -1,12 +1,36 @@
 'use client';
 
-import React, { useRef, useEffect, useState, useCallback } from 'react';
+import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
 const frameCount = 52; // De 000 à 051
 
 const getImagePath = (frame: number) =>
   `/sequence/herosection_000_${String(frame).padStart(3, '0')}.jpg`;
+
+// --- Letter Animation Component ---
+const Letter = ({ char, index, scrollYProgress, destinations }) => {
+  const destination = destinations[index];
+  // As scrollYProgress goes from 0.3 to 0.4, animate x, y, and rotate
+  const x = useTransform(scrollYProgress, [0.3, 0.42], [0, destination.x]);
+  const y = useTransform(scrollYProgress, [0.3, 0.42], [0, destination.y]);
+  const rotate = useTransform(scrollYProgress, [0.3, 0.42], [0, destination.rotate]);
+
+  // The letter is a span that will move based on the transforms
+  return (
+    <motion.span
+      style={{
+        display: 'inline-block',
+        x,
+        y,
+        rotate,
+      }}
+    >
+      {char === ' ' ? '\u00A0' : char}
+    </motion.span>
+  );
+};
+
 
 const ScrollSequence = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -15,6 +39,7 @@ const ScrollSequence = () => {
   const [images, setImages] = useState<HTMLImageElement[]>([]);
   const [isAnimationReady, setIsAnimationReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
@@ -26,14 +51,32 @@ const ScrollSequence = () => {
     return () => window.removeEventListener('resize', updateSize);
   }, []);
 
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ['start start', 'end end'],
   });
 
+  // --- Text Animations ---
+  const textToAnimate = "L'endroit où vos mots se posent.";
+
+  // Memoize random destinations for each letter to ensure they are stable
+  const letterDestinations = useMemo(() => {
+    return Array.from(textToAnimate).map(() => ({
+      x: (Math.random() - 0.5) * 700,
+      y: (Math.random() - 0.5) * 500,
+      rotate: (Math.random() - 0.5) * 540,
+    }));
+  }, []);
+
   const opacityHero = useTransform(scrollYProgress, [0, 0.1, 0.15], [1, 1, 0]);
-  const yParallax = useTransform(scrollYProgress, [0.08, 0.4], ["10vh", "-15vh"]);
-  const opacityParallax = useTransform(scrollYProgress, [0.08, 0.15, 0.35, 0.4], [0, 0.9, 0.9, 0]);
+  const yParallax = useTransform(scrollYProgress, [0.08, 0.4], ['10vh', '-15vh']);
+  const opacityParallax = useTransform(
+    scrollYProgress,
+    [0.08, 0.15, 0.35, 0.4],
+    [0, 0.9, 0.9, 0]
+  );
+  
 
   const drawImage = useCallback((img: HTMLImageElement) => {
     const canvas = canvasRef.current;
@@ -52,7 +95,7 @@ const ScrollSequence = () => {
   }, []);
 
   useEffect(() => {
-    if (canvasSize.width === 0 || canvasSize.height === 0) return;
+    if (canvasSize.width === 0 || canvasSize.height === 0 || images.length > 0) return;
 
     let isCancelled = false;
 
@@ -63,6 +106,7 @@ const ScrollSequence = () => {
         await firstImage.decode();
         if (isCancelled) return;
         drawImage(firstImage);
+        setIsAnimationReady(true); // Show first frame immediately
 
         const allImagePromises = Array.from({ length: frameCount }, (_, i) => {
           return new Promise<HTMLImageElement>((resolve, reject) => {
@@ -78,7 +122,6 @@ const ScrollSequence = () => {
         if (isCancelled) return;
 
         setImages(allImages);
-        setIsAnimationReady(true);
       } catch (err: any) {
         console.error("Erreur de chargement d'image:", err.message);
         setError(`Impossible de charger l'image à l'adresse : "${err.message}". Vérifiez que le fichier existe bien dans le dossier "public${err.message}" et que le nom est exact.`);
@@ -90,10 +133,10 @@ const ScrollSequence = () => {
     return () => {
       isCancelled = true;
     };
-  }, [drawImage, canvasSize]);
+  }, [drawImage, canvasSize, images]);
 
   useEffect(() => {
-    if (!isAnimationReady || images.length === 0) return;
+    if (images.length === 0) return;
     
     const unsubscribe = scrollYProgress.on("change", (latest) => {
       const frameIndex = Math.min(
@@ -107,7 +150,7 @@ const ScrollSequence = () => {
     });
 
     return () => unsubscribe();
-  }, [isAnimationReady, images, scrollYProgress, drawImage]);
+  }, [images, scrollYProgress, drawImage]);
 
   return (
     <div ref={containerRef} style={{ height: '800vh', position: 'relative' }}>
@@ -117,6 +160,11 @@ const ScrollSequence = () => {
             <h3 style={{color: '#fca5a5', fontSize: '1.2rem', marginBottom: '1rem', fontWeight: 'bold'}}>Erreur d'animation</h3>
             <p style={{color: '#fed7d7', textAlign: 'left', lineHeight: '1.5' }}>{error}</p>
           </div>
+        </div>
+      )}
+      {!isAnimationReady && !error && (
+         <div style={{ position: 'sticky', top: 0, height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#1c1917', color: 'white', zIndex: 10 }}>
+          {/* First frame will be drawn here on canvas, so no loader needed. */}
         </div>
       )}
       <canvas
@@ -187,8 +235,10 @@ const ScrollSequence = () => {
               color: '#F5F1E8',
             }}
           >
-            <h2 className="font-headline text-4xl text-center">
-              L'endroit où vos mots se posent.
+             <h2 className="font-headline text-4xl text-center flex justify-center flex-wrap" aria-label={textToAnimate}>
+                {textToAnimate.split('').map((char, i) => (
+                  <Letter key={i} char={char} index={i} scrollYProgress={scrollYProgress} destinations={letterDestinations} />
+                ))}
             </h2>
           </motion.div>
       </div>
