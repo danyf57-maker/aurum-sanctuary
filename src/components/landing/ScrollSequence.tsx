@@ -11,10 +11,10 @@ const getImagePath = (frame: number) =>
 // --- Fly-away Letter Animation Component ---
 const FlyAwayLetter = ({ char, index, scrollYProgress, destinations }) => {
   const destination = destinations[index];
-  // As scrollYProgress goes from 0.3 to 0.42, animate x, y, and rotate
-  const x = useTransform(scrollYProgress, [0.3, 0.42], [0, destination.x]);
-  const y = useTransform(scrollYProgress, [0.3, 0.42], [0, destination.y]);
-  const rotate = useTransform(scrollYProgress, [0.3, 0.42], [0, destination.rotate]);
+  // As scrollYProgress goes from 0.48 to 0.55, animate x, y, and rotate
+  const x = useTransform(scrollYProgress, [0.48, 0.55], [0, destination.x]);
+  const y = useTransform(scrollYProgress, [0.48, 0.55], [0, destination.y]);
+  const rotate = useTransform(scrollYProgress, [0.48, 0.55], [0, destination.rotate]);
 
   return (
     <motion.span
@@ -33,10 +33,10 @@ const FlyAwayLetter = ({ char, index, scrollYProgress, destinations }) => {
 // --- Fly-in Letter Animation Component ---
 const FlyInLetter = ({ char, index, scrollYProgress, destinations }) => {
   const destination = destinations[index];
-  // As scrollYProgress goes from 0.5 to 0.62, animate FROM random TO final position
-  const x = useTransform(scrollYProgress, [0.5, 0.62], [destination.x, 0]);
-  const y = useTransform(scrollYProgress, [0.5, 0.62], [destination.y, 0]);
-  const rotate = useTransform(scrollYProgress, [0.5, 0.62], [destination.rotate, 0]);
+  // As scrollYProgress goes from 0.58 to 0.7, animate FROM random TO final position
+  const x = useTransform(scrollYProgress, [0.58, 0.7], [destination.x, 0]);
+  const y = useTransform(scrollYProgress, [0.58, 0.7], [destination.y, 0]);
+  const rotate = useTransform(scrollYProgress, [0.58, 0.7], [destination.rotate, 0]);
 
   return (
     <motion.span
@@ -102,18 +102,18 @@ const ScrollSequence = () => {
   const opacityHero = useTransform(scrollYProgress, [0, 0.1, 0.15], [1, 1, 0]);
 
   // Animation for "L'endroit où vos mots se posent." (Fly Away)
-  const yParallax1 = useTransform(scrollYProgress, [0.2, 0.4], ['10vh', '-15vh']);
+  const yParallax1 = useTransform(scrollYProgress, [0.2, 0.55], ['10vh', '-15vh']);
   const opacityParallax1 = useTransform(
     scrollYProgress,
-    [0.2, 0.22, 0.38, 0.4],
+    [0.2, 0.25, 0.48, 0.55],
     [0, 0.9, 0.9, 0]
   );
 
   // Animation for "Là où vos mots trouvent la lumière." (Fly In)
-  const yParallax2 = useTransform(scrollYProgress, [0.45, 0.65], ['15vh', '-10vh']);
+  const yParallax2 = useTransform(scrollYProgress, [0.58, 0.8], ['15vh', '-10vh']);
   const opacityParallax2 = useTransform(
     scrollYProgress,
-    [0.45, 0.47],
+    [0.58, 0.7],
     [0, 1]
   );
   
