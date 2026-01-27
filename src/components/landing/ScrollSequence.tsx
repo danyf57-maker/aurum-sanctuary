@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
@@ -70,10 +71,10 @@ const ScrollSequence = () => {
   }, []);
 
   const opacityHero = useTransform(scrollYProgress, [0, 0.1, 0.15], [1, 1, 0]);
-  const yParallax = useTransform(scrollYProgress, [0.08, 0.4], ['10vh', '-15vh']);
+  const yParallax = useTransform(scrollYProgress, [0.15, 0.4], ['10vh', '-15vh']);
   const opacityParallax = useTransform(
     scrollYProgress,
-    [0.08, 0.15, 0.35, 0.4],
+    [0.15, 0.22, 0.3, 0.4],
     [0, 0.9, 0.9, 0]
   );
   
