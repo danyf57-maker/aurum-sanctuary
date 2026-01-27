@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
 const frameCount = 52; // De 000 à 051
@@ -11,6 +11,8 @@ const getImagePath = (frame: number) =>
 // --- Fly-away Letter Animation Component ---
 const FlyAwayLetter = ({ char, index, scrollYProgress, destinations }) => {
   const destination = destinations[index];
+  if (!destination) return null; // Guard against missing destination
+
   // As scrollYProgress goes from 0.48 to 0.55, animate x, y, and rotate
   const x = useTransform(scrollYProgress, [0.48, 0.55], [0, destination.x]);
   const y = useTransform(scrollYProgress, [0.48, 0.55], [0, destination.y]);
@@ -25,7 +27,7 @@ const FlyAwayLetter = ({ char, index, scrollYProgress, destinations }) => {
         rotate,
       }}
     >
-      {char === ' ' ? '\u00A0' : char}
+      {char === ' ' ? ' ' : char}
     </motion.span>
   );
 };
@@ -33,6 +35,8 @@ const FlyAwayLetter = ({ char, index, scrollYProgress, destinations }) => {
 // --- Fly-in Letter Animation Component ---
 const FlyInLetter = ({ char, index, scrollYProgress, destinations }) => {
   const destination = destinations[index];
+  if (!destination) return null; // Guard against missing destination
+  
   // As scrollYProgress goes from 0.58 to 0.7, animate FROM random TO final position
   const x = useTransform(scrollYProgress, [0.58, 0.7], [destination.x, 0]);
   const y = useTransform(scrollYProgress, [0.58, 0.7], [destination.y, 0]);
@@ -47,7 +51,7 @@ const FlyInLetter = ({ char, index, scrollYProgress, destinations }) => {
         rotate,
       }}
     >
-      {char === ' ' ? '\u00A0' : char}
+      {char === ' ' ? ' ' : char}
     </motion.span>
   );
 };
@@ -82,30 +86,35 @@ const ScrollSequence = () => {
   const textToAnimate1 = "L'endroit où vos mots se posent.";
   const textToAnimate2 = "Là où vos mots trouvent la lumière.";
 
-  // Memoize random destinations for each letter to ensure they are stable
-  const letterDestinations1 = useMemo(() => {
-    return Array.from(textToAnimate1).map(() => ({
-      x: (Math.random() - 0.5) * 700,
-      y: (Math.random() - 0.5) * 500,
-      rotate: (Math.random() - 0.5) * 540,
-    }));
-  }, [textToAnimate1]);
+  const [letterDestinations1, setLetterDestinations1] = useState<any[]>([]);
+  const [letterDestinations2, setLetterDestinations2] = useState<any[]>([]);
 
-  const letterDestinations2 = useMemo(() => {
-    return Array.from(textToAnimate2).map(() => ({
-      x: (Math.random() - 0.5) * 800,
-      y: (Math.random() - 0.5) * 600,
-      rotate: (Math.random() - 0.5) * 720,
-    }));
-  }, [textToAnimate2]);
+  useEffect(() => {
+    // This effect runs only on the client, after hydration, to prevent mismatch
+    setLetterDestinations1(
+      Array.from(textToAnimate1).map(() => ({
+        x: (Math.random() - 0.5) * 700,
+        y: (Math.random() - 0.5) * 500,
+        rotate: (Math.random() - 0.5) * 540,
+      }))
+    );
+
+    setLetterDestinations2(
+      Array.from(textToAnimate2).map(() => ({
+        x: (Math.random() - 0.5) * 800,
+        y: (Math.random() - 0.5) * 600,
+        rotate: (Math.random() - 0.5) * 720,
+      }))
+    );
+  }, []); // Empty dependency array ensures this runs once on the client
 
   const opacityHero = useTransform(scrollYProgress, [0, 0.1, 0.15], [1, 1, 0]);
 
   // Animation for "L'endroit où vos mots se posent." (Fly Away)
-  const yParallax1 = useTransform(scrollYProgress, [0.2, 0.55], ['10vh', '-15vh']);
+  const yParallax1 = useTransform(scrollYProgress, [0.25, 0.55], ['10vh', '-15vh']);
   const opacityParallax1 = useTransform(
     scrollYProgress,
-    [0.2, 0.25, 0.48, 0.55],
+    [0.25, 0.3, 0.48, 0.55],
     [0, 0.9, 0.9, 0]
   );
 
@@ -113,8 +122,8 @@ const ScrollSequence = () => {
   const yParallax2 = useTransform(scrollYProgress, [0.58, 0.8], ['15vh', '-10vh']);
   const opacityParallax2 = useTransform(
     scrollYProgress,
-    [0.58, 0.7],
-    [0, 1]
+    [0.58, 0.7, 1],
+    [0, 1, 1]
   );
   
 
@@ -276,7 +285,7 @@ const ScrollSequence = () => {
             }}
           >
              <h2 className="font-headline text-6xl text-center flex justify-center flex-wrap" aria-label={textToAnimate1}>
-                {textToAnimate1.split('').map((char, i) => (
+                {letterDestinations1.length > 0 && textToAnimate1.split('').map((char, i) => (
                   <FlyAwayLetter key={i} char={char} index={i} scrollYProgress={scrollYProgress} destinations={letterDestinations1} />
                 ))}
             </h2>
@@ -299,7 +308,7 @@ const ScrollSequence = () => {
             }}
           >
              <h2 className="font-headline text-6xl text-center flex justify-center flex-wrap" aria-label={textToAnimate2}>
-                {textToAnimate2.split('').map((char, i) => (
+                {letterDestinations2.length > 0 && textToAnimate2.split('').map((char, i) => (
                   <FlyInLetter key={i} char={char} index={i} scrollYProgress={scrollYProgress} destinations={letterDestinations2} />
                 ))}
             </h2>
