@@ -19,8 +19,8 @@ export default {
     extend: {
       fontFamily: {
         body: ['Inter', 'sans-serif'],
-        headline: ['Literata', 'serif'],
-        code: ['monospace'],
+        headline: ['Bebas Neue', 'sans-serif'],
+        code: ['Roboto Mono', 'monospace'],
       },
       colors: {
         border: "hsl(var(--border))",
