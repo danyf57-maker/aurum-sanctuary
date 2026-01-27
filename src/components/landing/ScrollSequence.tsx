@@ -201,7 +201,7 @@ const ScrollSequence = () => {
             <h1 className="text-6xl md:text-8xl font-headline font-bold text-white drop-shadow-2xl">
                 Aurum
             </h1>
-            <p className="mt-4 text-xl md:text-2xl text-stone-200 max-w-2xl drop-shadow-xl">
+            <p className="mt-4 text-2xl md:text-3xl text-stone-200 max-w-2xl drop-shadow-xl">
                 Le silence qui vous écoute.
             </p>
           </motion.div>

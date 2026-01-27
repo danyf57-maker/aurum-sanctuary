@@ -54,7 +54,7 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
                 </header>
                 
                 <div 
-                    className="prose prose-stone lg:prose-xl font-body leading-relaxed prose-headings:font-headline"
+                    className="prose prose-lg prose-stone lg:prose-xl font-body leading-relaxed prose-headings:font-headline"
                     dangerouslySetInnerHTML={{ __html: post.content.replace(/\n/g, '<br />') }}
                 />
 
@@ -79,3 +79,4 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
 
 // Ensure prose styles are available. We need to update tailwind config for this.
 // I will also add the official tailwind typography plugin.
+

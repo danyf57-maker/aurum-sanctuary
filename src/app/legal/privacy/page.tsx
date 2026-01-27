@@ -18,7 +18,7 @@ export default function PrivacyPolicyPage() {
           <p className="text-muted-foreground">Dernière mise à jour : 25 juillet 2024</p>
         </header>
 
-        <div className="prose prose-stone lg:prose-lg font-body mx-auto">
+        <div className="prose prose-lg prose-stone font-body mx-auto">
           <p>
             Bienvenue sur Aurum. Votre vie privée est au cœur de nos préoccupations. Cette politique de confidentialité a pour but de vous informer de manière transparente sur la manière dont nous collectons, utilisons et protégeons vos données personnelles, conformément au Règlement Général sur la Protection des Données (RGPD).
           </p>

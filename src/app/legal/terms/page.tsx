@@ -17,7 +17,7 @@ export default function TermsOfServicePage() {
           <p className="text-muted-foreground">Dernière mise à jour : 25 juillet 2024</p>
         </header>
 
-        <div className="prose prose-stone lg:prose-lg font-body mx-auto">
+        <div className="prose prose-lg prose-stone font-body mx-auto">
           <h2>1. Objet du service</h2>
           <p>
             Aurum est une application de journal intime assisté par une intelligence artificielle (IA), conçue comme un outil d'introspection personnelle. Le service est fourni à titre de démonstration et "en l'état", sans garantie de disponibilité ou de performance.
