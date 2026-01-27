@@ -12,11 +12,13 @@ const ScrollSequence = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [images, setImages] = useState<HTMLImageElement[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Préchargement des images
   useEffect(() => {
     const loadImages = async () => {
       setLoading(true);
+      setError(null);
       const imagePromises = Array.from({ length: frameCount }, (_, i) => {
         return new Promise<HTMLImageElement>((resolve, reject) => {
           const img = new Image();
@@ -28,15 +30,15 @@ const ScrollSequence = () => {
 
       try {
         const loadedImages = await Promise.all(imagePromises);
-        // Trier pour s'assurer que l'ordre est correct même si le chargement est asynchrone
         loadedImages.sort((a, b) => {
             const aNum = parseInt(a.src.split('_').pop()?.split('.')[0] || '0');
             const bNum = parseInt(b.src.split('_').pop()?.split('.')[0] || '0');
             return aNum - bNum;
         });
         setImages(loadedImages);
-      } catch (error) {
-        console.error("Erreur de chargement d'une ou plusieurs images:", error);
+      } catch (err) {
+        console.error("Erreur de chargement d'une ou plusieurs images:", err);
+        setError("Une erreur est survenue lors du chargement de la séquence d'images. Veuillez vérifier que les images se trouvent bien dans le dossier `public/images/sequence` et que leurs noms de fichiers sont corrects (ex: I_want_to_1080p_202601271616_000.jpg).");
       } finally {
         setLoading(false);
       }
@@ -53,7 +55,7 @@ const ScrollSequence = () => {
     const { top, height } = container.getBoundingClientRect();
     const scrollableHeight = height - window.innerHeight;
     let scrollFraction = (-top) / scrollableHeight;
-    scrollFraction = Math.min(1, Math.max(0, scrollFraction)); // Clamp between 0 and 1
+    scrollFraction = Math.min(1, Math.max(0, scrollFraction));
 
     const frameIndex = Math.min(
       frameCount - 1,
@@ -68,7 +70,7 @@ const ScrollSequence = () => {
 
     const hRatio = canvas.width / img.width;
     const vRatio = canvas.height / img.height;
-    const ratio = Math.max(hRatio, vRatio); // 'cover' effect
+    const ratio = Math.max(hRatio, vRatio);
     
     const centerX = (canvas.width - img.width * ratio) / 2;
     const centerY = (canvas.height - img.height * ratio) / 2;
@@ -81,7 +83,7 @@ const ScrollSequence = () => {
   // Initialiser le canvas et la taille
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas || loading || images.length === 0) return;
+    if (!canvas || loading || images.length === 0 || error) return;
 
     const context = canvas.getContext('2d');
     if (!context) return;
@@ -95,7 +97,6 @@ const ScrollSequence = () => {
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
     
-    // Dessiner la première image
     const firstImage = images[0];
     if (firstImage) {
         firstImage.onload = () => drawImage();
@@ -106,22 +107,31 @@ const ScrollSequence = () => {
     return () => {
       window.removeEventListener('resize', resizeCanvas);
     };
-  }, [loading, images, drawImage]);
+  }, [loading, images, drawImage, error]);
 
   // Gérer le défilement
   useEffect(() => {
+    if (error) return;
     const onScroll = () => {
         window.requestAnimationFrame(drawImage);
     };
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
-  }, [drawImage]);
+  }, [drawImage, error]);
 
   return (
     <div ref={containerRef} style={{ height: '400vh', position: 'relative' }}>
         {loading && (
             <div style={{ position: 'sticky', top: 0, height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'black', color: 'white' }}>
                 <p>Chargement de la séquence...</p>
+            </div>
+        )}
+        {error && (
+             <div style={{ position: 'sticky', top: 0, height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#1c1917', color: 'white', padding: '2rem', textAlign: 'center', fontFamily: 'monospace' }}>
+                <div style={{ maxWidth: '600px', border: '1px solid #fca5a5', padding: '2rem', borderRadius: '8px', background: 'rgba(153, 27, 27, 0.125)' }}>
+                    <h3 style={{color: '#fca5a5', fontSize: '1.2rem', marginBottom: '1rem', fontWeight: 'bold'}}>Erreur d'animation</h3>
+                    <p style={{color: '#fed7d7', textAlign: 'left', lineHeight: '1.5' }}>{error}</p>
+                </div>
             </div>
         )}
         <canvas
@@ -131,7 +141,7 @@ const ScrollSequence = () => {
             top: 0,
             width: '100%',
             height: '100vh',
-            display: loading ? 'none' : 'block'
+            display: loading || error ? 'none' : 'block'
             }}
         />
     </div>
