@@ -113,8 +113,8 @@ const ScrollSequence = () => {
   const yParallax2 = useTransform(scrollYProgress, [0.45, 0.65], ['15vh', '-10vh']);
   const opacityParallax2 = useTransform(
     scrollYProgress,
-    [0.45, 0.47, 0.63, 0.65],
-    [0, 1, 1, 0]
+    [0.45, 0.47],
+    [0, 1]
   );
   
 
