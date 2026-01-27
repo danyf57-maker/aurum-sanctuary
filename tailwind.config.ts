@@ -19,7 +19,8 @@ export default {
     extend: {
       fontFamily: {
         body: ['Inter', 'sans-serif'],
-        headline: ['Playfair Display', 'serif'],
+        headline: ['Cormorant Garamond', 'serif'],
+        handwriting: ['Dawning of a New Day', 'cursive'],
         code: ['Roboto Mono', 'monospace'],
       },
       colors: {
