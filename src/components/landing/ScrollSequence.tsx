@@ -12,7 +12,6 @@ const getImagePath = (frame: number) =>
 const FlyAwayLetter = ({ char, index, scrollYProgress, destinations }) => {
   const destination = destinations[index];
   
-  // No random values here, just reading from props
   const x = useTransform(scrollYProgress, [0.48, 0.55], [0, destination?.x || 0]);
   const y = useTransform(scrollYProgress, [0.48, 0.55], [0, destination?.y || 0]);
   const rotate = useTransform(scrollYProgress, [0.48, 0.55], [0, destination?.rotate || 0]);
@@ -35,7 +34,6 @@ const FlyAwayLetter = ({ char, index, scrollYProgress, destinations }) => {
 const FlyInLetter = ({ char, index, scrollYProgress, destinations }) => {
   const destination = destinations[index];
 
-  // No random values here
   const x = useTransform(scrollYProgress, [0.58, 0.7], [destination?.x || 0, 0]);
   const y = useTransform(scrollYProgress, [0.58, 0.7], [destination?.y || 0, 0]);
   const rotate = useTransform(scrollYProgress, [0.58, 0.7], [destination?.rotate || 0, 0]);
@@ -67,7 +65,9 @@ const ScrollSequence = () => {
 
   const [letterDestinations1, setLetterDestinations1] = useState<any[]>([]);
   const [letterDestinations2, setLetterDestinations2] = useState<any[]>([]);
-  const [isClient, setIsClient] = useState(false);
+  
+  const textToAnimate1 = "L'endroit où vos mots se posent.";
+  const textToAnimate2 = "Là où vos mots trouvent la lumière.";
 
   useEffect(() => {
     // This runs only on the client, after the initial render.
@@ -94,8 +94,6 @@ const ScrollSequence = () => {
     updateSize();
     window.addEventListener('resize', updateSize);
     
-    setIsClient(true);
-
     return () => window.removeEventListener('resize', updateSize);
   }, []);
 
@@ -106,9 +104,6 @@ const ScrollSequence = () => {
   });
 
   // --- Text Animations ---
-  const textToAnimate1 = "L'endroit où vos mots se posent.";
-  const textToAnimate2 = "Là où vos mots trouvent la lumière.";
-  
   const opacityHero = useTransform(scrollYProgress, [0, 0.1, 0.15], [1, 1, 0]);
 
   const yParallax1 = useTransform(scrollYProgress, [0.25, 0.55], ['10vh', '-15vh']);
@@ -210,7 +205,6 @@ const ScrollSequence = () => {
     justifyContent: 'center',
     alignItems: 'center',
     color: '#F5F1E8',
-    visibility: isClient ? 'visible' : 'hidden', // Use visibility instead of conditional rendering
   } as React.CSSProperties;
 
 
