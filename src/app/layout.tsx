@@ -60,7 +60,7 @@ export default function RootLayout({
           <Suspense fallback={null}>
             <GoogleAnalytics />
           </Suspense>
-          <div className="relative flex min-h-screen flex-col bg-background">
+          <div className="relative flex min-h-screen flex-col bg-background" suppressHydrationWarning={true}>
             <Header />
             <main className="flex-1">{children}</main>
             <Footer />
