@@ -13,31 +13,36 @@ const ScrollSequence = () => {
   const [images, setImages] = useState<HTMLImageElement[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [progress, setProgress] = useState(0);
 
   // Préchargement des images
   useEffect(() => {
     const loadImages = async () => {
       setLoading(true);
       setError(null);
-      const imagePromises = Array.from({ length: frameCount }, (_, i) => {
-        return new Promise<HTMLImageElement>((resolve, reject) => {
-          const img = new Image();
-          const path = getImagePath(i);
-          img.src = path;
-          img.onload = () => resolve(img);
-          img.onerror = () => reject(path); // Rejeter avec le chemin qui a échoué
-        });
-      });
+      setProgress(0);
 
-      try {
-        const loadedImages = await Promise.all(imagePromises);
-        setImages(loadedImages);
-      } catch (failedPath) {
-        console.error("Erreur de chargement de l'image:", failedPath);
-        setError(`Impossible de charger l'image à l'adresse : "${failedPath}". Vérifiez que le fichier existe bien dans le dossier "public${failedPath}" et que le nom est exact (majuscules/minuscules incluses).`);
-      } finally {
-        setLoading(false);
+      const loaded: HTMLImageElement[] = [];
+      for (let i = 0; i < frameCount; i++) {
+        try {
+          const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+            const image = new Image();
+            const path = getImagePath(i);
+            image.src = path;
+            image.onload = () => resolve(image);
+            image.onerror = () => reject(path);
+          });
+          loaded.push(img);
+          setProgress((i + 1) / frameCount); // Mettre à jour la progression
+        } catch (failedPath) {
+          console.error("Erreur de chargement de l'image:", failedPath);
+          setError(`Impossible de charger l'image à l'adresse : "${failedPath}". Vérifiez que le fichier existe bien dans le dossier "public${failedPath}" et que le nom est exact.`);
+          setLoading(false);
+          return;
+        }
       }
+      setImages(loaded);
+      setLoading(false);
     };
 
     loadImages();
@@ -115,7 +120,7 @@ const ScrollSequence = () => {
     <div ref={containerRef} style={{ height: '800vh', position: 'relative' }}>
         {loading && (
             <div style={{ position: 'sticky', top: 0, height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'black', color: 'white' }}>
-                <p>Chargement de la séquence...</p>
+                <p>Chargement de la séquence... {Math.round(progress * 100)}%</p>
             </div>
         )}
         {error && (
