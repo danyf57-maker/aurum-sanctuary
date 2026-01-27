@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useRef, useEffect, useState, useCallback } from 'react';
@@ -22,19 +23,19 @@ const ScrollSequence = () => {
       const imagePromises = Array.from({ length: frameCount }, (_, i) => {
         return new Promise<HTMLImageElement>((resolve, reject) => {
           const img = new Image();
-          img.src = getImagePath(i);
+          const path = getImagePath(i);
+          img.src = path;
           img.onload = () => resolve(img);
-          img.onerror = reject; // En cas d'erreur, la promesse est rejetée.
+          img.onerror = () => reject(path); // Rejeter avec le chemin qui a échoué
         });
       });
 
       try {
-        // Promise.all préserve l'ordre, donc le tri manuel est inutile.
         const loadedImages = await Promise.all(imagePromises);
         setImages(loadedImages);
-      } catch (err) {
-        console.error("Erreur de chargement d'une ou plusieurs images:", err);
-        setError("Une erreur est survenue lors du chargement de la séquence d'images. Veuillez vérifier que les images se trouvent bien dans le dossier `public/images/sequence` et que leurs noms de fichiers sont corrects (ex: I_want_to_1080p_202601271616_000.jpg).");
+      } catch (failedPath) {
+        console.error("Erreur de chargement de l'image:", failedPath);
+        setError(`Impossible de charger l'image à l'adresse : "${failedPath}". Vérifiez que le fichier existe bien dans le dossier "public${failedPath}" et que le nom est exact (majuscules/minuscules incluses).`);
       } finally {
         setLoading(false);
       }
@@ -98,15 +99,18 @@ const ScrollSequence = () => {
 
   // Gérer le défilement
   useEffect(() => {
-    if (error) return; // Ne pas attacher l'écouteur de scroll en cas d'erreur.
+    if (error || loading || images.length === 0) return;
 
     const onScroll = () => {
         window.requestAnimationFrame(drawImage);
     };
     window.addEventListener('scroll', onScroll, { passive: true });
 
+    // Dessiner la première image au cas où il n'y aurait pas de scroll
+    onScroll();
+
     return () => window.removeEventListener('scroll', onScroll);
-  }, [drawImage, error]);
+  }, [drawImage, error, loading, images]);
 
   return (
     <div ref={containerRef} style={{ height: '400vh', position: 'relative' }}>
@@ -117,7 +121,7 @@ const ScrollSequence = () => {
         )}
         {error && (
              <div style={{ position: 'sticky', top: 0, height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#1c1917', color: 'white', padding: '2rem', textAlign: 'center', fontFamily: 'monospace' }}>
-                <div style={{ maxWidth: '600px', border: '1px solid #fca5a5', padding: '2rem', borderRadius: '8px', background: 'rgba(153, 27, 27, 0.125)' }}>
+                <div style={{ maxWidth: '800px', border: '1px solid #fca5a5', padding: '2rem', borderRadius: '8px', background: 'rgba(153, 27, 27, 0.125)' }}>
                     <h3 style={{color: '#fca5a5', fontSize: '1.2rem', marginBottom: '1rem', fontWeight: 'bold'}}>Erreur d'animation</h3>
                     <p style={{color: '#fed7d7', textAlign: 'left', lineHeight: '1.5' }}>{error}</p>
                 </div>
