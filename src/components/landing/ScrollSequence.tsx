@@ -15,53 +15,55 @@ const ScrollSequence = () => {
   const [images, setImages] = useState<HTMLImageElement[]>([]);
   const [isAnimationReady, setIsAnimationReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
 
-  // Framer Motion scroll hook
+  useEffect(() => {
+    const updateSize = () => {
+      setCanvasSize({ width: window.innerWidth, height: window.innerHeight });
+    };
+    updateSize();
+    window.addEventListener('resize', updateSize);
+    return () => window.removeEventListener('resize', updateSize);
+  }, []);
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ['start start', 'end end'],
   });
 
-  // Hero text fades out quickly
   const opacityHero = useTransform(scrollYProgress, [0, 0.1, 0.15], [1, 1, 0]);
-  
-  // Parallax text fades in, moves, then fades out
   const yParallax = useTransform(scrollYProgress, [0.08, 0.4], ["10vh", "-15vh"]);
   const opacityParallax = useTransform(scrollYProgress, [0.08, 0.15, 0.35, 0.4], [0, 0.9, 0.9, 0]);
 
-
-  useEffect(() => {
+  const drawImage = useCallback((img: HTMLImageElement) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const context = canvas.getContext('2d');
     if (!context) return;
+    
+    const hRatio = canvas.width / img.width;
+    const vRatio = canvas.height / img.height;
+    const ratio = Math.max(hRatio, vRatio);
+    const centerX = (canvas.width - img.width * ratio) / 2;
+    const centerY = (canvas.height - img.height * ratio) / 2;
+
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.drawImage(img, 0, 0, img.width, img.height, centerX, centerY, img.width * ratio, img.height * ratio);
+  }, []);
+
+  useEffect(() => {
+    if (canvasSize.width === 0 || canvasSize.height === 0) return;
 
     let isCancelled = false;
 
-    const drawInitialImage = (img: HTMLImageElement) => {
-        if (!canvas) return;
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        const hRatio = canvas.width / img.width;
-        const vRatio = canvas.height / img.height;
-        const ratio = Math.max(hRatio, vRatio);
-        const centerX = (canvas.width - img.width * ratio) / 2;
-        const centerY = (canvas.height - img.height * ratio) / 2;
-        context.clearRect(0, 0, canvas.width, canvas.height);
-        context.drawImage(img, 0, 0, img.width, img.height, centerX, centerY, img.width * ratio, img.height * ratio);
-    };
-    
     const loadImages = async () => {
       try {
-        // Load the first image first to display it quickly
         const firstImage = new Image();
         firstImage.src = getImagePath(0);
         await firstImage.decode();
-
         if (isCancelled) return;
-        drawInitialImage(firstImage);
+        drawImage(firstImage);
 
-        // Preload all other images in the background
         const allImagePromises = Array.from({ length: frameCount }, (_, i) => {
           return new Promise<HTMLImageElement>((resolve, reject) => {
             const img = new Image();
@@ -88,63 +90,24 @@ const ScrollSequence = () => {
     return () => {
       isCancelled = true;
     };
-  }, []);
-
-  const drawImageOnScroll = useCallback(() => {
-    const canvas = canvasRef.current;
-    const container = containerRef.current;
-    if (!canvas || !container || !isAnimationReady || images.length === 0) return;
-
-    const { top, height } = container.getBoundingClientRect();
-    const scrollableHeight = height - window.innerHeight;
-    
-    let scrollFraction = (-top) / scrollableHeight;
-    scrollFraction = Math.min(1, Math.max(0, scrollFraction));
-
-    const frameIndex = Math.min(
-      images.length - 1,
-      Math.floor(scrollFraction * images.length)
-    );
-    
-    const context = canvas.getContext('2d');
-    if (!context) return;
-
-    const img = images[frameIndex];
-    if (!img) return;
-
-    const hRatio = canvas.width / img.width;
-    const vRatio = canvas.height / img.height;
-    const ratio = Math.max(hRatio, vRatio);
-    const centerX = (canvas.width - img.width * ratio) / 2;
-    const centerY = (canvas.height - img.height * ratio) / 2;
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    context.drawImage(img, 0, 0, img.width, img.height, centerX, centerY, img.width * ratio, img.height * ratio);
-  }, [images, isAnimationReady]);
+  }, [drawImage, canvasSize]);
 
   useEffect(() => {
-    if (!isAnimationReady) return;
-
-    const onScroll = () => window.requestAnimationFrame(drawImageOnScroll);
-    const onResize = () => {
-        const canvas = canvasRef.current;
-        if(canvas) {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            drawImageOnScroll();
-        }
-    };
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onResize);
+    if (!isAnimationReady || images.length === 0) return;
     
-    onResize(); // Initial draw on resize setup
+    const unsubscribe = scrollYProgress.on("change", (latest) => {
+      const frameIndex = Math.min(
+        images.length - 1,
+        Math.floor(latest * images.length)
+      );
+      const img = images[frameIndex];
+      if (img) {
+        requestAnimationFrame(() => drawImage(img));
+      }
+    });
 
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onResize);
-    };
-  }, [isAnimationReady, images, drawImageOnScroll]);
-
+    return () => unsubscribe();
+  }, [isAnimationReady, images, scrollYProgress, drawImage]);
 
   return (
     <div ref={containerRef} style={{ height: '800vh', position: 'relative' }}>
@@ -158,6 +121,8 @@ const ScrollSequence = () => {
       )}
       <canvas
         ref={canvasRef}
+        width={canvasSize.width}
+        height={canvasSize.height}
         style={{
           position: 'sticky',
           top: 0,
@@ -201,7 +166,7 @@ const ScrollSequence = () => {
             <h1 className="text-6xl md:text-8xl font-headline font-bold text-white drop-shadow-2xl">
                 Aurum
             </h1>
-            <p className="mt-4 text-2xl md:text-3xl text-stone-200 max-w-2xl drop-shadow-xl">
+            <p className="mt-4 text-3xl md:text-4xl text-stone-200 max-w-2xl drop-shadow-xl">
                 Le silence qui vous écoute.
             </p>
           </motion.div>
