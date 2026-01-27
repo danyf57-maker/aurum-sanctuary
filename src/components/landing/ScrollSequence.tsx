@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
@@ -9,15 +8,36 @@ const frameCount = 52; // De 000 à 051
 const getImagePath = (frame: number) =>
   `/sequence/herosection_000_${String(frame).padStart(3, '0')}.jpg`;
 
-// --- Letter Animation Component ---
-const Letter = ({ char, index, scrollYProgress, destinations }) => {
+// --- Fly-away Letter Animation Component ---
+const FlyAwayLetter = ({ char, index, scrollYProgress, destinations }) => {
   const destination = destinations[index];
-  // As scrollYProgress goes from 0.3 to 0.4, animate x, y, and rotate
+  // As scrollYProgress goes from 0.3 to 0.42, animate x, y, and rotate
   const x = useTransform(scrollYProgress, [0.3, 0.42], [0, destination.x]);
   const y = useTransform(scrollYProgress, [0.3, 0.42], [0, destination.y]);
   const rotate = useTransform(scrollYProgress, [0.3, 0.42], [0, destination.rotate]);
 
-  // The letter is a span that will move based on the transforms
+  return (
+    <motion.span
+      style={{
+        display: 'inline-block',
+        x,
+        y,
+        rotate,
+      }}
+    >
+      {char === ' ' ? '\u00A0' : char}
+    </motion.span>
+  );
+};
+
+// --- Fly-in Letter Animation Component ---
+const FlyInLetter = ({ char, index, scrollYProgress, destinations }) => {
+  const destination = destinations[index];
+  // As scrollYProgress goes from 0.5 to 0.62, animate FROM random TO final position
+  const x = useTransform(scrollYProgress, [0.5, 0.62], [destination.x, 0]);
+  const y = useTransform(scrollYProgress, [0.5, 0.62], [destination.y, 0]);
+  const rotate = useTransform(scrollYProgress, [0.5, 0.62], [destination.rotate, 0]);
+
   return (
     <motion.span
       style={{
@@ -59,23 +79,42 @@ const ScrollSequence = () => {
   });
 
   // --- Text Animations ---
-  const textToAnimate = "L'endroit où vos mots se posent.";
+  const textToAnimate1 = "L'endroit où vos mots se posent.";
+  const textToAnimate2 = "Là où vos mots trouvent la lumière.";
 
   // Memoize random destinations for each letter to ensure they are stable
-  const letterDestinations = useMemo(() => {
-    return Array.from(textToAnimate).map(() => ({
+  const letterDestinations1 = useMemo(() => {
+    return Array.from(textToAnimate1).map(() => ({
       x: (Math.random() - 0.5) * 700,
       y: (Math.random() - 0.5) * 500,
       rotate: (Math.random() - 0.5) * 540,
     }));
-  }, []);
+  }, [textToAnimate1]);
+
+  const letterDestinations2 = useMemo(() => {
+    return Array.from(textToAnimate2).map(() => ({
+      x: (Math.random() - 0.5) * 800,
+      y: (Math.random() - 0.5) * 600,
+      rotate: (Math.random() - 0.5) * 720,
+    }));
+  }, [textToAnimate2]);
 
   const opacityHero = useTransform(scrollYProgress, [0, 0.1, 0.15], [1, 1, 0]);
-  const yParallax = useTransform(scrollYProgress, [0.15, 0.4], ['10vh', '-15vh']);
-  const opacityParallax = useTransform(
+
+  // Animation for "L'endroit où vos mots se posent." (Fly Away)
+  const yParallax1 = useTransform(scrollYProgress, [0.2, 0.4], ['10vh', '-15vh']);
+  const opacityParallax1 = useTransform(
     scrollYProgress,
-    [0.15, 0.22, 0.3, 0.4],
+    [0.2, 0.22, 0.38, 0.4],
     [0, 0.9, 0.9, 0]
+  );
+
+  // Animation for "Là où vos mots trouvent la lumière." (Fly In)
+  const yParallax2 = useTransform(scrollYProgress, [0.45, 0.65], ['15vh', '-10vh']);
+  const opacityParallax2 = useTransform(
+    scrollYProgress,
+    [0.45, 0.47, 0.63, 0.65],
+    [0, 1, 1, 0]
   );
   
 
@@ -220,7 +259,7 @@ const ScrollSequence = () => {
             </p>
           </motion.div>
 
-          {/* Parallax text (Middle layer) */}
+          {/* Parallax text 1 (Fly away) */}
           <motion.div
             style={{
               position: 'absolute',
@@ -231,14 +270,37 @@ const ScrollSequence = () => {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              y: yParallax,
-              opacity: opacityParallax,
+              y: yParallax1,
+              opacity: opacityParallax1,
               color: '#F5F1E8',
             }}
           >
-             <h2 className="font-headline text-6xl text-center flex justify-center flex-wrap" aria-label={textToAnimate}>
-                {textToAnimate.split('').map((char, i) => (
-                  <Letter key={i} char={char} index={i} scrollYProgress={scrollYProgress} destinations={letterDestinations} />
+             <h2 className="font-headline text-6xl text-center flex justify-center flex-wrap" aria-label={textToAnimate1}>
+                {textToAnimate1.split('').map((char, i) => (
+                  <FlyAwayLetter key={i} char={char} index={i} scrollYProgress={scrollYProgress} destinations={letterDestinations1} />
+                ))}
+            </h2>
+          </motion.div>
+
+          {/* Parallax text 2 (Fly in) */}
+           <motion.div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              y: yParallax2,
+              opacity: opacityParallax2,
+              color: '#F5F1E8',
+            }}
+          >
+             <h2 className="font-headline text-6xl text-center flex justify-center flex-wrap" aria-label={textToAnimate2}>
+                {textToAnimate2.split('').map((char, i) => (
+                  <FlyInLetter key={i} char={char} index={i} scrollYProgress={scrollYProgress} destinations={letterDestinations2} />
                 ))}
             </h2>
           </motion.div>
