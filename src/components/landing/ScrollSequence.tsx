@@ -26,8 +26,8 @@ const ScrollSequence = () => {
   const opacityHero = useTransform(scrollYProgress, [0, 0.1, 0.15], [1, 1, 0]);
   
   // Parallax text fades in, moves, then fades out
-  const yParallax = useTransform(scrollYProgress, [0.08, 0.4], ["5vh", "-15vh"]);
-  const opacityParallax = useTransform(scrollYProgress, [0.08, 0.15, 0.35, 0.4], [0, 1, 1, 0]);
+  const yParallax = useTransform(scrollYProgress, [0.08, 0.4], ["10vh", "-15vh"]);
+  const opacityParallax = useTransform(scrollYProgress, [0.08, 0.15, 0.35, 0.4], [0, 0.9, 0.9, 0]);
 
 
   useEffect(() => {
@@ -222,7 +222,7 @@ const ScrollSequence = () => {
               color: '#F5F1E8',
             }}
           >
-            <h2 className="font-headline text-4xl text-center" style={{ opacity: 0.9 }}>
+            <h2 className="font-headline text-4xl text-center">
               L'endroit où vos mots se posent.
             </h2>
           </motion.div>
