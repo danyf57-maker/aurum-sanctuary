@@ -1,13 +1,13 @@
 
-"use client";
+'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ChevronDown } from 'lucide-react';
 import { AuthDialog } from '@/components/auth/auth-dialog';
 import { Button } from '@/components/ui/button';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, useMotionTemplate } from 'framer-motion';
 
 const Logo = (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props}>
@@ -18,132 +18,113 @@ const Logo = (props: React.SVGProps<SVGSVGElement>) => (
 
 export function HeroSection() {
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
-  const { scrollY } = useScroll();
   
-  // Cross-fade animation for the images
-  const gifOpacity = useTransform(scrollY, [0, 500], [0, 1]);
-  const imageOpacity = useTransform(scrollY, [0, 500], [1, 0]);
-  
-  // Parallax & scale animations for background
-  const backgroundY = useTransform(scrollY, [0, 1200], [0, 150]);
-  const backgroundScale = useTransform(scrollY, [0, 1200], [1, 1.1]);
+  const heroRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ['start start', 'end start'],
+  });
 
-  // Fade out animation for foreground content
-  const textOpacity = useTransform(scrollY, [0, 400], [1, 0]);
+  // Animation de "mise au point" : de zoomé/flou/sombre à net/taille normale
+  const scale = useTransform(scrollYProgress, [0, 0.5], [1.2, 1]);
+  const blur = useTransform(scrollYProgress, [0, 0.5], ['10px', '0px']);
+  const brightness = useTransform(scrollYProgress, [0, 0.5], [0.6, 1]);
+  const filter = useMotionTemplate`blur(${blur}) brightness(${brightness})`;
+
+  // Fondu du contenu au premier plan
+  const textOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 0]);
 
   return (
     <>
-      <section className="relative flex items-center justify-center h-[120vh] text-white overflow-hidden">
-        
-        {/* Background images container */}
-        <motion.div 
+      <div ref={heroRef} className="relative h-[200vh]">
+        <div className="sticky top-0 flex h-screen items-center justify-center overflow-hidden text-white">
+          
+          {/* Arrière-plan avec transformations */}
+          <motion.div
             className="absolute inset-0 z-0"
-            style={{ 
-                y: backgroundY,
-                scale: backgroundScale,
+            style={{
+              scale,
+              filter,
             }}
-        >
-            {/* Static Image */}
-             <motion.div 
-              className="absolute inset-0"
-              style={{ opacity: imageOpacity }}
-             >
-                <Image
-                    src="https://uqqrrojzftyagzvwgzsc.supabase.co/storage/v1/object/public/Image1/imagelivre1.png"
-                    alt="Sanctuaire paisible"
-                    fill
-                    className="object-cover"
-                    priority
-                />
-            </motion.div>
+          >
+            <Image
+                src="https://uqqrrojzftyagzvwgzsc.supabase.co/storage/v1/object/public/Image1/imagelivre1.png"
+                alt="Sanctuaire paisible"
+                fill
+                className="object-cover"
+                priority
+            />
+            <div className="absolute inset-0 bg-black/30"></div>
+          </motion.div>
 
-            {/* GIF that fades in */}
-            <motion.div 
-             className="absolute inset-0"
-             style={{ opacity: gifOpacity }}
-            >
-                <Image
-                    src="https://uqqrrojzftyagzvwgzsc.supabase.co/storage/v1/object/public/public-assets/Image%20paralaxe1.webp"
-                    alt="Animation de sanctuaire"
-                    fill
-                    className="object-cover"
-                />
-            </motion.div>
+          {/* En-tête */}
+          <header className="absolute top-0 left-0 right-0 z-20 p-8">
+              <Link href="/" aria-label="Accueil d'Aurum">
+                  <Logo className="h-6 w-6 text-amber-500" />
+              </Link>
+          </header>
+          
+          {/* Contenu principal */}
+          <motion.div 
+              className="relative z-10 px-4 text-center"
+              style={{ opacity: textOpacity }}
+          >
+            <div className="flex flex-col items-center">
+                  <div
+                  className="w-16 h-0.5 bg-primary mx-auto mb-6"
+                  />
+                  <h1
+                  className="text-5xl md:text-6xl font-headline italic leading-tight text-white"
+                  >
+                  Le Sanctuaire
+                  </h1>
+                  <h2
+                  className="text-4xl md:text-5xl font-headline text-white/80 leading-tight mt-2"
+                  >
+                  Le silence qui vous écoute.
+                  </h2>
 
-             {/* Dark overlay */}
-            <div className="absolute inset-0 bg-black/50"></div>
-        </motion.div>
+                  <p
+                  className="mt-6 text-lg text-white/80 max-w-2xl mx-auto"
+                  >
+                  Un espace intime pour déposer ce qui vous traverse.
+                  <br />
+                  Sans jugement. Sans bruit. Sans objectif de performance.
+                  </p>
+                  <div
+                  className="mt-10 flex flex-col sm:flex-row items-center gap-4"
+                  >
+                  <Button
+                      size="lg"
+                      onClick={() => setIsAuthDialogOpen(true)}
+                      className="bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 text-white"
+                  >
+                      Ouvrir mon sanctuaire
+                  </Button>
+                  <Button
+                      asChild
+                      size="lg"
+                      variant="outline"
+                      className="bg-transparent border-white/50 text-white hover:bg-white/10 hover:text-white"
+                  >
+                      <Link href="/sanctuary/write">Essayer sans compte</Link>
+                  </Button>
+                  </div>
+              </div>
+          </motion.div>
 
-        {/* Header */}
-        <header className="absolute top-0 left-0 right-0 z-20 p-8">
-            <Link href="/" aria-label="Accueil d'Aurum">
-                <Logo className="h-6 w-6 text-amber-500" />
-            </Link>
-        </header>
-        
-        {/* Main Content */}
-        <motion.div 
-            className="relative z-10 px-4 text-center"
-            style={{ opacity: textOpacity }}
-        >
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-                className="flex flex-col items-center"
-            >
-                <div
-                className="w-16 h-0.5 bg-primary mx-auto mb-6"
-                />
-                <h1
-                className="text-5xl md:text-6xl font-headline italic leading-tight text-white"
-                >
-                Le Sanctuaire
-                </h1>
-                <h2
-                className="text-4xl md:text-5xl font-headline text-white/80 leading-tight mt-2"
-                >
-                Le silence qui vous écoute.
-                </h2>
+           {/* Chevron */}
+          <motion.div 
+              className="absolute bottom-10 z-10"
+              style={{ opacity: textOpacity }}
+          >
+              <a href="#manifesto" aria-label="Scroll down">
+                  <ChevronDown className="h-6 w-6 text-white/70" />
+              </a>
+          </motion.div>
 
-                <p
-                className="mt-6 text-lg text-white/80 max-w-2xl mx-auto"
-                >
-                Un espace intime pour déposer ce qui vous traverse.
-                <br />
-                Sans jugement. Sans bruit. Sans objectif de performance.
-                </p>
-                <div
-                className="mt-10 flex flex-col sm:flex-row items-center gap-4"
-                >
-                <Button
-                    size="lg"
-                    onClick={() => setIsAuthDialogOpen(true)}
-                    className="bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 text-white"
-                >
-                    Ouvrir mon sanctuaire
-                </Button>
-                <Button
-                    asChild
-                    size="lg"
-                    variant="outline"
-                    className="bg-transparent border-white/50 text-white hover:bg-white/10 hover:text-white"
-                >
-                    <Link href="/sanctuary/write">Essayer sans compte</Link>
-                </Button>
-                </div>
-            </motion.div>
-        </motion.div>
-         {/* Chevron */}
-        <motion.div 
-            className="absolute bottom-10 z-10"
-            style={{ opacity: textOpacity }}
-        >
-            <a href="#manifesto" aria-label="Scroll down">
-                <ChevronDown className="h-6 w-6 text-white/70" />
-            </a>
-        </motion.div>
-      </section>
+        </div>
+      </div>
       <AuthDialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen} />
     </>
   );
