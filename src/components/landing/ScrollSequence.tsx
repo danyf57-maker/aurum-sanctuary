@@ -112,7 +112,7 @@ const ScrollSequence = () => {
   }, [drawImage, error, loading, images]);
 
   return (
-    <div ref={containerRef} style={{ height: '400vh', position: 'relative' }}>
+    <div ref={containerRef} style={{ height: '800vh', position: 'relative' }}>
         {loading && (
             <div style={{ position: 'sticky', top: 0, height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'black', color: 'white' }}>
                 <p>Chargement de la séquence...</p>
