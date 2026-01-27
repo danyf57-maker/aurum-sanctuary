@@ -26,10 +26,10 @@ const FaqSection = () => (
             <h2 className="text-4xl font-headline text-stone-800 mb-12 text-center">Questions Fréquentes</h2>
             <Accordion type="single" collapsible className="w-full">
                 <AccordionItem value="item-1">
-                    <AccordionTrigger className="text-lg font-headline">Est-ce que mes données sont lues par l'IA ?</AccordionTrigger>
+                    <AccordionTrigger className="text-lg font-headline">Qui peut lire mes données ?</AccordionTrigger>
                     <AccordionContent>
                         <p className="text-base text-stone-600 leading-relaxed">
-                            Votre vie privée est notre priorité absolue. Les entrées sont chiffrées et stockées de manière sécurisée. L'IA analyse le texte de manière anonymisée pour extraire le sentiment, mais elle n'a aucune mémoire à long terme de vos écrits. Personne, pas même notre équipe, ne peut lire vos entrées.
+                           Votre vie privée est notre priorité absolue. Les entrées sont chiffrées et stockées de manière sécurisée. Une analyse automatisée est effectuée pour vous aider à identifier vos tendances émotionnelles (sentiment, humeur), mais ce processus est entièrement anonymisé et n'a aucune mémoire à long terme de vos écrits. Personne, pas même notre équipe, ne peut lire le contenu de vos entrées.
                         </p>
                     </AccordionContent>
                 </AccordionItem>
@@ -84,7 +84,7 @@ export default function LandingPage() {
                       Une interface épurée qui s'efface pour laisser place à vos mots. Pas de distractions, juste une page blanche qui attend.
                   </FeatureCard>
                   <FeatureCard icon={BrainCircuit} title="Comprenez-vous">
-                      Grâce à une IA discrète, Aurum vous aide à voir les tendances émotionnelles qui se dessinent dans vos écrits, sans jamais vous juger.
+                      Grâce à une technologie d'analyse discrète, Aurum vous aide à voir les tendances émotionnelles qui se dessinent dans vos écrits, sans jamais vous juger.
                   </FeatureCard>
                   <FeatureCard icon={Archive} title="Gardez vos traces">
                       Toutes vos entrées sont chiffrées et stockées en toute sécurité. Votre sanctuaire est privé, et le restera pour toujours.
