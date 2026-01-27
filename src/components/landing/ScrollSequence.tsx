@@ -235,7 +235,7 @@ const ScrollSequence = () => {
               color: '#F5F1E8',
             }}
           >
-             <h2 className="font-headline text-4xl text-center flex justify-center flex-wrap" aria-label={textToAnimate}>
+             <h2 className="font-headline text-6xl text-center flex justify-center flex-wrap" aria-label={textToAnimate}>
                 {textToAnimate.split('').map((char, i) => (
                   <Letter key={i} char={char} index={i} scrollYProgress={scrollYProgress} destinations={letterDestinations} />
                 ))}
