@@ -99,7 +99,6 @@ export default function Home() {
                     </div>
                 ))}
             </div>
-             <p className="text-center text-muted-foreground italic mt-20 text-lg">Pages volées au quotidien.</p>
         </section>
 
         {/* SECTION 4: Le Journal d'Alma */}
