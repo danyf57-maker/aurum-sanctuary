@@ -2,10 +2,10 @@
 
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 
-const frameCount = 80; // De 000 à 079
+const frameCount = 52; // De 000 à 051
 
 const getImagePath = (frame: number) =>
-  `/sequence/I_want_to_1080p_202601271616_${String(frame).padStart(3, '0')}.jpg`;
+  `/sequence/herosection_000_${String(frame).padStart(3, '0')}.jpg`;
 
 const ScrollSequence = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
