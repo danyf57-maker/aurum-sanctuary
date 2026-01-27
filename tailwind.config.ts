@@ -19,7 +19,7 @@ export default {
     extend: {
       fontFamily: {
         body: ['Inter', 'sans-serif'],
-        headline: ['Bebas Neue', 'sans-serif'],
+        headline: ['Playfair Display', 'serif'],
         code: ['Roboto Mono', 'monospace'],
       },
       colors: {
