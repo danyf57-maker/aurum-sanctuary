@@ -24,17 +24,13 @@ const ScrollSequence = () => {
           const img = new Image();
           img.src = getImagePath(i);
           img.onload = () => resolve(img);
-          img.onerror = reject;
+          img.onerror = reject; // En cas d'erreur, la promesse est rejetée.
         });
       });
 
       try {
+        // Promise.all préserve l'ordre, donc le tri manuel est inutile.
         const loadedImages = await Promise.all(imagePromises);
-        loadedImages.sort((a, b) => {
-            const aNum = parseInt(a.src.split('_').pop()?.split('.')[0] || '0');
-            const bNum = parseInt(b.src.split('_').pop()?.split('.')[0] || '0');
-            return aNum - bNum;
-        });
         setImages(loadedImages);
       } catch (err) {
         console.error("Erreur de chargement d'une ou plusieurs images:", err);
@@ -68,6 +64,7 @@ const ScrollSequence = () => {
     const img = images[frameIndex];
     if (!img) return;
 
+    // Calcule le ratio pour que l'image couvre le canvas (similaire à `object-fit: cover`)
     const hRatio = canvas.width / img.width;
     const vRatio = canvas.height / img.height;
     const ratio = Math.max(hRatio, vRatio);
@@ -85,25 +82,15 @@ const ScrollSequence = () => {
     const canvas = canvasRef.current;
     if (!canvas || loading || images.length === 0 || error) return;
 
-    const context = canvas.getContext('2d');
-    if (!context) return;
-
     const resizeCanvas = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-      drawImage();
+      drawImage(); // Redessine l'image actuelle après le redimensionnement
     };
 
     window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
+    resizeCanvas(); // Appel initial pour définir la taille et dessiner la première image
     
-    const firstImage = images[0];
-    if (firstImage) {
-        firstImage.onload = () => drawImage();
-        if (firstImage.complete) drawImage();
-    }
-
-
     return () => {
       window.removeEventListener('resize', resizeCanvas);
     };
@@ -111,11 +98,13 @@ const ScrollSequence = () => {
 
   // Gérer le défilement
   useEffect(() => {
-    if (error) return;
+    if (error) return; // Ne pas attacher l'écouteur de scroll en cas d'erreur.
+
     const onScroll = () => {
         window.requestAnimationFrame(drawImage);
     };
-    window.addEventListener('scroll', onScroll);
+    window.addEventListener('scroll', onScroll, { passive: true });
+
     return () => window.removeEventListener('scroll', onScroll);
   }, [drawImage, error]);
 
