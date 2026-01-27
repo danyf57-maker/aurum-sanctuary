@@ -11,13 +11,10 @@ const ScrollSequence = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // All images for the animation
   const [images, setImages] = useState<HTMLImageElement[]>([]);
-  // Is the animation ready to play?
   const [isAnimationReady, setIsAnimationReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Main effect for preloading and setting up the scene
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -26,7 +23,6 @@ const ScrollSequence = () => {
 
     let isCancelled = false;
 
-    // Draws an image on the canvas, fitting it with 'cover'
     const drawImageToCanvas = (img: HTMLImageElement) => {
         if (!canvas) return;
         canvas.width = window.innerWidth;
@@ -41,41 +37,34 @@ const ScrollSequence = () => {
     };
 
     const preload = async () => {
-      // 1. Load the very first image
       const firstImage = new Image();
       firstImage.src = getImagePath(0);
 
       try {
-        // Wait for the image to be fully decoded
         await firstImage.decode();
         if (isCancelled) return;
 
-        // Draw it immediately, so the user sees something
         drawImageToCanvas(firstImage);
 
-        // A resize listener for the static first image
         const initialResize = () => drawImageToCanvas(firstImage);
         window.addEventListener('resize', initialResize);
 
-        // 2. Now, load all the other images in the background
         const allImagePromises = Array.from({ length: frameCount }, (_, i) => {
           return new Promise<HTMLImageElement>((resolve, reject) => {
             const img = new Image();
             const path = getImagePath(i);
             img.src = path;
             img.onload = () => resolve(img);
-            img.onerror = () => reject(new Error(path)); // Reject with the path
+            img.onerror = () => reject(new Error(path));
           });
         });
 
         const allImages = await Promise.all(allImagePromises);
         if (isCancelled) return;
 
-        // All images are ready
         setImages(allImages);
         setIsAnimationReady(true);
 
-        // Clean up the initial resize listener
         window.removeEventListener('resize', initialResize);
       } catch (err: any) {
         console.error("Erreur de chargement d'image:", err.message);
@@ -90,7 +79,6 @@ const ScrollSequence = () => {
     };
   }, []);
 
-  // This is the animation function that runs on scroll
   const drawImageOnScroll = useCallback(() => {
     const canvas = canvasRef.current;
     const container = containerRef.current;
@@ -99,7 +87,6 @@ const ScrollSequence = () => {
     const { top, height } = container.getBoundingClientRect();
     const scrollableHeight = height - window.innerHeight;
     
-    // Calculate scroll progress within the container
     let scrollFraction = (-top) / scrollableHeight;
     scrollFraction = Math.min(1, Math.max(0, scrollFraction));
 
@@ -114,7 +101,6 @@ const ScrollSequence = () => {
     const img = images[frameIndex];
     if (!img) return;
 
-    // Draw the correct frame
     const hRatio = canvas.width / img.width;
     const vRatio = canvas.height / img.height;
     const ratio = Math.max(hRatio, vRatio);
@@ -124,15 +110,13 @@ const ScrollSequence = () => {
     context.drawImage(img, 0, 0, img.width, img.height, centerX, centerY, img.width * ratio, img.height * ratio);
   }, [images, isAnimationReady]);
 
-  // Effect to handle scroll and resize once the animation is ready
   useEffect(() => {
     if (!isAnimationReady) return;
 
     const onScroll = () => window.requestAnimationFrame(drawImageOnScroll);
     const onResize = () => {
-        // Redraw current frame on resize
         const canvas = canvasRef.current;
-        const img = images[0]; // Just use first image for resize dimensions
+        const img = images[0]; 
         if(canvas && img) {
             drawImageOnScroll();
         }
@@ -141,7 +125,6 @@ const ScrollSequence = () => {
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onResize);
     
-    // Draw the first frame of the animation sequence
     drawImageOnScroll();
 
     return () => {
@@ -171,6 +154,29 @@ const ScrollSequence = () => {
           display: error ? 'none' : 'block',
         }}
       />
+       {/* Overlay and Text */}
+       <div style={{
+          position: 'sticky',
+          top: 0,
+          width: '100%',
+          height: '100vh',
+          marginTop: '-100vh', // This is the trick to overlay it on the sticky canvas
+          display: error ? 'none' : 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          color: 'white',
+          textAlign: 'center',
+          padding: '2rem',
+          backgroundColor: 'rgba(0, 0, 0, 0.4)', // 40% black overlay
+      }}>
+          <h1 className="text-6xl md:text-8xl font-headline font-bold text-white drop-shadow-2xl animate-fade-in">
+              Aurum
+          </h1>
+          <p className="mt-4 text-xl md:text-2xl text-stone-200 max-w-2xl drop-shadow-xl animate-fade-in" style={{ animationDelay: '200ms' }}>
+              Le silence qui vous écoute.
+          </p>
+      </div>
     </div>
   );
 };
