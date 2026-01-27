@@ -6,7 +6,7 @@ import ScrollSequence from '@/components/landing/ScrollSequence';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
-import { BrainCircuit, Lock, PenSquare } from 'lucide-react';
+import { PenSquare, Sparkles, Sprout, Shield } from 'lucide-react';
 import Link from 'next/link';
 
 const AlmaCard = ({ title, time, entry, response }: { title: string, time: string, entry: string, response: string }) => (
@@ -47,21 +47,21 @@ export default function Home() {
     }
   ];
   
-  const features = [
+  const howItWorks = [
     {
       icon: <PenSquare />,
-      title: "Écrivez librement",
-      description: "Une interface pure qui s'efface pour laisser place à vos mots. Pas de distractions, juste une page blanche qui attend.",
+      title: "1. Écrivez",
+      description: "Déposez vos pensées sans filtre. L'interface minimaliste est conçue pour s'effacer et laisser toute la place à votre voix intérieure. C'est votre espace, sans distractions.",
     },
     {
-      icon: <BrainCircuit />,
-      title: "Comprenez-vous",
-      description: "Grâce à une technologie d'analyse discrète, Aurum vous aide à voir les tendances émotionnelles qui se dessinent dans vos écrits, sans jamais vous juger.",
+      icon: <Sparkles />,
+      title: "2. Découvrez",
+      description: "Observez la magie opérer. Notre IA bienveillante analyse vos écrits pour révéler des thèmes et des humeurs, de manière 100% privée et automatisée.",
     },
     {
-      icon: <Lock />,
-      title: "Gardez vos traces",
-      description: "Toutes vos entrées sont chiffrées et stockées en toute sécurité. Votre sanctuaire est privé, et le restera pour toujours.",
+      icon: <Sprout />,
+      title: "3. Grandissez",
+      description: "Prenez de la hauteur. En visualisant votre paysage émotionnel, vous apprenez à mieux vous connaître et à cultiver activement votre bien-être mental.",
     }
   ];
   
@@ -101,31 +101,31 @@ export default function Home() {
             </div>
         </section>
 
-        {/* SECTION 2: Un manifeste du silence */}
-        <section className="py-24 md:py-32">
-          <div className="container max-w-3xl mx-auto">
-              <h2 className="text-4xl md:text-5xl font-headline text-center mb-12">
-                  Un manifeste du silence
+        {/* SECTION 2: Métaphore du jardin */}
+        <section className="py-24 md:py-32 bg-stone-100/50">
+          <div className="container max-w-3xl mx-auto text-center">
+              <h2 className="text-4xl md:text-5xl font-headline mb-6">
+                  Votre esprit est un jardin. <br/> Aurum est votre carnet de botaniste.
               </h2>
-              <div className="prose prose-lg lg:prose-xl mx-auto text-foreground/80 font-light space-y-6">
-                  <p>Dans un monde qui exige constamment notre attention, le silence est un luxe. Aurum est né de ce besoin : créer une pause, un lieu où le bruit extérieur s'estompe pour laisser place à votre voix intérieure.</p>
-                  <p>Votre journal n'est pas un outil de productivité. Il ne vous demandera pas d'être plus efficace, plus organisé, ou d'atteindre des objectifs. <span className="text-primary italic">Il vous demande simplement d'être.</span></p>
-                  <p>Ici, la seule mesure est la sincérité de l'instant. Ici, pas de badges, de séries à maintenir, ou de compétition. Juste vous, vos pensées, et un espace qui les accueille avec une bienveillance inconditionnelle.</p>
-                   <p>C'est le sanctuaire que vous méritez.</p>
+              <div className="prose prose-lg lg:prose-xl mx-auto text-foreground/80 font-light">
+                  <p>Chaque jour, des milliers de pensées, d'idées et d'émotions le traversent. Sans attention, ce jardin devient vite sauvage. Aurum est l'outil qui vous permet de nommer, de trier et de comprendre ce qui pousse en vous. Pour que vous puissiez cultiver la clarté, et pas le chaos.</p>
               </div>
           </div>
         </section>
 
-        {/* SECTION 3: Features */}
+        {/* SECTION 3: How It Works */}
         <section className="py-24 md:py-32 container">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-16 text-center">
-                {features.map((feature) => (
+             <div className="text-center max-w-2xl mx-auto mb-16">
+                <h2 className="text-4xl font-headline mb-4">Retrouvez la clarté en 3 étapes</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+                {howItWorks.map((feature) => (
                     <div key={feature.title} className="flex flex-col items-center">
                         <div className="text-primary w-16 h-16 rounded-full flex items-center justify-center bg-primary/10 mb-6">
                             {React.cloneElement(feature.icon, { className: "w-8 h-8" })}
                         </div>
-                        <h3 className="text-3xl font-headline text-primary mb-4">{feature.title}</h3>
-                        <p className="text-muted-foreground text-sm">{feature.description}</p>
+                        <h3 className="text-2xl font-headline text-primary mb-3">{feature.title}</h3>
+                        <p className="text-muted-foreground text-sm max-w-xs">{feature.description}</p>
                     </div>
                 ))}
             </div>
@@ -135,9 +135,9 @@ export default function Home() {
         <section className="py-24 md:py-32 bg-gradient-to-b from-background to-stone-200/30">
             <div className="container">
                 <div className="text-center max-w-2xl mx-auto mb-20">
-                    <h2 className="text-5xl font-headline mb-4">Le Journal d'Alma</h2>
+                    <h2 className="text-5xl font-headline mb-4">D'une pensée à une prise de conscience</h2>
                     <p className="text-muted-foreground">
-                        Découvrez comment de simples pensées peuvent se transformer en révélations, et laissez-vous inspirer pour commencer votre propre voyage.
+                        Le Journal d'Alma est une fenêtre sur l'introspection. Découvrez comment de simples mots peuvent se transformer en révélations.
                     </p>
                 </div>
                 
@@ -165,14 +165,27 @@ export default function Home() {
             </div>
         </section>
         
-        {/* SECTION 5: CTA Final */}
+        {/* SECTION 5: Privacy */}
+        <section className="py-24 md:py-32">
+            <div className="container max-w-3xl mx-auto text-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-6">
+                    <Shield className="w-8 h-8 text-primary"/>
+                </div>
+                <h2 className="text-4xl font-headline mb-6">Votre jardin secret, fortifié.</h2>
+                <p className="prose prose-lg lg:prose-xl mx-auto text-foreground/80 font-light">
+                    La confiance n'est pas une option, c'est le fondement. Vos entrées sont chiffrées de bout en bout. Personne chez Aurum ne peut les lire. Nous ne vendrons jamais vos données. Votre journal est votre sanctuaire, et nous en sommes les gardiens silencieux. Point final.
+                </p>
+            </div>
+        </section>
+
+
+        {/* SECTION 6: CTA Final & FAQ */}
         <section className="container py-24 md:py-32 text-center border-t border-black/5">
             <Button asChild size="lg" className="h-14 px-12 text-base">
-                <Link href="/sanctuary/write">OUVRIR VOTRE PROPRE JOURNAL</Link>
+                <Link href="/sanctuary/write">Commencez votre introspection</Link>
             </Button>
         </section>
 
-        {/* SECTION 6: FAQ */}
         <section className="container max-w-3xl pb-24 md:pb-32">
              <h2 className="text-4xl font-headline text-center mb-12">
                 Questions Fréquentes
