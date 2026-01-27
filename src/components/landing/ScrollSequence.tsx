@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useRef, useEffect, useState, useCallback } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 
 const frameCount = 52; // De 000 à 051
 
@@ -15,6 +16,20 @@ const ScrollSequence = () => {
   const [isAnimationReady, setIsAnimationReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Framer Motion scroll hook
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start start', 'end end'],
+  });
+
+  // Hero text fades out quickly
+  const opacityHero = useTransform(scrollYProgress, [0, 0.1, 0.15], [1, 1, 0]);
+  
+  // Parallax text fades in, moves, then fades out
+  const yParallax = useTransform(scrollYProgress, [0.08, 0.4], ["5vh", "-15vh"]);
+  const opacityParallax = useTransform(scrollYProgress, [0.08, 0.15, 0.35, 0.4], [0, 1, 1, 0]);
+
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -23,7 +38,7 @@ const ScrollSequence = () => {
 
     let isCancelled = false;
 
-    const drawImageToCanvas = (img: HTMLImageElement) => {
+    const drawInitialImage = (img: HTMLImageElement) => {
         if (!canvas) return;
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
@@ -35,20 +50,18 @@ const ScrollSequence = () => {
         context.clearRect(0, 0, canvas.width, canvas.height);
         context.drawImage(img, 0, 0, img.width, img.height, centerX, centerY, img.width * ratio, img.height * ratio);
     };
-
-    const preload = async () => {
-      const firstImage = new Image();
-      firstImage.src = getImagePath(0);
-
+    
+    const loadImages = async () => {
       try {
+        // Load the first image first to display it quickly
+        const firstImage = new Image();
+        firstImage.src = getImagePath(0);
         await firstImage.decode();
+
         if (isCancelled) return;
+        drawInitialImage(firstImage);
 
-        drawImageToCanvas(firstImage);
-
-        const initialResize = () => drawImageToCanvas(firstImage);
-        window.addEventListener('resize', initialResize);
-
+        // Preload all other images in the background
         const allImagePromises = Array.from({ length: frameCount }, (_, i) => {
           return new Promise<HTMLImageElement>((resolve, reject) => {
             const img = new Image();
@@ -64,15 +77,13 @@ const ScrollSequence = () => {
 
         setImages(allImages);
         setIsAnimationReady(true);
-
-        window.removeEventListener('resize', initialResize);
       } catch (err: any) {
         console.error("Erreur de chargement d'image:", err.message);
         setError(`Impossible de charger l'image à l'adresse : "${err.message}". Vérifiez que le fichier existe bien dans le dossier "public${err.message}" et que le nom est exact.`);
       }
     };
 
-    preload();
+    loadImages();
 
     return () => {
       isCancelled = true;
@@ -116,8 +127,9 @@ const ScrollSequence = () => {
     const onScroll = () => window.requestAnimationFrame(drawImageOnScroll);
     const onResize = () => {
         const canvas = canvasRef.current;
-        const img = images[0]; 
-        if(canvas && img) {
+        if(canvas) {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
             drawImageOnScroll();
         }
     };
@@ -125,7 +137,7 @@ const ScrollSequence = () => {
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onResize);
     
-    drawImageOnScroll();
+    onResize(); // Initial draw on resize setup
 
     return () => {
       window.removeEventListener('scroll', onScroll);
@@ -154,28 +166,66 @@ const ScrollSequence = () => {
           display: error ? 'none' : 'block',
         }}
       />
-       {/* Overlay and Text */}
+       {/* Overlay Container for all text */}
        <div style={{
           position: 'sticky',
           top: 0,
           width: '100%',
           height: '100vh',
-          marginTop: '-100vh', // This is the trick to overlay it on the sticky canvas
-          display: error ? 'none' : 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          color: 'white',
-          textAlign: 'center',
-          padding: '2rem',
-          backgroundColor: 'rgba(0, 0, 0, 0.4)', // 40% black overlay
+          marginTop: '-100vh',
+          display: error ? 'none' : 'block',
       }}>
-          <h1 className="text-6xl md:text-8xl font-headline font-bold text-white drop-shadow-2xl animate-fade-in">
-              Aurum
-          </h1>
-          <p className="mt-4 text-xl md:text-2xl text-stone-200 max-w-2xl drop-shadow-xl animate-fade-in" style={{ animationDelay: '200ms' }}>
-              Le silence qui vous écoute.
-          </p>
+          {/* Dark filter */}
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(0, 0, 0, 0.4)',
+          }}/>
+
+          {/* Hero text (Front layer) */}
+          <motion.div style={{
+            opacity: opacityHero,
+            position: 'relative',
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            textAlign: 'center',
+            color: 'white',
+          }}>
+            <h1 className="text-6xl md:text-8xl font-headline font-bold text-white drop-shadow-2xl">
+                Aurum
+            </h1>
+            <p className="mt-4 text-xl md:text-2xl text-stone-200 max-w-2xl drop-shadow-xl">
+                Le silence qui vous écoute.
+            </p>
+          </motion.div>
+
+          {/* Parallax text (Middle layer) */}
+          <motion.div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              y: yParallax,
+              opacity: opacityParallax,
+              color: '#F5F1E8',
+            }}
+          >
+            <h2 className="font-headline text-4xl text-center" style={{ opacity: 0.9 }}>
+              L'endroit où vos mots se posent.
+            </h2>
+          </motion.div>
       </div>
     </div>
   );
