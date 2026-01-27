@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ChevronDown } from 'lucide-react';
 import { AuthDialog } from '@/components/auth/auth-dialog';
 import { Button } from '@/components/ui/button';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 
 const Logo = (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props}>
@@ -16,76 +17,109 @@ const Logo = (props: React.SVGProps<SVGSVGElement>) => (
 
 export function HeroSection() {
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
+  const targetRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: targetRef,
+    offset: ['start start', 'end start'],
+  });
+
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
+  const backgroundScale = useTransform(scrollYProgress, [0, 1], [1.15, 1]);
+  const textOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
 
   return (
     <>
-      <section className="relative flex h-screen items-center justify-center overflow-hidden bg-stone-900 text-white">
-          <header className="absolute top-0 left-0 right-0 z-20 p-8">
-              <Link href="/" aria-label="Accueil d'Aurum">
-                  <Logo className="h-6 w-6 text-amber-500" />
-              </Link>
-          </header>
-          
-          <div
-              className="relative z-10 px-4 text-center"
-          >
+      <div ref={targetRef} className="relative h-[200vh] bg-stone-900">
+        <section className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
             <motion.div
-              className="flex flex-col items-center"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, ease: "easeOut" }}
+              className="absolute inset-0 z-0"
+              style={{
+                y: backgroundY,
+                scale: backgroundScale,
+              }}
             >
-                  <div
-                  className="w-16 h-0.5 bg-primary mx-auto mb-6"
-                  />
-                  <h1
-                  className="text-5xl md:text-6xl font-headline italic leading-tight text-white"
-                  >
-                  Le Sanctuaire
-                  </h1>
-                  <h2
-                  className="text-4xl md:text-5xl font-headline text-white/80 leading-tight mt-2"
-                  >
-                  Le silence qui vous écoute.
-                  </h2>
+              <Image
+                src="https://images.unsplash.com/photo-1593671954252-2a65d56285a4?q=80&w=2070&auto=format&fit=crop"
+                alt="Paysage brumeux et apaisant"
+                fill
+                priority
+                className="object-cover"
+                data-ai-hint="misty landscape"
+              />
+              <div className="absolute inset-0 bg-black/50" />
+            </motion.div>
+            
+            <header className="absolute top-0 left-0 right-0 z-20 p-8">
+                <Link href="/" aria-label="Accueil d'Aurum">
+                    <Logo className="h-6 w-6 text-amber-500" />
+                </Link>
+            </header>
 
-                  <p
-                  className="mt-6 text-lg text-white/80 max-w-2xl mx-auto"
-                  >
-                  Un espace intime pour déposer ce qui vous traverse.
-                  <br />
-                  Sans jugement. Sans bruit. Sans objectif de performance.
-                  </p>
-                  <div
-                  className="mt-10 flex flex-col sm:flex-row items-center gap-4"
-                  >
-                  <Button
-                      size="lg"
-                      onClick={() => setIsAuthDialogOpen(true)}
-                      className="bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 text-white"
-                  >
-                      Ouvrir mon sanctuaire
-                  </Button>
-                  <Button
-                      asChild
-                      size="lg"
-                      variant="outline"
-                      className="bg-transparent border-white/50 text-white hover:bg-white/10 hover:text-white"
-                  >
-                      <Link href="/sanctuary/write">Essayer sans compte</Link>
-                  </Button>
-                  </div>
-              </motion.div>
-          </div>
+            <motion.div
+              className="relative z-10 px-4 text-center text-white"
+              style={{ opacity: textOpacity }}
+            >
+                <div className="w-16 h-0.5 bg-primary mx-auto mb-6" />
+                <h1 className="text-5xl md:text-6xl font-headline italic leading-tight text-white">
+                Le Sanctuaire
+                </h1>
+                <h2 className="text-4xl md:text-5xl font-headline text-white/80 leading-tight mt-2">
+                Le silence qui vous écoute.
+                </h2>
 
-           <div className="absolute bottom-10 z-10">
+                <p className="mt-6 text-lg text-white/80 max-w-2xl mx-auto">
+                Un espace intime pour déposer ce qui vous traverse.
+                <br />
+                Sans jugement. Sans bruit. Sans objectif de performance.
+                </p>
+                <div className="mt-10 flex flex-col sm:flex-row items-center gap-4">
+                <Button
+                    size="lg"
+                    onClick={() => setIsAuthDialogOpen(true)}
+                    className="bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 text-white"
+                >
+                    Ouvrir mon sanctuaire
+                </Button>
+                <Button
+                    asChild
+                    size="lg"
+                    variant="outline"
+                    className="bg-transparent border-white/50 text-white hover:bg-white/10 hover:text-white"
+                >
+                    <Link href="/sanctuary/write">Essayer sans compte</Link>
+                </Button>
+                </div>
+            </motion.div>
+
+            <motion.div 
+              className="absolute bottom-10 z-10"
+              style={{ opacity: textOpacity }}
+            >
               <a href="#manifesto" aria-label="Scroll down">
                   <ChevronDown className="h-6 w-6 text-white/70" />
               </a>
-          </div>
-
-      </section>
+            </motion.div>
+        </section>
+      </div>
       <AuthDialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen} />
+      
+      {/* This section is needed to give context to the scroll down button and the next section */}
+      <section id="manifesto" className="py-32 bg-stone-50/70">
+        <div className="container max-w-2xl mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-headline text-stone-800 tracking-tight mb-8">Notre Manifeste</h2>
+            <div className="space-y-8 text-lg text-stone-600 font-body leading-relaxed">
+              <p>
+                Dans un monde qui exige de nous une performance constante, où chaque pensée doit être optimisée, où chaque émotion doit être canalisée vers un but, Aurum est une terre de jachère.
+              </p>
+              <p>
+                Ce n'est pas un outil pour devenir plus productif. Ce n'est pas une application pour "hacker" votre bien-être. C'est un sanctuaire. Un espace pour le désordre, pour la nuance, pour le murmure intérieur que le bruit du quotidien cherche à étouffer.
+              </p>
+              <p>
+                Nous croyons au pouvoir du dépôt. L'acte de simplement poser des mots, sans chercher à les sculpter, à les polir, est en soi une libération.
+              </p>
+            </div>
+        </div>
+      </section>
     </>
   );
 }
