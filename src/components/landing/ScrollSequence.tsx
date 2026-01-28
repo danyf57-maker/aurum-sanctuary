@@ -20,6 +20,8 @@ const ScrollSequence = () => {
   const [error, setError] = useState<string | null>(null);
 
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
+  const [textsVisible, setTextsVisible] = useState(false);
+
 
   
   useEffect(() => {
@@ -31,6 +33,14 @@ const ScrollSequence = () => {
     window.addEventListener('resize', updateSize);
     
     return () => window.removeEventListener('resize', updateSize);
+  }, []);
+
+  useEffect(() => {
+    // This effect runs only on the client.
+    // We set this after a short delay to ensure the initial server render
+    // and the first client render are identical.
+    const timer = setTimeout(() => setTextsVisible(true), 100);
+    return () => clearTimeout(timer);
   }, []);
 
 
@@ -181,6 +191,7 @@ const ScrollSequence = () => {
             alignItems: 'center',
             textAlign: 'center',
             color: 'white',
+            visibility: textsVisible ? 'visible' : 'hidden',
           }}>
             <h1 className="text-6xl md:text-8xl font-headline font-bold text-white drop-shadow-2xl">
                 Aurum
@@ -204,6 +215,7 @@ const ScrollSequence = () => {
               color: 'white',
               opacity: opacitySanctuary,
               y: ySanctuary,
+              visibility: textsVisible ? 'visible' : 'hidden',
             }}
           >
              <div className="text-center flex flex-col items-center p-4">
@@ -213,10 +225,12 @@ const ScrollSequence = () => {
                     Un espace intime pour déposer ce qui vous traverse. Sans jugement. Sans bruit. Sans objectif de performance.
                 </p>
                 <div className="flex gap-5 items-center">
-                    <Button asChild size="lg" className="bg-amber-500 hover:bg-amber-600 text-stone-900">
+                    <Button asChild size="lg">
                         <Link href="/sanctuary/write">Ouvrir mon sanctuaire</Link>
                     </Button>
-                    <Link href="/sanctuary/write" className="text-sm text-stone-300 underline underline-offset-4">Essayer sans compte</Link>
+                    <Button asChild size="lg" variant="secondary">
+                        <Link href="/sanctuary/write">Essayer sans compte</Link>
+                    </Button>
                 </div>
             </div>
           </motion.div>
