@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -68,7 +67,7 @@ export default function Home() {
   const faqs = [
     {
       question: "Qui peut lire mes données ?",
-      answer: "Personne d'autre que vous. Vos données sont privées et chiffrées. Même l'analyse par IA se fait de manière automatisée, sans intervention humaine. Nous n'avons pas accès à vos écrits."
+      answer: "Votre vie privée est notre priorité absolue. Les entrées sont chiffrées et stockées de manière sécurisée. Une analyse automatisée est effectuée pour vous aider à identifier vos tendances émotionnelles (sentiment, humeur), mais ce processus est entièrement anonymisé et n'a aucune mémoire à long terme de vos écrits. Personne, pas même notre équipe, ne peut lire le contenu de vos entrées."
     },
     {
       question: "Comment Aurum aide à la santé mentale ?",
