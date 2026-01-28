@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -5,7 +6,9 @@ import ScrollSequence from '@/components/landing/ScrollSequence';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
-import { PenSquare, Sparkles, Sprout, Shield } from 'lucide-react';
+import { PenSquare, Sparkles, Sprout, Shield, Quote } from 'lucide-react';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import Link from 'next/link';
 
 const AlmaCard = ({ title, time, entry, response }: { title: string, time: string, entry: string, response: string }) => (
@@ -64,6 +67,24 @@ export default function Home() {
     }
   ];
   
+  const testimonials = [
+      {
+          name: "Camille, 34 ans",
+          initials: "C",
+          quote: "J'étais sceptique à l'idée de confier mes pensées à une IA. Mais Aurum est différent. C'est un miroir bienveillant, pas un juge. Les 'insights' m'ont ouvert les yeux sur des schémas que j'ignorais totalement."
+      },
+      {
+          name: "Léo, 41 ans",
+          initials: "L",
+          quote: "Ma charge mentale était énorme. Le simple fait d'écrire, de 'déposer' mes angoisses dans Aurum chaque soir, a eu un effet libérateur. C'est plus qu'un journal, c'est une soupape de sécurité."
+      },
+      {
+          name: "Jeanne, 28 ans",
+          initials: "J",
+          quote: "Aurum ne donne pas de réponses, il aide à poser les bonnes questions. C'est un compagnon de route silencieux sur le chemin de l'introspection, sans la pression d'une performance."
+      }
+  ];
+
   const faqs = [
     {
       question: "Qui peut lire mes données ?",
@@ -162,8 +183,34 @@ export default function Home() {
             </div>
         </section>
 
+        {/* SECTION 6: Social Proof / Testimonials */}
+        <section className="py-24 md:py-32 bg-stone-100/50">
+            <div className="container">
+                <div className="text-center max-w-2xl mx-auto mb-16">
+                    <h2 className="text-4xl font-headline mb-4">Ils ont trouvé leur sanctuaire</h2>
+                    <p className="text-muted-foreground">L'expérience Aurum, racontée par ceux qui l'écrivent chaque jour.</p>
+                </div>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {testimonials.map((testimonial, index) => (
+                        <Card key={index} className="bg-card/30 border-0 shadow-none">
+                            <CardHeader className="flex-row gap-4 items-center">
+                                <Avatar>
+                                    <AvatarFallback>{testimonial.initials}</AvatarFallback>
+                                </Avatar>
+                                <div>
+                                    <h4 className="font-semibold">{testimonial.name}</h4>
+                                </div>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-foreground/80 italic">"{testimonial.quote}"</p>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
+            </div>
+        </section>
 
-        {/* SECTION 6: CTA Final & FAQ */}
+        {/* SECTION 7: CTA Final & FAQ */}
         <section className="container py-24 md:py-32 text-center border-t border-black/5">
             <Button asChild size="lg" className="h-14 px-12 text-base">
                 <Link href="/sanctuary/write">Commencez votre introspection</Link>
@@ -189,4 +236,5 @@ export default function Home() {
       </div>
     </main>
   );
-}
+
+    
