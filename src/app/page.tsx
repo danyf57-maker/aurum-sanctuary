@@ -1,8 +1,9 @@
 
+
 'use client';
 
 import React from 'react';
-import ScrollSequence from '@/components/landing/ScrollSequence';
+import dynamic from 'next/dynamic';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
@@ -10,6 +11,11 @@ import { PenSquare, Sparkles, Sprout, Shield, Quote } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import Link from 'next/link';
+
+const ScrollSequence = dynamic(() => import('@/components/landing/ScrollSequence'), {
+    ssr: false,
+    loading: () => <div style={{ height: '800vh', background: '#1c1917' }} />
+});
 
 const AlmaCard = ({ title, time, entry, response }: { title: string, time: string, entry: string, response: string }) => (
     <div className="flex-1 bg-white p-10 rounded-sm shadow-[0_10px_40px_-10px_rgba(0,0,0,0.08)] transition-transform duration-300 ease-in-out hover:-translate-y-1 min-w-[300px] group">
@@ -237,4 +243,4 @@ export default function Home() {
     </main>
   );
 
-    
+}

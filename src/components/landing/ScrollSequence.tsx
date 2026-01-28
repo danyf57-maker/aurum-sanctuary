@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useRef, useEffect, useState, useCallback } from 'react';
@@ -12,12 +13,6 @@ const getImagePath = (frame: number) =>
 
 
 const ScrollSequence = () => {
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -25,7 +20,6 @@ const ScrollSequence = () => {
   const [isAnimationReady, setIsAnimationReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Use a default size for SSR, and update on the client.
   const [canvasSize, setCanvasSize] = useState({ width: 1920, height: 1080 });
 
   const { scrollYProgress } = useScroll({
@@ -54,16 +48,12 @@ const ScrollSequence = () => {
   }, []);
 
   useEffect(() => {
-    if (!isMounted) return;
-
-    // 1. Handle window resize
     const updateSize = () => {
       setCanvasSize({ width: window.innerWidth, height: window.innerHeight });
     };
-    updateSize(); // Set initial size
+    updateSize();
     window.addEventListener('resize', updateSize);
 
-    // 2. Preload images
     let isCancelled = false;
     const loadImages = async () => {
       try {
@@ -80,8 +70,6 @@ const ScrollSequence = () => {
         if (isCancelled) return;
         
         setImages(loadedImages);
-        drawImage(loadedImages[0]); // Draw first frame
-        setIsAnimationReady(true);
       } catch (err: any) {
         console.error("Erreur de chargement d'image:", err.message);
         setError(`Impossible de charger une image pour l'animation. Vérifiez que le fichier existe bien.`);
@@ -93,30 +81,30 @@ const ScrollSequence = () => {
       isCancelled = true;
       window.removeEventListener('resize', updateSize);
     };
-  }, [isMounted, drawImage]);
+  }, []);
 
   useEffect(() => {
-    if (!isMounted || images.length === 0) return;
+    if (images.length === 0) return;
 
-    // 3. Animate on scroll
+    const img = images[0];
+    if(img) {
+      drawImage(img);
+      setIsAnimationReady(true);
+    }
+
     const unsubscribe = scrollYProgress.on("change", (latest) => {
       const frameIndex = Math.min(
         images.length - 1,
         Math.floor(latest * images.length)
       );
-      const img = images[frameIndex];
-      if (img) {
-        requestAnimationFrame(() => drawImage(img));
+      const currentImg = images[frameIndex];
+      if (currentImg) {
+        requestAnimationFrame(() => drawImage(currentImg));
       }
     });
 
     return () => unsubscribe();
-  }, [isMounted, images, scrollYProgress, drawImage]);
-
-  if (!isMounted) {
-    // Render a placeholder on the server and for the initial client render
-    return <div style={{ height: '800vh', background: '#1c1917' }} />;
-  }
+  }, [images, scrollYProgress, drawImage]);
 
   return (
     <div ref={containerRef} style={{ height: '800vh', position: 'relative' }}>
@@ -129,7 +117,7 @@ const ScrollSequence = () => {
         </div>
       )}
 
-      {/* Fallback background while images load */}
+      {/* Fallback visible until animation is ready */}
       <div style={{
           position: 'sticky',
           top: 0,
