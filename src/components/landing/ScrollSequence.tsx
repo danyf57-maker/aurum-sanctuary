@@ -12,11 +12,10 @@ const getImagePath = (frame: number) =>
 
 
 const ScrollSequence = () => {
-  const [isClient, setIsClient] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    // This effect runs only on the client, letting us use browser APIs safely.
-    setIsClient(true);
+    setIsMounted(true);
   }, []);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -55,7 +54,7 @@ const ScrollSequence = () => {
   }, []);
 
   useEffect(() => {
-    if (!isClient) return;
+    if (!isMounted) return;
 
     // 1. Handle window resize
     const updateSize = () => {
@@ -94,10 +93,10 @@ const ScrollSequence = () => {
       isCancelled = true;
       window.removeEventListener('resize', updateSize);
     };
-  }, [isClient, drawImage]);
+  }, [isMounted, drawImage]);
 
   useEffect(() => {
-    if (!isClient || images.length === 0) return;
+    if (!isMounted || images.length === 0) return;
 
     // 3. Animate on scroll
     const unsubscribe = scrollYProgress.on("change", (latest) => {
@@ -112,9 +111,13 @@ const ScrollSequence = () => {
     });
 
     return () => unsubscribe();
-  }, [isClient, images, scrollYProgress, drawImage]);
+  }, [isMounted, images, scrollYProgress, drawImage]);
 
-  // This structure is now the same for server and initial client render.
+  if (!isMounted) {
+    // Render a placeholder on the server and for the initial client render
+    return <div style={{ height: '800vh', background: '#1c1917' }} />;
+  }
+
   return (
     <div ref={containerRef} style={{ height: '800vh', position: 'relative' }}>
       {error && (
