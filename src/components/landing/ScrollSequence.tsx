@@ -15,8 +15,7 @@ const ScrollSequence = () => {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    // This effect runs only on the client, ensuring client-specific code
-    // runs after the initial server render.
+    // This effect runs only on the client, letting us use browser APIs safely.
     setIsClient(true);
   }, []);
 
@@ -27,7 +26,8 @@ const ScrollSequence = () => {
   const [isAnimationReady, setIsAnimationReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
+  // Use a default size for SSR, and update on the client.
+  const [canvasSize, setCanvasSize] = useState({ width: 1920, height: 1080 });
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -40,7 +40,7 @@ const ScrollSequence = () => {
   
   const drawImage = useCallback((img: HTMLImageElement) => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas || !img) return;
     const context = canvas.getContext('2d');
     if (!context) return;
     
@@ -56,58 +56,50 @@ const ScrollSequence = () => {
 
   useEffect(() => {
     if (!isClient) return;
+
+    // 1. Handle window resize
     const updateSize = () => {
       setCanvasSize({ width: window.innerWidth, height: window.innerHeight });
     };
-    updateSize();
+    updateSize(); // Set initial size
     window.addEventListener('resize', updateSize);
-    return () => window.removeEventListener('resize', updateSize);
-  }, [isClient]);
 
-  useEffect(() => {
-    if (!isClient || canvasSize.width === 0 || canvasSize.height === 0 || images.length > 0) return;
-
+    // 2. Preload images
     let isCancelled = false;
-
     const loadImages = async () => {
       try {
-        const firstImage = new Image();
-        firstImage.src = getImagePath(0);
-        await firstImage.decode();
-        if (isCancelled) return;
-        drawImage(firstImage);
-        setIsAnimationReady(true);
-
-        const allImagePromises = Array.from({ length: frameCount }, (_, i) => {
+        const imagePromises = Array.from({ length: frameCount }, (_, i) => {
           return new Promise<HTMLImageElement>((resolve, reject) => {
             const img = new Image();
-            const path = getImagePath(i);
-            img.src = path;
+            img.src = getImagePath(i);
             img.onload = () => resolve(img);
-            img.onerror = () => reject(new Error(path));
+            img.onerror = () => reject(new Error(getImagePath(i)));
           });
         });
 
-        const allImages = await Promise.all(allImagePromises);
+        const loadedImages = await Promise.all(imagePromises);
         if (isCancelled) return;
-
-        setImages(allImages);
+        
+        setImages(loadedImages);
+        drawImage(loadedImages[0]); // Draw first frame
+        setIsAnimationReady(true);
       } catch (err: any) {
         console.error("Erreur de chargement d'image:", err.message);
-        setError(`Impossible de charger l'image à l'adresse : "${err.message}". Vérifiez que le fichier existe bien dans le dossier "public${err.message}" et que le nom est exact.`);
+        setError(`Impossible de charger une image pour l'animation. Vérifiez que le fichier existe bien.`);
       }
     };
-
     loadImages();
 
     return () => {
       isCancelled = true;
+      window.removeEventListener('resize', updateSize);
     };
-  }, [isClient, drawImage, canvasSize, images]);
+  }, [isClient, drawImage]);
 
   useEffect(() => {
     if (!isClient || images.length === 0) return;
-    
+
+    // 3. Animate on scroll
     const unsubscribe = scrollYProgress.on("change", (latest) => {
       const frameIndex = Math.min(
         images.length - 1,
@@ -122,17 +114,7 @@ const ScrollSequence = () => {
     return () => unsubscribe();
   }, [isClient, images, scrollYProgress, drawImage]);
 
-  // Render a placeholder on the server and for the initial client-side render
-  // to prevent hydration mismatch.
-  if (!isClient) {
-    return (
-      <div style={{ height: '800vh', position: 'relative', background: '#1c1917' }}>
-        <div style={{ position: 'sticky', top: 0, height: '100vh' }} />
-      </div>
-    );
-  }
-
-  // Render the full component only on the client after mounting.
+  // This structure is now the same for server and initial client render.
   return (
     <div ref={containerRef} style={{ height: '800vh', position: 'relative' }}>
       {error && (
@@ -143,11 +125,16 @@ const ScrollSequence = () => {
           </div>
         </div>
       )}
-      {!isAnimationReady && !error && (
-         <div style={{ position: 'sticky', top: 0, height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#1c1917', color: 'white', zIndex: 10 }}>
-          {/* First frame will be drawn on canvas, so this is just a background */}
-        </div>
-      )}
+
+      {/* Fallback background while images load */}
+      <div style={{
+          position: 'sticky',
+          top: 0,
+          height: '100vh',
+          background: '#1c1917',
+          display: isAnimationReady ? 'none' : 'block'
+      }}/>
+      
       <canvas
         ref={canvasRef}
         width={canvasSize.width}
@@ -158,6 +145,7 @@ const ScrollSequence = () => {
           width: '100%',
           height: '100vh',
           display: error ? 'none' : 'block',
+          visibility: isAnimationReady ? 'visible' : 'hidden',
         }}
       />
        <div style={{
