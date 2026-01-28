@@ -12,6 +12,14 @@ const getImagePath = (frame: number) =>
 
 
 const ScrollSequence = () => {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    // This effect runs only on the client, ensuring client-specific code
+    // runs after the initial server render.
+    setIsClient(true);
+  }, []);
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -20,44 +28,16 @@ const ScrollSequence = () => {
   const [error, setError] = useState<string | null>(null);
 
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
-  const [textsVisible, setTextsVisible] = useState(false);
-
-
-  
-  useEffect(() => {
-    // This runs only on the client, after the initial render.
-    const updateSize = () => {
-      setCanvasSize({ width: window.innerWidth, height: window.innerHeight });
-    };
-    updateSize();
-    window.addEventListener('resize', updateSize);
-    
-    return () => window.removeEventListener('resize', updateSize);
-  }, []);
-
-  useEffect(() => {
-    // This effect runs only on the client.
-    // We set this after a short delay to ensure the initial server render
-    // and the first client render are identical.
-    const timer = setTimeout(() => setTextsVisible(true), 100);
-    return () => clearTimeout(timer);
-  }, []);
-
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ['start start', 'end end'],
   });
 
-  // --- Text Animations ---
-  // The first text fades out much earlier
   const opacityHero = useTransform(scrollYProgress, [0, 0.1, 0.2], [1, 1, 0]);
-
-  // The new "Sanctuary" hero fades in at the end.
   const opacitySanctuary = useTransform(scrollYProgress, [0.7, 0.9], [0, 1]);
   const ySanctuary = useTransform(scrollYProgress, [0.7, 0.9], ['5vh', '0vh']);
   
-
   const drawImage = useCallback((img: HTMLImageElement) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -75,7 +55,17 @@ const ScrollSequence = () => {
   }, []);
 
   useEffect(() => {
-    if (canvasSize.width === 0 || canvasSize.height === 0 || images.length > 0) return;
+    if (!isClient) return;
+    const updateSize = () => {
+      setCanvasSize({ width: window.innerWidth, height: window.innerHeight });
+    };
+    updateSize();
+    window.addEventListener('resize', updateSize);
+    return () => window.removeEventListener('resize', updateSize);
+  }, [isClient]);
+
+  useEffect(() => {
+    if (!isClient || canvasSize.width === 0 || canvasSize.height === 0 || images.length > 0) return;
 
     let isCancelled = false;
 
@@ -86,7 +76,7 @@ const ScrollSequence = () => {
         await firstImage.decode();
         if (isCancelled) return;
         drawImage(firstImage);
-        setIsAnimationReady(true); // Show first frame immediately
+        setIsAnimationReady(true);
 
         const allImagePromises = Array.from({ length: frameCount }, (_, i) => {
           return new Promise<HTMLImageElement>((resolve, reject) => {
@@ -113,10 +103,10 @@ const ScrollSequence = () => {
     return () => {
       isCancelled = true;
     };
-  }, [drawImage, canvasSize, images]);
+  }, [isClient, drawImage, canvasSize, images]);
 
   useEffect(() => {
-    if (images.length === 0) return;
+    if (!isClient || images.length === 0) return;
     
     const unsubscribe = scrollYProgress.on("change", (latest) => {
       const frameIndex = Math.min(
@@ -130,9 +120,19 @@ const ScrollSequence = () => {
     });
 
     return () => unsubscribe();
-  }, [images, scrollYProgress, drawImage]);
+  }, [isClient, images, scrollYProgress, drawImage]);
 
+  // Render a placeholder on the server and for the initial client-side render
+  // to prevent hydration mismatch.
+  if (!isClient) {
+    return (
+      <div style={{ height: '800vh', position: 'relative', background: '#1c1917' }}>
+        <div style={{ position: 'sticky', top: 0, height: '100vh' }} />
+      </div>
+    );
+  }
 
+  // Render the full component only on the client after mounting.
   return (
     <div ref={containerRef} style={{ height: '800vh', position: 'relative' }}>
       {error && (
@@ -145,7 +145,7 @@ const ScrollSequence = () => {
       )}
       {!isAnimationReady && !error && (
          <div style={{ position: 'sticky', top: 0, height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#1c1917', color: 'white', zIndex: 10 }}>
-          {/* First frame will be drawn here on canvas, so no loader needed. */}
+          {/* First frame will be drawn on canvas, so this is just a background */}
         </div>
       )}
       <canvas
@@ -160,7 +160,6 @@ const ScrollSequence = () => {
           display: error ? 'none' : 'block',
         }}
       />
-       {/* Overlay Container for all text */}
        <div style={{
           position: 'sticky',
           top: 0,
@@ -169,7 +168,6 @@ const ScrollSequence = () => {
           marginTop: '-100vh',
           display: error ? 'none' : 'block',
       }}>
-          {/* Dark filter */}
           <div style={{
             position: 'absolute',
             top: 0,
@@ -179,7 +177,6 @@ const ScrollSequence = () => {
             backgroundColor: 'rgba(0, 0, 0, 0.4)',
           }}/>
 
-          {/* Hero text (Front layer) */}
           <motion.div style={{
             opacity: opacityHero,
             position: 'relative',
@@ -191,7 +188,6 @@ const ScrollSequence = () => {
             alignItems: 'center',
             textAlign: 'center',
             color: 'white',
-            visibility: textsVisible ? 'visible' : 'hidden',
           }}>
             <h1 className="text-6xl md:text-8xl font-headline font-bold text-white drop-shadow-2xl">
                 Aurum
@@ -201,7 +197,6 @@ const ScrollSequence = () => {
             </p>
           </motion.div>
 
-          {/* Sanctuary Hero Content */}
            <motion.div
             style={{
               position: 'absolute',
@@ -215,7 +210,6 @@ const ScrollSequence = () => {
               color: 'white',
               opacity: opacitySanctuary,
               y: ySanctuary,
-              visibility: textsVisible ? 'visible' : 'hidden',
             }}
           >
              <div className="text-center flex flex-col items-center p-4">
