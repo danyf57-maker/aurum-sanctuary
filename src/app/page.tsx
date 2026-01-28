@@ -84,21 +84,6 @@ export default function Home() {
       <ScrollSequence />
       
       <div id="sanctuary-content" className="bg-background text-foreground">
-        
-        {/* SECTION 1: Le Sanctuaire */}
-        <section className="h-[90vh] flex flex-col justify-center items-center text-center animate-fade-in container">
-            <h1 className="text-6xl lg:text-7xl font-headline tracking-tighter">Le Sanctuaire</h1>
-            <p className="text-2xl lg:text-3xl font-headline italic text-primary my-6">Le silence qui vous écoute.</p>
-            <p className="max-w-md text-muted-foreground mb-12">
-                Un espace intime pour déposer ce qui vous traverse. Sans jugement. Sans bruit. Sans objectif de performance.
-            </p>
-            <div className="flex gap-5 items-center">
-                <Button asChild size="lg">
-                    <Link href="/sanctuary/write">Ouvrir mon sanctuaire</Link>
-                </Button>
-                <Link href="/sanctuary/write" className="text-sm underline underline-offset-4">Essayer sans compte</Link>
-            </div>
-        </section>
 
         {/* SECTION 2: Métaphore du jardin */}
         <section className="py-24 md:py-32 bg-stone-100/50">

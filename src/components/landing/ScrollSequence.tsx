@@ -2,55 +2,13 @@
 
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 const frameCount = 52; // De 000 à 051
 
 const getImagePath = (frame: number) =>
   `/sequence/herosection_000_${String(frame).padStart(3, '0')}.jpg`;
-
-// --- Fly-away Letter Animation Component ---
-const FlyAwayLetter = ({ char, index, scrollYProgress, destinations }) => {
-  const destination = destinations[index];
-  
-  const x = useTransform(scrollYProgress, [0.48, 0.55], [0, destination?.x || 0]);
-  const y = useTransform(scrollYProgress, [0.48, 0.55], [0, destination?.y || 0]);
-  const rotate = useTransform(scrollYProgress, [0.48, 0.55], [0, destination?.rotate || 0]);
-
-  return (
-    <motion.span
-      style={{
-        display: 'inline-block',
-        x,
-        y,
-        rotate,
-      }}
-    >
-      {char === ' ' ? '\u00A0' : char}
-    </motion.span>
-  );
-};
-
-// --- Fly-in Letter Animation Component ---
-const FlyInLetter = ({ char, index, scrollYProgress, destinations }) => {
-  const destination = destinations[index];
-
-  const x = useTransform(scrollYProgress, [0.58, 0.7], [destination?.x || 0, 0]);
-  const y = useTransform(scrollYProgress, [0.58, 0.7], [destination?.y || 0, 0]);
-  const rotate = useTransform(scrollYProgress, [0.58, 0.7], [destination?.rotate || 0, 0]);
-
-  return (
-    <motion.span
-      style={{
-        display: 'inline-block',
-        x,
-        y,
-        rotate,
-      }}
-    >
-      {char === ' ' ? '\u00A0' : char}
-    </motion.span>
-  );
-};
 
 
 const ScrollSequence = () => {
@@ -63,31 +21,9 @@ const ScrollSequence = () => {
 
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
 
-  const [letterDestinations1, setLetterDestinations1] = useState<any[]>([]);
-  const [letterDestinations2, setLetterDestinations2] = useState<any[]>([]);
   
-  const textToAnimate1 = "L'endroit où vos mots se posent.";
-  const textToAnimate2 = "Là où vos mots trouvent la lumière.";
-
   useEffect(() => {
     // This runs only on the client, after the initial render.
-    // It prevents hydration mismatch by ensuring random values are only generated client-side.
-    setLetterDestinations1(
-      Array.from({length: textToAnimate1.length}).map(() => ({
-        x: (Math.random() - 0.5) * 700,
-        y: (Math.random() - 0.5) * 500,
-        rotate: (Math.random() - 0.5) * 540,
-      }))
-    );
-
-    setLetterDestinations2(
-      Array.from({length: textToAnimate2.length}).map(() => ({
-        x: (Math.random() - 0.5) * 800,
-        y: (Math.random() - 0.5) * 600,
-        rotate: (Math.random() - 0.5) * 720,
-      }))
-    );
-
     const updateSize = () => {
       setCanvasSize({ width: window.innerWidth, height: window.innerHeight });
     };
@@ -104,21 +40,12 @@ const ScrollSequence = () => {
   });
 
   // --- Text Animations ---
-  const opacityHero = useTransform(scrollYProgress, [0, 0.1, 0.15], [1, 1, 0]);
+  // The first text fades out much earlier
+  const opacityHero = useTransform(scrollYProgress, [0, 0.1, 0.2], [1, 1, 0]);
 
-  const yParallax1 = useTransform(scrollYProgress, [0.25, 0.55], ['10vh', '-15vh']);
-  const opacityParallax1 = useTransform(
-    scrollYProgress,
-    [0.25, 0.3, 0.48, 0.55],
-    [0, 0.9, 0.9, 0]
-  );
-
-  const yParallax2 = useTransform(scrollYProgress, [0.58, 0.8], ['15vh', '-10vh']);
-  const opacityParallax2 = useTransform(
-    scrollYProgress,
-    [0.58, 0.7, 1],
-    [0, 1, 1]
-  );
+  // The new "Sanctuary" hero fades in at the end.
+  const opacitySanctuary = useTransform(scrollYProgress, [0.7, 0.9], [0, 1]);
+  const ySanctuary = useTransform(scrollYProgress, [0.7, 0.9], ['5vh', '0vh']);
   
 
   const drawImage = useCallback((img: HTMLImageElement) => {
@@ -195,18 +122,6 @@ const ScrollSequence = () => {
     return () => unsubscribe();
   }, [images, scrollYProgress, drawImage]);
 
-  const animatedTextContainerStyle = {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    color: '#F5F1E8',
-  } as React.CSSProperties;
-
 
   return (
     <div ref={containerRef} style={{ height: '800vh', position: 'relative' }}>
@@ -270,39 +185,40 @@ const ScrollSequence = () => {
             <h1 className="text-6xl md:text-8xl font-headline font-bold text-white drop-shadow-2xl">
                 Aurum
             </h1>
-            <p className="mt-4 text-3xl md:text-4xl text-stone-200 max-w-2xl drop-shadow-xl">
+            <p className="mt-4 text-3xl md:text-4xl text-stone-200 max-w-2xl drop-shadow-xl font-headline italic">
                 Le silence qui vous écoute.
             </p>
           </motion.div>
 
-          {/* Parallax text 1 (Fly away) */}
-          <motion.div
-            style={{
-              ...animatedTextContainerStyle,
-              y: yParallax1,
-              opacity: opacityParallax1,
-            }}
-          >
-             <h2 className="font-headline text-6xl text-center flex justify-center flex-wrap" aria-label={textToAnimate1}>
-                {textToAnimate1.split('').map((char, i) => (
-                  <FlyAwayLetter key={i} char={char} index={i} scrollYProgress={scrollYProgress} destinations={letterDestinations1} />
-                ))}
-            </h2>
-          </motion.div>
-
-          {/* Parallax text 2 (Fly in) */}
+          {/* Sanctuary Hero Content */}
            <motion.div
             style={{
-              ...animatedTextContainerStyle,
-              y: yParallax2,
-              opacity: opacityParallax2,
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              color: 'white',
+              opacity: opacitySanctuary,
+              y: ySanctuary,
             }}
           >
-             <h2 className="font-headline text-6xl text-center flex justify-center flex-wrap" aria-label={textToAnimate2}>
-                {textToAnimate2.split('').map((char, i) => (
-                  <FlyInLetter key={i} char={char} index={i} scrollYProgress={scrollYProgress} destinations={letterDestinations2} />
-                ))}
-            </h2>
+             <div className="text-center flex flex-col items-center p-4">
+                <h1 className="text-6xl lg:text-7xl font-headline tracking-tighter text-white">Le Sanctuaire</h1>
+                <p className="text-2xl lg:text-3xl font-headline italic text-amber-300 my-6">Le silence qui vous écoute.</p>
+                <p className="max-w-md text-stone-200 mb-12">
+                    Un espace intime pour déposer ce qui vous traverse. Sans jugement. Sans bruit. Sans objectif de performance.
+                </p>
+                <div className="flex gap-5 items-center">
+                    <Button asChild size="lg" className="bg-amber-500 hover:bg-amber-600 text-stone-900">
+                        <Link href="/sanctuary/write">Ouvrir mon sanctuaire</Link>
+                    </Button>
+                    <Link href="/sanctuary/write" className="text-sm text-stone-300 underline underline-offset-4">Essayer sans compte</Link>
+                </div>
+            </div>
           </motion.div>
       </div>
     </div>
