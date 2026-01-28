@@ -13,9 +13,9 @@ import { useFormStatus } from 'react-dom';
 import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
 
-// REMPLACEZ-LES PAR VOS VRAIS PRICE ID STRIPE
-const PRICE_ID_PRO = "price_xxxxxxxxxxxxxxxxx"; 
-const PRICE_ID_PREMIUM = "price_yyyyyyyyyyyyyyyyy";
+// Les ID de prix sont maintenant chargés depuis les variables d'environnement
+const PRICE_ID_PRO = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO; 
+const PRICE_ID_PREMIUM = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PREMIUM;
 
 const plans = [
     {
@@ -76,18 +76,19 @@ const Feature = ({ text, included }: { text: string, included: boolean }) => (
     </li>
 );
 
-function SubscribeButton({ priceId, cta, isRecommended }: { priceId: string | null, cta: string, isRecommended: boolean }) {
+function SubscribeButton({ priceId, cta, isRecommended }: { priceId: string | null | undefined, cta: string, isRecommended: boolean }) {
     const { pending } = useFormStatus();
     const [isCurrentPlan, setIsCurrentPlan] = useState(false); // Logique à implémenter
+    const isStripeDisabled = !priceId || priceId.includes('xxx');
 
     return (
         <Button
             type="submit"
             className={cn("w-full", { "bg-stone-600 text-white hover:bg-stone-700": !isRecommended })}
             size="lg"
-            disabled={pending || isCurrentPlan}
+            disabled={pending || isCurrentPlan || isStripeDisabled}
         >
-            {pending ? <Loader2 className="animate-spin" /> : isCurrentPlan ? 'Plan Actuel' : cta}
+            {pending ? <Loader2 className="animate-spin" /> : isCurrentPlan ? 'Plan Actuel' : isStripeDisabled ? 'Bientôt disponible' : cta}
         </Button>
     );
 }

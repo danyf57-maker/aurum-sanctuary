@@ -7,9 +7,10 @@ import { auth as adminAuth } from 'firebase-admin';
 import { db } from '@/lib/firebase/server-config';
 import Stripe from 'stripe';
 
-// REMPLACEZ-LES PAR VOS VRAIS PRICE ID STRIPE
-const PRICE_ID_PRO = "price_xxxxxxxxxxxxxxxxx"; 
-const PRICE_ID_PREMIUM = "price_yyyyyyyyyyyyyyyyy";
+// Les ID de prix sont maintenant chargés depuis les variables d'environnement.
+// Assurez-vous qu'elles sont définies dans votre fichier .env
+const PRICE_ID_PRO = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO; 
+const PRICE_ID_PREMIUM = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PREMIUM;
 
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('La variable d\'environnement STRIPE_SECRET_KEY n\'est pas définie.');
@@ -57,6 +58,11 @@ async function getOrCreateStripeCustomer(userId: string, email: string | undefin
 
 export async function createCheckoutSession(formData: FormData) {
     const priceId = formData.get('priceId') as string;
+    
+    // Vérification que les ID de prix sont bien configurés
+    if (!PRICE_ID_PRO || !PRICE_ID_PREMIUM || PRICE_ID_PRO.includes('xxx') || PRICE_ID_PREMIUM.includes('xxx')) {
+        throw new Error("Les ID de prix Stripe ne sont pas correctement configurés dans les variables d'environnement. Veuillez vérifier votre fichier .env.");
+    }
     
     if (!priceId || ![PRICE_ID_PRO, PRICE_ID_PREMIUM].includes(priceId)) {
         throw new Error("ID de plan invalide.");
