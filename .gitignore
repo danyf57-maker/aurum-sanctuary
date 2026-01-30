@@ -63,3 +63,7 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
+# PWA
+public/sw.js
+public/workbox-*.js
+public/worker-*.js
