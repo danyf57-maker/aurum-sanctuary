@@ -1,10 +1,28 @@
-
 {
-  "name": "nextn",
+  "name": "aurum-sanctuary",
   "version": "0.1.0",
   "private": true,
+  "description": "Privacy-first mental health journaling app with AI-powered insights and end-to-end encryption",
+  "keywords": [
+    "journaling",
+    "mental-health",
+    "ai",
+    "firebase",
+    "nextjs",
+    "privacy",
+    "encryption"
+  ],
+  "author": "Aurum Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/USERNAME/aurum-sanctuary.git"
+  },
+  "bugs": {
+    "url": "https://github.com/USERNAME/aurum-sanctuary/issues"
+  },
   "scripts": {
-    "dev": "next dev --turbopack -p 9002",
+    "dev": "next dev -p 9002",
     "genkit:dev": "genkit start -- tsx src/ai/dev.ts",
     "genkit:watch": "genkit start -- tsx --watch src/ai/dev.ts",
     "build": "NODE_ENV=production next build",
@@ -48,24 +66,26 @@
     "framer-motion": "^11.5.7",
     "genkit": "^1.20.0",
     "lucide-react": "^0.475.0",
-    "next": "15.5.9",
+    "next": "14.2.18",
     "openai": "^4.52.7",
     "patch-package": "^8.0.0",
-    "react": "^19.2.1",
+    "react": "^18.3.1",
     "react-day-picker": "^9.11.3",
-    "react-dom": "^19.2.1",
+    "react-dom": "^18.3.1",
     "react-hook-form": "^7.54.2",
     "recharts": "^2.15.1",
+    "server-only": "^0.0.1",
     "slugify": "^1.6.6",
     "stripe": "^16.2.0",
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",
-    "zod": "^3.24.2"
+    "zod": "^3.24.2",
+    "zustand": "^5.0.10"
   },
   "devDependencies": {
     "@types/node": "^20",
-    "@types/react": "^19.2.1",
-    "@types/react-dom": "^19.2.1",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"

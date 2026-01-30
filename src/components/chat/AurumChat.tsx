@@ -13,17 +13,17 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { cn } from '@/lib/utils';
-import { useAuth } from '@/hooks/use-auth';
+import { useAuth } from '@/providers/auth-provider';
 import { useToast } from '@/hooks/use-toast';
 
 
 const initialState = {
-    response: '',
-    history: [],
-    error: undefined,
+  response: '',
+  history: [],
+  error: undefined,
 };
 
-function SubmitButton() {  
+function SubmitButton() {
   const { pending } = useFormStatus();
   return (
     <Button type="submit" size="icon" disabled={pending}>
@@ -55,7 +55,7 @@ export function AurumChat() {
 
   useEffect(() => {
     if (state.error) {
-       toast({
+      toast({
         title: "Erreur",
         description: state.error,
         variant: "destructive",
@@ -63,7 +63,7 @@ export function AurumChat() {
     } else if (state && state.history.length > history.length) {
       setHistory(state.history);
       formRef.current?.reset();
-      if(textareaRef.current) {
+      if (textareaRef.current) {
         textareaRef.current.style.height = 'auto';
       }
     }
@@ -83,14 +83,14 @@ export function AurumChat() {
     textarea.style.height = 'auto';
     textarea.style.height = `${textarea.scrollHeight}px`;
   };
-  
+
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
       formRef.current?.requestSubmit();
     }
   };
-  
+
   if (!user) {
     return (
       <Card className="w-full max-w-3xl">
@@ -130,33 +130,33 @@ export function AurumChat() {
               >
                 {msg.role === 'assistant' && (
                   <Avatar className="h-8 w-8 border">
-                     <AvatarFallback className="bg-amber-100 text-amber-700">A</AvatarFallback>
+                    <AvatarFallback className="bg-amber-100 text-amber-700">A</AvatarFallback>
                   </Avatar>
                 )}
                 <div className={cn('max-w-md rounded-lg p-3', {
-                    'bg-secondary text-secondary-foreground': msg.role === 'user',
-                    'bg-stone-100 dark:bg-stone-800': msg.role === 'assistant'
+                  'bg-secondary text-secondary-foreground': msg.role === 'user',
+                  'bg-stone-100 dark:bg-stone-800': msg.role === 'assistant'
                 })}>
                   <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
                 </div>
                 {msg.role === 'user' && (
-                    <Avatar className="h-8 w-8 border">
-                        <AvatarImage src={user.photoURL ?? undefined} alt={user.displayName ?? "User"} />
-                        <AvatarFallback><User size={16}/></AvatarFallback>
-                    </Avatar>
+                  <Avatar className="h-8 w-8 border">
+                    <AvatarImage src={user.photoURL ?? undefined} alt={user.displayName ?? "User"} />
+                    <AvatarFallback><User size={16} /></AvatarFallback>
+                  </Avatar>
                 )}
               </div>
             ))}
-             {isPending && (
-                <div className="flex items-start gap-4">
-                     <Avatar className="h-8 w-8 border">
-                     <AvatarFallback className="bg-amber-100 text-amber-700">A</AvatarFallback>
-                  </Avatar>
-                  <div className="max-w-md rounded-lg p-3 bg-stone-100 dark:bg-stone-800 flex items-center justify-center">
-                    <Loader2 className="h-5 w-5 animate-spin text-amber-600" />
-                  </div>
+            {isPending && (
+              <div className="flex items-start gap-4">
+                <Avatar className="h-8 w-8 border">
+                  <AvatarFallback className="bg-amber-100 text-amber-700">A</AvatarFallback>
+                </Avatar>
+                <div className="max-w-md rounded-lg p-3 bg-stone-100 dark:bg-stone-800 flex items-center justify-center">
+                  <Loader2 className="h-5 w-5 animate-spin text-amber-600" />
                 </div>
-             )}
+              </div>
+            )}
           </div>
         </ScrollArea>
       </CardContent>

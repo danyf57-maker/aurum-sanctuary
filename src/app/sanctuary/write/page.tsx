@@ -6,7 +6,7 @@ import { JournalEntryForm } from '@/components/journal/journal-entry-form';
 import { AurumChat } from '@/components/chat/AurumChat';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BookText, MessageSquare } from 'lucide-react';
-import { useAuth } from '@/hooks/use-auth';
+import { useAuth } from '@/providers/auth-provider';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -41,13 +41,13 @@ export default function WritePage() {
                         </Card>
                     </TabsContent>
                     <TabsContent value="chat" className="mt-6">
-                    <AurumChat />
+                        <AurumChat />
                     </TabsContent>
                 </Tabs>
             </div>
         );
     }
-    
+
     // Si l'authentification est en cours, on affiche un skeleton
     if (loading) {
         return (

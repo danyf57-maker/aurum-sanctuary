@@ -1,9 +1,8 @@
-
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { Loader2 } from 'lucide-react';
-import { useAuth, ALMA_USER_ID } from "@/hooks/use-auth";
+import { useAuth, ALMA_EMAIL } from '@/providers/auth-provider';
 import { saveJournalEntry, type FormState } from "@/app/actions";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { AuthDialog } from "@/components/auth/auth-dialog";
+
 
 function SubmitButton({ isSubmitting }: { isSubmitting: boolean }) {
   return (
@@ -22,7 +22,7 @@ function SubmitButton({ isSubmitting }: { isSubmitting: boolean }) {
 }
 
 interface JournalEntryFormProps {
-    onSave?: () => void;
+  onSave?: () => void;
 }
 
 export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
@@ -30,7 +30,7 @@ export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
 
@@ -43,33 +43,33 @@ export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
 
     setIsSubmitting(true);
     const formData = new FormData(event.currentTarget);
-    
+
     // Server action expects a "previous state" argument, even if we don't use it here.
     const result: FormState = await saveJournalEntry({} as FormState, formData);
     setIsSubmitting(false);
 
     if (result && !result.errors && !result.message) {
-      if(onSave) onSave();
-      if(formRef.current) formRef.current.reset();
-      if(textareaRef.current) {
-          textareaRef.current.style.height = 'auto';
+      if (onSave) onSave();
+      if (formRef.current) formRef.current.reset();
+      if (textareaRef.current) {
+        textareaRef.current.style.height = 'auto';
       }
       toast({
         title: "Entrée enregistrée",
-        description: result.isFirstEntry 
+        description: result.isFirstEntry
           ? "Félicitations pour votre première entrée ! Bienvenue dans votre sanctuaire."
           : "Votre pensée a été préservée en toute sécurité.",
       });
     } else {
-       const errorMsg = result.errors?.content?.[0] || result.errors?.userId?.[0] || result.message || "Une erreur est survenue.";
-       toast({
-          title: "Erreur de validation",
-          description: errorMsg,
-          variant: "destructive",
+      const errorMsg = result.errors?.content?.[0] || result.errors?.userId?.[0] || result.message || "Une erreur est survenue.";
+      toast({
+        title: "Erreur de validation",
+        description: errorMsg,
+        variant: "destructive",
       });
     }
   };
-  
+
   useEffect(() => {
     const ta = textareaRef.current;
     if (ta) {
@@ -84,47 +84,47 @@ export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
     target.style.height = `${target.scrollHeight}px`;
   };
 
-  const isAlma = user?.uid === ALMA_USER_ID;
+  const isAlma = user?.email === ALMA_EMAIL;
 
   return (
     <>
-    <form ref={formRef} onSubmit={handleFormSubmit} className="w-full max-w-2xl mx-auto space-y-8">
-      <input type="hidden" name="userId" value={user?.uid ?? ''} />
-      <div>
-        <Textarea
-          ref={textareaRef}
-          id="content"
-          name="content"
-          placeholder="Écrivez ici..."
-          className="bg-transparent border-none shadow-none resize-none overflow-hidden min-h-[30vh] p-0 font-body text-xl leading-relaxed text-stone-800 placeholder:text-stone-300 focus:ring-0 focus:outline-none focus-visible:ring-0"
-          required
-          onInput={handleInput}
-        />
-      </div>
-      <div className="space-y-4 opacity-80 focus-within:opacity-100 transition-opacity">
+      <form ref={formRef} onSubmit={handleFormSubmit} className="w-full max-w-2xl mx-auto space-y-8">
+        <input type="hidden" name="userId" value={user?.uid ?? ''} />
         <div>
-          <Label htmlFor="tags" className="sr-only">Étiquettes</Label>
-          <Input
-            id="tags"
-            name="tags"
-            placeholder="Ajouter des étiquettes... (ex: gratitude, travail)"
-            className="bg-transparent border-0 border-b rounded-none px-0 focus:ring-0 focus-visible:ring-0"
+          <Textarea
+            ref={textareaRef}
+            id="content"
+            name="content"
+            placeholder="Écrivez ici..."
+            className="bg-transparent border-none shadow-none resize-none overflow-hidden min-h-[30vh] p-0 font-body text-xl leading-relaxed text-stone-800 placeholder:text-stone-300 focus:ring-0 focus:outline-none focus-visible:ring-0"
+            required
+            onInput={handleInput}
           />
         </div>
-        {isAlma && (
-          <div className="flex items-center space-x-2 pt-2">
-            <Checkbox id="publishAsPost" name="publishAsPost" defaultChecked={true} />
-            <Label htmlFor="publishAsPost" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-              Publier sur le blog public en tant qu'Alma
-            </Label>
+        <div className="space-y-4 opacity-80 focus-within:opacity-100 transition-opacity">
+          <div>
+            <Label htmlFor="tags" className="sr-only">Étiquettes</Label>
+            <Input
+              id="tags"
+              name="tags"
+              placeholder="Ajouter des étiquettes... (ex: gratitude, travail)"
+              className="bg-transparent border-0 border-b rounded-none px-0 focus:ring-0 focus-visible:ring-0"
+            />
           </div>
-        )}
-      </div>
-      <div className="flex justify-end">
-        <SubmitButton isSubmitting={isSubmitting} />
-      </div>
-    </form>
-    <AuthDialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen} />
+          {isAlma && (
+            <div className="flex items-center space-x-2 pt-2">
+              <Checkbox id="publishAsPost" name="publishAsPost" defaultChecked={true} />
+              <Label htmlFor="publishAsPost" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Publier sur le blog public en tant qu'Alma
+              </Label>
+            </div>
+          )}
+        </div>
+        <div className="flex justify-end">
+          <SubmitButton isSubmitting={isSubmitting} />
+        </div>
+      </form>
+      <AuthDialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen} />
     </>
   );
 }

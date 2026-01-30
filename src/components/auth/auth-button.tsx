@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { LogOut, User as UserIcon, Database, UserCircle2 } from 'lucide-react';
-import { useAuth } from '@/hooks/use-auth';
+import { useAuth } from '@/providers/auth-provider';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -25,7 +25,7 @@ export function AuthButton() {
   const { toast } = useToast();
   const router = useRouter();
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
-  
+
   const handleSignOut = async () => {
     await signOut();
     toast({ title: "Vous avez été déconnecté." });
@@ -58,14 +58,14 @@ export function AuthButton() {
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
             <Link href="/account/profile">
-                <UserCircle2 className="mr-2 h-4 w-4" />
-                <span>Mon Profil</span>
+              <UserCircle2 className="mr-2 h-4 w-4" />
+              <span>Mon Profil</span>
             </Link>
           </DropdownMenuItem>
-           <DropdownMenuItem asChild>
+          <DropdownMenuItem asChild>
             <Link href="/account/data">
-                <Database className="mr-2 h-4 w-4" />
-                <span>Mes données</span>
+              <Database className="mr-2 h-4 w-4" />
+              <span>Mes données</span>
             </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />

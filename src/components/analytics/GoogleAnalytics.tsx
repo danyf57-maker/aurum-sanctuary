@@ -5,7 +5,7 @@ import { usePathname, useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
 import Script from 'next/script'
 import { pageview, GA_TRACKING_ID } from '@/lib/gtag'
-import { useAuth } from '@/hooks/use-auth';
+import { useAuth } from '@/providers/auth-provider';
 import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 import { auth as firebaseAuth } from '@/lib/firebase/config';
 import { useToast } from '@/hooks/use-toast';
@@ -20,7 +20,7 @@ export default function GoogleAnalytics() {
 
   useEffect(() => {
     if (!GA_TRACKING_ID) {
-        return;
+      return;
     }
     const url = pathname + searchParams.toString()
     pageview(new URL(url, window.location.origin))
@@ -59,17 +59,17 @@ export default function GoogleAnalytics() {
     };
 
     if (window.google) {
-        window.google.accounts.id.initialize({
-            client_id: GOOGLE_CLIENT_ID,
-            callback: handleCredentialResponse,
-            auto_select: true,
-        });
+      window.google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: handleCredentialResponse,
+        auto_select: true,
+      });
 
-        window.google.accounts.id.prompt((notification: any) => {
-            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-                // console.log('Google One Tap not displayed or skipped.');
-            }
-        });
+      window.google.accounts.id.prompt((notification: any) => {
+        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+          // console.log('Google One Tap not displayed or skipped.');
+        }
+      });
     }
 
     // Cleanup function to cancel the prompt if the component unmounts
@@ -111,7 +111,7 @@ export default function GoogleAnalytics() {
 }
 
 declare global {
-    interface Window {
-        google?: any;
-    }
+  interface Window {
+    google?: any;
+  }
 }

@@ -9,6 +9,7 @@ import { AuthProvider } from '@/providers/auth-provider';
 import { Suspense } from 'react';
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
 import { CookieConsent } from '@/components/legal/CookieConsent';
+import { TermsModal } from '@/components/auth/TermsModal';
 
 export const metadata: Metadata = {
   title: 'Aurum | Journal Intime IA & Sanctuaire de Santé Mentale',
@@ -32,18 +33,18 @@ export default function RootLayout({
       priceCurrency: 'EUR',
     },
     featureList: [
-        "Analyse de sentiment IA",
-        "Chiffrement privé",
-        "Journaling guidé"
+      "Analyse de sentiment IA",
+      "Chiffrement privé",
+      "Journaling guidé"
     ]
   };
-  
+
   return (
     <html lang="fr" suppressHydrationWarning={true}>
-       <head>
+      <head>
         <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -57,6 +58,7 @@ export default function RootLayout({
         suppressHydrationWarning={true}
       >
         <AuthProvider>
+          <TermsModal />
           <Suspense fallback={null}>
             <GoogleAnalytics />
           </Suspense>

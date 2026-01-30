@@ -1,0 +1,59 @@
+name: Deploy Firestore Rules & Indexes
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'firestore.rules'
+      - 'firestore.indexes.json'
+      - '.github/workflows/deploy-firestore.yml'
+
+jobs:
+  deploy-firestore:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Validate Firestore Rules syntax
+        run: |
+          echo "Validating firestore.rules syntax..."
+          # Basic syntax check (Firebase CLI will validate on deploy)
+          if [ ! -f firestore.rules ]; then
+            echo "❌ firestore.rules not found"
+            exit 1
+          fi
+          echo "✅ firestore.rules found"
+
+      - name: Validate Firestore Indexes
+        run: |
+          echo "Validating firestore.indexes.json..."
+          if [ ! -f firestore.indexes.json ]; then
+            echo "❌ firestore.indexes.json not found"
+            exit 1
+          fi
+          # Validate JSON syntax
+          cat firestore.indexes.json | jq empty
+          echo "✅ firestore.indexes.json is valid JSON"
+
+      - name: Deploy Firestore Rules & Indexes
+        run: firebase deploy --only firestore:rules,firestore:indexes
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+
+      - name: Notify deployment success
+        if: success()
+        run: echo "✅ Firestore Rules & Indexes deployed successfully"
+
+      - name: Notify deployment failure
+        if: failure()
+        run: echo "❌ Firestore deployment failed"

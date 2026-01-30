@@ -7,14 +7,14 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { createCheckoutSession } from '@/app/actions/stripe';
-import { useAuth } from '@/hooks/use-auth';
+import { useAuth } from '@/providers/auth-provider';
 import { useRouter } from 'next/navigation';
 import { useFormStatus } from 'react-dom';
 import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
 
 // Les ID de prix sont maintenant chargés depuis les variables d'environnement
-const PRICE_ID_PRO = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO; 
+const PRICE_ID_PRO = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO;
 const PRICE_ID_PREMIUM = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PREMIUM;
 
 const plans = [
@@ -161,7 +161,7 @@ export default function PricingPage() {
                         ))}
                     </div>
                 </div>
-                 <div className="text-center mt-16 text-sm text-muted-foreground">
+                <div className="text-center mt-16 text-sm text-muted-foreground">
                     <p>Les abonnements sont gérés via Stripe. Vous pouvez annuler à tout moment.</p>
                 </div>
             </section>

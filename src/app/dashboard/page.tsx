@@ -1,204 +1,42 @@
-
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useAuth } from '@/hooks/use-auth';
-import { getEntries, getUserProfile } from '@/lib/firebase/firestore';
-import { JournalEntry, UserProfile } from '@/lib/types';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { JournalCard } from '@/components/journal/journal-card';
-import { SentimentChart } from '@/components/journal/sentiment-chart';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Book, Smile, PenSquare, ShieldAlert } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { JournalEntryDialog } from '@/components/journal/journal-entry-dialog';
-import { InsightsSection } from '@/components/dashboard/InsightsSection';
-import { useToast } from '@/hooks/use-toast';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import Link from 'next/link';
-
-export const dynamic = 'force-dynamic';
-
-function getMostCommonMood(entries: JournalEntry[]): string {
-    if (entries.length === 0) return 'N/A';
-    const moodCounts = entries.reduce((acc, entry) => {
-        const mood = entry.mood || 'Inconnu';
-        acc[mood] = (acc[mood] || 0) + 1;
-        return acc;
-    }, {} as Record<string, number>);
-
-    return Object.entries(moodCounts).reduce((a, b) => a[1] > b[1] ? a : b)[0];
-}
-
+import { useAuth } from '@/providers/auth-provider';
+import { EntryForm } from '@/components/journal/EntryForm';
+import { Timeline } from '@/components/journal/Timeline';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function DashboardPage() {
-    const { user: authUser, loading: authLoading } = useAuth();
-    const { toast } = useToast();
-    const [data, setData] = useState<{entries: JournalEntry[], profile: UserProfile | null} | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [isFormOpen, setIsFormOpen] = useState(false);
-    
-    useEffect(() => {
-        if (authLoading) {
-            setLoading(true);
-            return;
-        }
-        if (!authUser) {
-            setLoading(false); // Pas d'utilisateur, on arrête de charger
-            setData({ entries: [], profile: null });
-            return;
-        }
-
-        setLoading(true);
-        const fetchData = async () => {
-            try {
-                const [userEntries, profile] = await Promise.all([
-                    getEntries(authUser.uid),
-                    getUserProfile(authUser.uid)
-                ]);
-                setData({ entries: userEntries, profile });
-            } catch (error) {
-                console.error("Failed to fetch user data:", error);
-                toast({ title: "Erreur", description: "Impossible de charger vos données.", variant: "destructive" });
-                setData({ entries: [], profile: null });
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchData();
-    }, [authUser, authLoading, toast]);
-
-
-    if (authLoading || loading) {
-        return (
-            <div className="container max-w-7xl py-8 md:py-12">
-                <div className="space-y-12">
-                    <Skeleton className="h-10 w-1/3" />
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                        <Skeleton className="h-28 w-full" />
-                        <Skeleton className="h-28 w-full" />
-                    </div>
-                     <Skeleton className="h-64 w-full" />
-                    <Skeleton className="h-[350px] w-full" />
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {[...Array(3)].map((_, i) => ( <Skeleton key={i} className="h-[220px] w-full" /> ))}
-                    </div>
-                </div>
-            </div>
-        );
-    }
-    
-    if (!authUser || !data) {
-        return (
-             <div className="container max-w-2xl mx-auto py-20 md:py-28 text-center">
-                 <Alert variant="destructive">
-                    <ShieldAlert className="h-4 w-4" />
-                    <AlertTitle>Accès restreint</AlertTitle>
-                    <AlertDescription>
-                       Vous devez être connecté pour accéder à votre tableau de bord.
-                    </AlertDescription>
-                </Alert>
-                <Button asChild className="mt-6">
-                    <Link href="/sanctuary/write">Commencer à écrire</Link>
-                </Button>
-            </div>
-        );
-    }
-    
-    const { entries, profile } = data;
-    const mostCommonMood = getMostCommonMood(entries);
+    const { user } = useAuth();
 
     return (
-        <div className="container max-w-7xl py-8 md:py-12">
-            <JournalEntryDialog open={isFormOpen} onOpenChange={setIsFormOpen} onSave={() => {
-                setLoading(true);
-                 if (authUser) {
-                    const fetchData = async () => {
-                        const [userEntries, profile] = await Promise.all([
-                            getEntries(authUser.uid),
-                            getUserProfile(authUser.uid)
-                        ]);
-                        setData({ entries: userEntries, profile });
-                        setLoading(false);
-                    };
-                    fetchData();
-                }
-            }}/>
-            <header className="mb-12">
-                <div className="flex flex-col sm:flex-row justify-between sm:items-start gap-4">
-                    <div>
-                        <h1 className="text-4xl font-bold font-headline tracking-tight">
-                            Tableau de bord
-                        </h1>
-                        <p className="mt-2 text-muted-foreground">Ravi de vous revoir, {authUser.displayName || 'cher explorateur'}.</p>
-                    </div>
-                    <Button onClick={() => setIsFormOpen(true)}>
-                        <PenSquare className="mr-2 h-4 w-4" />
-                        Nouvelle entrée
-                    </Button>
-                </div>
+        <div className="container mx-auto px-4 py-8 max-w-4xl">
+            <header className="mb-12 text-center">
+                <h1 className="text-3xl font-serif text-foreground/90 mb-2">
+                    Bonjour, {user?.displayName?.split(' ')[0] || 'Voyageur'}
+                </h1>
+                <p className="text-muted-foreground">
+                    Le sanctuaire est ouvert.
+                </p>
             </header>
 
-            <div className="space-y-12">
-                <section>
-                    <h2 className="text-2xl font-headline font-semibold mb-4">Vos Statistiques</h2>
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                        <Card>
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-sm font-medium">
-                                    Entrées Totales
-                                </CardTitle>
-                                <Book className="h-4 w-4 text-muted-foreground" />
-                            </CardHeader>
-                            <CardContent>
-                                <div className="text-2xl font-bold">{entries.length}</div>
-                                <p className="text-xs text-muted-foreground">
-                                    Continuez votre voyage intérieur.
-                                </p>
-                            </CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-sm font-medium">Humeur Dominante</CardTitle>
-                                <Smile className="h-4 w-4 text-muted-foreground" />
-                            </CardHeader>
-                            <CardContent>
-                                <div className="text-2xl font-bold capitalize">{mostCommonMood}</div>
-                                <p className="text-xs text-muted-foreground">
-                                    Basé sur vos dernières entrées.
-                                </p>
-                            </CardContent>
-                        </Card>
-                    </div>
-                </section>
-                
-                {profile && <InsightsSection user={profile} />}
-                
-                <section>
-                    <SentimentChart entries={entries} />
-                </section>
+            <Tabs defaultValue="write" className="w-full">
+                <div className="flex justify-center mb-8">
+                    <TabsList className="grid w-full max-w-md grid-cols-2">
+                        <TabsTrigger value="write">Écrire</TabsTrigger>
+                        <TabsTrigger value="timeline">Journal</TabsTrigger>
+                    </TabsList>
+                </div>
 
-                <section>
-                    <h2 className="text-2xl font-headline font-semibold mb-4">Historique des Entrées</h2>
-                    {entries.length > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {entries.slice(0, 3).map((entry, i) => (
-                                <JournalCard key={entry.id} entry={entry} style={{ animationDelay: `${i * 50}ms` }} className="animate-fade-in" />
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="text-center py-20 border-2 border-dashed rounded-lg flex flex-col items-center">
-                            <h3 className="text-xl font-semibold">Aucune entrée pour le moment.</h3>
-                            <p className="text-muted-foreground mt-2">Votre voyage commence avec le premier mot que vous écrivez.</p>
-                             <Button onClick={() => setIsFormOpen(true)} className="mt-6">
-                                Rédiger ma première entrée
-                            </Button>
-                        </div>
-                    )}
-                </section>
-            </div>
+                <TabsContent value="write" className="space-y-4 focus-visible:outline-none focus-visible:ring-0">
+                    <section className="bg-card/30 backdrop-blur-sm rounded-xl p-6 min-h-[600px] border border-border/50 shadow-sm">
+                        <EntryForm />
+                    </section>
+                </TabsContent>
+
+                <TabsContent value="timeline" className="focus-visible:outline-none focus-visible:ring-0">
+                    <Timeline />
+                </TabsContent>
+            </Tabs>
         </div>
     );
 }
-
-    

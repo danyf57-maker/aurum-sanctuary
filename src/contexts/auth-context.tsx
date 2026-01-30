@@ -15,6 +15,13 @@ export const ALMA_EMAIL = "alma@aurum.com";
 export interface AuthContextType {
   user: (CustomFirebaseUser & { uid: string }) | null;
   loading: boolean;
+  termsAccepted: boolean | null;
+  signInWithGoogle: () => Promise<void>;
+  signInWithEmail: (email: string, password: string) => Promise<void>;
+  signUpWithEmail: (email: string, password: string) => Promise<void>;
+  signOut: () => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
+  acceptTerms: () => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);

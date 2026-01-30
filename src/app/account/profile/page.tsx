@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useAuth } from '@/hooks/use-auth';
+import { useAuth } from '@/providers/auth-provider';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -20,7 +20,7 @@ export default function ProfilePage() {
 
     if (loading) {
         return (
-             <div className="container max-w-4xl mx-auto py-20 md:py-28">
+            <div className="container max-w-4xl mx-auto py-20 md:py-28">
                 <div className="flex items-center space-x-4 mb-8">
                     <div className="w-24 h-24 bg-muted rounded-full animate-pulse"></div>
                     <div className="space-y-2">
@@ -28,19 +28,19 @@ export default function ProfilePage() {
                         <div className="h-6 w-64 bg-muted rounded-md animate-pulse"></div>
                     </div>
                 </div>
-                 <div className="h-96 w-full bg-muted rounded-lg animate-pulse"></div>
-             </div>
+                <div className="h-96 w-full bg-muted rounded-lg animate-pulse"></div>
+            </div>
         );
     }
-    
+
     if (!user) {
-         return (
-             <div className="container max-w-2xl mx-auto py-20 md:py-28 text-center">
-                 <Alert variant="destructive">
+        return (
+            <div className="container max-w-2xl mx-auto py-20 md:py-28 text-center">
+                <Alert variant="destructive">
                     <ShieldAlert className="h-4 w-4" />
                     <AlertTitle>Accès restreint</AlertTitle>
                     <AlertDescription>
-                       Vous devez être connecté pour accéder à votre profil.
+                        Vous devez être connecté pour accéder à votre profil.
                     </AlertDescription>
                 </Alert>
                 <Button asChild className="mt-6">
@@ -50,7 +50,7 @@ export default function ProfilePage() {
         );
     }
 
-    const registrationDate = user.metadata.creationTime 
+    const registrationDate = user.metadata.creationTime
         ? new Intl.DateTimeFormat('fr-FR', { dateStyle: 'long' }).format(new Date(user.metadata.creationTime))
         : 'N/A';
 
@@ -66,8 +66,8 @@ export default function ProfilePage() {
                             <AvatarFallback>{userInitial}</AvatarFallback>
                         </Avatar>
                         <Button size="sm" className="absolute -bottom-2 -right-2 rounded-full h-8 w-8 p-0" disabled>
-                           <User className="h-4 w-4" /> 
-                           <span className="sr-only">Changer l'avatar</span>
+                            <User className="h-4 w-4" />
+                            <span className="sr-only">Changer l'avatar</span>
                         </Button>
                     </div>
                     <div>
@@ -85,15 +85,15 @@ export default function ProfilePage() {
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="flex items-center gap-3">
-                                <User className="h-5 w-5 text-muted-foreground"/>
+                                <User className="h-5 w-5 text-muted-foreground" />
                                 <span className="text-sm">{user.displayName}</span>
                             </div>
                             <div className="flex items-center gap-3">
-                                <Mail className="h-5 w-5 text-muted-foreground"/>
+                                <Mail className="h-5 w-5 text-muted-foreground" />
                                 <span className="text-sm">{user.email}</span>
                             </div>
                             <div className="flex items-center gap-3">
-                                <Calendar className="h-5 w-5 text-muted-foreground"/>
+                                <Calendar className="h-5 w-5 text-muted-foreground" />
                                 <span className="text-sm">Membre depuis le {registrationDate}</span>
                             </div>
                         </CardContent>
@@ -103,13 +103,13 @@ export default function ProfilePage() {
                             <CardTitle>Abonnement</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                           <p className="text-sm text-muted-foreground">Vous êtes sur le plan Essentiel.</p>
-                           <form action={createPortalSession}>
-                             <Button>
-                                <CreditCard className="mr-2 h-4 w-4" />
-                                Gérer l'abonnement
-                             </Button>
-                           </form>
+                            <p className="text-sm text-muted-foreground">Vous êtes sur le plan Essentiel.</p>
+                            <form action={createPortalSession}>
+                                <Button>
+                                    <CreditCard className="mr-2 h-4 w-4" />
+                                    Gérer l'abonnement
+                                </Button>
+                            </form>
                         </CardContent>
                     </Card>
                 </div>
@@ -121,17 +121,17 @@ export default function ProfilePage() {
                                 <CardDescription>Personnalisez votre expérience Aurum.</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-6">
-                               <div className="space-y-2">
-                                    <Label className="flex items-center gap-2"><Palette className="h-4 w-4"/> Thème de l'application</Label>
+                                <div className="space-y-2">
+                                    <Label className="flex items-center gap-2"><Palette className="h-4 w-4" /> Thème de l'application</Label>
                                     <div className="flex items-center space-x-2 rounded-lg border p-3">
                                         <Button variant="ghost" size="sm" className="flex-1 justify-start gap-2" disabled>
-                                            <Sun className="h-4 w-4"/> Clair
+                                            <Sun className="h-4 w-4" /> Clair
                                         </Button>
                                         <Button variant="ghost" size="sm" className="flex-1 justify-start gap-2" disabled>
                                             <Moon className="h-4 w-4" /> Foncé
                                         </Button>
-                                         <Button variant="secondary" size="sm" className="flex-1 justify-start gap-2" disabled>
-                                            <Monitor className="h-4 w-4"/> Système
+                                        <Button variant="secondary" size="sm" className="flex-1 justify-start gap-2" disabled>
+                                            <Monitor className="h-4 w-4" /> Système
                                         </Button>
                                     </div>
                                 </div>
@@ -150,11 +150,10 @@ export default function ProfilePage() {
                     </form>
                 </div>
             </div>
-             <div className="mt-12 flex justify-end">
+            <div className="mt-12 flex justify-end">
                 <Button disabled>Enregistrer les modifications</Button>
             </div>
         </div>
     );
 }
 
-    

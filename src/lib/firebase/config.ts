@@ -4,13 +4,13 @@ import { getFirestore } from "firebase/firestore";
 
 // This is the public, client-side config
 const firebaseConfig = {
-  apiKey: "AIzaSyDzV22OnpFu4hxw_Mg69k5hmVyCnyD_OCU",
-  authDomain: "aurum-dev-8361a.firebaseapp.com",
-  projectId: "aurum-dev-8361a",
-  storageBucket: "aurum-dev-8361a.appspot.com",
-  messagingSenderId: "886059164552",
-  appId: "1:886059164552:web:e9e52b4a92d5e39b78103d",
-  measurementId: "G-E4GZ42RM9T"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
 // Initialize Firebase for the client

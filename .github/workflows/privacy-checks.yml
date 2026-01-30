@@ -1,0 +1,119 @@
+name: Privacy & Security Checks
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  privacy-docs-check:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for prohibited privacy terms
+        run: |
+          echo "Checking for prohibited privacy terms in documentation..."
+          
+          # Check for prohibited terms
+          PROHIBITED_TERMS=(
+            "E2EE"
+            "end-to-end encrypted"
+            "end-to-end encryption"
+            "zero-knowledge"
+            "zero knowledge"
+            "HIPAA certified"
+            "HIPAA compliant"
+            "medical grade"
+            "medical-grade"
+          )
+          
+          FOUND_VIOLATIONS=0
+          
+          for term in "${PROHIBITED_TERMS[@]}"; do
+            # Search in docs, README, and markdown files (case-insensitive)
+            if grep -ri "$term" docs/ README.md _bmad-output/ 2>/dev/null; then
+              echo "❌ VIOLATION: Found prohibited term '$term'"
+              FOUND_VIOLATIONS=1
+            fi
+          done
+          
+          if [ $FOUND_VIOLATIONS -eq 1 ]; then
+            echo ""
+            echo "❌ Privacy terminology violations found!"
+            echo "Use approved terms:"
+            echo "  ✅ 'Client-side Encryption + Admin-Blind Processing'"
+            echo "  ✅ 'Privacy-first architecture'"
+            echo "  ❌ NOT 'E2EE', 'Zero-Knowledge', 'HIPAA certified'"
+            exit 1
+          else
+            echo "✅ No prohibited privacy terms found"
+          fi
+
+  schema-sync-check:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check Firestore schema sync
+        run: |
+          echo "Checking if firestore.rules and firestore.indexes.json are in sync..."
+          
+          # Check if files have been modified together
+          RULES_MODIFIED=$(git diff --name-only HEAD~1 HEAD | grep -c "firestore.rules" || true)
+          INDEXES_MODIFIED=$(git diff --name-only HEAD~1 HEAD | grep -c "firestore.indexes.json" || true)
+          
+          if [ $RULES_MODIFIED -eq 1 ] || [ $INDEXES_MODIFIED -eq 1 ]; then
+            if [ $RULES_MODIFIED -ne $INDEXES_MODIFIED ]; then
+              echo "⚠️  WARNING: firestore.rules or firestore.indexes.json modified without the other"
+              echo "Consider if both files need updating"
+            else
+              echo "✅ Firestore schema files modified together"
+            fi
+          else
+            echo "✅ No Firestore schema changes detected"
+          fi
+
+  safe-logging-check:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for unsafe logging patterns
+        run: |
+          echo "Checking for unsafe logging patterns..."
+          
+          # Check for console.log with sensitive data patterns
+          UNSAFE_PATTERNS=(
+            "console.log.*password"
+            "console.log.*token"
+            "console.log.*key"
+            "console.log.*secret"
+            "console.error\(error\)"
+            "console.error\(err\)"
+          )
+          
+          FOUND_VIOLATIONS=0
+          
+          for pattern in "${UNSAFE_PATTERNS[@]}"; do
+            if grep -rE "$pattern" src/ functions/ 2>/dev/null | grep -v "// safe-logging-ignore"; then
+              echo "⚠️  WARNING: Potentially unsafe logging pattern found: $pattern"
+              FOUND_VIOLATIONS=1
+            fi
+          done
+          
+          if [ $FOUND_VIOLATIONS -eq 1 ]; then
+            echo ""
+            echo "⚠️  Unsafe logging patterns detected!"
+            echo "Use logger.errorSafe() instead of console.error(error)"
+            echo "Add '// safe-logging-ignore' comment to suppress false positives"
+          else
+            echo "✅ No unsafe logging patterns found"
+          fi

@@ -2,7 +2,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useAuth } from '@/hooks/use-auth';
+import { useAuth } from '@/providers/auth-provider';
 import { useToast } from '@/hooks/use-toast';
 import { exportUserData, deleteUserAccount } from '@/app/actions/account';
 import { Button } from '@/components/ui/button';
@@ -22,26 +22,26 @@ export default function AccountDataPage() {
 
     if (authLoading) {
         return (
-             <div className="container max-w-2xl mx-auto py-20 md:py-28">
+            <div className="container max-w-2xl mx-auto py-20 md:py-28">
                 <div className="space-y-4">
                     <div className="h-10 w-1/3 bg-muted rounded-md animate-pulse"></div>
                     <div className="h-6 w-2/3 bg-muted rounded-md animate-pulse"></div>
                 </div>
-             </div>
+            </div>
         );
     }
 
     if (!user) {
-       return (
-             <div className="container max-w-2xl mx-auto py-20 md:py-28 text-center">
-                 <Alert variant="destructive">
+        return (
+            <div className="container max-w-2xl mx-auto py-20 md:py-28 text-center">
+                <Alert variant="destructive">
                     <ShieldAlert className="h-4 w-4" />
                     <AlertTitle>Accès restreint</AlertTitle>
                     <AlertDescription>
-                       Vous devez être connecté pour gérer vos données.
+                        Vous devez être connecté pour gérer vos données.
                     </AlertDescription>
                 </Alert>
-                 <Button asChild className="mt-6">
+                <Button asChild className="mt-6">
                     <Link href="/sanctuary/write">Retourner à l'écriture</Link>
                 </Button>
             </div>
@@ -68,7 +68,7 @@ export default function AccountDataPage() {
             toast({ title: "Exportation réussie", description: "Vos données ont été téléchargées." });
         }
     };
-    
+
     const handleDelete = async () => {
         setIsDeleting(true);
         const { error } = await deleteUserAccount(user.uid);
@@ -116,7 +116,7 @@ export default function AccountDataPage() {
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
-                         <AlertDialog>
+                        <AlertDialog>
                             <AlertDialogTrigger asChild>
                                 <Button variant="destructive" disabled={isDeleting}>
                                     <Trash2 className="mr-2 h-4 w-4" />
@@ -125,20 +125,20 @@ export default function AccountDataPage() {
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                                 <AlertDialogHeader>
-                                <AlertDialogTitle>Êtes-vous absolument sûr ?</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                    Cette action est irréversible. Toutes vos entrées de journal seront définitivement supprimées. Nous ne pourrons pas récupérer vos données.
-                                </AlertDialogDescription>
+                                    <AlertDialogTitle>Êtes-vous absolument sûr ?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        Cette action est irréversible. Toutes vos entrées de journal seront définitivement supprimées. Nous ne pourrons pas récupérer vos données.
+                                    </AlertDialogDescription>
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
-                                <AlertDialogCancel>Annuler</AlertDialogCancel>
-                                <AlertDialogAction onClick={handleDelete} disabled={isDeleting} className="bg-destructive hover:bg-destructive/90">
-                                     {isDeleting ? (
-                                        <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Suppression...</>
-                                    ) : (
-                                        "Oui, supprimer mon compte"
-                                    )}
-                                </AlertDialogAction>
+                                    <AlertDialogCancel>Annuler</AlertDialogCancel>
+                                    <AlertDialogAction onClick={handleDelete} disabled={isDeleting} className="bg-destructive hover:bg-destructive/90">
+                                        {isDeleting ? (
+                                            <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Suppression...</>
+                                        ) : (
+                                            "Oui, supprimer mon compte"
+                                        )}
+                                    </AlertDialogAction>
                                 </AlertDialogFooter>
                             </AlertDialogContent>
                         </AlertDialog>
@@ -149,4 +149,3 @@ export default function AccountDataPage() {
     );
 }
 
-    

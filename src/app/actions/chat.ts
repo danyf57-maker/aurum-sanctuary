@@ -47,7 +47,7 @@ export async function submitAurumMessage(
             error: "Une erreur de validation est survenue.",
         };
     }
-    
+
     const { message, history, idToken } = validatedFields.data;
     const userId = await getUserIdFromToken(idToken || null);
 
@@ -77,14 +77,14 @@ export async function submitAurumMessage(
 
     try {
         const response = await aurumService.generateResponse(message);
-        
+
         // 3. Log d'audit
         await logAuditEvent(userId, 'MESSAGE_SENT', { messageLength: message.length });
 
-        const newHistory = [
+        const newHistory: ChatMessage[] = [
             ...chatHistory,
-            { role: 'user', content: message },
-            { role: 'assistant', content: response },
+            { role: 'user' as const, content: message },
+            { role: 'assistant' as const, content: response },
         ];
 
         return {

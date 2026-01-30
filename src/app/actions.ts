@@ -3,10 +3,9 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { db } from "@/lib/firebase/server-config";
-import { collection, addDoc, Timestamp, doc, updateDoc, getDoc } from "firebase-admin/firestore";
+import { db, ALMA_EMAIL } from "@/lib/firebase/server-config";
+import { Timestamp } from "firebase-admin/firestore";
 import slugify from "slugify";
-import { ALMA_USER_ID } from "@/hooks/use-auth";
 import { generateInsights } from "@/lib/ai/deepseek";
 import { getEntries as getEntriesForUser } from "@/lib/firebase/firestore";
 
@@ -30,19 +29,19 @@ export type FormState = {
 
 // Helper function to create a unique slug
 function createSlug(text: string) {
-    const slug = slugify(text, {
-        lower: true,
-        strict: true,
-        remove: /[*+~.()'"!:@]/g,
-    });
-    // Append a unique identifier to avoid collisions
-    return `${slug}-${Date.now().toString(36)}`;
+  const slug = slugify(text, {
+    lower: true,
+    strict: true,
+    remove: /[*+~.()'"!:@]/g,
+  });
+  // Append a unique identifier to avoid collisions
+  return `${slug}-${Date.now().toString(36)}`;
 }
 
 // Helper function to generate a title from the content
 function generateTitle(content: string) {
-    const words = content.split(/\s+/);
-    return words.slice(0, 8).join(' ') + (words.length > 8 ? '...' : '');
+  const words = content.split(/\s+/);
+  return words.slice(0, 8).join(' ') + (words.length > 8 ? '...' : '');
 }
 
 async function addEntryOnServer(entryData: {
@@ -53,31 +52,28 @@ async function addEntryOnServer(entryData: {
   sentiment: string;
   mood: string;
   insight: string;
-}, publishAsPost: boolean) {
-  const entriesCollection = collection(db, "entries");
-  const publicPostsCollection = collection(db, "publicPosts");
-
+}, publishAsPost: boolean, userEmail: string) {
   try {
-    // Save the private journal entry
-    const privateDocRef = await addDoc(entriesCollection, {
+    // Save the private journal entry using Admin SDK API
+    const privateDocRef = await db.collection("entries").add({
       ...entryData,
       createdAt: Timestamp.fromDate(entryData.createdAt),
     });
 
     // If "publish" is checked and the user is Alma, save to publicPosts as well
-    if (publishAsPost && entryData.userId === ALMA_USER_ID) {
-        const title = generateTitle(entryData.content);
-        const slug = createSlug(title);
+    if (publishAsPost && userEmail === ALMA_EMAIL) {
+      const title = generateTitle(entryData.content);
+      const slug = createSlug(title);
 
-        await addDoc(publicPostsCollection, {
-            userId: entryData.userId,
-            title: title,
-            content: entryData.content,
-            tags: entryData.tags,
-            slug: slug,
-            publishedAt: Timestamp.fromDate(entryData.createdAt),
-            isPublic: true,
-        });
+      await db.collection("publicPosts").add({
+        userId: entryData.userId,
+        title: title,
+        content: entryData.content,
+        tags: entryData.tags,
+        slug: slug,
+        publishedAt: Timestamp.fromDate(entryData.createdAt),
+        isPublic: true,
+      });
     }
 
     return { id: privateDocRef.id };
@@ -107,8 +103,8 @@ async function analyzeEntrySentiment(content: string) {
 
     return response.json();
   } catch (error) {
-     console.error("Fetch to sentiment analysis failed:", error);
-     throw error;
+    console.error("Fetch to sentiment analysis failed:", error);
+    throw error;
   }
 }
 
@@ -132,11 +128,14 @@ export async function saveJournalEntry(
 
   const { content, tags, userId, publishAsPost } = validatedFields.data;
   let isFirstEntry = false;
+  let userEmail = '';
 
   try {
-    const userDocRef = doc(db, 'users', userId);
-    const userDoc = await getDoc(userDocRef);
+    // Get user document using Admin SDK API
+    const userDocRef = db.collection('users').doc(userId);
+    const userDoc = await userDocRef.get();
     const userData = userDoc.data();
+    userEmail = userData?.email || '';
     const entryCount = userData?.entryCount || 0;
     isFirstEntry = entryCount === 0;
 
@@ -150,24 +149,24 @@ export async function saveJournalEntry(
       sentiment: analysisResult.sentiment,
       mood: analysisResult.mood,
       insight: analysisResult.insight,
-    }, publishAsPost);
+    }, publishAsPost, userEmail);
 
-    // Update entry count
-    await updateDoc(userDocRef, {
-        entryCount: entryCount + 1,
+    // Update entry count using Admin SDK API
+    await userDocRef.update({
+      entryCount: entryCount + 1,
     });
 
 
   } catch (error) {
     console.error("Error saving entry:", error);
     if (error instanceof Error) {
-        return { message: error.message };
+      return { message: error.message };
     }
     return { message: "Une erreur inattendue est survenue lors de l'enregistrement de votre entrée. Veuillez réessayer." };
   }
 
-  if (publishAsPost && userId === ALMA_USER_ID) {
-      revalidatePath("/blog");
+  if (publishAsPost && userEmail === ALMA_EMAIL) {
+    revalidatePath("/blog");
   }
   revalidatePath("/dashboard");
   revalidatePath("/sanctuary");
@@ -177,33 +176,34 @@ export async function saveJournalEntry(
 }
 
 export async function generateUserInsights(userId: string) {
-    if (!userId) {
-        return { error: 'ID utilisateur manquant.' };
+  if (!userId) {
+    return { error: 'ID utilisateur manquant.' };
+  }
+
+  try {
+    const entries = await getEntriesForUser(userId, null, 30); // Use last 30 entries for insights
+
+    if (entries.length < 3) {
+      return { error: 'Pas assez de données pour générer des insights significatifs. Continuez à écrire !' };
     }
 
-    try {
-        const entries = await getEntriesForUser(userId, null, 30); // Use last 30 entries for insights
+    const insights = await generateInsights(entries);
 
-        if (entries.length < 3) {
-            return { error: 'Pas assez de données pour générer des insights significatifs. Continuez à écrire !' };
-        }
+    // Update user document using Admin SDK API
+    const userDocRef = db.collection('users').doc(userId);
 
-        const insights = await generateInsights(entries);
-        
-        const userDocRef = doc(db, 'users', userId);
-        
-        await updateDoc(userDocRef, {
-            insights: {
-                ...insights,
-                lastUpdatedAt: Timestamp.now()
-            }
-        });
+    await userDocRef.update({
+      insights: {
+        ...insights,
+        lastUpdatedAt: Timestamp.now()
+      }
+    });
 
-        revalidatePath('/dashboard');
-        return { success: true };
+    revalidatePath('/dashboard');
+    return { success: true };
 
-    } catch (error: any) {
-        console.error("Error generating user insights:", error);
-        return { error: error.message || "Une erreur est survenue lors de la génération des insights." };
-    }
+  } catch (error: any) {
+    console.error("Error generating user insights:", error);
+    return { error: error.message || "Une erreur est survenue lors de la génération des insights." };
+  }
 }
