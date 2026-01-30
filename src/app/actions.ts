@@ -54,11 +54,18 @@ async function addEntryOnServer(entryData: {
   insight: string;
 }, publishAsPost: boolean, userEmail: string) {
   try {
-    // Save the private journal entry using Admin SDK API
-    const privateDocRef = await db.collection("entries").add({
-      ...entryData,
-      createdAt: Timestamp.fromDate(entryData.createdAt),
-    });
+    // Extract userId for routing, but don't store it in the document
+    const { userId, ...dataToStore } = entryData;
+
+    // Save the private journal entry to user's subcollection using Admin SDK API
+    const privateDocRef = await db
+      .collection("users")
+      .doc(userId)
+      .collection("entries")
+      .add({
+        ...dataToStore,
+        createdAt: Timestamp.fromDate(entryData.createdAt),
+      });
 
     // If "publish" is checked and the user is Alma, save to publicPosts as well
     if (publishAsPost && userEmail === ALMA_EMAIL) {
@@ -66,7 +73,7 @@ async function addEntryOnServer(entryData: {
       const slug = createSlug(title);
 
       await db.collection("publicPosts").add({
-        userId: entryData.userId,
+        userId: userId,
         title: title,
         content: entryData.content,
         tags: entryData.tags,

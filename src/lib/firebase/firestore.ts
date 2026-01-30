@@ -10,48 +10,47 @@ const usersCollectionName = "users";
 
 
 export async function getUserProfile(userId: string): Promise<UserProfile | null> {
-    if (!userId) return null;
-    const userDocRef = doc(db, usersCollectionName, userId);
-    try {
-        const docSnap = await getDoc(userDocRef);
-        if (docSnap.exists()) {
-            const data = docSnap.data();
-            return {
-                ...data,
-                createdAt: (data.createdAt as Timestamp)?.toDate(),
-                insights: data.insights ? {
-                    ...data.insights,
-                    lastUpdatedAt: (data.insights.lastUpdatedAt as Timestamp)?.toDate(),
-                } : undefined,
-            } as UserProfile;
-        }
-        return null;
-    } catch (error) {
-        console.error("Error getting user profile: ", error);
-        return null;
+  if (!userId) return null;
+  const userDocRef = doc(db, usersCollectionName, userId);
+  try {
+    const docSnap = await getDoc(userDocRef);
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      return {
+        ...data,
+        createdAt: (data.createdAt as Timestamp)?.toDate(),
+        insights: data.insights ? {
+          ...data.insights,
+          lastUpdatedAt: (data.insights.lastUpdatedAt as Timestamp)?.toDate(),
+        } : undefined,
+      } as UserProfile;
     }
+    return null;
+  } catch (error) {
+    console.error("Error getting user profile: ", error);
+    return null;
+  }
 }
 
 
 export async function getEntries(userId: string, tag?: string | null, limit?: number): Promise<JournalEntry[]> {
-  const entriesCollection = collection(db, entriesCollectionName);
+  const entriesCollection = collection(db, "users", userId, "entries");
   try {
     let q;
     const queryConstraints = [
-        where("userId", "==", userId),
-        orderBy("createdAt", "desc")
+      orderBy("createdAt", "desc")
     ];
 
     if (tag) {
-        queryConstraints.unshift(where("tags", "array-contains", tag));
+      queryConstraints.unshift(where("tags", "array-contains", tag));
     }
-    
+
     if (limit) {
-        queryConstraints.push(firestoreLimit(limit));
+      queryConstraints.push(firestoreLimit(limit));
     }
 
     q = query(entriesCollection, ...queryConstraints);
-    
+
     const querySnapshot = await getDocs(q);
     const entries: JournalEntry[] = querySnapshot.docs.map(doc => {
       const data = doc.data();
@@ -69,22 +68,22 @@ export async function getEntries(userId: string, tag?: string | null, limit?: nu
 }
 
 export async function getUniqueTags(userId: string): Promise<string[]> {
-    const entriesCollection = collection(db, entriesCollectionName);
-    try {
-        const q = query(entriesCollection, where("userId", "==", userId));
-        const querySnapshot = await getDocs(q);
-        const tags = new Set<string>();
-        querySnapshot.forEach(doc => {
-            const data = doc.data();
-            if (data.tags && Array.isArray(data.tags)) {
-                data.tags.forEach((tag: string) => tags.add(tag));
-            }
-        });
-        return Array.from(tags).sort();
-    } catch (error) {
-        console.error("Error getting unique tags: ", error);
-        return [];
-    }
+  const entriesCollection = collection(db, "users", userId, "entries");
+  try {
+    const q = query(entriesCollection);
+    const querySnapshot = await getDocs(q);
+    const tags = new Set<string>();
+    querySnapshot.forEach(doc => {
+      const data = doc.data();
+      if (data.tags && Array.isArray(data.tags)) {
+        data.tags.forEach((tag: string) => tags.add(tag));
+      }
+    });
+    return Array.from(tags).sort();
+  } catch (error) {
+    console.error("Error getting unique tags: ", error);
+    return [];
+  }
 }
 
 // Données de départ pour le blog d'Alma
@@ -108,11 +107,11 @@ const almaInitialPosts = [
 
 
 function createSlug(text: string) {
-    return slugify(text, {
-        lower: true,
-        strict: true,
-        remove: /[*+~.()'"!:@]/g,
-    });
+  return slugify(text, {
+    lower: true,
+    strict: true,
+    remove: /[*+~.()'"!:@]/g,
+  });
 }
 
 export async function getPublicPosts(limit?: number): Promise<PublicPost[]> {
@@ -128,7 +127,7 @@ export async function getPublicPosts(limit?: number): Promise<PublicPost[]> {
     }
 
     const q = query(postsCollection, ...constraints);
-    
+
     const querySnapshot = await getDocs(q);
     const firestorePosts = querySnapshot.docs.map(doc => {
       const data = doc.data();
@@ -146,71 +145,71 @@ export async function getPublicPosts(limit?: number): Promise<PublicPost[]> {
     // Si la base de données est vide, on renvoie les articles de départ.
     const baseDate = new Date();
     return almaInitialPosts.map((post, index) => {
-        const postDate = new Date(baseDate.getTime() - index * 24 * 60 * 60 * 1000); // 1 jour d'intervalle
-        return {
-            id: `initial-${index}`,
-            title: post.title,
-            content: post.content,
-            tags: post.tags,
-            slug: createSlug(post.title),
-            publishedAt: postDate,
-            userId: "ALMA_SPECIAL_USER_ID",
-            isPublic: true,
-        };
+      const postDate = new Date(baseDate.getTime() - index * 24 * 60 * 60 * 1000); // 1 jour d'intervalle
+      return {
+        id: `initial-${index}`,
+        title: post.title,
+        content: post.content,
+        tags: post.tags,
+        slug: createSlug(post.title),
+        publishedAt: postDate,
+        userId: "ALMA_SPECIAL_USER_ID",
+        isPublic: true,
+      };
     }).slice(0, limit);
   } catch (error) {
     console.error("Error getting public posts: ", error);
     // En cas d'erreur, on peut toujours renvoyer les articles de départ.
     const baseDate = new Date();
     return almaInitialPosts.map((post, index) => {
-        const postDate = new Date(baseDate.getTime() - index * 24 * 60 * 60 * 1000);
-        return {
-            id: `error-initial-${index}`,
-            title: post.title,
-            content: post.content,
-            tags: post.tags,
-            slug: createSlug(post.title),
-            publishedAt: postDate,
-            userId: "ALMA_SPECIAL_USER_ID",
-            isPublic: true,
-        };
+      const postDate = new Date(baseDate.getTime() - index * 24 * 60 * 60 * 1000);
+      return {
+        id: `error-initial-${index}`,
+        title: post.title,
+        content: post.content,
+        tags: post.tags,
+        slug: createSlug(post.title),
+        publishedAt: postDate,
+        userId: "ALMA_SPECIAL_USER_ID",
+        isPublic: true,
+      };
     }).slice(0, limit);
   }
 }
 
 export async function getPublicPostBySlug(slug: string): Promise<PublicPost | null> {
-    const postsCollection = collection(db, publicPostsCollectionName);
-    try {
-        const q = query(postsCollection, where("slug", "==", slug), firestoreLimit(1));
-        const querySnapshot = await getDocs(q);
-        
-        if (!querySnapshot.empty) {
-            const doc = querySnapshot.docs[0];
-            const data = doc.data();
-            return {
-                id: doc.id,
-                ...data,
-                publishedAt: (data.publishedAt as Timestamp).toDate(),
-            } as PublicPost;
-        }
-    } catch (error) {
-        console.error("Error getting post by slug from firestore: ", error);
-    }
-    
-    // Si rien dans firestore, on cherche dans les articles de départ
-    const initialPost = almaInitialPosts.find(p => createSlug(p.title) === slug);
-    if(initialPost) {
-        return {
-             id: `initial-slug-${slug}`,
-            title: initialPost.title,
-            content: initialPost.content,
-            tags: initialPost.tags,
-            slug: createSlug(initialPost.title),
-            publishedAt: new Date(),
-            userId: "ALMA_SPECIAL_USER_ID",
-            isPublic: true,
-        }
-    }
+  const postsCollection = collection(db, publicPostsCollectionName);
+  try {
+    const q = query(postsCollection, where("slug", "==", slug), firestoreLimit(1));
+    const querySnapshot = await getDocs(q);
 
-    return null;
+    if (!querySnapshot.empty) {
+      const doc = querySnapshot.docs[0];
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        publishedAt: (data.publishedAt as Timestamp).toDate(),
+      } as PublicPost;
+    }
+  } catch (error) {
+    console.error("Error getting post by slug from firestore: ", error);
+  }
+
+  // Si rien dans firestore, on cherche dans les articles de départ
+  const initialPost = almaInitialPosts.find(p => createSlug(p.title) === slug);
+  if (initialPost) {
+    return {
+      id: `initial-slug-${slug}`,
+      title: initialPost.title,
+      content: initialPost.content,
+      tags: initialPost.tags,
+      slug: createSlug(initialPost.title),
+      publishedAt: new Date(),
+      userId: "ALMA_SPECIAL_USER_ID",
+      isPublic: true,
+    }
+  }
+
+  return null;
 }
