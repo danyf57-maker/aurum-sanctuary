@@ -7,6 +7,9 @@ import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { JournalCard } from '@/components/journal/journal-card';
 import { SentimentChart } from '@/components/journal/sentiment-chart';
+import { MoodTrendsChart } from '@/components/stats/mood-trends-chart';
+import { SentimentPieChart } from '@/components/stats/sentiment-pie-chart';
+import { EntryHeatmap } from '@/components/stats/entry-heatmap';
 import { TagFilter } from '@/components/journal/tag-filter';
 import { Button } from '@/components/ui/button';
 import { getEntries, getUniqueTags } from '@/lib/firebase/firestore';
@@ -121,9 +124,20 @@ function SanctuaryPageContent() {
                 {entries && entries.length > 0 ? (
                     <div className="space-y-12">
                         <div className="animate-fade-in" style={{ animationDelay: '150ms' }}><SentimentChart entries={entries} /></div>
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div className="animate-fade-in" style={{ animationDelay: '200ms' }}>
+                                <MoodTrendsChart entries={entries} days={30} />
+                            </div>
+                            <div className="animate-fade-in" style={{ animationDelay: '250ms' }}>
+                                <SentimentPieChart entries={entries} />
+                            </div>
+                        </div>
+                        <div className="animate-fade-in" style={{ animationDelay: '300ms' }}>
+                            <EntryHeatmap entries={entries} />
+                        </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {entries.map((entry, i) => (
-                                <JournalCard key={entry.id} entry={entry} style={{ animationDelay: `${200 + i * 50}ms` }} className="animate-fade-in" />
+                                <JournalCard key={entry.id} entry={entry} style={{ animationDelay: `${350 + i * 50}ms` }} className="animate-fade-in" />
                             ))}
                         </div>
                     </div>

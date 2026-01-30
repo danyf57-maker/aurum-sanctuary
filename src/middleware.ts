@@ -8,7 +8,8 @@ import type { NextRequest } from 'next/server';
  */
 
 // Define routes that require authentication
-const protectedRoutes = ['/dashboard', '/settings', '/profile', '/journal'];
+// Note: /dashboard uses client-side auth (useAuth hook), so it's not in this list
+const protectedRoutes = ['/settings', '/profile', '/journal'];
 
 // Define routes that should redirect to dashboard if already authenticated
 const authRoutes = ['/login', '/signup', '/forgot-password'];
