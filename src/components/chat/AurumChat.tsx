@@ -1,8 +1,7 @@
-
 'use client';
 
-import { useEffect, useRef, useState, useActionState } from 'react';
-import { useFormStatus } from 'react-dom';
+import { useEffect, useRef, useState, useTransition } from 'react';
+import { useFormStatus, useFormState } from 'react-dom';
 import { Bot, Loader2, Send, User, ShieldAlert } from 'lucide-react';
 import { submitAurumMessage } from '@/app/actions/chat';
 import { type ChatMessage } from '@/lib/ai/types';
@@ -36,7 +35,14 @@ function SubmitButton() {
 export function AurumChat() {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [state, formAction, isPending] = useActionState(submitAurumMessage, initialState);
+  const [state, dispatch] = useFormState(submitAurumMessage, initialState);
+  const [isPending, startTransition] = useTransition();
+
+  const formAction = (formData: FormData) => {
+    startTransition(() => {
+      dispatch(formData);
+    });
+  };
   const [history, setHistory] = useState<ChatMessage[]>([]);
   const formRef = useRef<HTMLFormElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);

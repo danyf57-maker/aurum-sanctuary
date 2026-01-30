@@ -10,6 +10,7 @@ import { Suspense } from 'react';
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
 import { CookieConsent } from '@/components/legal/CookieConsent';
 import { TermsModal } from '@/components/auth/TermsModal';
+import { MirrorChat } from '@/components/features/MirrorChat';
 
 export const metadata: Metadata = {
   title: 'Aurum | Journal Intime IA & Sanctuaire de Santé Mentale',
@@ -69,6 +70,7 @@ export default function RootLayout({
           </div>
           <Toaster />
           <CookieConsent />
+          <MirrorChat />
         </AuthProvider>
       </body>
     </html>

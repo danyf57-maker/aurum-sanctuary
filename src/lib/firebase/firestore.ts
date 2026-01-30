@@ -37,7 +37,7 @@ export async function getEntries(userId: string, tag?: string | null, limit?: nu
   const entriesCollection = collection(db, "users", userId, "entries");
   try {
     let q;
-    const queryConstraints = [
+    const queryConstraints: any[] = [
       orderBy("createdAt", "desc")
     ];
 
@@ -117,7 +117,7 @@ function createSlug(text: string) {
 export async function getPublicPosts(limit?: number): Promise<PublicPost[]> {
   const postsCollection = collection(db, publicPostsCollectionName);
   try {
-    const constraints = [
+    const constraints: any[] = [
       where("isPublic", "==", true),
       orderBy("publishedAt", "desc"),
     ];

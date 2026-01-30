@@ -4,7 +4,7 @@
 "use server";
 
 import { AurumAIService } from '@/lib/ai/service';
-import { ChatMessage } from '@/lib/ai/types';
+import { ChatMessage, MessageRole } from '@/lib/ai/types';
 import { z } from 'zod';
 import { checkRateLimit } from '@/lib/ratelimit';
 import { logAuditEvent } from '@/lib/audit';
@@ -83,8 +83,8 @@ export async function submitAurumMessage(
 
         const newHistory: ChatMessage[] = [
             ...chatHistory,
-            { role: 'user' as const, content: message },
-            { role: 'assistant' as const, content: response },
+            { role: MessageRole.User, content: message },
+            { role: MessageRole.Assistant, content: response },
         ];
 
         return {

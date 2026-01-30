@@ -6,9 +6,9 @@ import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { LineChart, Users, BookOpen, MessageCircle, TrendingUp, AlertTriangle } from 'lucide-react';
+import { LineChart as LineChartIcon, Users, BookOpen, MessageCircle, TrendingUp, AlertTriangle } from 'lucide-react';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { CartesianGrid, XAxis, YAxis, Line, ResponsiveContainer } from 'recharts';
+import { CartesianGrid, XAxis, YAxis, Line, ResponsiveContainer, LineChart } from 'recharts';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export const dynamic = 'force-dynamic';

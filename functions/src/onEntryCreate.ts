@@ -18,13 +18,6 @@ if (!admin.apps.length) {
 const firestore = admin.firestore();
 
 /**
- * Count words in text
- */
-function countWords(text: string): number {
-    return text.trim().split(/\s+/).filter(word => word.length > 0).length;
-}
-
-/**
  * onCreate trigger for entries subcollection
  * 
  * Updates derivedMemory/lite stats:
