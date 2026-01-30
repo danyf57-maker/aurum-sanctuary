@@ -31,7 +31,7 @@ export function MobileNav() {
             <span className="sr-only">Ouvrir le menu</span>
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="pr-0">
+        <SheetContent side="left" className="pr-0 pt-[calc(env(safe-area-inset-top)+2rem)]">
           <SheetTitle className="sr-only">Menu de navigation principal</SheetTitle>
           <MobileLink
             href="/"

@@ -11,6 +11,7 @@
 import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
 import { getAuth, Auth } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
+import { getFunctions, Functions } from 'firebase/functions';
 
 const firebaseConfig = {
     apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -41,12 +42,14 @@ for (const key of requiredConfigKeys) {
 let app: FirebaseApp;
 let auth: Auth;
 let firestore: Firestore;
+let functions: Functions;
 
 if (typeof window !== 'undefined') {
     // Client-side only
     app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
     auth = getAuth(app);
     firestore = getFirestore(app);
+    functions = getFunctions(app, 'us-central1'); // Region is important
 }
 
-export { app, auth, firestore };
+export { app, auth, firestore, functions };

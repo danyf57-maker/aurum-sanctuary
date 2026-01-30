@@ -3,6 +3,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { motion } from 'framer-motion';
 import { AuthButton } from '@/components/auth/auth-button';
 import { MobileNav } from './mobile-nav';
 import { useAuth, ALMA_EMAIL } from '@/providers/auth-provider';
@@ -26,11 +27,13 @@ export function Header() {
   const isAdminPage = pathname.startsWith('/admin');
   if (isAdminPage) {
     return (
-      <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 pt-[env(safe-area-inset-top)]">
         <div className="container flex h-14 max-w-screen-2xl items-center">
           <div className="mr-4 hidden md:flex">
             <Link href="/" className="mr-6 flex items-center space-x-2">
-              <Logo className="h-6 w-6 text-amber-600" />
+              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+                <Logo className="h-6 w-6 text-amber-600" />
+              </motion.div>
               <span className="font-bold font-headline sm:inline-block">
                 Aurum <span className="text-muted-foreground font-normal text-sm">/ Admin</span>
               </span>
@@ -49,7 +52,9 @@ export function Header() {
       <div className="container flex h-14 max-w-screen-2xl items-center">
         <div className="mr-4 hidden md:flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <Logo className="h-6 w-6 text-amber-600" />
+            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+              <Logo className="h-6 w-6 text-amber-600" />
+            </motion.div>
             <span className="font-bold font-headline sm:inline-block">
               Aurum
             </span>

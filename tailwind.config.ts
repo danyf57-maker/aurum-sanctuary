@@ -1,5 +1,5 @@
 
-import type {Config} from 'tailwindcss';
+import type { Config } from 'tailwindcss';
 
 export default {
   darkMode: ['class'],
@@ -18,9 +18,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        body: ['Inter', 'sans-serif'],
-        headline: ['Cormorant Garamond', 'serif'],
-        handwriting: ['Dawning of a New Day', 'cursive'],
+        body: ['var(--font-inter)', 'sans-serif'],
+        headline: ['var(--font-cormorant)', 'serif'],
+        handwriting: ['var(--font-dawning)', 'cursive'],
         code: ['Roboto Mono', 'monospace'],
       },
       colors: {

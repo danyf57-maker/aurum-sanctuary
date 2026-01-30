@@ -1,5 +1,5 @@
 
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { Header } from '@/components/layout/header';
@@ -12,9 +12,67 @@ import { CookieConsent } from '@/components/legal/CookieConsent';
 import { TermsModal } from '@/components/auth/TermsModal';
 import { MirrorChat } from '@/components/features/MirrorChat';
 
+import { Cormorant_Garamond, Inter, Dawning_of_a_New_Day } from 'next/font/google';
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+});
+
+const cormorant = Cormorant_Garamond({
+  subsets: ['latin'],
+  weight: ['400', '600', '700'],
+  variable: '--font-cormorant',
+  display: 'swap',
+});
+
+const dawning = Dawning_of_a_New_Day({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-dawning',
+  display: 'swap',
+});
+
 export const metadata: Metadata = {
   title: 'Aurum | Journal Intime IA & Sanctuaire de Santé Mentale',
   description: 'Allégez votre charge mentale avec Aurum. Un journal sécurisé qui utilise l\'IA pour transformer vos pensées en clarté. Essayez sans compte.',
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Aurum",
+  },
+  openGraph: {
+    title: 'Aurum | Journal Intime IA',
+    description: 'Un sanctuaire pour vos pensées. Journal sécurisé et analyses IA.',
+    url: 'https://aurum-sanctuary.vercel.app',
+    siteName: 'Aurum Sanctuary',
+    images: [
+      {
+        url: '/icons/icon-512x512.png',
+        width: 512,
+        height: 512,
+        alt: 'Aurum App Icon',
+      },
+    ],
+    locale: 'fr_FR',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Aurum | Journal Intime IA',
+    description: 'Un sanctuaire pour vos pensées. Journal sécurisé et analyses IA.',
+    images: ['/icons/icon-512x512.png'],
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#1c1917",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default function RootLayout({
@@ -47,14 +105,14 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400&family=Dawning+of+a+New+Day&display=swap" rel="stylesheet" />
         {/* Le script GSI est maintenant dans GoogleAnalytics.tsx */}
       </head>
       <body
         className={cn(
-          "min-h-screen bg-background font-body antialiased"
+          "min-h-screen bg-background font-body antialiased",
+          inter.variable,
+          cormorant.variable,
+          dawning.variable
         )}
         suppressHydrationWarning={true}
       >
