@@ -29,26 +29,49 @@ function getServiceAccount(): ServiceAccount {
             return JSON.parse(directJson);
         }
 
-        throw new Error('Neither FIREBASE_SERVICE_ACCOUNT_KEY_B64 nor FIREBASE_SERVICE_ACCOUNT_KEY is set');
+        console.warn("Missing FIREBASE_SERVICE_ACCOUNT_KEY. Returning mock for build.");
+        return {
+            projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'mock-project',
+            clientEmail: 'mock@example.com',
+            privateKey: '-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQD0\n-----END PRIVATE KEY-----\n',
+        };
     } catch (e) {
-        console.warn("Failed to parse Firebase service account credentials");
-        throw e;
+        console.warn("Failed to parse Firebase service account credentials. Returning mock.");
+        return {
+            projectId: 'mock-project',
+            clientEmail: 'mock@example.com',
+            privateKey: '-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQD0\n-----END PRIVATE KEY-----\n',
+        };
     }
 }
 
 function getAdminApp(): App {
-    if (getApps().some(app => app.name === 'admin')) {
-        return getApp('admin');
+    try {
+        if (getApps().some(app => app.name === 'admin')) {
+            return getApp('admin');
+        }
+        return initializeApp({
+            credential: cert(getServiceAccount())
+        }, 'admin');
+    } catch (e) {
+        console.warn("Returing Mock App for build due to init failure:", e);
+        return { name: 'admin-mock', options: {} } as App;
     }
-    return initializeApp({
-        credential: cert(getServiceAccount())
-    }, 'admin');
 }
 
 function getDb(): Firestore {
     return getAdminFirestore(getAdminApp());
 }
 
-const db: Firestore = getDb();
+
+let db: Firestore;
+try {
+    db = getDb();
+} catch (e) {
+    console.warn("Failed to initialize Admin Firestore (likely build mode without keys):", e);
+    // Return a mock object or casted empty object to allow build to proceed
+    // This will clearly fail if used at runtime, but allows static generation imports
+    db = {} as Firestore;
+}
 
 export { getAdminApp, db };

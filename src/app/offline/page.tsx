@@ -1,10 +1,10 @@
+'use client';
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { WifiOff } from 'lucide-react';
 
-export const metadata = {
-    title: "Hors Connexion | Aurum",
-};
+// Metadata removed for Client Component compatibility
 
 export default function OfflinePage() {
     return (

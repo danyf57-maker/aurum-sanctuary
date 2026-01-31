@@ -4,7 +4,12 @@ import { getPublicPosts } from '@/lib/firebase/firestore';
 import { BlogCard } from '@/components/blog/blog-card';
 
 export default async function BlogPage() {
-    const posts = await getPublicPosts();
+    let posts: any[] = [];
+    try {
+        posts = await getPublicPosts();
+    } catch (error) {
+        console.warn('Failed to fetch blog posts:', error);
+    }
 
     return (
         <div className="bg-stone-50/50">
@@ -20,7 +25,7 @@ export default async function BlogPage() {
             <section className="pb-24 md:pb-32">
                 <div className="container max-w-7xl mx-auto">
                     {posts.length > 0 ? (
-                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {posts.map(post => (
                                 <BlogCard key={post.id} post={post} />
                             ))}
