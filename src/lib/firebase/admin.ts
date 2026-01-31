@@ -28,23 +28,24 @@ function initializeFirebaseAdmin() {
         return getApps()[0];
     }
 
-    const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
-    let serviceAccount: any;
+    const key = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+    const b64 = process.env.FIREBASE_SERVICE_ACCOUNT_KEY_B64;
 
-    if (!serviceAccountKey) {
-        console.warn('Missing FIREBASE_SERVICE_ACCOUNT_KEY env var. Returning Mock App for build.');
+    if (!key && !b64) {
+        console.warn('Missing FIREBASE_SERVICE_ACCOUNT_KEY and FIREBASE_SERVICE_ACCOUNT_KEY_B64 env vars. Returning Mock App for build.');
         return { name: '[DEFAULT]-mock', options: {} } as App;
     }
 
+    let serviceAccount: any;
     try {
-        serviceAccount = JSON.parse(serviceAccountKey);
-    } catch {
-        try {
-            const decoded = Buffer.from(serviceAccountKey, 'base64').toString('utf-8');
+        if (key) {
+            serviceAccount = JSON.parse(key);
+        } else if (b64) {
+            const decoded = Buffer.from(b64, 'base64').toString('utf-8');
             serviceAccount = JSON.parse(decoded);
-        } catch {
-            throw new Error('Invalid FIREBASE_SERVICE_ACCOUNT_KEY format.');
         }
+    } catch (error) {
+        throw new Error('Invalid Firebase service account format (JSON or Base64).');
     }
 
     return initializeApp({
