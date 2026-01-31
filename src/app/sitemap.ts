@@ -3,7 +3,7 @@ import { MetadataRoute } from 'next';
 import { getPublicPosts } from '@/lib/firebase/firestore';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const baseUrl = 'https://aurum-sanctuary.vercel.app';
+    const baseUrl = 'https://aurumdiary.com';
 
     // Static routes
     const routes = [

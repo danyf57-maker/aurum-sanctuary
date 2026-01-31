@@ -8,6 +8,6 @@ export default function robots(): MetadataRoute.Robots {
             allow: '/',
             disallow: ['/admin/', '/sanctuary/', '/api/'], // Private routes
         },
-        sitemap: 'https://aurum-sanctuary.vercel.app/sitemap.xml',
+        sitemap: 'https://aurumdiary.com/sitemap.xml',
     };
 }

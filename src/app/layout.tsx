@@ -43,7 +43,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Aurum | Transformez le chaos en clarté',
     description: 'Le journal intime privé par excellence. Chiffrement sur votre appareil, IA locale et design apaisant.',
-    url: 'https://aurum-sanctuary.vercel.app',
+    url: 'https://aurumdiary.com',
     siteName: 'Aurum Sanctuary',
     images: [
       {
@@ -62,7 +62,7 @@ export const metadata: Metadata = {
     description: 'Le journal intime privé par excellence. Chiffrement sur votre appareil.',
     images: ['/og-image.png'],
   },
-  metadataBase: new URL('https://aurum-sanctuary.vercel.app'),
+  metadataBase: new URL('https://aurumdiary.com'),
 };
 
 export const viewport: Viewport = {
