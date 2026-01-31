@@ -13,6 +13,14 @@ service cloud.firestore {
     }
 
     // ---------------------------------------------------------
+    // Public Content (Blog)
+    // ---------------------------------------------------------
+    match /publicPosts/{postId} {
+      allow read: if true;
+      allow write: if false; // Admin only
+    }
+
+    // ---------------------------------------------------------
     // Users Collection (Root)
     // Architecture: Admin-Blind
     // ---------------------------------------------------------

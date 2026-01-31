@@ -1,6 +1,7 @@
 
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { getPublicPostBySlug } from '@/lib/firebase/firestore';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -18,6 +19,48 @@ function calculateReadingTime(text: string): number {
     const wordsPerMinute = 200;
     const wordCount = text.split(/\s+/).length;
     return Math.ceil(wordCount / wordsPerMinute);
+}
+
+export async function generateMetadata({ params }: BlogArticlePageProps): Promise<Metadata> {
+    const post = await getPublicPostBySlug(params.slug);
+
+    if (!post) {
+        return {
+            title: 'Article introuvable | Aurum',
+            description: 'L\'article que vous cherchez n\'existe pas.',
+        };
+    }
+
+    const excerpt = post.content.substring(0, 160).replace(/\n/g, ' ') + '...';
+    const publishedTime = post.publishedAt.toISOString();
+
+    return {
+        title: `${post.title} | Aurum Journal`,
+        description: excerpt,
+        openGraph: {
+            title: post.title,
+            description: excerpt,
+            url: `https://aurum-sanctuary.vercel.app/blog/${params.slug}`,
+            type: 'article',
+            publishedTime: publishedTime,
+            authors: ['Alma'],
+            tags: post.tags,
+            images: [
+                {
+                    url: '/og-image.png',
+                    width: 1200,
+                    height: 630,
+                    alt: post.title,
+                },
+            ],
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: post.title,
+            description: excerpt,
+            images: ['/og-image.png'],
+        },
+    };
 }
 
 export default async function BlogArticlePage({ params }: BlogArticlePageProps) {
@@ -38,10 +81,10 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
             <div className="container max-w-4xl mx-auto py-20 md:py-28 animate-fade-in">
                 <header className="mb-12">
                     <Button asChild variant="ghost" className="mb-8">
-                         <Link href="/blog">
-                             <ArrowLeft className="mr-2 h-4 w-4"/>
-                             Retour au blog
-                         </Link>
+                        <Link href="/blog">
+                            <ArrowLeft className="mr-2 h-4 w-4" />
+                            Retour au blog
+                        </Link>
                     </Button>
                     <h1 className="text-4xl md:text-5xl font-bold font-headline leading-tight tracking-tight mb-4">
                         {post.title}
@@ -52,8 +95,8 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
                         <p>{readingTime} min de lecture</p>
                     </div>
                 </header>
-                
-                <div 
+
+                <div
                     className="prose prose-lg prose-stone lg:prose-xl font-body leading-relaxed prose-headings:font-headline"
                     dangerouslySetInnerHTML={{ __html: post.content.replace(/\n/g, '<br />') }}
                 />

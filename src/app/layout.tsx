@@ -2,15 +2,12 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { cn } from '@/lib/utils';
-import { Header } from '@/components/layout/header';
-import { Footer } from '@/components/layout/footer';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/providers/auth-provider';
 import { Suspense } from 'react';
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
 import { CookieConsent } from '@/components/legal/CookieConsent';
 import { TermsModal } from '@/components/auth/TermsModal';
-import { MirrorChat } from '@/components/features/MirrorChat';
 
 import { Cormorant_Garamond, Inter, Dawning_of_a_New_Day } from 'next/font/google';
 
@@ -44,27 +41,28 @@ export const metadata: Metadata = {
     title: "Aurum",
   },
   openGraph: {
-    title: 'Aurum | Journal Intime IA',
-    description: 'Un sanctuaire pour vos pensées. Journal sécurisé et analyses IA.',
+    title: 'Aurum | Transformez le chaos en clarté',
+    description: 'Le journal intime privé par excellence. Chiffrement sur votre appareil, IA locale et design apaisant.',
     url: 'https://aurum-sanctuary.vercel.app',
     siteName: 'Aurum Sanctuary',
     images: [
       {
-        url: '/icons/icon-512x512.png',
-        width: 512,
-        height: 512,
-        alt: 'Aurum App Icon',
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Aurum Sanctuary Banner',
       },
     ],
     locale: 'fr_FR',
     type: 'website',
   },
   twitter: {
-    card: 'summary',
-    title: 'Aurum | Journal Intime IA',
-    description: 'Un sanctuaire pour vos pensées. Journal sécurisé et analyses IA.',
-    images: ['/icons/icon-512x512.png'],
+    card: 'summary_large_image',
+    title: 'Aurum | Transformez le chaos en clarté',
+    description: 'Le journal intime privé par excellence. Chiffrement sur votre appareil.',
+    images: ['/og-image.png'],
   },
+  metadataBase: new URL('https://aurum-sanctuary.vercel.app'),
 };
 
 export const viewport: Viewport = {
@@ -121,14 +119,9 @@ export default function RootLayout({
           <Suspense fallback={null}>
             <GoogleAnalytics />
           </Suspense>
-          <div className="relative flex min-h-screen flex-col bg-background" suppressHydrationWarning={true}>
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </div>
+          {children}
           <Toaster />
           <CookieConsent />
-          <MirrorChat />
         </AuthProvider>
       </body>
     </html>
