@@ -9,10 +9,15 @@
 
 import Stripe from 'stripe';
 
-if (!process.env.STRIPE_SECRET_KEY) {
-    throw new Error(
-        'STRIPE_SECRET_KEY is not set. Please add it to your .env.local file.'
-    );
+const stripeKey = process.env.STRIPE_SECRET_KEY;
+
+if (!stripeKey) {
+    if (process.env.NODE_ENV === 'production' && !process.env.CI) {
+        throw new Error(
+            'STRIPE_SECRET_KEY is not set. Please add it to your .env.local file.'
+        );
+    }
+    console.warn('STRIPE_SECRET_KEY is not set. Using mock for build.');
 }
 
 /**
@@ -23,14 +28,24 @@ if (!process.env.STRIPE_SECRET_KEY) {
  * 
  * const products = await stripe.products.list();
  */
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-    apiVersion: '2024-06-20',
-    typescript: true,
-    appInfo: {
-        name: 'Aurum Sanctuary',
-        version: '1.0.0',
-    },
-});
+export const stripe = stripeKey 
+    ? new Stripe(stripeKey, {
+        apiVersion: '2024-06-20',
+        typescript: true,
+        appInfo: {
+            name: 'Aurum Sanctuary',
+            version: '1.0.0',
+        },
+    })
+    : new Proxy({} as Stripe, {
+        get: (target, prop) => {
+            if (prop === 'then') return undefined;
+            return () => {
+                console.warn(`Stripe.${String(prop)} called without API key. Returning empty object.`);
+                return { data: [] };
+            };
+        },
+    });
 
 /**
  * Helper function to get or create a Stripe customer
