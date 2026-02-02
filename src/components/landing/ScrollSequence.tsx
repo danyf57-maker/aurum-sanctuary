@@ -173,19 +173,19 @@ const ScrollSequence = () => {
           <h1 className="text-3xl sm:text-4xl md:text-7xl font-headline font-bold text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-stone-400 drop-shadow-[0_8px_32px_rgba(0,0,0,0.5)] leading-[1.1] max-w-4xl px-4">
             Aurum : Le sanctuaire qui transforme votre chaos en clarté.
           </h1>
-          
+
           <div className="mt-6 md:mt-12 w-full max-w-2xl bg-white/10 backdrop-blur-xl p-5 md:p-10 rounded-3xl border border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
             <h2 className="text-lg md:text-2xl font-headline mb-4 md:mb-6 text-stone-100/90 tracking-wide uppercase text-[10px] md:text-xs font-semibold">
-              Que déposez-vous aujourd'hui ?
+              Écrivez vos pensées
             </h2>
-            
+
             <textarea
               value={thought}
               onChange={(e) => setThought(e.target.value)}
-              placeholder="Écrivez ici l'essentiel..."
+              placeholder="Que se passe-t-il dans votre esprit ?"
               className="w-full h-24 md:h-32 bg-transparent border-0 focus:ring-0 text-xl md:text-2xl font-handwriting text-white placeholder:text-stone-400/60 resize-none leading-relaxed italic mb-4"
             />
-            
+
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Button asChild size="lg" className="h-12 md:h-14 px-8 text-base md:text-lg rounded-xl w-full sm:w-auto shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all bg-primary hover:bg-primary/90 text-primary-foreground">
                 <Link href={`/sanctuary/write?initial=${encodeURIComponent(thought)}`}>
