@@ -32,6 +32,50 @@ const ScrollSequence = () => {
   const opacitySanctuary = useTransform(scrollYProgress, [0.7, 0.9], [0, 1]);
   const ySanctuary = useTransform(scrollYProgress, [0.7, 0.9], ['5vh', '0vh']);
 
+  const [currentPlaceholder, setCurrentPlaceholder] = useState('');
+  const [placeholderIndex, setPlaceholderIndex] = useState(0);
+  const [charIndex, setCharIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const placeholders = [
+    "Une intuition...",
+    "Une petite victoire...",
+    "Une contrariété...",
+    "Un projet fou...",
+    "Un rêve au réveil...",
+    "Ce qui vous pèse...",
+    "Une gratitude..."
+  ];
+
+  useEffect(() => {
+    const typeSpeed = isDeleting ? 50 : 100;
+    const nextCharTimeout = setTimeout(() => {
+      const currentFullText = placeholders[placeholderIndex];
+
+      if (!isDeleting) {
+        setCurrentPlaceholder(currentFullText.substring(0, charIndex + 1));
+        setCharIndex(prev => prev + 1);
+
+        if (charIndex + 1 === currentFullText.length) {
+          setIsDeleting(true);
+          // Pause at the end of the word
+          clearTimeout(nextCharTimeout);
+          setTimeout(() => setIsDeleting(true), 1500);
+        }
+      } else {
+        setCurrentPlaceholder(currentFullText.substring(0, charIndex - 1));
+        setCharIndex(prev => prev - 1);
+
+        if (charIndex - 1 === 0) {
+          setIsDeleting(false);
+          setPlaceholderIndex((prev) => (prev + 1) % placeholders.length);
+        }
+      }
+    }, typeSpeed);
+
+    return () => clearTimeout(nextCharTimeout);
+  }, [charIndex, isDeleting, placeholderIndex]);
+
   const drawImage = useCallback((img: HTMLImageElement) => {
     const canvas = canvasRef.current;
     if (!canvas || !img) return;
@@ -182,7 +226,7 @@ const ScrollSequence = () => {
             <textarea
               value={thought}
               onChange={(e) => setThought(e.target.value)}
-              placeholder="Que se passe-t-il dans votre esprit ?"
+              placeholder={currentPlaceholder}
               className="w-full h-24 md:h-32 bg-transparent border-0 focus:ring-0 text-xl md:text-2xl font-handwriting text-white placeholder:text-stone-400/60 resize-none leading-relaxed italic mb-4"
             />
 
