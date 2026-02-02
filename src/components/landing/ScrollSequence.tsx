@@ -13,6 +13,7 @@ const getImagePath = (frame: number) =>
 
 
 const ScrollSequence = () => {
+  const [thought, setThought] = useState('');
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -167,13 +168,31 @@ const ScrollSequence = () => {
           alignItems: 'center',
           textAlign: 'center',
           color: 'white',
+          padding: '0 1rem'
         }}>
-          <h1 className="text-6xl md:text-8xl font-headline font-bold text-white drop-shadow-2xl">
-            Aurum
+          <h1 className="text-4xl md:text-7xl font-headline font-bold text-white drop-shadow-2xl leading-tight max-w-4xl">
+            Aurum : Le sanctuaire qui transforme votre chaos en clarté.
           </h1>
-          <p className="mt-4 text-3xl md:text-4xl text-stone-200 max-w-2xl drop-shadow-xl font-headline italic">
-            Le silence qui vous écoute.
-          </p>
+
+          <div className="mt-12 w-full max-w-2xl bg-white/10 backdrop-blur-md p-6 md:p-8 rounded-2xl border border-white/20 shadow-2xl">
+            <h2 className="text-xl md:text-2xl font-headline mb-6 text-stone-100">Que déposez-vous aujourd'hui ?</h2>
+
+            <textarea
+              value={thought}
+              onChange={(e) => setThought(e.target.value)}
+              placeholder="Écrivez ici l'essentiel..."
+              className="w-full h-32 bg-transparent border-0 focus:ring-0 text-xl font-handwriting text-stone-100 placeholder:text-stone-400 resize-none leading-relaxed italic mb-4"
+            />
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Button asChild size="lg" className="h-14 px-8 text-lg rounded-xl w-full sm:w-auto shadow-lg hover:shadow-primary/20 transition-all">
+                <Link href={`/sanctuary/write?initial=${encodeURIComponent(thought)}`}>
+                  Essayer sans compte
+                </Link>
+              </Button>
+              <span className="text-[10px] text-stone-400 uppercase tracking-widest font-medium">100% Anonyme • Sans engagement</span>
+            </div>
+          </div>
         </motion.div>
 
         <motion.div
@@ -192,17 +211,13 @@ const ScrollSequence = () => {
           }}
         >
           <div className="text-center flex flex-col items-center p-4">
-            <h1 className="text-6xl lg:text-7xl font-headline tracking-tighter text-white">Le Sanctuaire</h1>
-            <p className="text-2xl lg:text-3xl font-headline italic text-amber-300 my-6">Le silence qui vous écoute.</p>
-            <p className="max-w-md text-stone-200 mb-12">
-              Un espace intime pour déposer ce qui vous traverse. Sans jugement. Sans bruit. Sans objectif de performance.
+            <h1 className="text-6xl lg:text-7xl font-headline tracking-tighter text-white">Prêt à commencer ?</h1>
+            <p className="max-w-md text-stone-200 my-8 font-light">
+              Rejoignez ceux qui ont déjà retrouvé leur calme intérieur grâce au Sanctuaire.
             </p>
             <div className="flex gap-5 items-center">
-              <Button asChild size="lg">
-                <Link href="/sanctuary/write">Ouvrir mon sanctuaire</Link>
-              </Button>
-              <Button asChild size="lg" variant="secondary">
-                <Link href="/sanctuary/write">Essayer sans compte</Link>
+              <Button asChild size="lg" className="h-14 px-10">
+                <Link href="/signup">Créer mon espace privé</Link>
               </Button>
             </div>
           </div>

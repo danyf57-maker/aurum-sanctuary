@@ -202,58 +202,7 @@ const FloatingCTA = ({ visible }: { visible: boolean }) => (
     </AnimatePresence>
 );
 
-const QuickStart = () => {
-    const [thought, setThought] = useState('');
 
-    return (
-        <section className="py-24 md:py-32 bg-stone-100/30">
-            <div className="container max-w-4xl mx-auto">
-                <div className="bg-white/80 backdrop-blur-lg p-8 md:p-12 rounded-2xl border border-white shadow-xl">
-                    <div className="text-center mb-10">
-                        <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-[10px] uppercase tracking-[0.2em] font-semibold mb-6">Expérience Ephémère</span>
-                        <h2 className="text-3xl md:text-4xl font-headline mb-4">Que déposez-vous aujourd'hui ?</h2>
-                        <p className="text-stone-500 font-light max-w-lg mx-auto">Une pensée, une angoisse, ou un simple mot. Goûtez à la clarté d'Aurum sans attendre.</p>
-                    </div>
-
-                    <div className="relative group">
-                        <textarea
-                            value={thought}
-                            onChange={(e) => setThought(e.target.value)}
-                            placeholder="Écrivez ici l'essentiel..."
-                            className="w-full h-40 bg-transparent border-0 focus:ring-0 text-xl font-handwriting text-stone-700 placeholder:text-stone-300 resize-none leading-relaxed italic"
-                        />
-                        <div className="absolute bottom-0 right-0 p-4 transition-all duration-300 opacity-0 group-focus-within:opacity-100">
-                            <Button asChild variant="ghost" className="text-primary hover:bg-primary/5 gap-2 group">
-                                <Link href={`/sanctuary/write?initial=${encodeURIComponent(thought)}`}>
-                                    Continuer vers mon Sanctuaire
-                                    <Send className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                                </Link>
-                            </Button>
-                        </div>
-                        <div className="mt-4 text-center">
-                            <span className="text-[10px] text-stone-400 uppercase tracking-widest font-medium">Gratuit • Sans carte • 100% Anonyme</span>
-                        </div>
-                        <div className="w-full h-px bg-stone-200 mt-4 overflow-hidden relative">
-                            <div className="absolute top-0 left-0 h-full bg-primary/40 w-0 group-focus-within:w-full transition-all duration-1000 ease-in-out"></div>
-                        </div>
-                    </div>
-
-                    <div className="mt-12 flex items-center justify-center gap-6 text-[10px] text-stone-400 uppercase tracking-widest font-medium">
-                        <div className="flex items-center gap-2">
-                            <Shield className="w-3 h-3" />
-                            <span>100% Privé</span>
-                        </div>
-                        <div className="w-1 h-1 bg-stone-300 rounded-full"></div>
-                        <div className="flex items-center gap-2">
-                            <Sparkles className="w-3 h-3" />
-                            <span>Analyse IA Bienveillante</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    );
-};
 
 export default function Home() {
     const [showCTA, setShowCTA] = useState(false);
@@ -348,16 +297,14 @@ export default function Home() {
             <ScrollSequence />
 
             <div id="sanctuary-content" className="bg-background text-foreground">
-                <QuickStart />
-
-                {/* SECTION 2: Métaphore du jardin */}
+                {/* SECTION 1: Métaphore du jardin (Simple & Strong) */}
                 <section className="py-24 md:py-32 bg-stone-100/50">
                     <div className="container max-w-3xl mx-auto text-center">
                         <h2 className="text-4xl md:text-5xl font-headline mb-6">
-                            Votre esprit est un jardin. <br /> Aurum est votre carnet de botaniste.
+                            Cultivez votre clarté.
                         </h2>
                         <div className="prose prose-lg lg:prose-xl mx-auto text-foreground/80 font-light">
-                            <p>Chaque jour, des milliers de pensées, d'idées et d'émotions le traversent. Sans attention, ce jardin devient vite sauvage. Aurum est l'outil qui vous permet de nommer, de trier et de comprendre ce qui pousse en vous. Pour que vous puissiez cultiver la clarté, et pas le chaos.</p>
+                            <p>Aurum est l'outil qui vous permet de nommer, de trier et de comprendre ce qui pousse en vous. Pour que vous puissiez cultiver la paix, et pas le chaos.</p>
                         </div>
                     </div>
                 </section>
