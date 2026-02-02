@@ -168,29 +168,34 @@ const ScrollSequence = () => {
           alignItems: 'center',
           textAlign: 'center',
           color: 'white',
-          padding: '0 1rem'
+          padding: '0 1.5rem'
         }}>
-          <h1 className="text-4xl md:text-7xl font-headline font-bold text-white drop-shadow-2xl leading-tight max-w-4xl">
+          <h1 className="text-3xl sm:text-4xl md:text-7xl font-headline font-bold text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-stone-400 drop-shadow-[0_8px_32px_rgba(0,0,0,0.5)] leading-[1.1] max-w-4xl px-4">
             Aurum : Le sanctuaire qui transforme votre chaos en clarté.
           </h1>
-
-          <div className="mt-12 w-full max-w-2xl bg-white/10 backdrop-blur-md p-6 md:p-8 rounded-2xl border border-white/20 shadow-2xl">
-            <h2 className="text-xl md:text-2xl font-headline mb-6 text-stone-100">Que déposez-vous aujourd'hui ?</h2>
-
+          
+          <div className="mt-6 md:mt-12 w-full max-w-2xl bg-white/10 backdrop-blur-xl p-5 md:p-10 rounded-3xl border border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
+            <h2 className="text-lg md:text-2xl font-headline mb-4 md:mb-6 text-stone-100/90 tracking-wide uppercase text-[10px] md:text-xs font-semibold">
+              Que déposez-vous aujourd'hui ?
+            </h2>
+            
             <textarea
               value={thought}
               onChange={(e) => setThought(e.target.value)}
               placeholder="Écrivez ici l'essentiel..."
-              className="w-full h-32 bg-transparent border-0 focus:ring-0 text-xl font-handwriting text-stone-100 placeholder:text-stone-400 resize-none leading-relaxed italic mb-4"
+              className="w-full h-24 md:h-32 bg-transparent border-0 focus:ring-0 text-xl md:text-2xl font-handwriting text-white placeholder:text-stone-400/60 resize-none leading-relaxed italic mb-4"
             />
-
+            
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Button asChild size="lg" className="h-14 px-8 text-lg rounded-xl w-full sm:w-auto shadow-lg hover:shadow-primary/20 transition-all">
+              <Button asChild size="lg" className="h-12 md:h-14 px-8 text-base md:text-lg rounded-xl w-full sm:w-auto shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all bg-primary hover:bg-primary/90 text-primary-foreground">
                 <Link href={`/sanctuary/write?initial=${encodeURIComponent(thought)}`}>
                   Essayer sans compte
                 </Link>
               </Button>
-              <span className="text-[10px] text-stone-400 uppercase tracking-widest font-medium">100% Anonyme • Sans engagement</span>
+              <div className="flex flex-col items-center sm:items-start gap-1">
+                <span className="text-[10px] text-stone-300/80 uppercase tracking-[0.2em] font-medium">100% Anonyme</span>
+                <span className="text-[9px] text-stone-400/60 uppercase tracking-widest">Zéro engagement • Privé</span>
+              </div>
             </div>
           </div>
         </motion.div>
