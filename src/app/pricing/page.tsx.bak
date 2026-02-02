@@ -6,12 +6,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
-import { createCheckoutSession } from '@/app/actions/stripe';
+// import { createCheckoutSession } from '@/app/actions/stripe';
 import { useAuth } from '@/providers/auth-provider';
 import { useRouter } from 'next/navigation';
 import { useFormStatus } from 'react-dom';
 import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
+
+export const dynamic = 'force-dynamic';
 
 // Les ID de prix sont maintenant chargés depuis les variables d'environnement
 const PRICE_ID_PRO = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO;
@@ -94,7 +96,8 @@ function SubscribeButton({ priceId, cta, isRecommended }: { priceId: string | nu
 }
 
 export default function PricingPage() {
-    const { user } = useAuth();
+    const auth = useAuth();
+    const user = auth ? auth.user : null;
     const router = useRouter();
 
     const handleFormAction = async (formData: FormData) => {
@@ -102,7 +105,8 @@ export default function PricingPage() {
             router.push('/sanctuary/write'); // ou afficher un modal de connexion
             return;
         }
-        await createCheckoutSession(formData);
+        // await createCheckoutSession(formData);
+        console.warn("Stripe Checkout disabled during build/deploy debugging.");
     };
 
     return (
