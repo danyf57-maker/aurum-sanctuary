@@ -2,7 +2,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { headers } from "next/headers";
 import { z } from "zod";
 import { db, ALMA_EMAIL } from "@/lib/firebase/server-config";
 import { Timestamp } from "firebase-admin/firestore";
@@ -12,9 +11,15 @@ import { getEntries as getEntriesForUser } from "@/lib/firebase/firestore";
 import { getAuthedUserId } from "@/app/actions/auth";
 
 const formSchema = z.object({
-  content: z.string().min(10, { message: "Votre entrée doit comporter au moins 10 caractères." }),
+  encryptedContent: z.string().min(1, { message: "Contenu chiffré manquant." }),
+  iv: z.string().min(1, { message: "IV manquant." }),
   tags: z.string().optional(),
   publishAsPost: z.boolean(),
+  // Only required for Alma public posts
+  content: z.string().optional(),
+  sentiment: z.string().optional(),
+  mood: z.string().optional(),
+  insight: z.string().optional(),
 });
 
 export type FormState = {
@@ -23,6 +28,11 @@ export type FormState = {
     content?: string[];
     tags?: string[];
     publishAsPost?: string[];
+    encryptedContent?: string[];
+    iv?: string[];
+    sentiment?: string[];
+    mood?: string[];
+    insight?: string[];
   };
   isFirstEntry?: boolean;
 };
@@ -46,12 +56,14 @@ function generateTitle(content: string) {
 
 async function addEntryOnServer(entryData: {
   userId: string;
-  content: string;
+  encryptedContent: string;
+  iv: string;
   tags: string[];
   createdAt: Date;
-  sentiment: string;
-  mood: string;
-  insight: string;
+  sentiment?: string;
+  mood?: string;
+  insight?: string;
+  content?: string;
 }, publishAsPost: boolean, userEmail: string) {
   try {
     // Extract userId for routing, but don't store it in the document
@@ -65,10 +77,14 @@ async function addEntryOnServer(entryData: {
       .add({
         ...dataToStore,
         createdAt: Timestamp.fromDate(entryData.createdAt),
+        updatedAt: Timestamp.fromDate(entryData.createdAt),
       });
 
     // If "publish" is checked and the user is Alma, save to publicPosts as well
     if (publishAsPost && userEmail === ALMA_EMAIL) {
+      if (!entryData.content) {
+        throw new Error("Contenu manquant pour la publication publique.");
+      }
       const title = generateTitle(entryData.content);
       const slug = createSlug(title);
 
@@ -90,47 +106,19 @@ async function addEntryOnServer(entryData: {
   }
 }
 
-async function analyzeEntrySentiment(content: string) {
-  // Build absolute URL based on the incoming request (works on App Hosting)
-  const reqHeaders = headers();
-  const host = reqHeaders.get('x-forwarded-host') || reqHeaders.get('host');
-  const proto = reqHeaders.get('x-forwarded-proto') || 'https';
-  const baseUrl = host ? `${proto}://${host}` : (process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:9002');
-  const apiUrl = `${baseUrl}/api/analyze`;
-
-  try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 15000);
-
-    const response = await fetch(apiUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ content }),
-      signal: controller.signal,
-    });
-    clearTimeout(timeout);
-
-    if (!response.ok) {
-      const errorBody = await response.json();
-      console.error("Sentiment analysis API error:", errorBody);
-      throw new Error(errorBody.error || "Échec de l'analyse des sentiments");
-    }
-
-    return response.json();
-  } catch (error) {
-    console.error("Fetch to sentiment analysis failed:", error);
-    throw error;
-  }
-}
-
 export async function saveJournalEntry(
   prevState: FormState,
   formData: FormData
 ): Promise<FormState> {
   const validatedFields = formSchema.safeParse({
-    content: formData.get("content"),
+    encryptedContent: formData.get("encryptedContent"),
+    iv: formData.get("iv"),
     tags: formData.get("tags"),
     publishAsPost: formData.get("publishAsPost") === "on",
+    content: formData.get("content"),
+    sentiment: formData.get("sentiment"),
+    mood: formData.get("mood"),
+    insight: formData.get("insight"),
   });
 
   if (!validatedFields.success) {
@@ -140,7 +128,7 @@ export async function saveJournalEntry(
     };
   }
 
-  const { content, tags, publishAsPost } = validatedFields.data;
+  const { encryptedContent, iv, tags, publishAsPost, content, sentiment, mood, insight } = validatedFields.data;
   const userId = await getAuthedUserId();
   if (!userId) {
     return {
@@ -159,16 +147,16 @@ export async function saveJournalEntry(
     const entryCount = userData?.entryCount || 0;
     isFirstEntry = entryCount === 0;
 
-    const analysisResult = await analyzeEntrySentiment(content);
-
     await addEntryOnServer({
       userId,
-      content,
+      encryptedContent,
+      iv,
       tags: tags ? tags.split(",").map((tag) => tag.trim().toLowerCase()).filter(Boolean) : [],
       createdAt: new Date(),
-      sentiment: analysisResult.sentiment,
-      mood: analysisResult.mood,
-      insight: analysisResult.insight,
+      sentiment,
+      mood,
+      insight,
+      content: publishAsPost ? content : undefined,
     }, publishAsPost, userEmail);
 
     // Update entry count using Admin SDK API

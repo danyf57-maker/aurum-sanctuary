@@ -11,6 +11,8 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { AuthDialog } from "@/components/auth/auth-dialog";
+import { useEncryption } from "@/hooks/useEncryption";
+import { encryptEntry } from "@/lib/crypto/encryption";
 
 
 function SubmitButton({ isSubmitting }: { isSubmitting: boolean }) {
@@ -27,6 +29,7 @@ interface JournalEntryFormProps {
 
 export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
   const { user } = useAuth();
+  const { key, loading: keyLoading } = useEncryption();
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -41,32 +44,88 @@ export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
       return;
     }
 
-    setIsSubmitting(true);
-    const formData = new FormData(event.currentTarget);
-
-    // Server action expects a "previous state" argument, even if we don't use it here.
-    const result: FormState = await saveJournalEntry({} as FormState, formData);
-    setIsSubmitting(false);
-
-    if (result && !result.errors && !result.message) {
-      if (onSave) onSave();
-      if (formRef.current) formRef.current.reset();
-      if (textareaRef.current) {
-        textareaRef.current.style.height = 'auto';
-      }
+    if (!key) {
       toast({
-        title: "Entrée enregistrée",
-        description: result.isFirstEntry
-          ? "Félicitations pour votre première entrée ! Bienvenue dans votre sanctuaire."
-          : "Votre pensée a été préservée en toute sécurité.",
-      });
-    } else {
-      const errorMsg = result.errors?.content?.[0] || result.message || "Une erreur est survenue.";
-      toast({
-        title: "Erreur de validation",
-        description: errorMsg,
+        title: "Clé de chiffrement manquante",
+        description: "Impossible d'enregistrer sans clé. Recharge la page.",
         variant: "destructive",
       });
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const rawFormData = new FormData(event.currentTarget);
+      const content = String(rawFormData.get("content") || "").trim();
+      const tags = String(rawFormData.get("tags") || "");
+      const publishAsPost = rawFormData.get("publishAsPost") === "on";
+
+      if (!content) {
+        throw new Error("Le contenu ne peut pas être vide.");
+      }
+
+      // Encrypt content client-side
+      const encrypted = await encryptEntry(content, key);
+
+      // Analyze content via API (server-side DeepSeek)
+      const analysisRes = await fetch("/api/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content }),
+      });
+      if (!analysisRes.ok) {
+        const err = await analysisRes.json().catch(() => ({}));
+        throw new Error(err.error || "Échec de l'analyse des sentiments");
+      }
+      const analysis = await analysisRes.json();
+
+      // Build payload for server action
+      const payload = new FormData();
+      payload.set("encryptedContent", encrypted.ciphertext);
+      payload.set("iv", encrypted.iv);
+      if (tags) payload.set("tags", tags);
+      if (publishAsPost) payload.set("publishAsPost", "on");
+      if (analysis?.sentiment) payload.set("sentiment", analysis.sentiment);
+      if (analysis?.mood) payload.set("mood", analysis.mood);
+      if (analysis?.insight) payload.set("insight", analysis.insight);
+
+      // Only send raw content for Alma public posts
+      if (publishAsPost && user?.email === ALMA_EMAIL) {
+        payload.set("content", content);
+      }
+
+      // Server action expects a "previous state" argument, even if we don't use it here.
+      const result: FormState = await saveJournalEntry({} as FormState, payload);
+
+      if (result && !result.errors && !result.message) {
+        if (onSave) onSave();
+        if (formRef.current) formRef.current.reset();
+        if (textareaRef.current) {
+          textareaRef.current.style.height = 'auto';
+        }
+        toast({
+          title: "Entrée enregistrée",
+          description: result.isFirstEntry
+            ? "Félicitations pour votre première entrée ! Bienvenue dans votre sanctuaire."
+            : "Votre pensée a été préservée en toute sécurité.",
+        });
+      } else {
+        const errorMsg = result.errors?.content?.[0] || result.message || "Une erreur est survenue.";
+        toast({
+          title: "Erreur de validation",
+          description: errorMsg,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Une erreur est survenue.";
+      toast({
+        title: "Erreur",
+        description: message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -120,7 +179,7 @@ export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
           )}
         </div>
         <div className="flex justify-end">
-          <SubmitButton isSubmitting={isSubmitting} />
+          <SubmitButton isSubmitting={isSubmitting || keyLoading} />
         </div>
       </form>
       <AuthDialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen} />
