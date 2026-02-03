@@ -5,3 +5,8 @@ runConfig:
   # Increase this value if you'd like to automatically spin up
   # more instances in response to increased traffic.
   maxInstances: 1
+
+# Environment variables and secrets
+env:
+  - variable: DEEPSEEK_API_KEY
+    secret: deepseek_api_key
