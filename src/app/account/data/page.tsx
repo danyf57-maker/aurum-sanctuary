@@ -50,7 +50,7 @@ export default function AccountDataPage() {
 
     const handleDownload = async () => {
         setIsDownloading(true);
-        const { data, error } = await exportUserData(user.uid);
+        const { data, error } = await exportUserData();
         setIsDownloading(false);
 
         if (error) {
@@ -71,7 +71,7 @@ export default function AccountDataPage() {
 
     const handleDelete = async () => {
         setIsDeleting(true);
-        const { error } = await deleteUserAccount(user.uid);
+        const { error } = await deleteUserAccount();
         setIsDeleting(false);
 
         if (error) {
@@ -148,4 +148,3 @@ export default function AccountDataPage() {
         </div>
     );
 }
-

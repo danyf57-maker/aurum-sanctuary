@@ -2,9 +2,10 @@
 "use server";
 
 import { db } from "@/lib/firebase/server-config";
-import { auth as adminAuth } from "firebase-admin";
 import { checkRateLimit } from '@/lib/ratelimit';
 import { logAuditEvent } from '@/lib/audit';
+import { getAuthedUserId } from "@/app/actions/auth";
+import { auth } from "@/lib/firebase/admin";
 
 // Helper function to get all documents from a collection for a user
 async function getUserCollection(userId: string, collectionName: string) {
@@ -13,9 +14,10 @@ async function getUserCollection(userId: string, collectionName: string) {
 }
 
 
-export async function exportUserData(userId: string): Promise<{ data: any | null, error: string | null }> {
+export async function exportUserData(): Promise<{ data: any | null, error: string | null }> {
+    const userId = await getAuthedUserId();
     if (!userId) {
-        return { data: null, error: "ID utilisateur non fourni." };
+        return { data: null, error: "Utilisateur non authentifié." };
     }
 
     // Rate limiting
@@ -49,9 +51,10 @@ export async function exportUserData(userId: string): Promise<{ data: any | null
 }
 
 
-export async function deleteUserAccount(userId: string): Promise<{ success: boolean, error: string | null }> {
+export async function deleteUserAccount(): Promise<{ success: boolean, error: string | null }> {
+    const userId = await getAuthedUserId();
     if (!userId) {
-        return { success: false, error: "ID utilisateur non fourni." };
+        return { success: false, error: "Utilisateur non authentifié." };
     }
     
     // Rate limiting
@@ -89,7 +92,9 @@ export async function deleteUserAccount(userId: string): Promise<{ success: bool
         await batch.commit();
         
         // 5. Delete user from Firebase Authentication
-        await adminAuth().deleteUser(userId);
+        if (auth && typeof auth.deleteUser === 'function') {
+            await auth.deleteUser(userId);
+        }
 
         // Audit logging
         await logAuditEvent(userId, 'ACCOUNT_DELETED');

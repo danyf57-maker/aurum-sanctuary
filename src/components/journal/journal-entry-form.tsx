@@ -61,7 +61,7 @@ export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
           : "Votre pensée a été préservée en toute sécurité.",
       });
     } else {
-      const errorMsg = result.errors?.content?.[0] || result.errors?.userId?.[0] || result.message || "Une erreur est survenue.";
+      const errorMsg = result.errors?.content?.[0] || result.message || "Une erreur est survenue.";
       toast({
         title: "Erreur de validation",
         description: errorMsg,
@@ -89,7 +89,6 @@ export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
   return (
     <>
       <form ref={formRef} onSubmit={handleFormSubmit} className="w-full max-w-2xl mx-auto space-y-8">
-        <input type="hidden" name="userId" value={user?.uid ?? ''} />
         <div>
           <Textarea
             ref={textareaRef}

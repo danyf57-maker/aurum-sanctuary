@@ -29,7 +29,7 @@ export function InsightsSection({ user }: InsightsSectionProps) {
     const { toast } = useToast();
 
     const handleGenerateInsights = async () => {
-        const result = await generateUserInsights(user.uid);
+        const result = await generateUserInsights();
         if (result?.error) {
             toast({
                 title: "Erreur lors de la génération",

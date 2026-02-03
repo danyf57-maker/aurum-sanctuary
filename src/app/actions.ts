@@ -9,11 +9,11 @@ import { Timestamp } from "firebase-admin/firestore";
 import slugify from "slugify";
 import { generateInsights } from "@/lib/ai/deepseek";
 import { getEntries as getEntriesForUser } from "@/lib/firebase/firestore";
+import { getAuthedUserId } from "@/app/actions/auth";
 
 const formSchema = z.object({
   content: z.string().min(10, { message: "Votre entrée doit comporter au moins 10 caractères." }),
   tags: z.string().optional(),
-  userId: z.string().min(1, { message: "Vous devez être connecté pour enregistrer une entrée." }),
   publishAsPost: z.boolean(),
 });
 
@@ -22,7 +22,6 @@ export type FormState = {
   errors?: {
     content?: string[];
     tags?: string[];
-    userId?: string[];
     publishAsPost?: string[];
   };
   isFirstEntry?: boolean;
@@ -131,7 +130,6 @@ export async function saveJournalEntry(
   const validatedFields = formSchema.safeParse({
     content: formData.get("content"),
     tags: formData.get("tags"),
-    userId: formData.get("userId"),
     publishAsPost: formData.get("publishAsPost") === "on",
   });
 
@@ -142,7 +140,13 @@ export async function saveJournalEntry(
     };
   }
 
-  const { content, tags, userId, publishAsPost } = validatedFields.data;
+  const { content, tags, publishAsPost } = validatedFields.data;
+  const userId = await getAuthedUserId();
+  if (!userId) {
+    return {
+      message: "Utilisateur non authentifié. Veuillez vous reconnecter.",
+    };
+  }
   let isFirstEntry = false;
   let userEmail = '';
 
@@ -191,9 +195,10 @@ export async function saveJournalEntry(
   return { isFirstEntry: isFirstEntry };
 }
 
-export async function generateUserInsights(userId: string) {
+export async function generateUserInsights() {
+  const userId = await getAuthedUserId();
   if (!userId) {
-    return { error: 'ID utilisateur manquant.' };
+    return { error: 'Utilisateur non authentifié.' };
   }
 
   try {
