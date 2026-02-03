@@ -20,6 +20,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
+
     const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -40,8 +43,10 @@ export async function POST(request: NextRequest) {
         ],
         temperature: 0.7,
         response_format: { type: 'json_object' }
-      })
+      }),
+      signal: controller.signal,
     });
+    clearTimeout(timeout);
 
     if (!response.ok) {
       const error = await response.text();

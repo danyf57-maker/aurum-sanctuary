@@ -2,6 +2,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { z } from "zod";
 import { db, ALMA_EMAIL } from "@/lib/firebase/server-config";
 import { Timestamp } from "firebase-admin/firestore";
@@ -91,16 +92,24 @@ async function addEntryOnServer(entryData: {
 }
 
 async function analyzeEntrySentiment(content: string) {
-  // We need to use the full URL for server-side fetch
-  const host = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:9002';
-  const apiUrl = `${host}/api/analyze`;
+  // Build absolute URL based on the incoming request (works on App Hosting)
+  const reqHeaders = headers();
+  const host = reqHeaders.get('x-forwarded-host') || reqHeaders.get('host');
+  const proto = reqHeaders.get('x-forwarded-proto') || 'https';
+  const baseUrl = host ? `${proto}://${host}` : (process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:9002');
+  const apiUrl = `${baseUrl}/api/analyze`;
 
   try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
+
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ content }),
+      signal: controller.signal,
     });
+    clearTimeout(timeout);
 
     if (!response.ok) {
       const errorBody = await response.json();
