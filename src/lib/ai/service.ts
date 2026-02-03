@@ -1,6 +1,6 @@
 // src/lib/ai/service.ts
 
-import { aiClient, AI_MODEL, AI_TEMPERATURE } from './config';
+import { getAiClient, AI_MODEL, AI_TEMPERATURE } from './config';
 import { AURUM_CONSTITUTION, EMERGENCY_KEYWORDS, SAFETY_RESPONSE } from './aurum-constitution';
 import { ChatMessage, MessageRole } from './types';
 
@@ -34,6 +34,7 @@ export class AurumAIService {
         });
 
         try {
+            const aiClient = getAiClient();
             const response = await aiClient.chat.completions.create({
                 model: AI_MODEL,
                 messages: this.conversationHistory as any, // Le type est compatible

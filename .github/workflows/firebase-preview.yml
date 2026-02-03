@@ -38,3 +38,4 @@ jobs:
           expires: 7d
         env:
           FIREBASE_CLI_EXPERIMENTS: webframeworks
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
