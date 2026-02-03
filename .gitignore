@@ -67,3 +67,6 @@ Thumbs.db
 public/sw.js
 public/workbox-*.js
 public/worker-*.js
+
+# AI Agent Artifacts
+_bmad-output/

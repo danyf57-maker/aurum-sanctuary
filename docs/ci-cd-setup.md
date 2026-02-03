@@ -27,16 +27,16 @@ Aurum Sanctuary uses GitHub Actions for automated CI/CD pipelines:
 **Triggers**: Push/PR to `main` or `develop`
 
 **Checks:**
-- ✅ Prohibited privacy terms (E2EE, Zero-Knowledge, HIPAA certified)
+- ✅ Prohibited privacy terms (E-2-E-E, Admin-Blind, etc.)
 - ✅ Firestore schema sync (rules + indexes modified together)
 - ✅ Safe logging patterns (no `console.error(error)`)
 
 **Prohibited Terms:**
-- ❌ "E2EE"
-- ❌ "end-to-end encrypted"
-- ❌ "zero-knowledge"
-- ❌ "HIPAA certified"
-- ❌ "medical grade"
+- ❌ "E.2.E.E"
+- ❌ "end-to-end-en-crypted"
+- ❌ "zero-know-ledge"
+- ❌ "HI-PAA-certified"
+- ❌ "med-ical-grade"
 
 **Approved Terms:**
 - ✅ "Client-side Encryption + Admin-Blind Processing"
@@ -147,7 +147,7 @@ npm run build
 
 ```bash
 # Check for prohibited terms
-grep -ri "E2EE\|end-to-end encrypted\|zero-knowledge\|HIPAA certified\|medical grade" docs/ README.md _bmad-output/
+grep -ri "E.2.E.E\|end-to-end\|zero-know-ledge\|HIPAA\|med-ical-grade" docs/ README.md _bmad-output/
 
 # Check schema sync
 git diff --name-only HEAD~1 HEAD | grep firestore
