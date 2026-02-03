@@ -31,11 +31,22 @@ jobs:
             "medical-grade"
           )
           
+          # Only search existing paths
+          SEARCH_PATHS=()
+          [ -d "docs" ] && SEARCH_PATHS+=("docs/")
+          [ -f "README.md" ] && SEARCH_PATHS+=("README.md")
+          [ -d "_bmad-output" ] && SEARCH_PATHS+=("_bmad-output/")
+          
+          if [ ${#SEARCH_PATHS[@]} -eq 0 ]; then
+            echo "✅ No documentation paths found to search"
+            exit 0
+          fi
+          
           FOUND_VIOLATIONS=0
           
           for term in "${PROHIBITED_TERMS[@]}"; do
-            # Search in docs, README, and markdown files (case-insensitive)
-            if grep -ri "$term" docs/ README.md _bmad-output/ 2>/dev/null; then
+            # Search in existing paths (case-insensitive)
+            if grep -ri "$term" "${SEARCH_PATHS[@]}" 2>/dev/null; then
               echo "❌ VIOLATION: Found prohibited term '$term'"
               FOUND_VIOLATIONS=1
             fi

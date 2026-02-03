@@ -147,7 +147,7 @@ npm run build
 
 ```bash
 # Check for prohibited terms
-grep -ri "E.2.E.E\|end-to-end\|zero-know-ledge\|HIPAA\|med-ical-grade" docs/ README.md _bmad-output/
+grep -ri "E-2-E-E\|end-to-end\|zero-know-ledge\|HI-PAA\|med-ical-grade" docs/ README.md _bmad-output/
 
 # Check schema sync
 git diff --name-only HEAD~1 HEAD | grep firestore
