@@ -23,8 +23,62 @@ function SubmitButton({ isSubmitting }: { isSubmitting: boolean }) {
   );
 }
 
+interface PostWritePayload {
+  freeQuestion: string;
+  lockedQuestions: string[];
+  sentiment?: string;
+  mood?: string;
+  insight?: string;
+}
+
 interface JournalEntryFormProps {
-  onSave?: () => void;
+  onSave?: (payload?: PostWritePayload) => void;
+}
+
+function buildMirrorQuestions(sentiment?: string, mood?: string): {
+  freeQuestion: string;
+  lockedQuestions: string[];
+} {
+  const moodLower = (mood || "").toLowerCase();
+  const sentimentLower = (sentiment || "").toLowerCase();
+
+  if (moodLower.includes("anx") || moodLower.includes("stress") || sentimentLower === "negative") {
+    return {
+      freeQuestion: "Si cette tension avait une forme, laquelle serait‑elle ?",
+      lockedQuestions: [
+        "Qu’est‑ce que cette situation protège en vous ?",
+        "Quel besoin non nommé se cache derrière cette inquiétude ?",
+      ],
+    };
+  }
+
+  if (moodLower.includes("trist") || moodLower.includes("sad")) {
+    return {
+      freeQuestion: "Si cette tristesse pouvait parler, que dirait‑elle ?",
+      lockedQuestions: [
+        "Qu’est‑ce qui mérite d’être accueilli ici, sans le juger ?",
+        "Quelle part de vous demande de la douceur aujourd’hui ?",
+      ],
+    };
+  }
+
+  if (sentimentLower === "positive" || moodLower.includes("joy") || moodLower.includes("calm")) {
+    return {
+      freeQuestion: "Qu’est‑ce qui a rendu ce moment possible ?",
+      lockedQuestions: [
+        "Quel détail voudriez‑vous retenir pour y revenir ?",
+        "Comment ce calme pourrait‑il vous accompagner demain ?",
+      ],
+    };
+  }
+
+  return {
+    freeQuestion: "Si ce sentiment avait une couleur, laquelle serait‑elle ?",
+    lockedQuestions: [
+      "Qu’est‑ce que cette situation protège en vous ?",
+      "Quel besoin non nommé se cache derrière cette tension ?",
+    ],
+  };
 }
 
 export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
@@ -78,6 +132,7 @@ export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
         throw new Error(err.error || "Échec de l'analyse des sentiments");
       }
       const analysis = await analysisRes.json();
+      const questions = buildMirrorQuestions(analysis?.sentiment, analysis?.mood);
 
       // Build payload for server action
       const payload = new FormData();
@@ -98,7 +153,13 @@ export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
       const result: FormState = await saveJournalEntry({} as FormState, payload);
 
       if (result && !result.errors && !result.message) {
-        if (onSave) onSave();
+        if (onSave) onSave({
+          freeQuestion: questions.freeQuestion,
+          lockedQuestions: questions.lockedQuestions,
+          sentiment: analysis?.sentiment,
+          mood: analysis?.mood,
+          insight: analysis?.insight,
+        });
         if (formRef.current) formRef.current.reset();
         if (textareaRef.current) {
           textareaRef.current.style.height = 'auto';

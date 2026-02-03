@@ -32,7 +32,7 @@ function SubmitButton() {
   );
 }
 
-export function AurumChat() {
+export function AurumChat({ prompt }: { prompt?: string }) {
   const { user } = useAuth();
   const { toast } = useToast();
   const [state, dispatch] = useFormState(submitAurumMessage, initialState);
@@ -125,6 +125,11 @@ export function AurumChat() {
           <span>Discuter avec Aurum</span>
         </CardTitle>
         <CardDescription>Votre confident IA pour une introspection guidée.</CardDescription>
+        {prompt && (
+          <div className="mt-2 rounded-md border bg-amber-50/60 px-3 py-2 text-sm text-amber-900">
+            <span className="font-medium">Question‑miroir :</span> {prompt}
+          </div>
+        )}
       </CardHeader>
       <CardContent className="flex-1 p-0">
         <ScrollArea className="h-full" ref={scrollAreaRef}>
