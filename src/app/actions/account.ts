@@ -7,10 +7,17 @@ import { logAuditEvent } from '@/lib/audit';
 import { getAuthedUserId } from "@/app/actions/auth";
 import { auth } from "@/lib/firebase/admin";
 
-// Helper function to get all documents from a collection for a user
+// Helper function to get all documents from a user's subcollection
 async function getUserCollection(userId: string, collectionName: string) {
-    const snapshot = await db.collection(collectionName).where('userId', '==', userId).get();
+    const snapshot = await db.collection('users').doc(userId).collection(collectionName).get();
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+}
+
+async function deleteUserSubcollection(userId: string, collectionName: string) {
+    const snapshot = await db.collection('users').doc(userId).collection(collectionName).get();
+    const batch = db.batch();
+    snapshot.docs.forEach(doc => batch.delete(doc.ref));
+    await batch.commit();
 }
 
 
@@ -68,11 +75,8 @@ export async function deleteUserAccount(): Promise<{ success: boolean, error: st
     const batch = db.batch();
 
     try {
-        // 1. Delete journal entries
-        const entriesSnapshot = await db.collection('entries').where('userId', '==', userId).get();
-        entriesSnapshot.forEach(doc => {
-            batch.delete(doc.ref);
-        });
+        // 1. Delete journal entries (subcollection)
+        await deleteUserSubcollection(userId, 'entries');
 
         // 2. Delete public posts if any (for Alma user, though it's a good general practice)
         const postsSnapshot = await db.collection('publicPosts').where('userId', '==', userId).get();
@@ -80,18 +84,23 @@ export async function deleteUserAccount(): Promise<{ success: boolean, error: st
             batch.delete(doc.ref);
         });
         
-        // 3. Delete rate limits doc
+        // 3. Delete derived memory, insights, settings (subcollections)
+        await deleteUserSubcollection(userId, 'derivedMemory');
+        await deleteUserSubcollection(userId, 'insights');
+        await deleteUserSubcollection(userId, 'settings');
+
+        // 4. Delete rate limits doc
         const rateLimitRef = db.collection('rateLimits').doc(userId);
         batch.delete(rateLimitRef);
 
-        // 4. Delete user profile document
+        // 5. Delete user profile document
         const userDocRef = db.collection('users').doc(userId);
         batch.delete(userDocRef);
 
-        // Commit all Firestore deletions
+        // Commit all root-level deletions
         await batch.commit();
         
-        // 5. Delete user from Firebase Authentication
+        // 6. Delete user from Firebase Authentication
         if (auth && typeof auth.deleteUser === 'function') {
             await auth.deleteUser(userId);
         }
