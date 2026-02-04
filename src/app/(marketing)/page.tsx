@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
+import HeroIntegrated from '@/components/landing/HeroIntegrated';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
@@ -10,11 +10,6 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-
-const ScrollSequence = dynamic(() => import('@/components/landing/ScrollSequence'), {
-    ssr: false,
-    loading: () => <div style={{ height: '800vh', background: '#1c1917' }} />
-});
 
 const ExitIntent = () => {
     const [show, setShow] = useState(false);
@@ -294,7 +289,7 @@ export default function Home() {
 
     return (
         <main>
-            <ScrollSequence />
+            <HeroIntegrated />
 
             <div id="sanctuary-content" className="bg-background text-foreground">
                 {/* SECTION 1: Métaphore du jardin (Simple & Strong) */}
