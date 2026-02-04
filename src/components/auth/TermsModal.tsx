@@ -21,14 +21,20 @@ import {
 import Link from 'next/link';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
+import { usePathname } from 'next/navigation';
 
 export function TermsModal() {
     const { user, termsAccepted, acceptTerms, loading } = useAuth();
     const [accepted, setAccepted] = useState(false);
     const [submitting, setSubmitting] = useState(false);
+    const pathname = usePathname();
 
-    // Don't show if not logged in, if still loading auth, or if terms already accepted
-    if (loading || !user || termsAccepted === true) return null;
+    // Don't show if:
+    // 1. Loading auth
+    // 2. Not logged in
+    // 3. Terms already accepted
+    // 4. On the landing page (to avoid scaring visitors)
+    if (loading || !user || termsAccepted === true || pathname === '/') return null;
 
     const handleAccept = async () => {
         if (!accepted) return;
