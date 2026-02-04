@@ -9,8 +9,6 @@ const HeroIntegrated = () => {
     () => [
       "Une intuition...",
       "Une petite victoire...",
-      "Une contrariété...",
-      "Un projet fou...",
       "Un rêve au réveil...",
       "Ce qui vous pèse...",
       "Une gratitude...",
