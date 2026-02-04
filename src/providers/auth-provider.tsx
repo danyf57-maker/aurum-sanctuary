@@ -144,6 +144,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signInWithGoogle = async () => {
     try {
+      const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+      if (!googleClientId) {
+        const message =
+          "NEXT_PUBLIC_GOOGLE_CLIENT_ID est manquant. Ajoutez-le pour activer la connexion Google.";
+        logger.warnSafe(message);
+        toast({
+          title: "Connexion Google indisponible",
+          description: message,
+          variant: "destructive",
+        });
+        throw new Error(message);
+      }
       const provider = new GoogleAuthProvider();
       await signInWithPopup(firebaseAuth, provider);
       // Redirect logic handled by component or useEffect

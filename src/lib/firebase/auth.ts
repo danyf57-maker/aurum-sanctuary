@@ -44,6 +44,13 @@ export function useAuth() {
  * Sign in with Google
  */
 export async function signInWithGoogle() {
+  const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+  if (!googleClientId) {
+    const message =
+      "NEXT_PUBLIC_GOOGLE_CLIENT_ID est manquant. Ajoutez-le pour activer la connexion Google.";
+    console.warn(message);
+    return { user: null, error: message };
+  }
   const provider = new GoogleAuthProvider();
   try {
     const result = await signInWithPopup(auth, provider);

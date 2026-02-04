@@ -35,7 +35,9 @@ export default function GoogleAnalytics() {
     const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
     if (!GOOGLE_CLIENT_ID) {
-      console.error("NEXT_PUBLIC_GOOGLE_CLIENT_ID is not set. Google One Tap will not work.");
+      console.warn(
+        "NEXT_PUBLIC_GOOGLE_CLIENT_ID is not set. Google One Tap is disabled until a client ID is provided."
+      );
       return;
     }
 
