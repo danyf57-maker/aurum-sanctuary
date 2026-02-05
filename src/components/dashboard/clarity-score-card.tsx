@@ -23,7 +23,8 @@ export function ClarityScoreCard({ entries }: ClarityScoreCardProps) {
     const now = new Date();
     const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
     const recentEntries = entries.filter(e => {
-        const d = e.createdAt?.toDate ? e.createdAt.toDate() : new Date(e.createdAt);
+        const createdAt = e.createdAt as any;
+        const d = createdAt?.toDate ? createdAt.toDate() : new Date(createdAt);
         return d > weekAgo;
     });
     const consistencyScore = Math.min(recentEntries.length * 10, 40); // (max 40)

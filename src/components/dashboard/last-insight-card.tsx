@@ -13,7 +13,8 @@ type LastInsightCardProps = {
 };
 
 export function LastInsightCard({ entry }: LastInsightCardProps) {
-  const date = entry.createdAt?.toDate ? entry.createdAt.toDate() : new Date(entry.createdAt);
+  const createdAt = entry.createdAt as any;
+  const date = createdAt?.toDate ? createdAt.toDate() : new Date(createdAt);
   
   return (
     <Card className="h-full border-border/40 bg-white/50 backdrop-blur-sm group hover:border-amber-500/20 transition-all duration-300">
