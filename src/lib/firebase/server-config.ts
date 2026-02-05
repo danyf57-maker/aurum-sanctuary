@@ -7,6 +7,7 @@ if (typeof window !== 'undefined') {
 
 import { initializeApp, getApps, getApp, App, cert, ServiceAccount } from "firebase-admin/app";
 import { getFirestore as getAdminFirestore, Firestore } from "firebase-admin/firestore";
+import { getAuth as getAdminAuth, Auth } from "firebase-admin/auth";
 
 // Server-only constants
 export const ALMA_EMAIL = 'alma.lawson@aurum.inc';
@@ -64,34 +65,42 @@ function getDb(): Firestore {
 }
 
 /**
- * Robust Proxy Mock for Firestore
+ * Robust Proxy Mock for Firestore/Auth
  * Prevents "undefined is not a function" errors when Firebase is not initialized.
  */
-function createFirestoreMock() {
+function createMock(name: string) {
     return new Proxy({}, {
         get: (target, prop) => {
             if (prop === 'collection' || prop === 'doc' || prop === 'collectionGroup') {
-                return () => createFirestoreMock();
+                return () => createMock('Firestore');
             }
             if (prop === 'add' || prop === 'set' || prop === 'update' || prop === 'delete' || prop === 'get') {
                 return () => Promise.resolve({ id: 'mock-id', exists: false, data: () => ({}) });
             }
+            if (prop === 'name') return 'admin-mock';
+            if (prop === 'createSessionCookie') return () => Promise.resolve('mock-session-cookie');
+            if (prop === 'verifyIdToken') return () => Promise.resolve({ uid: 'mock-uid' });
             return undefined;
         }
-    }) as Firestore;
+    }) as any;
 }
 
 let db: Firestore;
+let auth: Auth;
+
 try {
     const app = getAdminApp();
     if (app.name === 'admin-mock') {
-        db = createFirestoreMock();
+        db = createMock('Firestore');
+        auth = createMock('Auth');
     } else {
         db = getAdminFirestore(app);
+        auth = getAdminAuth(app);
     }
 } catch (e) {
-    console.warn("Failed to initialize Admin Firestore (likely build mode without keys):", e);
-    db = createFirestoreMock();
+    console.warn("Failed to initialize Admin Services (likely build mode without keys):", e);
+    db = createMock('Firestore');
+    auth = createMock('Auth');
 }
 
-export { getAdminApp, db };
+export { getAdminApp, db, auth, db as firestore };
