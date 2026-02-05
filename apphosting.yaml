@@ -10,5 +10,10 @@ runConfig:
 env:
   - variable: DEEPSEEK_API_KEY
     secret: deepseek_api_key
+    availability:
+      - RUNTIME
   - variable: NEXT_PUBLIC_GOOGLE_CLIENT_ID
     value: 719152007030-uf32c8nhs8hg4bnm83vriv28ou902qje.apps.googleusercontent.com
+    availability:
+      - BUILD
+      - RUNTIME
