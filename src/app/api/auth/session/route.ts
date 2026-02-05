@@ -19,13 +19,17 @@ export async function POST(request: Request) {
         // Set session expiration to 5 days
         const expiresIn = 60 * 60 * 24 * 5 * 1000;
 
-        if (!auth) {
-            console.warn("Firebase Admin Auth not initialized. Skipping session cookie creation.");
+        if (!auth || auth.name === '[DEFAULT]-mock') {
+            console.warn("Firebase Admin Auth not initialized or mocked. Skipping session cookie creation.");
             return NextResponse.json({ status: 'skipped', message: 'Admin Auth missing' }, { status: 200 });
         }
 
         // Create the session cookie using Firebase Admin
         const sessionCookie = await auth.createSessionCookie(idToken, { expiresIn });
+
+        if (!sessionCookie) {
+            throw new Error("Failed to create session cookie: result is empty.");
+        }
 
         // Set cookie options
         const options = {

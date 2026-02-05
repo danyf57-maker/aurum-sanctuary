@@ -140,6 +140,7 @@ export async function saveJournalEntry(
 
   try {
     // Get user document using Admin SDK API
+    // If db is mocked, this will return a mock document
     const userDocRef = db.collection('users').doc(userId);
     const userDoc = await userDocRef.get();
     const userData = userDoc.data();
@@ -164,6 +165,11 @@ export async function saveJournalEntry(
       entryCount: entryCount + 1,
     });
 
+    if (publishAsPost && userEmail === ALMA_EMAIL) {
+      revalidatePath("/blog");
+    }
+    revalidatePath("/dashboard");
+    revalidatePath("/sanctuary");
 
   } catch (error) {
     console.error("Error saving entry:", error);
@@ -172,12 +178,6 @@ export async function saveJournalEntry(
     }
     return { message: "Une erreur inattendue est survenue lors de l'enregistrement de votre entrée. Veuillez réessayer." };
   }
-
-  if (publishAsPost && userEmail === ALMA_EMAIL) {
-    revalidatePath("/blog");
-  }
-  revalidatePath("/dashboard");
-  revalidatePath("/sanctuary");
 
   // No redirect, component will handle UI changes
   return { isFirstEntry: isFirstEntry };
