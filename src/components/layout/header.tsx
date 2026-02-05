@@ -25,6 +25,8 @@ export function Header() {
   }
 
   const isAdminPage = pathname.startsWith('/admin');
+  const isAppPage = pathname.startsWith('/dashboard') || pathname.startsWith('/sanctuary') || pathname.startsWith('/insights') || pathname.startsWith('/settings');
+
   if (isAdminPage) {
     return (
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 pt-[env(safe-area-inset-top)]">
@@ -50,54 +52,61 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 max-w-screen-2xl items-center">
-        <div className="mr-4 hidden md:flex">
-          <Link href="/" className="mr-6 flex items-center space-x-2">
-            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-              <Logo className="h-6 w-6 text-amber-600" />
-            </motion.div>
-            <span className="font-bold font-headline sm:inline-block">
-              Aurum
-            </span>
-          </Link>
-          <nav className="flex items-center gap-6 text-sm">
-            <Link
-              href="/dashboard"
-              className="transition-colors hover:text-foreground/80 text-foreground/60"
-            >
-              Tableau de Bord
+        {!isAppPage && (
+          <div className="mr-4 hidden md:flex">
+            <Link href="/" className="mr-6 flex items-center space-x-2">
+              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+                <Logo className="h-6 w-6 text-amber-600" />
+              </motion.div>
+              <span className="font-bold font-headline sm:inline-block">
+                Aurum
+              </span>
             </Link>
-            <Link
-              href="/sanctuary"
-              className="transition-colors hover:text-foreground/80 text-foreground/60"
-            >
-              Journal
-            </Link>
-            <Link
-              href="/sanctuary/write"
-              className="transition-colors hover:text-foreground/80 text-foreground/60"
-            >
-              Écrire
-            </Link>
-            <Link
-              href="/blog"
-              className="transition-colors hover:text-foreground/80 text-foreground/60"
-            >
-              Blog
-            </Link>
-            {user?.email === ALMA_EMAIL && (
+            <nav className="flex items-center gap-6 text-sm">
               <Link
-                href="/admin"
-                className="text-amber-600 transition-colors hover:text-amber-500"
+                href="/dashboard"
+                className="transition-colors hover:text-foreground/80 text-foreground/60"
               >
-                Admin
+                Tableau de Bord
               </Link>
-            )}
-          </nav>
-        </div>
+              <Link
+                href="/sanctuary"
+                className="transition-colors hover:text-foreground/80 text-foreground/60"
+              >
+                Journal
+              </Link>
+              <Link
+                href="/sanctuary/write"
+                className="transition-colors hover:text-foreground/80 text-foreground/60"
+              >
+                Écrire
+              </Link>
+              <Link
+                href="/blog"
+                className="transition-colors hover:text-foreground/80 text-foreground/60"
+              >
+                Blog
+              </Link>
+              {user?.email === ALMA_EMAIL && (
+                <Link
+                  href="/admin"
+                  className="text-amber-600 transition-colors hover:text-amber-500"
+                >
+                  Admin
+                </Link>
+              )}
+            </nav>
+          </div>
+        )}
 
         <MobileNav />
 
         <div className="flex flex-1 items-center justify-end space-x-2">
+          {isAppPage && (
+            <div className="hidden lg:flex items-center gap-4 mr-4">
+               {/* Any specific app header items can go here */}
+            </div>
+          )}
           <AuthButton />
         </div>
       </div>

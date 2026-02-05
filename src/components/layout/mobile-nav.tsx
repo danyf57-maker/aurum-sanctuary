@@ -46,14 +46,20 @@ export function MobileNav() {
               <MobileLink href="/dashboard" onOpenChange={setOpen} active={pathname === '/dashboard'}>
                 Tableau de Bord
               </MobileLink>
-              <MobileLink href="/sanctuary" onOpenChange={setOpen} active={pathname.startsWith('/sanctuary')}>
-                Journal
-              </MobileLink>
               <MobileLink href="/sanctuary/write" onOpenChange={setOpen} active={pathname === '/sanctuary/write'}>
                 Écrire
               </MobileLink>
+              <MobileLink href="/insights" onOpenChange={setOpen} active={pathname === '/insights'}>
+                L'Écho
+              </MobileLink>
+              <MobileLink href="/sanctuary" onOpenChange={setOpen} active={pathname === '/sanctuary'}>
+                Le Caveau
+              </MobileLink>
               <MobileLink href="/blog" onOpenChange={setOpen} active={pathname.startsWith('/blog')}>
                 Blog
+              </MobileLink>
+              <MobileLink href="/settings" onOpenChange={setOpen} active={pathname === '/settings'}>
+                Paramètres
               </MobileLink>
               {user?.email === ALMA_EMAIL && (
                 <MobileLink href="/admin" onOpenChange={setOpen} active={pathname.startsWith('/admin')} className="text-amber-600">
