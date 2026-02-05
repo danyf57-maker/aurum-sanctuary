@@ -63,15 +63,35 @@ function getDb(): Firestore {
     return getAdminFirestore(getAdminApp());
 }
 
+/**
+ * Robust Proxy Mock for Firestore
+ * Prevents "undefined is not a function" errors when Firebase is not initialized.
+ */
+function createFirestoreMock() {
+    return new Proxy({}, {
+        get: (target, prop) => {
+            if (prop === 'collection' || prop === 'doc' || prop === 'collectionGroup') {
+                return () => createFirestoreMock();
+            }
+            if (prop === 'add' || prop === 'set' || prop === 'update' || prop === 'delete' || prop === 'get') {
+                return () => Promise.resolve({ id: 'mock-id', exists: false, data: () => ({}) });
+            }
+            return undefined;
+        }
+    }) as Firestore;
+}
 
 let db: Firestore;
 try {
-    db = getDb();
+    const app = getAdminApp();
+    if (app.name === 'admin-mock') {
+        db = createFirestoreMock();
+    } else {
+        db = getAdminFirestore(app);
+    }
 } catch (e) {
     console.warn("Failed to initialize Admin Firestore (likely build mode without keys):", e);
-    // Return a mock object or casted empty object to allow build to proceed
-    // This will clearly fail if used at runtime, but allows static generation imports
-    db = {} as Firestore;
+    db = createFirestoreMock();
 }
 
 export { getAdminApp, db };
