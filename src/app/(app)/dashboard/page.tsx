@@ -73,7 +73,7 @@ export default function DashboardPage() {
         );
     }
 
-    const lastEntryWithAnalysis = entries.find(e => e.analysis) || entries[0];
+    const lastEntryWithAnalysis = entries.find(e => e.insight) || entries[0];
 
     return (
         <div className="container mx-auto px-4 py-8 max-w-6xl">
