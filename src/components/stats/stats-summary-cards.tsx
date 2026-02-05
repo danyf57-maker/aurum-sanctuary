@@ -8,9 +8,10 @@ import { TrendingUp, TrendingDown, Minus, Calendar, Flame, BarChart3, Smile } fr
 
 type StatsSummaryCardsProps = {
     entries: JournalEntry[];
+    layout?: "grid" | "stack";
 };
 
-export function StatsSummaryCards({ entries }: StatsSummaryCardsProps) {
+export function StatsSummaryCards({ entries, layout = "grid" }: StatsSummaryCardsProps) {
     const stats = useMemo(() => calculateSummaryStats(entries), [entries]);
     const streaks = useMemo(() => calculateStreaks(entries), [entries]);
 
@@ -51,7 +52,7 @@ export function StatsSummaryCards({ entries }: StatsSummaryCardsProps) {
     ];
 
     return (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className={layout === "grid" ? "grid gap-4 md:grid-cols-2 lg:grid-cols-4" : "flex flex-col gap-4"}>
             {cards.map((card, index) => {
                 const Icon = card.icon;
                 const TrendIcon = card.trendIcon;
