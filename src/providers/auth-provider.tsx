@@ -145,6 +145,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signInWithGoogle = async () => {
     try {
       const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+      console.log("GOOGLE_CLIENT_ID check:", googleClientId ? `${googleClientId.substring(0, 5)}...` : "MISSING");
       if (!googleClientId) {
         const message =
           "NEXT_PUBLIC_GOOGLE_CLIENT_ID est manquant. Ajoutez-le pour activer la connexion Google.";
