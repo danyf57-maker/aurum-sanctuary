@@ -29,7 +29,7 @@ export function LastInsightCard({ entry }: LastInsightCardProps) {
       <CardContent className="space-y-4">
         <div className="relative">
           <p className="text-stone-700 italic leading-relaxed line-clamp-3 pl-4 border-l-2 border-stone-200">
-            {entry.analysis || "Aucune analyse disponible pour cette entrée. Commencez à écrire pour recevoir un écho de l'IA."}
+            {entry.insight || "Aucune analyse disponible pour cette entrée. Commencez à écrire pour recevoir un écho de l'IA."}
           </p>
         </div>
         
