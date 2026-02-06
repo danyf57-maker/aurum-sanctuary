@@ -1,7 +1,8 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { JournalEntryForm } from '@/components/journal/journal-entry-form';
 import { AurumChat } from '@/components/chat/AurumChat';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -16,6 +17,7 @@ import { WelcomePresence } from '@/components/sanctuary/welcome-presence';
 import { PremiumJournalForm } from '@/components/sanctuary/premium-journal-form';
 
 export default function WritePage() {
+    const router = useRouter();
     const { user, loading } = useAuth();
     const [activeTab, setActiveTab] = useState("write");
     const { isPremium, loading: subscriptionLoading } = useSubscription();
@@ -23,6 +25,13 @@ export default function WritePage() {
         freeQuestion: string;
         lockedQuestions: string[];
     } | null>(null);
+
+    // Redirect to login if not authenticated
+    useEffect(() => {
+        if (!loading && !user) {
+            router.push('/login?redirect=/sanctuary/write');
+        }
+    }, [loading, user, router]);
 
     // Si l'utilisateur est authentifié, on affiche l'interface complète
     if (user) {
@@ -135,21 +144,13 @@ export default function WritePage() {
     }
 
     // Si l'authentification est en cours, on affiche un skeleton
-    if (loading) {
-        return (
-            <div className="container max-w-4xl mx-auto py-20">
-                <div className="space-y-4">
-                    <Skeleton className="h-10 w-1/3" />
-                    <Skeleton className="h-96 w-full bg-muted rounded-md animate-pulse" />
-                </div>
-            </div>
-        )
-    }
-
-    // Si pas d'utilisateur et chargement terminé, on affiche le formulaire simple
+    // (ou si pas d'utilisateur - redirection en cours)
     return (
-        <div className="flex flex-col flex-1 items-center justify-center py-8 md:py-12 animate-fade-in bg-stone-50/50">
-            <JournalEntryForm />
+        <div className="container max-w-4xl mx-auto py-20">
+            <div className="space-y-4">
+                <Skeleton className="h-10 w-1/3" />
+                <Skeleton className="h-96 w-full bg-muted rounded-md animate-pulse" />
+            </div>
         </div>
     );
 }

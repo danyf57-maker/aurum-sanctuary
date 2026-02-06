@@ -1,13 +1,13 @@
 /**
  * Login Page
- * 
+ *
  * Email/password login with Google OAuth option.
  */
 
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/providers/auth-provider';
 import { z } from 'zod';
@@ -21,11 +21,15 @@ const loginSchema = z.object({
     password: z.string().min(6, 'Le mot de passe doit contenir au moins 6 caractères'),
 });
 
-export default function LoginPage() {
+function LoginForm() {
     const { signInWithEmail, signInWithGoogle, loading: authLoading } = useAuth();
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+
+    // Get redirect URL from query params, default to /dashboard
+    const redirectUrl = searchParams.get('redirect') || '/dashboard';
 
     const handleEmailLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -51,7 +55,7 @@ export default function LoginPage() {
 
         try {
             await signInWithEmail(email, password);
-            router.push('/dashboard');
+            router.push(redirectUrl);
         } catch (error) {
             // Error toast shown by AuthProvider
         } finally {
@@ -63,7 +67,8 @@ export default function LoginPage() {
         setLoading(true);
         try {
             await signInWithGoogle();
-            // Redirect handled by Google OAuth
+            // Popup-based OAuth, no page reload - redirect directly
+            router.push(redirectUrl);
         } catch (error) {
             // Error toast shown by AuthProvider
             setLoading(false);
@@ -187,5 +192,20 @@ export default function LoginPage() {
                 </CardFooter>
             </Card>
         </div>
+    );
+}
+
+export default function LoginPage() {
+    return (
+        <Suspense fallback={
+            <div className="flex min-h-screen items-center justify-center">
+                <div className="text-center">
+                    <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto"></div>
+                    <p className="mt-4 text-muted-foreground">Chargement...</p>
+                </div>
+            </div>
+        }>
+            <LoginForm />
+        </Suspense>
     );
 }
