@@ -12,11 +12,13 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useSubscription } from '@/hooks/useSubscription';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { WelcomePresence } from '@/components/sanctuary/welcome-presence';
+import { PremiumJournalForm } from '@/components/sanctuary/premium-journal-form';
 
 export default function WritePage() {
     const { user, loading } = useAuth();
     const [activeTab, setActiveTab] = useState("write");
-    const { isPremium } = useSubscription();
+    const { isPremium, loading: subscriptionLoading } = useSubscription();
     const [postWrite, setPostWrite] = useState<{
         freeQuestion: string;
         lockedQuestions: string[];
@@ -24,6 +26,27 @@ export default function WritePage() {
 
     // Si l'utilisateur est authentifié, on affiche l'interface complète
     if (user) {
+        // Premium experience: spacious, presence-focused
+        if (isPremium) {
+            return (
+                <>
+                    <WelcomePresence userName={user.displayName || undefined} />
+                    <div className="container max-w-5xl mx-auto py-12 md:py-20 px-4">
+                        <div className="mb-12 text-center space-y-3">
+                            <h1 className="font-headline text-4xl md:text-5xl text-stone-900 tracking-tight">
+                                Ton Sanctuaire
+                            </h1>
+                            <p className="text-stone-600 text-lg">
+                                Écris ce qui demande à être posé.
+                            </p>
+                        </div>
+                        <PremiumJournalForm />
+                    </div>
+                </>
+            );
+        }
+
+        // Free experience: tabs with mirror questions
         return (
             <div className="container max-w-4xl mx-auto py-12 md:py-16">
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -91,15 +114,9 @@ export default function WritePage() {
                                             <li>• {postWrite.lockedQuestions[1]}</li>
                                         </ul>
                                         <div className="mt-4 flex gap-3 flex-wrap">
-                                            {isPremium ? (
-                                                <Button onClick={() => setActiveTab("chat")}>
-                                                    Continuer avec Aurum
-                                                </Button>
-                                            ) : (
-                                                <Button asChild>
-                                                    <Link href="/pricing">Continuer avec Aurum (Pro)</Link>
-                                                </Button>
-                                            )}
+                                            <Button asChild>
+                                                <Link href="/pricing">Continuer avec Aurum (Pro)</Link>
+                                            </Button>
                                             <p className="text-xs text-muted-foreground self-center">
                                                 Chiffré. Privé. Non‑lu par des humains.
                                             </p>

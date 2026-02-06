@@ -121,6 +121,11 @@ export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
       // Encrypt content client-side
       const encrypted = await encryptEntry(content, key);
 
+      // Validate encryption result
+      if (!encrypted || !encrypted.ciphertext || !encrypted.iv) {
+        throw new Error('Échec du chiffrement. Veuillez réessayer.');
+      }
+
       // Analyze content via API (server-side DeepSeek)
       let analysis: any = null;
       try {
@@ -180,7 +185,14 @@ export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
             : "Votre pensée a été préservée en toute sécurité.",
         });
       } else {
-        const errorMsg = result.errors?.content?.[0] || result.message || "Une erreur est survenue.";
+        // Extract all validation errors
+        let errorMsg = result.message || "Une erreur est survenue.";
+        if (result.errors) {
+          const allErrors = Object.values(result.errors).flat().filter(Boolean);
+          if (allErrors.length > 0) {
+            errorMsg = allErrors[0];
+          }
+        }
         toast({
           title: "Erreur de validation",
           description: errorMsg,
