@@ -1,9 +1,11 @@
 /**
  * Client-Side Encryption Utilities
- * 
+ *
  * Uses Web Crypto API (AES-GCM) to encrypt/decrypt journal entries.
  * This ensures "Admin-Blind" privacy - the server never sees the raw content.
  */
+
+import { logger } from '@/lib/logger/safe';
 
 // Key configuration
 const ALGORITHM = 'AES-GCM';
@@ -99,7 +101,7 @@ export async function decryptEntry(encryptedData: EncryptedData, key: CryptoKey)
         const decoder = new TextDecoder();
         return decoder.decode(decryptedBuffer);
     } catch (error) {
-        console.error('Decryption failed:', error);
+        logger.errorSafe('Decryption failed', error);
         throw new Error('Failed to decrypt content. Key mismatch or data corruption.');
     }
 }

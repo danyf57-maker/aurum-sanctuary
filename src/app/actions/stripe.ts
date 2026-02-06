@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation';
 import { auth as adminAuth } from 'firebase-admin';
 import { db } from '@/lib/firebase/server-config';
 import Stripe from 'stripe';
+import { logger } from '@/lib/logger/safe';
 
 // Les ID de prix sont maintenant chargés depuis les variables d'environnement.
 // Assurez-vous qu'elles sont définies dans votre fichier .env
@@ -28,7 +29,7 @@ async function getUserIdFromToken(): Promise<string | null> {
             const decodedToken = await adminAuth().verifyIdToken(idToken);
             return decodedToken.uid;
         } catch (error) {
-            console.error("Error verifying ID token:", error);
+            logger.errorSafe("Error verifying ID token", error);
             return null;
         }
     }

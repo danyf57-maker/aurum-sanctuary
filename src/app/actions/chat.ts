@@ -9,6 +9,7 @@ import { z } from 'zod';
 import { checkRateLimit } from '@/lib/ratelimit';
 import { logAuditEvent } from '@/lib/audit';
 import { auth } from 'firebase-admin';
+import { logger } from '@/lib/logger/safe';
 
 async function getUserIdFromToken(token: string | null): Promise<string | null> {
     if (!token) return null;
@@ -16,7 +17,7 @@ async function getUserIdFromToken(token: string | null): Promise<string | null> 
         const decodedToken = await auth().verifyIdToken(token);
         return decodedToken.uid;
     } catch (error) {
-        console.error("Error verifying ID token:", error);
+        logger.errorSafe("Error verifying ID token", error);
         return null;
     }
 }
@@ -92,7 +93,7 @@ export async function submitAurumMessage(
             history: newHistory,
         };
     } catch (error) {
-        console.error("Erreur dans l'action submitAurumMessage:", error);
+        logger.errorSafe("Erreur dans l'action submitAurumMessage", error);
         return {
             response: "",
             history: chatHistory,

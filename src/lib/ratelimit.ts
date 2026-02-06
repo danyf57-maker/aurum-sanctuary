@@ -3,6 +3,7 @@
 
 import { db } from "@/lib/firebase/server-config";
 import { Timestamp } from "firebase-admin/firestore";
+import { logger } from "@/lib/logger/safe";
 
 type RateLimitAction = 'submitAurumMessage' | 'exportUserData' | 'deleteUserAccount';
 
@@ -79,7 +80,9 @@ export async function checkRateLimit(userId: string, action: RateLimitAction): P
         };
 
     } catch (error) {
-        console.error(`Erreur lors de la vérification du rate limit pour ${userId} sur ${action}:`, error);
+        logger.errorSafe('Erreur lors de la vérification du rate limit', error, {
+            action: action
+        });
         // En cas d'erreur, on refuse par sécurité
         return {
             allowed: false,

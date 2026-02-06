@@ -7,6 +7,7 @@ import { collection, addDoc, serverTimestamp, query, orderBy, getDocs, Timestamp
 import { useEncryption } from './useEncryption';
 import { encryptEntry, decryptEntry, EncryptedData } from '@/lib/crypto/encryption';
 import { useToast } from './use-toast';
+import { logger } from '@/lib/logger/safe';
 
 export interface JournalEntry {
     id: string;
@@ -52,7 +53,7 @@ export function useJournal() {
 
             return true;
         } catch (error) {
-            console.error("Failed to create entry:", error);
+            logger.errorSafe("Failed to create entry", error);
             toast({
                 title: "Erreur de sauvegarde",
                 description: "Impossible d'enregistrer l'entrée.",
@@ -97,7 +98,7 @@ export function useJournal() {
                             updatedAt: (data.updatedAt as Timestamp)?.toDate() || new Date(),
                         };
                     } catch (e) {
-                        console.error(`Failed to decrypt entry ${doc.id}`, e);
+                        logger.errorSafe("Failed to decrypt entry", e, { entryId: doc.id });
                         return {
                             id: doc.id,
                             content: "⚠️ Contenu illisible (Erreur de déchiffrement)",
@@ -110,7 +111,7 @@ export function useJournal() {
 
             setEntries(decryptedEntries);
         } catch (error) {
-            console.error("Failed to fetch entries:", error);
+            logger.errorSafe("Failed to fetch entries", error);
             toast({
                 title: "Erreur de chargement",
                 description: "Impossible de récupérer vos entrées.",

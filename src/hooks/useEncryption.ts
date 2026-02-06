@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { generateKey, exportKey, importKey } from '@/lib/crypto/encryption';
 import { useToast } from './use-toast';
+import { logger } from '@/lib/logger/safe';
 
 const STORAGE_KEY = 'aurum_encryption_key_v1';
 
@@ -35,7 +36,7 @@ export function useEncryption() {
                     });
                 }
             } catch (error) {
-                console.error('Failed to load/generate encryption key:', error);
+                logger.errorSafe('Failed to load/generate encryption key', error);
                 toast({
                     title: "Erreur de chiffrement",
                     description: "Impossible d'initialiser la sécurité. Vos entrées ne peuvent pas être protégées.",
@@ -68,7 +69,7 @@ export function useEncryption() {
             setKey(newKey);
             toast({ title: "Clé changée (Dev)" });
         } catch (e) {
-            console.error(e);
+            logger.errorSafe('Failed to rotate encryption key', e);
         }
     };
 

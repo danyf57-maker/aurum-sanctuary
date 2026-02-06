@@ -1,6 +1,6 @@
 /**
  * Firebase Authentication Helpers
- * 
+ *
  * React hooks and utilities for Firebase Auth integration.
  */
 
@@ -18,6 +18,7 @@ import {
   sendPasswordResetEmail,
 } from 'firebase/auth';
 import { auth } from './web-client';
+import { logger } from '@/lib/logger/safe';
 
 /**
  * Hook to get current authenticated user
@@ -123,7 +124,7 @@ export async function getIdToken(forceRefresh: boolean = false): Promise<string 
   try {
     return await user.getIdToken(forceRefresh);
   } catch (error) {
-    console.error('Error getting ID token:', error);
+    logger.errorSafe('Error getting ID token', error);
     return null;
   }
 }
