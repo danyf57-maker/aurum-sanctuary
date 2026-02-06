@@ -112,8 +112,18 @@ export function PremiumJournalForm() {
       // Save to Firestore
       const result: FormState = await saveJournalEntry({} as FormState, payload);
 
+      // Debug logging
+      console.log('[PremiumJournalForm] saveJournalEntry result:', {
+        result,
+        hasResult: !!result,
+        resultType: typeof result,
+        errors: result?.errors,
+        message: result?.message,
+      });
+
       // Check if result exists and has no errors
       if (!result) {
+        console.error('[PremiumJournalForm] Result is undefined or null');
         throw new Error('Aucune réponse du serveur. Veuillez réessayer.');
       }
 
@@ -143,6 +153,13 @@ export function PremiumJournalForm() {
         });
       }
     } catch (error) {
+      console.error('[PremiumJournalForm] Error in handleFormSubmit:', {
+        error,
+        errorType: typeof error,
+        isError: error instanceof Error,
+        errorMessage: error instanceof Error ? error.message : undefined,
+        errorStack: error instanceof Error ? error.stack : undefined,
+      });
       const message = error instanceof Error ? error.message : 'Une erreur est survenue.';
       toast({
         title: 'Erreur',
