@@ -78,9 +78,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
           let userSnap = await getDoc(userRef);
 
-          // FALLBACK FOR DEV: If trigger didn't run (no emulators), create doc client-side
-          if (!userSnap.exists() && process.env.NODE_ENV === 'development') {
-            logger.warnSafe("DEV MODE: Creating user doc client-side because Cloud Trigger is missing.", { userId: finalUser.uid });
+          // FALLBACK: If trigger didn't run, create doc client-side
+          // This ensures users can still use the app even if Cloud Functions aren't deployed yet
+          if (!userSnap.exists()) {
+            logger.warnSafe("Creating user doc client-side because Cloud Trigger is missing.", { userId: finalUser.uid });
             try {
               await setDoc(userRef, {
                 uid: finalUser.uid,
@@ -100,10 +101,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 updatedAt: serverTimestamp(),
               });
 
-              logger.infoSafe("DEV MODE: User doc created", { userId: finalUser.uid });
+              logger.infoSafe("User doc created client-side", { userId: finalUser.uid });
               userSnap = await getDoc(userRef); // Refresh
             } catch (e) {
-              logger.errorSafe("DEV MODE: Failed to force create user doc", e, { userId: finalUser.uid });
+              logger.errorSafe("Failed to create user doc client-side", e, { userId: finalUser.uid });
             }
           }
 

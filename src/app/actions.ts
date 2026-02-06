@@ -9,17 +9,30 @@ import slugify from "slugify";
 import { generateInsights } from "@/lib/ai/deepseek";
 import { getEntries as getEntriesForUser } from "@/lib/firebase/firestore";
 import { getAuthedUserId } from "@/app/actions/auth";
+import { logger } from "@/lib/logger/safe";
+
+const requiredString = (message: string) =>
+  z.preprocess(
+    (value) => (typeof value === "string" ? value : ""),
+    z.string().min(1, { message })
+  );
+
+const optionalString = () =>
+  z.preprocess(
+    (value) => (typeof value === "string" ? value : undefined),
+    z.string().optional()
+  );
 
 const formSchema = z.object({
-  encryptedContent: z.string().min(1, { message: "Contenu chiffré manquant." }),
-  iv: z.string().min(1, { message: "IV manquant." }),
-  tags: z.string().optional(),
+  encryptedContent: requiredString("Contenu chiffré manquant."),
+  iv: requiredString("IV manquant."),
+  tags: optionalString(),
   publishAsPost: z.boolean(),
   // Only required for Alma public posts
-  content: z.string().optional(),
-  sentiment: z.string().optional(),
-  mood: z.string().optional(),
-  insight: z.string().optional(),
+  content: optionalString(),
+  sentiment: optionalString(),
+  mood: optionalString(),
+  insight: optionalString(),
 });
 
 export type FormState = {
@@ -101,7 +114,7 @@ async function addEntryOnServer(entryData: {
 
     return { id: privateDocRef.id };
   } catch (error: any) {
-    console.error("Error adding document(s): ", error);
+    logger.errorSafe("Error adding document(s)", error);
     return { error: error.message };
   }
 }
@@ -172,7 +185,7 @@ export async function saveJournalEntry(
     revalidatePath("/sanctuary");
 
   } catch (error) {
-    console.error("Error saving entry:", error);
+    logger.errorSafe("Error saving entry", error);
     if (error instanceof Error) {
       return { message: error.message };
     }
@@ -212,7 +225,7 @@ export async function generateUserInsights() {
     return { success: true };
 
   } catch (error: any) {
-    console.error("Error generating user insights:", error);
+    logger.errorSafe("Error generating user insights", error);
     return { error: error.message || "Une erreur est survenue lors de la génération des insights." };
   }
 }
