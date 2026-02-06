@@ -104,6 +104,23 @@ export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
       return;
     }
 
+    // Verify token is still valid
+    try {
+      const token = await user.getIdToken();
+      if (!token) {
+        throw new Error('No token available');
+      }
+    } catch (error) {
+      console.error('[JournalEntryForm] Token invalid or expired', error);
+      toast({
+        title: "Session expirée",
+        description: "Veuillez vous reconnecter.",
+        variant: "destructive",
+      });
+      setIsAuthDialogOpen(true);
+      return;
+    }
+
     if (!key) {
       toast({
         title: "Clé de chiffrement manquante",

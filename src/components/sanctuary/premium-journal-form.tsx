@@ -50,6 +50,22 @@ export function PremiumJournalForm() {
       return;
     }
 
+    // Verify token is still valid
+    try {
+      const token = await user.getIdToken();
+      if (!token) {
+        throw new Error('No token available');
+      }
+    } catch (error) {
+      console.error('[PremiumJournalForm] Token invalid or expired', error);
+      toast({
+        title: 'Session expirée',
+        description: 'Veuillez vous reconnecter.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const rawFormData = new FormData(event.currentTarget);
