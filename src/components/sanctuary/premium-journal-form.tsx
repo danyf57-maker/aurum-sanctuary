@@ -41,6 +41,20 @@ export function PremiumJournalForm() {
 
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    // CRITICAL: Capture form reference BEFORE any async operations
+    // React synthetic events are nullified after async calls
+    const form = event.currentTarget;
+    if (!(form instanceof HTMLFormElement)) {
+      console.error('[PremiumJournalForm] event.currentTarget is not a form:', form);
+      toast({
+        title: 'Erreur',
+        description: 'Erreur de formulaire. Veuillez recharger la page.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     if (!user || !key) {
       toast({
         title: 'Erreur',
@@ -68,13 +82,7 @@ export function PremiumJournalForm() {
 
     setIsSubmitting(true);
     try {
-      // Verify we have a valid form element
-      if (!(event.currentTarget instanceof HTMLFormElement)) {
-        console.error('[PremiumJournalForm] event.currentTarget is not a form:', event.currentTarget);
-        throw new Error('Erreur de formulaire. Veuillez recharger la page.');
-      }
-
-      const rawFormData = new FormData(event.currentTarget);
+      const rawFormData = new FormData(form);
       const content = String(rawFormData.get('content') || '').trim();
       const tags = String(rawFormData.get('tags') || '');
 
