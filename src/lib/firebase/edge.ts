@@ -1,12 +1,14 @@
 /**
  * Firebase Edge Runtime Utilities
- * 
+ *
  * Edge-compatible Firebase utilities for Vercel Edge Runtime.
  * Used for: Token verification in Edge API routes (e.g., Mirror Chat)
- * 
+ *
  * IMPORTANT: Firebase Admin SDK does not work in Edge runtime.
  * This module uses Firebase REST API for token verification.
  */
+
+import { logger } from '@/lib/logger/safe';
 
 /**
  * Verify Firebase ID token using REST API (Edge-compatible)
@@ -50,7 +52,7 @@ export async function verifyIdTokenEdge(idToken: string): Promise<string | null>
         return userId || null;
     } catch (error) {
         // Network error or invalid response
-        console.error('Error verifying ID token:', error);
+        logger.errorSafe('Error verifying ID token', error);
         return null;
     }
 }

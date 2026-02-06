@@ -6,6 +6,7 @@ import { checkRateLimit } from '@/lib/ratelimit';
 import { logAuditEvent } from '@/lib/audit';
 import { getAuthedUserId } from "@/app/actions/auth";
 import { auth } from "@/lib/firebase/admin";
+import { logger } from '@/lib/logger/safe';
 
 // Helper function to get all documents from a user's subcollection
 async function getUserCollection(userId: string, collectionName: string) {
@@ -52,7 +53,7 @@ export async function exportUserData(): Promise<{ data: any | null, error: strin
         return { data: exportData, error: null };
 
     } catch (error: any) {
-        console.error("Error exporting user data:", error);
+        logger.errorSafe("Error exporting user data", error);
         return { data: null, error: "Une erreur est survenue lors de l'exportation de vos données." };
     }
 }
@@ -111,7 +112,7 @@ export async function deleteUserAccount(): Promise<{ success: boolean, error: st
         return { success: true, error: null };
 
     } catch (error: any) {
-        console.error("Error deleting user account:", error);
+        logger.errorSafe("Error deleting user account", error);
         return { success: false, error: "Une erreur est survenue lors de la suppression de votre compte." };
     }
 }

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '@/lib/logger/safe';
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,7 +14,7 @@ export async function POST(request: NextRequest) {
 
     const apiKey = process.env.DEEPSEEK_API_KEY;
     if (!apiKey) {
-      console.error('Clé API Deepseek non configurée');
+      logger.errorSafe('Clé API Deepseek non configurée');
       return NextResponse.json(
         { error: 'Clé API Deepseek non configurée' },
         { status: 500 }
@@ -50,7 +51,10 @@ export async function POST(request: NextRequest) {
 
     if (!response.ok) {
       const error = await response.text();
-      console.error('Deepseek API error:', error);
+      logger.errorSafe('Deepseek API error', undefined, {
+        statusCode: response.status,
+        errorPreview: error?.substring(0, 100)
+      });
       return NextResponse.json(
         { error: 'Erreur lors de l\'analyse par l\'API Deepseek' },
         { status: response.status }
@@ -59,7 +63,7 @@ export async function POST(request: NextRequest) {
 
     const data = await response.json();
     const analysisText = data.choices[0]?.message?.content;
-    
+
     if (!analysisText) {
       return NextResponse.json(
         { error: 'Réponse invalide de l\'API d\'analyse' },
@@ -68,11 +72,20 @@ export async function POST(request: NextRequest) {
     }
 
     // L'API est censée retourner un JSON valide
-    const analysis = JSON.parse(analysisText);
-
-    return NextResponse.json(analysis);
+    try {
+      const analysis = JSON.parse(analysisText);
+      return NextResponse.json(analysis);
+    } catch (parseError) {
+      logger.errorSafe('Failed to parse DeepSeek response as JSON', parseError, {
+        responsePreview: analysisText?.substring(0, 100)
+      });
+      return NextResponse.json(
+        { error: 'Format de réponse invalide de l\'API d\'analyse' },
+        { status: 500 }
+      );
+    }
   } catch (error) {
-    console.error('Error analyzing entry:', error);
+    logger.errorSafe('Error analyzing entry', error);
     return NextResponse.json(
       { error: 'Erreur interne lors de l\'analyse' },
       { status: 500 }

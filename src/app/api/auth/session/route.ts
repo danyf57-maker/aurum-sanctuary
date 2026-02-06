@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/firebase/server-config";
 import { cookies } from "next/headers";
+import { logger } from '@/lib/logger/safe';
 
 /**
  * POST /api/auth/session
@@ -47,7 +48,7 @@ export async function POST(request: Request) {
 
         return NextResponse.json({ status: 'success' }, { status: 200 });
     } catch (error) {
-        console.error('Failed to create session cookie', error);
+        logger.errorSafe('Failed to create session cookie', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }

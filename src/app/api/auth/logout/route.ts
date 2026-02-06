@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { logger } from '@/lib/logger/safe';
 
 /**
  * POST /api/auth/logout
@@ -20,7 +21,7 @@ export async function POST(request: Request) {
 
         return NextResponse.json({ status: 'success' }, { status: 200 });
     } catch (error) {
-        console.error('Failed to logout', error);
+        logger.errorSafe('Failed to logout', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }
