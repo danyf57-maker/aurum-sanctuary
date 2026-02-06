@@ -68,6 +68,12 @@ export function PremiumJournalForm() {
 
     setIsSubmitting(true);
     try {
+      // Verify we have a valid form element
+      if (!(event.currentTarget instanceof HTMLFormElement)) {
+        console.error('[PremiumJournalForm] event.currentTarget is not a form:', event.currentTarget);
+        throw new Error('Erreur de formulaire. Veuillez recharger la page.');
+      }
+
       const rawFormData = new FormData(event.currentTarget);
       const content = String(rawFormData.get('content') || '').trim();
       const tags = String(rawFormData.get('tags') || '');
