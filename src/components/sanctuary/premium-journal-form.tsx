@@ -112,7 +112,12 @@ export function PremiumJournalForm() {
       // Save to Firestore
       const result: FormState = await saveJournalEntry({} as FormState, payload);
 
-      if (result && !result.errors && !result.message) {
+      // Check if result exists and has no errors
+      if (!result) {
+        throw new Error('Aucune réponse du serveur. Veuillez réessayer.');
+      }
+
+      if (!result.errors && !result.message) {
         // Success
         setSavedContent(content);
         setIsSaved(true);

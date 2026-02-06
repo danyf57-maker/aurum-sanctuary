@@ -189,7 +189,12 @@ export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
       // Server action expects a "previous state" argument, even if we don't use it here.
       const result: FormState = await saveJournalEntry({} as FormState, payload);
 
-      if (result && !result.errors && !result.message) {
+      // Check if result exists
+      if (!result) {
+        throw new Error('Aucune réponse du serveur. Veuillez réessayer.');
+      }
+
+      if (!result.errors && !result.message) {
         if (onSave) onSave({
           freeQuestion: questions.freeQuestion,
           lockedQuestions: questions.lockedQuestions,
