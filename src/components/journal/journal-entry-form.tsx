@@ -91,9 +91,15 @@ export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
 
+  useEffect(() => {
+    console.log('[JournalEntryForm] Auth dialog state changed:', isAuthDialogOpen);
+  }, [isAuthDialogOpen]);
+
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
     if (!user) {
+      console.log('[JournalEntryForm] User not authenticated, opening auth dialog');
       setIsAuthDialogOpen(true);
       return;
     }
