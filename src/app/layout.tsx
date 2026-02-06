@@ -62,6 +62,9 @@ export const metadata: Metadata = {
     description: 'Le journal intime privé par excellence. Chiffrement sur votre appareil.',
     images: ['/og-image.png'],
   },
+  alternates: {
+    canonical: 'https://aurumdiary.com',
+  },
   metadataBase: new URL('https://aurumdiary.com'),
 };
 

@@ -10,16 +10,24 @@ import { logger } from '@/lib/logger/safe';
 
 // Les ID de prix sont maintenant chargés depuis les variables d'environnement.
 // Assurez-vous qu'elles sont définies dans votre fichier .env
-const PRICE_ID_PRO = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO; 
+const PRICE_ID_PRO = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO;
 const PRICE_ID_PREMIUM = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PREMIUM;
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('La variable d\'environnement STRIPE_SECRET_KEY n\'est pas définie.');
-}
+// Use mock key for build time, real key for runtime
+const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || 'sk_test_mock';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+const stripe = new Stripe(STRIPE_SECRET_KEY, {
   apiVersion: '2024-06-20',
 });
+
+/**
+ * Check if Stripe is properly configured for production use
+ */
+function assertStripeConfigured() {
+    if (!process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY === 'sk_test_mock') {
+        throw new Error('Stripe is not configured. Please add STRIPE_SECRET_KEY to your environment variables.');
+    }
+}
 
 async function getUserIdFromToken(): Promise<string | null> {
     const authorization = headers().get('Authorization');
@@ -58,6 +66,7 @@ async function getOrCreateStripeCustomer(userId: string, email: string | undefin
 
 
 export async function createCheckoutSession(formData: FormData) {
+    assertStripeConfigured();
     const priceId = formData.get('priceId') as string;
     
     // Vérification que les ID de prix sont bien configurés
@@ -99,7 +108,8 @@ export async function createCheckoutSession(formData: FormData) {
 }
 
 export async function createPortalSession() {
-     const userId = await getUserIdFromToken();
+    assertStripeConfigured();
+    const userId = await getUserIdFromToken();
     
     if (!userId) {
          throw new Error("Utilisateur non authentifié. L'en-tête d'autorisation est manquant ou invalide.");
