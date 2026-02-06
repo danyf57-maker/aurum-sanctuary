@@ -252,7 +252,7 @@ firebase apphosting:rollouts:create studio --git-branch main
 
 ### Long Terme
 1. **Embeddings sémantiques** : regroupements plus fins sans texte
-2. **Multi-modal** : analyse d'images/voix (toujours E2EE)
+2. **Multi-modal** : analyse d'images/voix (toujours avec chiffrement côté client)
 3. **"Compagnon longue durée"** : Aurum qui évolue sur 1+ an avec l'utilisateur
 
 ---
