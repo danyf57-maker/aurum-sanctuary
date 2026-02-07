@@ -51,9 +51,20 @@ function getAdminApp(): App {
         if (getApps().some(app => app.name === 'admin')) {
             return getApp('admin');
         }
-        return initializeApp({
-            credential: cert(getServiceAccount())
-        }, 'admin');
+
+        // Try to use explicit service account credentials (for local dev)
+        // If not available, let Firebase use Application Default Credentials (for Firebase App Hosting)
+        const hasExplicitCredentials = process.env.FIREBASE_SERVICE_ACCOUNT_KEY || process.env.FIREBASE_SERVICE_ACCOUNT_KEY_B64;
+
+        if (hasExplicitCredentials) {
+            return initializeApp({
+                credential: cert(getServiceAccount())
+            }, 'admin');
+        } else {
+            // Firebase App Hosting provides credentials automatically via ADC
+            console.log("Using Application Default Credentials (Firebase App Hosting)");
+            return initializeApp({}, 'admin');
+        }
     } catch (e) {
         console.warn("Returing Mock App for build due to init failure:", e);
         return { name: 'admin-mock', options: {} } as App;
@@ -80,6 +91,7 @@ function createMock(name: string) {
             if (prop === 'name') return 'admin-mock';
             if (prop === 'createSessionCookie') return () => Promise.resolve('mock-session-cookie');
             if (prop === 'verifyIdToken') return () => Promise.resolve({ uid: 'mock-uid' });
+            if (prop === 'verifySessionCookie') return () => Promise.resolve({ uid: 'mock-uid' });
             return undefined;
         }
     }) as any;
