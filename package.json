@@ -58,7 +58,10 @@
     "@radix-ui/react-tooltip": "^1.1.8",
     "@stripe/stripe-js": "^8.7.0",
     "@tailwindcss/typography": "^0.5.14",
+    "@types/bip39": "^2.4.2",
+    "@types/zxcvbn": "^4.4.5",
     "@upstash/redis": "^1.36.1",
+    "bip39": "^3.1.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
@@ -83,7 +86,8 @@
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.24.2",
-    "zustand": "^5.0.10"
+    "zustand": "^5.0.10",
+    "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.3",

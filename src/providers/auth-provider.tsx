@@ -16,6 +16,12 @@ import { doc, getDoc, setDoc, serverTimestamp, updateDoc } from 'firebase/firest
 import { auth as firebaseAuth, firestore as db } from '@/lib/firebase/web-client';
 import { logger } from '@/lib/logger/safe';
 import { useToast } from '@/hooks/use-toast';
+import { hasLegacyEncryption } from '@/lib/crypto/migration';
+import { hasSessionKey } from '@/lib/crypto/session-manager';
+import { PassphraseSetupModal } from '@/components/crypto/PassphraseSetupModal';
+import { PassphraseUnlockModal } from '@/components/crypto/PassphraseUnlockModal';
+import { MigrationModal } from '@/components/crypto/MigrationModal';
+import { RecoveryPhraseModal } from '@/components/crypto/RecoveryPhraseModal';
 
 
 interface AuthContextType {
@@ -36,10 +42,14 @@ const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 // ⚠️ DO NOT import in server actions - use @/lib/firebase/server-config instead
 export const ALMA_EMAIL = 'alma.lawson@aurum.inc';
 
+type CryptoModalState = 'none' | 'setup' | 'unlock' | 'migration' | 'recovery';
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [termsAccepted, setTermsAccepted] = useState<boolean | null>(null);
+  const [cryptoModal, setCryptoModal] = useState<CryptoModalState>('none');
+  const [encryptionVersion, setEncryptionVersion] = useState<number>(0);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -117,6 +127,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               setTermsAccepted(legalSnap.data().termsAccepted);
             } else {
               setTermsAccepted(false);
+            }
+
+            // Check encryption version and determine which modal to show
+            const userData = userSnap.data();
+            const userEncryptionVersion = userData?.encryptionVersion || 0;
+            setEncryptionVersion(userEncryptionVersion);
+
+            // Determine crypto modal state
+            const hasLegacy = hasLegacyEncryption();
+            const hasSession = hasSessionKey();
+
+            if (hasLegacy && userEncryptionVersion < 2) {
+              // User has old localStorage key and needs migration
+              setCryptoModal('migration');
+            } else if (userEncryptionVersion === 2 && !hasSession) {
+              // User has v2 encryption but no active session - needs to unlock
+              setCryptoModal('unlock');
+            } else if (userEncryptionVersion === 0 || userEncryptionVersion === 1) {
+              // New user or v1 user without legacy key - needs setup
+              if (!hasLegacy) {
+                setCryptoModal('setup');
+              }
+            } else {
+              // User is unlocked (has session key)
+              setCryptoModal('none');
             }
           } else {
             // User doc doesn't exist yet (Cloud Function might be slow)
@@ -240,6 +275,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const handleCryptoModalComplete = () => {
+    setCryptoModal('none');
+  };
+
+  const handleRecoveryRequest = () => {
+    setCryptoModal('recovery');
+  };
+
+  const handleRecoveryCancel = () => {
+    setCryptoModal('unlock');
+  };
+
   return (
     <AuthContext.Provider value={{
       user,
@@ -253,6 +300,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       resetPassword // Exported here
     }}>
       {children}
+
+      {/* Crypto Modals */}
+      {user && (
+        <>
+          <PassphraseSetupModal
+            open={cryptoModal === 'setup'}
+            onComplete={handleCryptoModalComplete}
+          />
+          <PassphraseUnlockModal
+            open={cryptoModal === 'unlock'}
+            onUnlocked={handleCryptoModalComplete}
+            onForgotPassphrase={handleRecoveryRequest}
+          />
+          <MigrationModal
+            open={cryptoModal === 'migration'}
+            onComplete={handleCryptoModalComplete}
+          />
+          <RecoveryPhraseModal
+            open={cryptoModal === 'recovery'}
+            onRecovered={handleCryptoModalComplete}
+            onCancel={handleRecoveryCancel}
+          />
+        </>
+      )}
     </AuthContext.Provider>
   );
 }
