@@ -174,9 +174,12 @@ export async function saveJournalEntry(
     }, publishAsPost, userEmail);
 
     // Update entry count using Admin SDK API
-    await userDocRef.update({
+    // Use set with merge to create document if it doesn't exist (fallback for missing Cloud Function trigger)
+    await userDocRef.set({
       entryCount: entryCount + 1,
-    });
+      email: userEmail || null,
+      updatedAt: Timestamp.now(),
+    }, { merge: true });
 
     if (publishAsPost && userEmail === ALMA_EMAIL) {
       revalidatePath("/blog");
