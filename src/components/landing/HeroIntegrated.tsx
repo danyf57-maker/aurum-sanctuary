@@ -76,7 +76,7 @@ const HeroIntegrated = () => {
                 className="h-12 md:h-14 px-8 rounded-xl bg-[#D4AF37] text-stone-900 hover:bg-[#D4AF37]/90"
               >
                 <Link href={`/sanctuary/write?initial=${encodeURIComponent(thought)}`}>
-                  Retrouver le calme
+                  Entrer dans le Sanctuaire
                 </Link>
               </Button>
               <span className="font-body text-xs uppercase tracking-[0.2em] text-stone-500">

@@ -275,7 +275,7 @@ export default function Home() {
     const faqs = [
         {
             question: "Qui peut lire mes données ?",
-            answer: "Votre vie privée est notre priorité absolue. Les entrées sont chiffrées et stockées de manière sécurisée. Une analyse automatisée est effectuée pour vous aider à identifier vos tendances émotionnelles (sentiment, humeur), mais ce processus est entièrement anonymisé et n'a aucune mémoire à long terme de vos écrits. Personne, pas même notre équipe, ne peut lire le contenu de vos entrées."
+            answer: "Personne. Nous utilisons une architecture 'Admin-Blind' avec chiffrement AES-256 côté client. Vos entrées sont chiffrées avec votre clé privée avant d'être envoyées. Techniquement, même avec un accès total à nos serveurs, il est impossible de déchiffrer vos écrits sans votre mot de passe."
         },
         {
             question: "Comment Aurum aide à la santé mentale ?",
@@ -429,9 +429,9 @@ export default function Home() {
                                 <div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center mb-6 text-primary">
                                     <Lock className="w-6 h-6" />
                                 </div>
-                                <h3 className="text-xl font-headline mb-3 text-primary">Chiffrement Militaire</h3>
+                                <h3 className="text-xl font-headline mb-3 text-primary">Confidentialité Absolue</h3>
                                 <p className="text-sm text-stone-500 font-light leading-relaxed">
-                                    Toutes vos pensées sont chiffrées de bout en bout avant même de quitter votre appareil. Votre vie privée est inviolable.
+                                    Vos pensées sont chiffrées (AES-256) directement sur votre appareil. Même nous ne pouvons pas lire vos secrets.
                                 </p>
                             </div>
 
@@ -472,6 +472,17 @@ export default function Home() {
                             </div>
                             <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 blur-[100px] -translate-y-1/2 translate-x-1/2 rounded-full"></div>
                             <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/5 blur-[80px] translate-y-1/2 -translate-x-1/2 rounded-full"></div>
+                        </div>
+
+                        <div className="text-center mt-16">
+                            <a
+                                href="/security"
+                                className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-semibold transition-colors group"
+                            >
+                                <Lock className="w-4 h-4" />
+                                En savoir plus sur notre architecture de sécurité
+                                <span className="group-hover:translate-x-1 transition-transform">→</span>
+                            </a>
                         </div>
                     </div>
                 </section>

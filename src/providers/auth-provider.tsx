@@ -156,6 +156,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           } else {
             // User doc doesn't exist yet (Cloud Function might be slow)
             setTermsAccepted(false);
+            
+            // NEW: If doc doesn't exist, it's a new user, trigger setup
+            if (!hasLegacyEncryption()) {
+              setCryptoModal('setup');
+            }
+            
             logger.warnSafe('User document not found (waiting for trigger)', { userId: finalUser.uid });
           }
         } else {

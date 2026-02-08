@@ -27,9 +27,19 @@ service cloud.firestore {
     
     match /users/{userId} {
       // READ: Owner only
-      // WRITE: DENY ALL (Client cannot modify root user doc, handled by Cloud Functions)
+      // WRITE: Allow owner to CREATE their own doc (fallback for dev)
       allow read: if isOwner(userId);
-      allow write: if false; 
+      allow create: if isOwner(userId);
+      // ALLOW UPDATE for encryption metadata (encryptionVersion, saltBase64, encryptedSalt, passphraseHash)
+      // and entryCount (updated by server actions)
+      allow update: if isOwner(userId)
+        && (
+          // Allow updating encryption fields
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+            'encryptionVersion', 'saltBase64', 'encryptedSalt', 'passphraseHash',
+            'recoveryPhraseBackupDate', 'entryCount', 'updatedAt', 'email'
+          ])
+        );
 
       // -------------------------------------------------------
       // Settings Subcollection

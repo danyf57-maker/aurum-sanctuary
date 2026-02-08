@@ -51,6 +51,7 @@ const plans = [
         ],
         cta: "Choisir Pro",
         isRecommended: true,
+        href: "/sanctuary/write",
         priceId: PRICE_ID_PRO,
     },
     {
@@ -67,6 +68,7 @@ const plans = [
         ],
         cta: "Passer Premium",
         isRecommended: false,
+        href: "/sanctuary/write",
         priceId: PRICE_ID_PREMIUM,
     }
 ];
