@@ -22,6 +22,7 @@ import { PassphraseSetupModal } from '@/components/crypto/PassphraseSetupModal';
 import { PassphraseUnlockModal } from '@/components/crypto/PassphraseUnlockModal';
 import { MigrationModal } from '@/components/crypto/MigrationModal';
 import { RecoveryPhraseModal } from '@/components/crypto/RecoveryPhraseModal';
+import { PasskeyUnlockModal } from '@/components/crypto/PasskeyUnlockModal';
 
 
 interface AuthContextType {
@@ -42,7 +43,7 @@ const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 // ⚠️ DO NOT import in server actions - use @/lib/firebase/server-config instead
 export const ALMA_EMAIL = 'alma.lawson@aurum.inc';
 
-type CryptoModalState = 'none' | 'setup' | 'unlock' | 'migration' | 'recovery';
+type CryptoModalState = 'none' | 'setup' | 'unlock' | 'migration' | 'recovery' | 'passkey-unlock';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -141,6 +142,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             if (hasLegacy && userEncryptionVersion < 2) {
               // User has old localStorage key and needs migration
               setCryptoModal('migration');
+            } else if (userEncryptionVersion === 3 && !hasSession) {
+              // User has v3 passkey encryption but no active session - needs passkey unlock
+              setCryptoModal('passkey-unlock');
             } else if (userEncryptionVersion === 2 && !hasSession) {
               // User has v2 encryption but no active session - needs to unlock
               setCryptoModal('unlock');
@@ -290,6 +294,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const handleRecoveryCancel = () => {
+    // Return to the appropriate unlock modal based on encryption version
+    if (encryptionVersion === 3) {
+      setCryptoModal('passkey-unlock');
+    } else {
+      setCryptoModal('unlock');
+    }
+  };
+
+  const handlePasskeyFallbackToPassphrase = () => {
+    // Allow v3 users to fall back to passphrase unlock if needed
     setCryptoModal('unlock');
   };
 
@@ -327,6 +341,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             open={cryptoModal === 'recovery'}
             onRecovered={handleCryptoModalComplete}
             onCancel={handleRecoveryCancel}
+          />
+          <PasskeyUnlockModal
+            open={cryptoModal === 'passkey-unlock'}
+            onOpenChange={(open) => !open && setCryptoModal('none')}
+            onUnlock={handleCryptoModalComplete}
+            onFallbackToPassphrase={handlePasskeyFallbackToPassphrase}
           />
         </>
       )}

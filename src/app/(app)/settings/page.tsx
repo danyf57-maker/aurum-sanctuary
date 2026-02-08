@@ -9,7 +9,7 @@ import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Loader2, Moon, Sun, Globe, Bell, User, Lock, ExternalLink } from 'lucide-react';
+import { Loader2, Moon, Sun, Globe, Bell, User, Lock, ExternalLink, Fingerprint } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { httpsCallable } from 'firebase/functions';
@@ -18,6 +18,8 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useEncryption } from '@/hooks/useEncryption';
+import { usePasskey } from '@/hooks/usePasskey';
+import { PasskeySetupModal } from '@/components/crypto/PasskeySetupModal';
 import { decryptEntry } from '@/lib/crypto/encryption';
 import { collection, getDocs, Timestamp } from 'firebase/firestore';
 
@@ -25,9 +27,11 @@ export default function SettingsPage() {
     const { user, loading: authLoading, logout } = useAuth();
     const { preferences, loading: settingsLoading, updatePreferences } = useSettings();
     const { key: encryptionKey } = useEncryption();
+    const { isPasskeyAvailable, hasPasskeys, isLoading: passkeyLoading } = usePasskey();
     const [deleteConfirmation, setDeleteConfirmation] = useState('');
     const [isDeleting, setIsDeleting] = useState(false);
     const [isExporting, setIsExporting] = useState(false);
+    const [showPasskeySetup, setShowPasskeySetup] = useState(false);
     const router = useRouter();
     const { toast } = useToast();
 
@@ -366,6 +370,63 @@ export default function SettingsPage() {
 
                 {/* Privacy Tab */}
                 <TabsContent value="privacy" className="space-y-6">
+                    {/* Passkey / Biometric Authentication */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <Fingerprint className="w-5 h-5 text-primary" />
+                                Biometric Authentication
+                            </CardTitle>
+                            <CardDescription>
+                                Unlock your sanctuary with Face ID or Touch ID.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            {!isPasskeyAvailable ? (
+                                <div className="flex items-center justify-between p-4 border rounded-lg bg-muted/50">
+                                    <div className="space-y-0.5">
+                                        <p className="font-medium text-muted-foreground">Not Available</p>
+                                        <p className="text-sm text-muted-foreground">
+                                            Your browser doesn&apos;t support passkeys. Try Safari 17+ or Chrome 116+.
+                                        </p>
+                                    </div>
+                                </div>
+                            ) : hasPasskeys ? (
+                                <div className="flex items-center justify-between p-4 border rounded-lg bg-green-500/10 border-green-500/20">
+                                    <div className="space-y-0.5">
+                                        <p className="font-medium text-green-700 dark:text-green-400">Enabled</p>
+                                        <p className="text-sm text-muted-foreground">
+                                            Biometric unlock is active on this device.
+                                        </p>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <Fingerprint className="w-8 h-8 text-green-500" />
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="flex items-center justify-between">
+                                    <div className="space-y-0.5">
+                                        <Label className="text-base">Enable Face ID / Touch ID</Label>
+                                        <p className="text-sm text-muted-foreground">
+                                            Faster, more secure access with biometric authentication.
+                                        </p>
+                                    </div>
+                                    <Button
+                                        onClick={() => setShowPasskeySetup(true)}
+                                        disabled={passkeyLoading}
+                                    >
+                                        {passkeyLoading ? (
+                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        ) : (
+                                            <Fingerprint className="mr-2 h-4 w-4" />
+                                        )}
+                                        Enable
+                                    </Button>
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+
                     <Card>
                         <CardHeader>
                             <CardTitle>Your Data</CardTitle>
@@ -413,6 +474,18 @@ export default function SettingsPage() {
                     </Card>
                 </TabsContent>
             </Tabs>
+
+            {/* Passkey Setup Modal */}
+            <PasskeySetupModal
+                open={showPasskeySetup}
+                onOpenChange={setShowPasskeySetup}
+                onSuccess={() => {
+                    toast({
+                        title: "Biometric Authentication Enabled",
+                        description: "You can now unlock with Face ID or Touch ID.",
+                    });
+                }}
+            />
         </div>
     );
 }
