@@ -1,276 +1,164 @@
-import { Metadata } from 'next';
-import { Shield, Lock, Key, FileText, Server, CheckCircle2 } from 'lucide-react';
+'use client';
 
-export const metadata: Metadata = {
-  title: 'Sécurité & Confidentialité | Aurum Sanctuary',
-  description: 'Comment Aurum protège vos pensées avec une architecture Zero-Knowledge et un chiffrement AES-256 côté client.',
-};
+import React from 'react';
+import { ShieldCheck, Lock, Fingerprint, EyeOff, Key, Database, Server, Smartphone } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+
+const SecurityBadge = ({ icon: Icon, title, description }: { icon: any, title: string, description: string }) => (
+    <div className="flex flex-col items-center text-center p-8 rounded-3xl bg-white border border-stone-100 shadow-sm transition-all hover:shadow-md">
+        <div className="w-16 h-16 rounded-2xl bg-primary/5 flex items-center justify-center mb-6 text-primary">
+            <Icon className="w-8 h-8" />
+        </div>
+        <h3 className="text-xl font-headline mb-3 text-stone-900">{title}</h3>
+        <p className="text-sm text-stone-500 font-light leading-relaxed">
+            {description}
+        </p>
+    </div>
+);
 
 export default function SecurityPage() {
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-stone-50 to-white">
-      {/* Hero */}
-      <section className="py-24 md:py-32">
-        <div className="container max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 mb-8">
-            <Shield className="w-10 h-10 text-primary" />
-          </div>
-          <h1 className="text-4xl md:text-6xl font-headline font-bold tracking-tight mb-6">
-            Comment Aurum protège vos pensées
-          </h1>
-          <p className="text-xl text-stone-600 max-w-2xl mx-auto">
-            Votre monde intérieur est sacré. Nous avons construit une architecture où{' '}
-            <strong className="text-primary">même nous ne pouvons pas accéder à vos données</strong>.
-          </p>
-        </div>
-      </section>
+    const securityFaqs = [
+        {
+            question: "Est-ce qu'Aurum peut lire mes entrées ?",
+            answer: "Non. Grâce à notre architecture Zero-Knowledge, vos données sont chiffrées sur votre appareil (navigateur ou application mobile) avec une clé dérivée de votre passphrase. Le serveur ne reçoit que des données chiffrées ('ciphertext') qu'il est incapable de déchiffrer."
+        },
+        {
+            question: "Qu'est-ce que le chiffrement AES-256 ?",
+            answer: "L'Advanced Encryption Standard (AES) avec une clé de 256 bits est le standard de chiffrement le plus robuste utilisé par les gouvernements et les institutions bancaires mondiales. Il est considéré comme inviolable par les capacités de calcul actuelles."
+        },
+        {
+            question: "Où sont stockées mes données ?",
+            answer: "Vos données chiffrées sont stockées sur des serveurs sécurisés en Europe (Google Cloud / Firebase). Cependant, sans votre passphrase, ces données sont des suites de caractères aléatoires inutilisables."
+        },
+        {
+            question: "Que se passe-t-il si j'oublie ma passphrase ?",
+            answer: "Comme nous ne stockons pas votre passphrase, nous ne pouvons pas réinitialiser votre accès. C'est pourquoi nous générons une 'Phrase de Récupération' (12 mots BIP39) lors de la création de votre compte. C'est votre seule issue de secours."
+        }
+    ];
 
-      {/* Architecture Zero-Knowledge */}
-      <section className="py-16 border-t border-stone-200">
-        <div className="container max-w-4xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12 border border-stone-100">
-            <div className="flex items-start gap-4 mb-6">
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                <Lock className="w-6 h-6 text-primary" />
-              </div>
-              <div>
-                <h2 className="text-3xl font-headline font-bold mb-3">Architecture Zero-Knowledge</h2>
-                <p className="text-lg text-stone-600">
-                  Vos entrées de journal sont <strong>chiffrées sur votre appareil</strong> avant d'être envoyées à nos serveurs.
-                  La clé de déchiffrement ne quitte jamais votre navigateur.
-                </p>
-              </div>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-6 mt-8">
-              <div className="bg-stone-50 rounded-xl p-6 border border-stone-100">
-                <div className="flex items-center gap-3 mb-3">
-                  <CheckCircle2 className="w-5 h-5 text-green-600" />
-                  <h3 className="font-semibold text-stone-900">Chiffrement AES-256-GCM</h3>
+    return (
+        <main className="min-h-screen bg-stone-50/50 pt-24 pb-40">
+            <div className="container max-w-5xl">
+                {/* Header */}
+                <div className="text-center mb-24">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6 }}
+                    >
+                        <span className="text-primary/60 text-[10px] uppercase tracking-[0.3em] font-bold mb-4 block">Souveraineté Numérique</span>
+                        <h1 className="text-4xl md:text-6xl font-headline mb-6 text-stone-900">Le Sanctuaire de vos secrets.</h1>
+                        <p className="text-stone-500 text-lg max-w-2xl mx-auto font-light leading-relaxed">
+                            Nous avons construit Aurum avec une conviction : votre jardin secret ne doit appartenir qu'à vous. Voici comment nous garantissons techniquement votre vie privée.
+                        </p>
+                    </motion.div>
                 </div>
-                <p className="text-sm text-stone-600">
-                  Standard militaire utilisé par les banques et gouvernements. Vos données sont protégées par l'un des algorithmes les plus robustes au monde.
-                </p>
-              </div>
 
-              <div className="bg-stone-50 rounded-xl p-6 border border-stone-100">
-                <div className="flex items-center gap-3 mb-3">
-                  <CheckCircle2 className="w-5 h-5 text-green-600" />
-                  <h3 className="font-semibold text-stone-900">Dérivation PBKDF2</h3>
+                {/* Core Pillars */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-32">
+                    <SecurityBadge 
+                        icon={Lock}
+                        title="Zero-Knowledge"
+                        description="Nous n'avons jamais accès à votre passphrase. Vos données sont chiffrées avant même d'arriver sur nos serveurs."
+                    />
+                    <SecurityBadge 
+                        icon={ShieldCheck}
+                        title="AES-256 GCM"
+                        description="Nous utilisons le standard de chiffrement le plus élevé du marché pour protéger l'intégrité de vos écrits."
+                    />
+                    <SecurityBadge 
+                        icon={Fingerprint}
+                        title="Anonymat par Design"
+                        description="Vos écrits ne sont jamais liés à votre identité réelle. Nous ne vendons et ne vendrons jamais vos données."
+                    />
                 </div>
-                <p className="text-sm text-stone-600">
-                  Votre passphrase est transformée en clé via 210 000 itérations, rendant les attaques par force brute extrêmement coûteuses.
-                </p>
-              </div>
 
-              <div className="bg-stone-50 rounded-xl p-6 border border-stone-100">
-                <div className="flex items-center gap-3 mb-3">
-                  <CheckCircle2 className="w-5 h-5 text-green-600" />
-                  <h3 className="font-semibold text-stone-900">Admin-Blind</h3>
+                {/* The Data Journey */}
+                <section className="bg-white rounded-[2.5rem] p-12 md:p-20 border border-stone-200 mb-32 shadow-sm">
+                    <h2 className="text-3xl md:text-4xl font-headline mb-12 text-center">Le parcours de votre pensée</h2>
+                    <div className="grid grid-cols-1 lg:grid-cols-7 items-center gap-8">
+                        {/* Step 1 */}
+                        <div className="lg:col-span-2 text-center">
+                            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4 text-primary font-bold">1</div>
+                            <Smartphone className="w-8 h-8 mx-auto mb-4 text-stone-400" />
+                            <h4 className="font-bold mb-2">Capture</h4>
+                            <p className="text-xs text-stone-500 font-light">Vous écrivez dans l'interface sécurisée.</p>
+                        </div>
+                        <div className="hidden lg:block text-stone-200 text-center"><ArrowRight /></div>
+                        
+                        {/* Step 2 */}
+                        <div className="lg:col-span-2 text-center">
+                            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4 text-primary font-bold">2</div>
+                            <Key className="w-8 h-8 mx-auto mb-4 text-primary" />
+                            <h4 className="font-bold mb-2">Chiffrement Local</h4>
+                            <p className="text-xs text-stone-500 font-light">Votre passphrase transforme le texte en code illisible.</p>
+                        </div>
+                        <div className="hidden lg:block text-stone-200 text-center"><ArrowRight /></div>
+
+                        {/* Step 3 */}
+                        <div className="lg:col-span-2 text-center">
+                            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4 text-primary font-bold">3</div>
+                            <Database className="w-8 h-8 mx-auto mb-4 text-stone-400" />
+                            <h4 className="font-bold mb-2">Stockage Aveugle</h4>
+                            <p className="text-xs text-stone-500 font-light">Le serveur stocke le code sans pouvoir le lire.</p>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Technical Specs */}
+                <div className="max-w-3xl mx-auto mb-32">
+                    <h2 className="text-3xl font-headline mb-12 text-center">Spécifications Techniques</h2>
+                    <div className="space-y-4">
+                        <div className="p-6 rounded-2xl bg-stone-100/50 border border-stone-200 flex justify-between items-center">
+                            <span className="font-medium">Algorithme de chiffrement</span>
+                            <span className="text-primary font-mono text-sm">AES-256-GCM</span>
+                        </div>
+                        <div className="p-6 rounded-2xl bg-stone-100/50 border border-stone-200 flex justify-between items-center">
+                            <span className="font-medium">Dérivation de clé</span>
+                            <span className="text-primary font-mono text-sm">PBKDF2 (100,000 rounds)</span>
+                        </div>
+                        <div className="p-6 rounded-2xl bg-stone-100/50 border border-stone-200 flex justify-between items-center">
+                            <span className="font-medium">Standard de récupération</span>
+                            <span className="text-primary font-mono text-sm">BIP39 (Mnémonique 12 mots)</span>
+                        </div>
+                        <div className="p-6 rounded-2xl bg-stone-100/50 border border-stone-200 flex justify-between items-center">
+                            <span className="font-medium">Hébergement des données</span>
+                            <span className="text-primary font-mono text-sm">Google Cloud (France/EU)</span>
+                        </div>
+                    </div>
                 </div>
-                <p className="text-sm text-stone-600">
-                  Même avec un accès total aux serveurs, aucun administrateur ne peut déchiffrer vos écrits sans votre passphrase.
-                </p>
-              </div>
 
-              <div className="bg-stone-50 rounded-xl p-6 border border-stone-100">
-                <div className="flex items-center gap-3 mb-3">
-                  <CheckCircle2 className="w-5 h-5 text-green-600" />
-                  <h3 className="font-semibold text-stone-900">Phrase de récupération BIP39</h3>
+                {/* FAQ */}
+                <div className="max-w-3xl mx-auto">
+                    <h2 className="text-3xl font-headline mb-12 text-center">Questions de Sécurité</h2>
+                    <Accordion type="single" collapsible className="w-full">
+                        {securityFaqs.map((faq, index) => (
+                            <AccordionItem value={`item-${index + 1}`} key={index}>
+                                <AccordionTrigger className="text-lg text-left font-headline font-normal">{faq.question}</AccordionTrigger>
+                                <AccordionContent className="prose prose-stone font-light text-stone-600">
+                                    {faq.answer}
+                                </AccordionContent>
+                            </AccordionItem>
+                        ))}
+                    </Accordion>
                 </div>
-                <p className="text-sm text-stone-600">
-                  12 mots générés lors de la configuration vous permettent de récupérer vos données sur un nouvel appareil.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Comment ça fonctionne */}
-      <section className="py-16">
-        <div className="container max-w-4xl mx-auto">
-          <h2 className="text-3xl font-headline font-bold text-center mb-12">
-            Le parcours de vos données
-          </h2>
-
-          <div className="space-y-8">
-            <div className="flex gap-6">
-              <div className="flex-shrink-0">
-                <div className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center font-bold">
-                  1
+                {/* Final Note */}
+                <div className="mt-40 p-12 rounded-[2rem] bg-primary text-primary-foreground text-center">
+                    <EyeOff className="w-12 h-12 mx-auto mb-8 opacity-50" />
+                    <h3 className="text-3xl font-headline mb-6">Notre promesse est mathématique.</h3>
+                    <p className="max-w-2xl mx-auto font-light leading-relaxed">
+                        La confiance est fragile. C'est pourquoi nous l'avons remplacée par du code et des mathématiques. Votre Sanctuaire est protégé par les lois du chiffrement.
+                    </p>
                 </div>
-              </div>
-              <div>
-                <h3 className="text-xl font-semibold mb-2">Vous écrivez dans votre journal</h3>
-                <p className="text-stone-600">
-                  Votre entrée reste en texte clair dans votre navigateur pendant que vous écrivez.
-                </p>
-              </div>
             </div>
+        </main>
+    );
+}
 
-            <div className="flex gap-6">
-              <div className="flex-shrink-0">
-                <div className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center font-bold">
-                  2
-                </div>
-              </div>
-              <div>
-                <h3 className="text-xl font-semibold mb-2">Chiffrement côté client</h3>
-                <p className="text-stone-600">
-                  Avant l'envoi, votre entrée est chiffrée avec votre clé privée (dérivée de votre passphrase).
-                  Le texte devient illisible : une suite de caractères aléatoires.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex gap-6">
-              <div className="flex-shrink-0">
-                <div className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center font-bold">
-                  3
-                </div>
-              </div>
-              <div>
-                <h3 className="text-xl font-semibold mb-2">Stockage sécurisé</h3>
-                <p className="text-stone-600">
-                  Les données chiffrées sont sauvegardées sur Firebase (Google Cloud, certifié ISO 27001).
-                  Même en cas de piratage serveur, vos pensées restent illisibles.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex gap-6">
-              <div className="flex-shrink-0">
-                <div className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center font-bold">
-                  4
-                </div>
-              </div>
-              <div>
-                <h3 className="text-xl font-semibold mb-2">Déchiffrement local</h3>
-                <p className="text-stone-600">
-                  Quand vous vous reconnectez, vous saisissez votre passphrase. Votre clé est régénérée localement
-                  pour déchiffrer vos entrées. Personne d'autre ne peut le faire.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Sécurité */}
-      <section className="py-16 bg-stone-50 border-t border-stone-200">
-        <div className="container max-w-4xl mx-auto">
-          <h2 className="text-3xl font-headline font-bold text-center mb-12">
-            Questions fréquentes
-          </h2>
-
-          <div className="space-y-6">
-            <div className="bg-white rounded-xl p-6 border border-stone-100">
-              <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                <Key className="w-5 h-5 text-primary" />
-                Pouvez-vous lire mes données ?
-              </h3>
-              <p className="text-stone-600">
-                <strong>Non.</strong> Nous utilisons une architecture "Admin-Blind" avec chiffrement AES-256 côté client.
-                Vos entrées sont chiffrées avec votre clé privée avant d'être envoyées.
-                Techniquement, même avec un accès total à nos serveurs, il est <strong>impossible</strong> de déchiffrer
-                vos écrits sans votre passphrase.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-xl p-6 border border-stone-100">
-              <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                <FileText className="w-5 h-5 text-primary" />
-                Que se passe-t-il si je perds mon appareil ?
-              </h3>
-              <p className="text-stone-600">
-                Lors de votre première configuration, vous recevez une <strong>phrase de récupération de 12 mots</strong> (BIP39).
-                Conservez-la dans un endroit sûr (coffre-fort, gestionnaire de mots de passe).
-                Si vous perdez votre appareil, vous pouvez utiliser cette phrase pour régénérer votre clé sur un nouveau device.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-xl p-6 border border-stone-100">
-              <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                <Server className="w-5 h-5 text-primary" />
-                Où sont stockées mes données ?
-              </h3>
-              <p className="text-stone-600">
-                Vos données chiffrées sont stockées sur <strong>Firebase (Google Cloud)</strong>, certifié ISO 27001, SOC 2 et RGPD-compliant.
-                Les serveurs sont situés aux États-Unis (us-central1).
-                Rappel : même Google ne peut pas déchiffrer vos entrées.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-xl p-6 border border-stone-100">
-              <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                <Shield className="w-5 h-5 text-primary" />
-                Que se passe-t-il si j'oublie ma passphrase ET ma phrase de récupération ?
-              </h3>
-              <p className="text-stone-600">
-                Nous ne pouvons pas récupérer vos données. C'est le prix de la confidentialité absolue :
-                <strong> personne ne peut déchiffrer vos pensées, même vous</strong> si vous perdez vos clés.
-                C'est pourquoi nous recommandons de sauvegarder votre phrase de récupération dans un endroit sûr.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Trust Badges */}
-      <section className="py-16">
-        <div className="container max-w-4xl mx-auto text-center">
-          <h3 className="text-2xl font-headline font-bold mb-8">Standards de sécurité</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div className="flex flex-col items-center">
-              <div className="w-16 h-16 rounded-full bg-stone-100 flex items-center justify-center mb-3">
-                <Shield className="w-8 h-8 text-stone-600" />
-              </div>
-              <p className="text-sm font-semibold">AES-256-GCM</p>
-              <p className="text-xs text-stone-500">Chiffrement militaire</p>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="w-16 h-16 rounded-full bg-stone-100 flex items-center justify-center mb-3">
-                <Lock className="w-8 h-8 text-stone-600" />
-              </div>
-              <p className="text-sm font-semibold">PBKDF2-SHA256</p>
-              <p className="text-xs text-stone-500">210k itérations</p>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="w-16 h-16 rounded-full bg-stone-100 flex items-center justify-center mb-3">
-                <Key className="w-8 h-8 text-stone-600" />
-              </div>
-              <p className="text-sm font-semibold">BIP39</p>
-              <p className="text-xs text-stone-500">Récupération standard</p>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="w-16 h-16 rounded-full bg-stone-100 flex items-center justify-center mb-3">
-                <Server className="w-8 h-8 text-stone-600" />
-              </div>
-              <p className="text-sm font-semibold">ISO 27001</p>
-              <p className="text-xs text-stone-500">Google Cloud</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="py-16 bg-primary text-white">
-        <div className="container max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-headline font-bold mb-4">
-            Prêt à protéger vos pensées ?
-          </h2>
-          <p className="text-lg mb-8 text-white/90">
-            Créez votre sanctuaire privé en quelques secondes. Aucune carte bancaire requise.
-          </p>
-          <a
-            href="/sanctuary/write"
-            className="inline-flex items-center justify-center px-8 py-4 bg-white text-primary rounded-full font-semibold hover:bg-stone-100 transition-colors"
-          >
-            Entrer dans le Sanctuaire
-          </a>
-        </div>
-      </section>
-    </div>
-  );
+function ArrowRight() {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-arrow-right mx-auto opacity-20"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    );
 }

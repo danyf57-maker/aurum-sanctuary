@@ -430,9 +430,12 @@ export default function Home() {
                                     <Lock className="w-6 h-6" />
                                 </div>
                                 <h3 className="text-xl font-headline mb-3 text-primary">Confidentialité Absolue</h3>
-                                <p className="text-sm text-stone-500 font-light leading-relaxed">
+                                <p className="text-sm text-stone-500 font-light leading-relaxed mb-4">
                                     Vos pensées sont chiffrées (AES-256) directement sur votre appareil. Même nous ne pouvons pas lire vos secrets.
                                 </p>
+                                <Link href="/security" className="text-[10px] uppercase tracking-widest font-bold text-primary hover:underline flex items-center gap-2">
+                                    En savoir plus sur notre architecture <ArrowRight className="w-3 h-3" />
+                                </Link>
                             </div>
 
                             <div className="flex flex-col items-center text-center p-8 rounded-3xl bg-stone-50 border border-stone-100 transition-all hover:shadow-lg">
