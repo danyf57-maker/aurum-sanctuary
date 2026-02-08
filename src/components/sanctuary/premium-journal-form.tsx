@@ -98,20 +98,22 @@ export function PremiumJournalForm() {
         throw new Error('Échec du chiffrement. Veuillez réessayer.');
       }
 
-      // Analyze content via API (for basic sentiment - not the full reflection)
+      // DÉSACTIVÉ : Analyse IA (viole l'architecture Zero-Knowledge)
+      // L'envoi du contenu en clair à /api/analyze est une fuite de données
+      // TODO: Implémenter analyse côté client OU consent explicite utilisateur
       let analysis: any = null;
-      try {
-        const analysisRes = await fetch('/api/analyze', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ content }),
-        });
-        if (analysisRes.ok) {
-          analysis = await analysisRes.json();
-        }
-      } catch (e) {
-        // Soft-fail
-      }
+      // try {
+      //   const analysisRes = await fetch('/api/analyze', {
+      //     method: 'POST',
+      //     headers: { 'Content-Type': 'application/json' },
+      //     body: JSON.stringify({ content }),
+      //   });
+      //   if (analysisRes.ok) {
+      //     analysis = await analysisRes.json();
+      //   }
+      // } catch (e) {
+      //   // Soft-fail
+      // }
 
       // Build payload for server action
       const payload = new FormData();

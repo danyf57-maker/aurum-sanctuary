@@ -162,26 +162,27 @@ export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
         throw new Error('Échec du chiffrement. Veuillez réessayer.');
       }
 
-      // Analyze content via API (server-side DeepSeek)
+      // DÉSACTIVÉ : Analyse IA (viole l'architecture Zero-Knowledge)
+      // L'envoi du contenu en clair à /api/analyze est une fuite de données
+      // TODO: Implémenter analyse côté client OU consent explicite utilisateur
       let analysis: any = null;
-      try {
-        const analysisRes = await fetch("/api/analyze", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ content }),
-        });
-        if (!analysisRes.ok) {
-          const err = await analysisRes.json().catch(() => ({}));
-          throw new Error(err.error || "Échec de l'analyse des sentiments");
-        }
-        analysis = await analysisRes.json();
-      } catch (e) {
-        // Soft-fail: save entry even if analysis is unavailable
-        toast({
-          title: "Analyse indisponible",
-          description: "Votre entrée a été enregistrée, l’analyse reviendra plus tard.",
-        });
-      }
+      // try {
+      //   const analysisRes = await fetch("/api/analyze", {
+      //     method: "POST",
+      //     headers: { "Content-Type": "application/json" },
+      //     body: JSON.stringify({ content }),
+      //   });
+      //   if (!analysisRes.ok) {
+      //     const err = await analysisRes.json().catch(() => ({}));
+      //     throw new Error(err.error || "Échec de l'analyse des sentiments");
+      //   }
+      //   analysis = await analysisRes.json();
+      // } catch (e) {
+      //   toast({
+      //     title: "Analyse indisponible",
+      //     description: "Votre entrée a été enregistrée, l'analyse reviendra plus tard.",
+      //   });
+      // }
       const questions = buildMirrorQuestions(analysis?.sentiment, analysis?.mood);
 
       // Build payload for server action
