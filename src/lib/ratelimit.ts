@@ -1,7 +1,7 @@
 
 "use server";
 
-import { db } from "@/lib/firebase/server-config";
+import { db } from "@/lib/firebase/admin";
 import { Timestamp } from "firebase-admin/firestore";
 import { logger } from "@/lib/logger/safe";
 

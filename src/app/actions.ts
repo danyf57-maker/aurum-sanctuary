@@ -3,7 +3,7 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { db, ALMA_EMAIL } from "@/lib/firebase/server-config";
+import { db, ALMA_EMAIL } from "@/lib/firebase/admin";
 import { Timestamp } from "firebase-admin/firestore";
 import slugify from "slugify";
 import { generateInsights } from "@/lib/ai/deepseek";
@@ -161,7 +161,7 @@ export async function saveJournalEntry(
     const entryCount = userData?.entryCount || 0;
     isFirstEntry = entryCount === 0;
 
-    await addEntryOnServer({
+    const entryResult = await addEntryOnServer({
       userId,
       encryptedContent,
       iv,
@@ -172,6 +172,10 @@ export async function saveJournalEntry(
       insight,
       content: publishAsPost ? content : undefined,
     }, publishAsPost, userEmail);
+
+    if (entryResult.error) {
+      throw new Error(entryResult.error);
+    }
 
     // Update entry count using Admin SDK API
     // Use set with merge to create document if it doesn't exist (fallback for missing Cloud Function trigger)

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/firebase/server-config";
+import { auth } from "@/lib/firebase/admin";
 import { cookies } from "next/headers";
 import { logger } from '@/lib/logger/safe';
 

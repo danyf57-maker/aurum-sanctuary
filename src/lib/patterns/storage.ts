@@ -5,7 +5,7 @@
  * Collection: users/{uid}/patterns/{themeId}
  */
 
-import { db } from '@/lib/firebase/server-config';
+import { db } from '@/lib/firebase/admin';
 import { Pattern, ThemeId } from './types';
 import { logger } from '@/lib/logger/safe';
 

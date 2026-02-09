@@ -40,7 +40,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 // Client-side constant for UI display only
-// ⚠️ DO NOT import in server actions - use @/lib/firebase/server-config instead
+// ⚠️ DO NOT import in server actions - use @/lib/firebase/admin instead
 export const ALMA_EMAIL = 'alma.lawson@aurum.inc';
 
 type CryptoModalState = 'none' | 'setup' | 'unlock' | 'migration' | 'recovery' | 'passkey-unlock';

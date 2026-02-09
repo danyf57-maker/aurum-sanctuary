@@ -4,7 +4,7 @@
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { auth as adminAuth } from 'firebase-admin';
-import { db } from '@/lib/firebase/server-config';
+import { db } from '@/lib/firebase/admin';
 import Stripe from 'stripe';
 import { logger } from '@/lib/logger/safe';
 

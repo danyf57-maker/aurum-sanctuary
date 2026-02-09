@@ -15,7 +15,7 @@
  * - No encryption keys ever touch the server
  */
 
-import { db } from '@/lib/firebase/server-config';
+import { db } from '@/lib/firebase/admin';
 import { Timestamp, FieldValue } from 'firebase-admin/firestore';
 import { getAuthedUserId, getAuthedUserEmail } from '@/app/actions/auth';
 import { logger } from '@/lib/logger/safe';

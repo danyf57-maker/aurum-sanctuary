@@ -1,11 +1,10 @@
 
 "use server";
 
-import { db } from "@/lib/firebase/server-config";
+import { db, auth } from "@/lib/firebase/admin";
 import { checkRateLimit } from '@/lib/ratelimit';
 import { logAuditEvent } from '@/lib/audit';
 import { getAuthedUserId } from "@/app/actions/auth";
-import { auth } from "@/lib/firebase/admin";
 import { logger } from '@/lib/logger/safe';
 
 // Helper function to get all documents from a user's subcollection
