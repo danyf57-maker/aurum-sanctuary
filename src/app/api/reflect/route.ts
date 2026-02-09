@@ -19,12 +19,16 @@ import {
   PSYCHOLOGIST_ANALYST_SYSTEM_PROMPT,
 } from '@/lib/skills/psychologist-analyst';
 import {
+  UX_PSYCHOLOGY_SKILL_ID,
+  UX_PSYCHOLOGY_SYSTEM_PROMPT,
+} from '@/lib/skills/ux-psychology';
+import {
   containsMetaReference,
   validateResponse,
   getCorrectionPrompt,
 } from '@/lib/patterns/anti-meta';
 
-type AurumIntent = 'reflection' | 'conversation' | 'analysis' | 'action';
+type AurumIntent = 'reflection' | 'conversation' | 'analysis' | 'action' | 'ux_psychology';
 
 /**
  * System prompt for reflection (with implicit pattern awareness)
@@ -90,6 +94,9 @@ Contraintes:
 
 function detectAurumIntent(content: string): AurumIntent {
   const text = content.toLowerCase();
+  if (/(ux|ui|landing|onboarding|pricing|cta|conversion|funnel|hero section|social proof|hick|cognitive load|goal gradient|dark pattern)/.test(text)) {
+    return 'ux_psychology';
+  }
   if (/(que faire|que puis-je faire|plan|prochaine etape|prochaine étape|action|aide moi a agir|aide-moi a agir)/.test(text)) {
     return 'action';
   }
@@ -103,6 +110,7 @@ function detectAurumIntent(content: string): AurumIntent {
 }
 
 function getSystemPromptForIntent(intent: AurumIntent): string {
+  if (intent === 'ux_psychology') return UX_PSYCHOLOGY_SYSTEM_PROMPT;
   if (intent === 'conversation') return CONVERSATION_SYSTEM_PROMPT;
   if (intent === 'analysis') return ANALYSIS_SYSTEM_PROMPT;
   if (intent === 'action') return ACTION_SYSTEM_PROMPT;
@@ -110,6 +118,7 @@ function getSystemPromptForIntent(intent: AurumIntent): string {
 }
 
 function getSkillIdForIntent(intent: AurumIntent): string | null {
+  if (intent === 'ux_psychology') return UX_PSYCHOLOGY_SKILL_ID;
   if (intent === 'analysis') return PSYCHOLOGIST_ANALYST_SKILL_ID;
   return null;
 }

@@ -2,12 +2,14 @@
 
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2, Trash2 } from 'lucide-react';
+import { Loader2, Sparkles, Trash2 } from 'lucide-react';
 import { updateJournalEntry, deleteJournalEntry } from '@/app/actions';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/providers/auth-provider';
+import { ReflectionResponse } from './reflection-response';
 
 type EntryImage = {
   id: string;
@@ -32,11 +34,15 @@ export function MagazineEntryEditor({
   readOnly,
 }: MagazineEntryEditorProps) {
   const router = useRouter();
+  const { user } = useAuth();
   const { toast } = useToast();
   const [content, setContent] = useState(initialContent);
   const [tags, setTags] = useState(initialTags.join(', '));
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [question, setQuestion] = useState('');
+  const [isAskingAurum, setIsAskingAurum] = useState(false);
+  const [aurumReply, setAurumReply] = useState<string | null>(null);
 
   const hasChanges = useMemo(() => {
     return content !== initialContent || tags !== initialTags.join(', ');
@@ -89,6 +95,56 @@ export function MagazineEntryEditor({
       router.refresh();
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  const onAskAurum = async () => {
+    if (!user) {
+      toast({
+        title: 'Connexion requise',
+        description: "Reconnecte-toi pour demander l'avis d'Aurum.",
+        variant: 'destructive',
+      });
+      return;
+    }
+    const cleanQuestion = question.trim();
+    if (!cleanQuestion) return;
+
+    setIsAskingAurum(true);
+    try {
+      const idToken = await user.getIdToken();
+      const payload = [
+        'Voici mon entrée de journal:',
+        content,
+        '',
+        "Ma question à Aurum:",
+        cleanQuestion,
+      ].join('\n');
+
+      const response = await fetch('/api/reflect', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          content: payload,
+          idToken,
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data?.error || "Aurum n'a pas pu répondre.");
+      }
+
+      const data = await response.json();
+      setAurumReply(String(data.reflection || ''));
+    } catch (error) {
+      toast({
+        title: 'Erreur',
+        description: error instanceof Error ? error.message : "Aurum n'a pas pu répondre.",
+        variant: 'destructive',
+      });
+    } finally {
+      setIsAskingAurum(false);
     }
   };
 
@@ -174,6 +230,39 @@ export function MagazineEntryEditor({
             </>
           )}
         </Button>
+      </div>
+
+      <div className="rounded-2xl border border-amber-200/40 bg-amber-50/30 p-4 md:p-6 space-y-4">
+        <div className="flex items-center gap-2 text-stone-900">
+          <Sparkles className="h-4 w-4 text-amber-600" />
+          <h3 className="font-medium">Demander l'avis d'Aurum</h3>
+        </div>
+        <Textarea
+          value={question}
+          onChange={(event) => setQuestion(event.currentTarget.value)}
+          placeholder="Pose ta question à partir de cette entrée..."
+          className="min-h-[92px]"
+          disabled={isAskingAurum}
+        />
+        <div className="flex justify-end">
+          <Button
+            onClick={onAskAurum}
+            disabled={isAskingAurum || !question.trim()}
+            className="bg-amber-700 text-white hover:bg-amber-800"
+          >
+            {isAskingAurum ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Aurum réfléchit...
+              </>
+            ) : (
+              "Demander l'avis d'Aurum"
+            )}
+          </Button>
+        </div>
+        {aurumReply && (
+          <ReflectionResponse reflection={aurumReply} />
+        )}
       </div>
     </div>
   );

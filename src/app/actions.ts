@@ -3,7 +3,7 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { db, ALMA_EMAIL } from "@/lib/firebase/admin";
+import { db, auth, ALMA_EMAIL } from "@/lib/firebase/admin";
 import { Timestamp } from "firebase-admin/firestore";
 import slugify from "slugify";
 import { generateInsights } from "@/lib/ai/deepseek";
@@ -38,6 +38,7 @@ const formSchema = z.object({
   iv: optionalString(),
   // Plaintext field (temporary - Biométrie-First migration)
   content: optionalString(),
+  idToken: optionalString(),
   images: optionalString(),
   tags: optionalString(),
   publishAsPost: z.boolean(),
@@ -57,6 +58,7 @@ export type FormState = {
     publishAsPost?: string[];
     encryptedContent?: string[];
     iv?: string[];
+    idToken?: string[];
     images?: string[];
     sentiment?: string[];
     mood?: string[];
@@ -187,6 +189,7 @@ export async function saveJournalEntry(
     tags: formData.get("tags"),
     publishAsPost: formData.get("publishAsPost") === "on",
     content: formData.get("content"),
+    idToken: formData.get("idToken"),
     images: formData.get("images"),
     sentiment: formData.get("sentiment"),
     mood: formData.get("mood"),
@@ -200,7 +203,7 @@ export async function saveJournalEntry(
     };
   }
 
-  const { encryptedContent, iv, tags, publishAsPost, content, images, sentiment, mood, insight } = validatedFields.data;
+  const { encryptedContent, iv, tags, publishAsPost, content, idToken, images, sentiment, mood, insight } = validatedFields.data;
   let parsedImages: Array<z.infer<typeof journalImageSchema>> = [];
   if (images) {
     try {
@@ -213,7 +216,17 @@ export async function saveJournalEntry(
       };
     }
   }
-  const userId = await getAuthedUserId();
+  let userId = await getAuthedUserId();
+  if (!userId && idToken) {
+    try {
+      const decoded = await auth.verifyIdToken(idToken);
+      userId = decoded.uid;
+    } catch (error) {
+      logger.warnSafe("saveJournalEntry: invalid idToken fallback", {
+        reason: error instanceof Error ? error.message : String(error),
+      });
+    }
+  }
   if (!userId) {
     return {
       message: "Utilisateur non authentifié. Veuillez vous reconnecter.",

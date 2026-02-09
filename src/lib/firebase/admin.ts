@@ -53,10 +53,20 @@ function getServiceAccount(): ServiceAccount | null {
     if (!key && !b64) return null;
 
     try {
-        if (key) return JSON.parse(key);
+        const normalizeServiceAccount = (raw: any): ServiceAccount => {
+            return {
+                projectId: raw?.projectId || raw?.project_id,
+                clientEmail: raw?.clientEmail || raw?.client_email,
+                privateKey: String(raw?.privateKey || raw?.private_key || '').replace(/\\n/g, '\n'),
+            };
+        };
+
+        if (key) {
+            return normalizeServiceAccount(JSON.parse(key));
+        }
         if (b64) {
-            const decoded = Buffer.from(b64, 'base64').toString('utf-8');
-            return JSON.parse(decoded);
+            const decoded = Buffer.from(b64.trim(), 'base64').toString('utf-8');
+            return normalizeServiceAccount(JSON.parse(decoded));
         }
     } catch (error) {
         console.error('Invalid Firebase service account format.');
@@ -67,22 +77,32 @@ function getServiceAccount(): ServiceAccount | null {
 let app: App;
 let auth: Auth;
 let db: Firestore;
+const ADMIN_APP_NAME = 'aurum-admin';
 
 try {
     let isNewApp = false;
-    if (getApps().length > 0) {
-        app = getApps()[0];
-    } else {
-        const serviceAccount = getServiceAccount();
-        if (serviceAccount) {
-            app = initializeApp({
+    const serviceAccount = getServiceAccount();
+
+    // Use a named admin app to avoid accidentally reusing another default app
+    // created without the expected credentials during local dev/HMR.
+    if (getApps().some((existing) => existing.name === ADMIN_APP_NAME)) {
+        app = getApp(ADMIN_APP_NAME);
+    } else if (serviceAccount) {
+        const projectId =
+            (serviceAccount as ServiceAccount & { project_id?: string }).project_id ||
+            serviceAccount.projectId;
+        app = initializeApp(
+            {
                 credential: cert(serviceAccount),
-            });
-        } else {
-            // Fallback for environments with ADC (like Firebase App Hosting)
-            console.log("Initializing Firebase Admin with Application Default Credentials");
-            app = initializeApp();
-        }
+                projectId,
+            },
+            ADMIN_APP_NAME
+        );
+        isNewApp = true;
+    } else {
+        // Fallback for environments with ADC (like Firebase App Hosting)
+        console.log("Initializing Firebase Admin with Application Default Credentials");
+        app = initializeApp({}, ADMIN_APP_NAME);
         isNewApp = true;
     }
     

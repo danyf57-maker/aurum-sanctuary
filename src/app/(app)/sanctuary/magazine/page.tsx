@@ -1,51 +1,81 @@
-import Link from "next/link";
-import { db } from "@/lib/firebase/admin";
-import { getAuthedUserId } from "@/app/actions/auth";
-import { Timestamp } from "firebase-admin/firestore";
-import { BookImage, PenSquare } from "lucide-react";
-import { Button } from "@/components/ui/button";
+'use client';
+
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { BookImage, PenSquare } from 'lucide-react';
+import { collection, getDocs, limit, orderBy, query } from 'firebase/firestore';
+import { useAuth } from '@/providers/auth-provider';
+import { firestore as db } from '@/lib/firebase/web-client';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 
 type MagazineIssue = {
   id: string;
   title: string;
   excerpt: string;
   coverImageUrl: string | null;
-  createdAt?: Timestamp | null;
 };
 
-export const dynamic = "force-dynamic";
+export default function MagazinePage() {
+  const { user, loading } = useAuth();
+  const [issues, setIssues] = useState<MagazineIssue[]>([]);
+  const [isLoadingIssues, setIsLoadingIssues] = useState(true);
 
-async function getMagazineIssuesForUser(userId: string): Promise<MagazineIssue[]> {
-  try {
-    const snap = await db
-      .collection("users")
-      .doc(userId)
-      .collection("magazineIssues")
-      .orderBy("createdAt", "desc")
-      .limit(30)
-      .get();
+  useEffect(() => {
+    let isMounted = true;
 
-    const docs = Array.isArray((snap as any)?.docs) ? (snap as any).docs : [];
+    const loadIssues = async () => {
+      if (!user) {
+        if (isMounted) {
+          setIssues([]);
+          setIsLoadingIssues(false);
+        }
+        return;
+      }
 
-    return docs.map((doc: any) => {
-      const data = doc.data() as Record<string, any>;
-      return {
-        id: doc.id,
-        title: String(data.title || "Entrée"),
-        excerpt: String(data.excerpt || ""),
-        coverImageUrl: data.coverImageUrl ? String(data.coverImageUrl) : null,
-        createdAt: data.createdAt || null,
-      };
-    });
-  } catch (error) {
-    // Keep the page usable in local/mock mode even if query operators are unavailable.
-    return [];
+      setIsLoadingIssues(true);
+      try {
+        const issuesRef = collection(db, 'users', user.uid, 'magazineIssues');
+        const q = query(issuesRef, orderBy('createdAt', 'desc'), limit(30));
+        const snap = await getDocs(q);
+
+        if (!isMounted) return;
+        const nextIssues: MagazineIssue[] = snap.docs.map((docSnap) => {
+          const data = docSnap.data() as Record<string, unknown>;
+          return {
+            id: docSnap.id,
+            title: String(data.title || 'Entrée'),
+            excerpt: String(data.excerpt || ''),
+            coverImageUrl: data.coverImageUrl ? String(data.coverImageUrl) : null,
+          };
+        });
+        setIssues(nextIssues);
+      } catch {
+        if (isMounted) setIssues([]);
+      } finally {
+        if (isMounted) setIsLoadingIssues(false);
+      }
+    };
+
+    void loadIssues();
+    return () => {
+      isMounted = false;
+    };
+  }, [user]);
+
+  if (loading || isLoadingIssues) {
+    return (
+      <div className="container max-w-7xl py-8 md:py-12 space-y-6">
+        <Skeleton className="h-10 w-64" />
+        <Skeleton className="h-6 w-96" />
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+          <Skeleton className="h-[340px] rounded-3xl" />
+          <Skeleton className="h-[340px] rounded-3xl" />
+          <Skeleton className="h-[340px] rounded-3xl" />
+        </div>
+      </div>
+    );
   }
-}
-
-export default async function MagazinePage() {
-  const userId = await getAuthedUserId();
-  const issues = userId ? await getMagazineIssuesForUser(userId) : [];
 
   return (
     <div className="container max-w-7xl py-8 md:py-12">
@@ -85,7 +115,7 @@ export default async function MagazinePage() {
                 </div>
                 <div className="space-y-3 p-5">
                   <h2 className="line-clamp-2 font-headline text-2xl text-stone-900">{issue.title}</h2>
-                  <p className="line-clamp-4 text-sm leading-relaxed text-stone-600">{issue.excerpt || "Sans extrait."}</p>
+                  <p className="line-clamp-4 text-sm leading-relaxed text-stone-600">{issue.excerpt || 'Sans extrait.'}</p>
                 </div>
               </article>
             </Link>

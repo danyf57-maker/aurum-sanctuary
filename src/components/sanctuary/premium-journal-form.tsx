@@ -188,9 +188,10 @@ export function PremiumJournalForm() {
     }
 
     // Verify token is still valid
+    let idTokenForServer = '';
     try {
-      const token = await user.getIdToken();
-      if (!token) {
+      idTokenForServer = await user.getIdToken();
+      if (!idTokenForServer) {
         throw new Error('No token available');
       }
     } catch (error) {
@@ -221,6 +222,7 @@ export function PremiumJournalForm() {
       // Build payload for server action (plaintext mode)
       const payload = new FormData();
       payload.set('content', content);
+      payload.set('idToken', idTokenForServer);
       payload.set(
         'images',
         JSON.stringify(

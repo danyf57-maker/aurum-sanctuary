@@ -1,9 +1,14 @@
+'use client';
+
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
-import { db } from '@/lib/firebase/admin';
-import { getAuthedUserId } from '@/app/actions/auth';
+import { doc, getDoc } from 'firebase/firestore';
+import { firestore as db } from '@/lib/firebase/web-client';
+import { useAuth } from '@/providers/auth-provider';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { MagazineEntryEditor } from '@/components/sanctuary/magazine-entry-editor';
 
 type EntryImage = {
@@ -21,24 +26,12 @@ type EntryDetails = {
   readOnly: boolean;
 };
 
-export const dynamic = 'force-dynamic';
-
-async function getEntry(userId: string, entryId: string): Promise<EntryDetails | null> {
-  const doc = await db
-    .collection('users')
-    .doc(userId)
-    .collection('entries')
-    .doc(entryId)
-    .get();
-
-  if (!doc.exists) return null;
-
-  const data = doc.data() as Record<string, any>;
+function normalizeEntry(docId: string, data: Record<string, unknown>): EntryDetails {
   const hasPlainContent = typeof data.content === 'string';
 
   const rawImages = Array.isArray(data.images) ? data.images : [];
   const images: EntryImage[] = rawImages
-    .filter((item: any) => item && typeof item.url === 'string')
+    .filter((item: unknown) => item && typeof item === 'object' && typeof (item as any).url === 'string')
     .map((item: any) => ({
       id: String(item.id || Math.random().toString(36).slice(2)),
       url: String(item.url),
@@ -47,7 +40,7 @@ async function getEntry(userId: string, entryId: string): Promise<EntryDetails |
     }));
 
   return {
-    id: doc.id,
+    id: docId,
     content: hasPlainContent ? String(data.content) : '[Entrée chiffrée - lecture indisponible ici]',
     tags: Array.isArray(data.tags) ? data.tags.map((t: any) => String(t)) : [],
     images,
@@ -55,16 +48,72 @@ async function getEntry(userId: string, entryId: string): Promise<EntryDetails |
   };
 }
 
-export default async function MagazineEntryPage({
-  params,
-}: {
-  params: { entryId: string };
-}) {
-  const userId = await getAuthedUserId();
-  if (!userId) notFound();
+export default function MagazineEntryPage() {
+  const { user, loading } = useAuth();
+  const params = useParams<{ entryId: string }>();
+  const entryId = params?.entryId || '';
+  const [entry, setEntry] = useState<EntryDetails | null>(null);
+  const [isLoadingEntry, setIsLoadingEntry] = useState(true);
 
-  const entry = await getEntry(userId, params.entryId);
-  if (!entry) notFound();
+  useEffect(() => {
+    let isMounted = true;
+    const loadEntry = async () => {
+      if (!user || !entryId) {
+        if (isMounted) {
+          setEntry(null);
+          setIsLoadingEntry(false);
+        }
+        return;
+      }
+
+      setIsLoadingEntry(true);
+      try {
+        const entryRef = doc(db, 'users', user.uid, 'entries', entryId);
+        const snap = await getDoc(entryRef);
+        if (!isMounted) return;
+        if (!snap.exists()) {
+          setEntry(null);
+          return;
+        }
+        setEntry(normalizeEntry(snap.id, snap.data() as Record<string, unknown>));
+      } catch {
+        if (isMounted) setEntry(null);
+      } finally {
+        if (isMounted) setIsLoadingEntry(false);
+      }
+    };
+
+    void loadEntry();
+    return () => {
+      isMounted = false;
+    };
+  }, [user, entryId]);
+
+  if (loading || isLoadingEntry) {
+    return (
+      <div className="container mx-auto max-w-4xl py-8 md:py-12 space-y-5">
+        <Skeleton className="h-8 w-56" />
+        <Skeleton className="h-10 w-72" />
+        <Skeleton className="h-[420px] w-full rounded-3xl" />
+      </div>
+    );
+  }
+
+  if (!user || !entry) {
+    return (
+      <div className="container mx-auto max-w-4xl py-8 md:py-12">
+        <Button asChild variant="ghost" className="mb-4 pl-0 text-stone-600 hover:text-stone-900">
+          <Link href="/sanctuary/magazine">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Retour au journal
+          </Link>
+        </Button>
+        <div className="rounded-3xl border border-stone-200 bg-white p-8 text-center text-stone-600">
+          Entrée introuvable ou inaccessible.
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto max-w-4xl py-8 md:py-12">
