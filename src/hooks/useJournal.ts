@@ -4,8 +4,6 @@ import { useState } from 'react';
 import { useAuth } from '@/providers/auth-provider';
 import { firestore as db } from '@/lib/firebase/web-client';
 import { collection, addDoc, serverTimestamp, query, orderBy, getDocs, Timestamp } from 'firebase/firestore';
-import { useEncryption } from './useEncryption';
-import { encryptEntry, decryptEntry, EncryptedData } from '@/lib/crypto/encryption';
 import { useToast } from './use-toast';
 import { logger } from '@/lib/logger/safe';
 
@@ -18,38 +16,30 @@ export interface JournalEntry {
 
 export function useJournal() {
     const { user } = useAuth();
-    const { key } = useEncryption();
+    // TABULA RASA: Pas de chiffrement
     const { toast } = useToast();
     const [loading, setLoading] = useState(false);
     const [entries, setEntries] = useState<JournalEntry[]>([]);
 
     /**
-     * Create a new encrypted entry
+     * Create a new entry (TABULA RASA: plaintext mode)
      */
     const createEntry = async (content: string) => {
-        if (!user || !key) {
-            throw new Error("User not authenticated or encryption key missing");
+        if (!user) {
+            throw new Error("User not authenticated");
         }
 
         try {
             setLoading(true);
 
-            // 1. Encrypt
-            const encryptedData = await encryptEntry(content, key);
-
-            // 2. Upload to Firestore
-            // Path: users/{uid}/entries
+            // Upload to Firestore (plaintext)
             const entriesRef = collection(db, 'users', user.uid, 'entries');
 
             await addDoc(entriesRef, {
-                encryptedContent: encryptedData.ciphertext,
-                iv: encryptedData.iv,
+                content, // ← PLAINTEXT (temporaire)
                 createdAt: serverTimestamp(),
                 updatedAt: serverTimestamp(),
             });
-
-            // 3. Optimistic update or refetch?
-            // For V1, we'll just succeed. Parent can refetch if needed.
 
             return true;
         } catch (error) {
@@ -66,50 +56,29 @@ export function useJournal() {
     };
 
     /**
-     * Fetch and decrypt all entries
+     * Fetch all entries (TABULA RASA: plaintext mode)
      */
     const fetchEntries = async () => {
-        if (!user || !key) return;
+        if (!user) return;
 
         try {
             setLoading(true);
             const entriesRef = collection(db, 'users', user.uid, 'entries');
-            // Check indexes later if needed. For now simple orderBy.
             const q = query(entriesRef, orderBy('createdAt', 'desc'));
 
             const snapshot = await getDocs(q);
 
-            const decryptedEntries: JournalEntry[] = await Promise.all(
-                snapshot.docs.map(async (doc) => {
-                    const data = doc.data();
+            const entries: JournalEntry[] = snapshot.docs.map((doc) => {
+                const data = doc.data();
+                return {
+                    id: doc.id,
+                    content: data.content || '[No content]', // ← PLAINTEXT
+                    createdAt: (data.createdAt as Timestamp)?.toDate() || new Date(),
+                    updatedAt: (data.updatedAt as Timestamp)?.toDate() || new Date(),
+                };
+            });
 
-                    try {
-                        // Decrypt content
-                        const encryptedData: EncryptedData = {
-                            ciphertext: data.encryptedContent,
-                            iv: data.iv,
-                        };
-                        const content = await decryptEntry(encryptedData, key);
-
-                        return {
-                            id: doc.id,
-                            content,
-                            createdAt: (data.createdAt as Timestamp)?.toDate() || new Date(),
-                            updatedAt: (data.updatedAt as Timestamp)?.toDate() || new Date(),
-                        };
-                    } catch (e) {
-                        logger.errorSafe("Failed to decrypt entry", e, { entryId: doc.id });
-                        return {
-                            id: doc.id,
-                            content: "⚠️ Contenu illisible (Erreur de déchiffrement)",
-                            createdAt: (data.createdAt as Timestamp)?.toDate() || new Date(),
-                            updatedAt: (data.updatedAt as Timestamp)?.toDate() || new Date(),
-                        };
-                    }
-                })
-            );
-
-            setEntries(decryptedEntries);
+            setEntries(entries);
         } catch (error) {
             logger.errorSafe("Failed to fetch entries", error);
             toast({

@@ -433,9 +433,7 @@ export default function Home() {
                                 <p className="text-sm text-stone-500 font-light leading-relaxed mb-4">
                                     Vos pensées sont chiffrées (AES-256) directement sur votre appareil. Même nous ne pouvons pas lire vos secrets.
                                 </p>
-                                <Link href="/security" className="text-[10px] uppercase tracking-widest font-bold text-primary hover:underline flex items-center gap-2">
-                                    En savoir plus sur notre architecture <ArrowRight className="w-3 h-3" />
-                                </Link>
+                                {/* Security page removed - TABULA RASA */}
                             </div>
 
                             <div className="flex flex-col items-center text-center p-8 rounded-3xl bg-stone-50 border border-stone-100 transition-all hover:shadow-lg">
@@ -477,16 +475,7 @@ export default function Home() {
                             <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/5 blur-[80px] translate-y-1/2 -translate-x-1/2 rounded-full"></div>
                         </div>
 
-                        <div className="text-center mt-16">
-                            <a
-                                href="/security"
-                                className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-semibold transition-colors group"
-                            >
-                                <Lock className="w-4 h-4" />
-                                En savoir plus sur notre architecture de sécurité
-                                <span className="group-hover:translate-x-1 transition-transform">→</span>
-                            </a>
-                        </div>
+                        {/* Security page removed - TABULA RASA */}
                     </div>
                 </section>
 

@@ -23,17 +23,22 @@ const optionalString = () =>
     z.string().optional()
   );
 
+// TABULA RASA: Schema simplifié pour accepter plaintext
 const formSchema = z.object({
-  encryptedContent: requiredString("Contenu chiffré manquant."),
-  iv: requiredString("IV manquant."),
+  // Encrypted fields (optional - legacy compatibility)
+  encryptedContent: optionalString(),
+  iv: optionalString(),
+  // Plaintext field (temporary - Biométrie-First migration)
+  content: optionalString(),
   tags: optionalString(),
   publishAsPost: z.boolean(),
-  // Only required for Alma public posts
-  content: optionalString(),
   sentiment: optionalString(),
   mood: optionalString(),
   insight: optionalString(),
-});
+}).refine(
+  (data) => data.encryptedContent || data.content,
+  { message: "Contenu (chiffré ou plaintext) requis.", path: ["content"] }
+);
 
 export type FormState = {
   message?: string;
@@ -67,31 +72,52 @@ function generateTitle(content: string) {
   return words.slice(0, 8).join(' ') + (words.length > 8 ? '...' : '');
 }
 
+// TABULA RASA: Fonction simplifiée pour accepter encrypted OU plaintext
 async function addEntryOnServer(entryData: {
   userId: string;
-  encryptedContent: string;
-  iv: string;
+  encryptedContent?: string;
+  iv?: string;
+  content?: string; // NOUVEAU: support plaintext temporaire
   tags: string[];
   createdAt: Date;
   sentiment?: string;
   mood?: string;
   insight?: string;
-  content?: string;
 }, publishAsPost: boolean, userEmail: string) {
   try {
     // Extract userId for routing, but don't store it in the document
     const { userId, ...dataToStore } = entryData;
+
+    // TABULA RASA: Sauvegarder encrypted OU plaintext
+    // Si encryptedContent existe, on utilise l'ancien format
+    // Sinon, on sauvegarde directement content en clair (temporaire)
+    const entryToSave = entryData.encryptedContent && entryData.iv
+      ? {
+          encryptedContent: dataToStore.encryptedContent!,
+          iv: dataToStore.iv!,
+          tags: dataToStore.tags,
+          createdAt: Timestamp.fromDate(entryData.createdAt),
+          updatedAt: Timestamp.fromDate(entryData.createdAt),
+          sentiment: dataToStore.sentiment,
+          mood: dataToStore.mood,
+          insight: dataToStore.insight,
+        }
+      : {
+          content: dataToStore.content!, // PLAINTEXT (temporaire)
+          tags: dataToStore.tags,
+          createdAt: Timestamp.fromDate(entryData.createdAt),
+          updatedAt: Timestamp.fromDate(entryData.createdAt),
+          sentiment: dataToStore.sentiment,
+          mood: dataToStore.mood,
+          insight: dataToStore.insight,
+        };
 
     // Save the private journal entry to user's subcollection using Admin SDK API
     const privateDocRef = await db
       .collection("users")
       .doc(userId)
       .collection("entries")
-      .add({
-        ...dataToStore,
-        createdAt: Timestamp.fromDate(entryData.createdAt),
-        updatedAt: Timestamp.fromDate(entryData.createdAt),
-      });
+      .add(entryToSave);
 
     // If "publish" is checked and the user is Alma, save to publicPosts as well
     if (publishAsPost && userEmail === ALMA_EMAIL) {
@@ -161,16 +187,17 @@ export async function saveJournalEntry(
     const entryCount = userData?.entryCount || 0;
     isFirstEntry = entryCount === 0;
 
+    // TABULA RASA: Passer encrypted OU plaintext
     const entryResult = await addEntryOnServer({
       userId,
       encryptedContent,
       iv,
+      content, // NOUVEAU: support plaintext
       tags: tags ? tags.split(",").map((tag) => tag.trim().toLowerCase()).filter(Boolean) : [],
       createdAt: new Date(),
       sentiment,
       mood,
       insight,
-      content: publishAsPost ? content : undefined,
     }, publishAsPost, userEmail);
 
     if (entryResult.error) {

@@ -18,14 +18,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { useEncryption } from '@/hooks/useEncryption';
-import { encryptEntry } from '@/lib/crypto/encryption';
 import { ReflectionResponse } from './reflection-response';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export function PremiumJournalForm() {
   const { user } = useAuth();
-  const { key, loading: keyLoading } = useEncryption();
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -55,7 +52,7 @@ export function PremiumJournalForm() {
       return;
     }
 
-    if (!user || !key) {
+    if (!user) {
       toast({
         title: 'Erreur',
         description: 'Impossible de sauvegarder sans authentification',
@@ -90,35 +87,12 @@ export function PremiumJournalForm() {
         throw new Error('Le contenu ne peut pas être vide.');
       }
 
-      // Encrypt content client-side
-      const encrypted = await encryptEntry(content, key);
-
-      // Validate encryption result
-      if (!encrypted || !encrypted.ciphertext || !encrypted.iv) {
-        throw new Error('Échec du chiffrement. Veuillez réessayer.');
-      }
-
-      // DÉSACTIVÉ : Analyse IA (viole l'architecture Zero-Knowledge)
-      // L'envoi du contenu en clair à /api/analyze est une fuite de données
-      // TODO: Implémenter analyse côté client OU consent explicite utilisateur
+      // TABULA RASA: Pas de chiffrement, envoi direct en plaintext
       let analysis: any = null;
-      // try {
-      //   const analysisRes = await fetch('/api/analyze', {
-      //     method: 'POST',
-      //     headers: { 'Content-Type': 'application/json' },
-      //     body: JSON.stringify({ content }),
-      //   });
-      //   if (analysisRes.ok) {
-      //     analysis = await analysisRes.json();
-      //   }
-      // } catch (e) {
-      //   // Soft-fail
-      // }
 
-      // Build payload for server action
+      // Build payload for server action (plaintext mode)
       const payload = new FormData();
-      payload.set('encryptedContent', encrypted.ciphertext);
-      payload.set('iv', encrypted.iv);
+      payload.set('content', content); // ← PLAINTEXT (temporaire)
       if (tags) payload.set('tags', tags);
       // Premium users don't publish to public blog
       if (analysis?.sentiment) payload.set('sentiment', analysis.sentiment);
@@ -290,7 +264,7 @@ export function PremiumJournalForm() {
               <div className="flex justify-center">
                 <Button
                   type="submit"
-                  disabled={isSubmitting || keyLoading}
+                  disabled={isSubmitting}
                   size="lg"
                   className="bg-stone-800 text-white hover:bg-stone-900 px-8 rounded-xl shadow-lg"
                 >

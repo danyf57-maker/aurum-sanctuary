@@ -16,13 +16,6 @@ import { doc, getDoc, setDoc, serverTimestamp, updateDoc } from 'firebase/firest
 import { auth as firebaseAuth, firestore as db } from '@/lib/firebase/web-client';
 import { logger } from '@/lib/logger/safe';
 import { useToast } from '@/hooks/use-toast';
-import { hasLegacyEncryption } from '@/lib/crypto/migration';
-import { hasSessionKey } from '@/lib/crypto/session-manager';
-import { PassphraseSetupModal } from '@/components/crypto/PassphraseSetupModal';
-import { PassphraseUnlockModal } from '@/components/crypto/PassphraseUnlockModal';
-import { MigrationModal } from '@/components/crypto/MigrationModal';
-import { RecoveryPhraseModal } from '@/components/crypto/RecoveryPhraseModal';
-import { PasskeyUnlockModal } from '@/components/crypto/PasskeyUnlockModal';
 
 
 interface AuthContextType {
@@ -43,14 +36,10 @@ const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 // ⚠️ DO NOT import in server actions - use @/lib/firebase/admin instead
 export const ALMA_EMAIL = 'alma.lawson@aurum.inc';
 
-type CryptoModalState = 'none' | 'setup' | 'unlock' | 'migration' | 'recovery' | 'passkey-unlock';
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [termsAccepted, setTermsAccepted] = useState<boolean | null>(null);
-  const [cryptoModal, setCryptoModal] = useState<CryptoModalState>('none');
-  const [encryptionVersion, setEncryptionVersion] = useState<number>(0);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -116,7 +105,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
                 logger.infoSafe("User doc created client-side", { userId: finalUser.uid });
                 setTermsAccepted(false);
-                setCryptoModal('setup');
               };
               
               createDoc();
@@ -135,41 +123,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             } else {
               setTermsAccepted(false);
             }
-
-            // Check encryption version and determine which modal to show
-            const userData = userSnap.data();
-            const userEncryptionVersion = userData?.encryptionVersion || 0;
-            setEncryptionVersion(userEncryptionVersion);
-
-            // Determine crypto modal state
-            const hasLegacy = hasLegacyEncryption();
-            const hasSession = hasSessionKey();
-
-            if (hasLegacy && userEncryptionVersion < 2) {
-              // User has old localStorage key and needs migration
-              setCryptoModal('migration');
-            } else if (userEncryptionVersion === 3 && !hasSession) {
-              // User has v3 passkey encryption but no active session - needs passkey unlock
-              setCryptoModal('passkey-unlock');
-            } else if (userEncryptionVersion === 2 && !hasSession) {
-              // User has v2 encryption but no active session - needs to unlock
-              setCryptoModal('unlock');
-            } else if (userEncryptionVersion === 0 || userEncryptionVersion === 1) {
-              // New user or v1 user without legacy key - needs setup
-              if (!hasLegacy) {
-                setCryptoModal('setup');
-              }
-            } else {
-              // User is unlocked (has session key)
-              setCryptoModal('none');
-            }
           } else {
             // User doc doesn't exist yet (Cloud Function might be slow)
             setTermsAccepted(false);
-            
-            // Trigger setup for new users (doc missing = new user)
-            setCryptoModal('setup');
-            
             logger.warnSafe('User document not found (waiting for trigger)', { userId: finalUser.uid });
           }
         } else {
@@ -289,28 +245,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const handleCryptoModalComplete = () => {
-    setCryptoModal('none');
-  };
-
-  const handleRecoveryRequest = () => {
-    setCryptoModal('recovery');
-  };
-
-  const handleRecoveryCancel = () => {
-    // Return to the appropriate unlock modal based on encryption version
-    if (encryptionVersion === 3) {
-      setCryptoModal('passkey-unlock');
-    } else {
-      setCryptoModal('unlock');
-    }
-  };
-
-  const handlePasskeyFallbackToPassphrase = () => {
-    // Allow v3 users to fall back to passphrase unlock if needed
-    setCryptoModal('unlock');
-  };
-
   return (
     <AuthContext.Provider value={{
       user,
@@ -321,39 +255,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       signUpWithEmail,
       logout,
       acceptTerms,
-      resetPassword // Exported here
+      resetPassword
     }}>
       {children}
-
-      {/* Crypto Modals */}
-      {user && (
-        <>
-          <PassphraseSetupModal
-            open={cryptoModal === 'setup'}
-            onComplete={handleCryptoModalComplete}
-          />
-          <PassphraseUnlockModal
-            open={cryptoModal === 'unlock'}
-            onUnlocked={handleCryptoModalComplete}
-            onForgotPassphrase={handleRecoveryRequest}
-          />
-          <MigrationModal
-            open={cryptoModal === 'migration'}
-            onComplete={handleCryptoModalComplete}
-          />
-          <RecoveryPhraseModal
-            open={cryptoModal === 'recovery'}
-            onRecovered={handleCryptoModalComplete}
-            onCancel={handleRecoveryCancel}
-          />
-          <PasskeyUnlockModal
-            open={cryptoModal === 'passkey-unlock'}
-            onOpenChange={(open) => !open && setCryptoModal('none')}
-            onUnlock={handleCryptoModalComplete}
-            onFallbackToPassphrase={handlePasskeyFallbackToPassphrase}
-          />
-        </>
-      )}
     </AuthContext.Provider>
   );
 }
