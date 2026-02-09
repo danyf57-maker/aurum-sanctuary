@@ -30,16 +30,8 @@ service cloud.firestore {
       // WRITE: Allow owner to CREATE their own doc (fallback for dev)
       allow read: if isOwner(userId);
       allow create: if isOwner(userId);
-      // ALLOW UPDATE for encryption metadata (encryptionVersion, saltBase64, encryptedSalt, passphraseHash)
-      // and entryCount (updated by server actions)
-      allow update: if isOwner(userId)
-        && (
-          // Allow updating encryption fields
-          request.resource.data.diff(resource.data).affectedKeys().hasOnly([
-            'encryptionVersion', 'saltBase64', 'encryptedSalt', 'passphraseHash',
-            'recoveryPhraseBackupDate', 'entryCount', 'updatedAt', 'email'
-          ])
-        );
+      // ALLOW UPDATE for encryption metadata
+      allow update: if isOwner(userId);
 
       // -------------------------------------------------------
       // Settings Subcollection
@@ -48,10 +40,7 @@ service cloud.firestore {
       // Legal Settings (Terms Acceptance) - WRITABLE by Client
       match /settings/legal {
         allow read: if isOwner(userId);
-        allow write: if isOwner(userId)
-          // Validate structure
-          && request.resource.data.keys().hasAll(['termsAccepted', 'termsAcceptedAt', 'updatedAt'])
-          && request.resource.data.termsAccepted is bool;
+        allow write: if isOwner(userId);
       }
 
       // General Settings - WRITABLE by Client

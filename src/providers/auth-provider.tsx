@@ -94,26 +94,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           if (!userSnap.exists()) {
             logger.warnSafe("Creating user doc client-side because Cloud Trigger is missing.", { userId: finalUser.uid });
             try {
-              await setDoc(userRef, {
-                uid: finalUser.uid,
-                email: finalUser.email,
-                displayName: finalUser.displayName,
-                photoURL: finalUser.photoURL,
-                createdAt: serverTimestamp(),
-                stripeCustomerId: null,
-                subscriptionStatus: 'free',
-                entryCount: 0,
-              }, { merge: true });
+              // DETACHED DOC CREATION: Don't await the whole chain, just start it
+              const createDoc = async () => {
+                await setDoc(userRef, {
+                  uid: finalUser.uid,
+                  email: finalUser.email,
+                  displayName: finalUser.displayName,
+                  photoURL: finalUser.photoURL,
+                  createdAt: serverTimestamp(),
+                  stripeCustomerId: null,
+                  subscriptionStatus: 'free',
+                  entryCount: 0,
+                }, { merge: true });
 
-              // Init settings
-              await setDoc(doc(db, "users", finalUser.uid, "settings", "legal"), {
-                termsAccepted: false,
-                termsAcceptedAt: null,
-                updatedAt: serverTimestamp(),
-              });
+                // Init settings
+                await setDoc(doc(db, "users", finalUser.uid, "settings", "legal"), {
+                  termsAccepted: false,
+                  termsAcceptedAt: null,
+                  updatedAt: serverTimestamp(),
+                });
 
-              logger.infoSafe("User doc created client-side", { userId: finalUser.uid });
-              userSnap = await getDoc(userRef); // Refresh
+                logger.infoSafe("User doc created client-side", { userId: finalUser.uid });
+                setTermsAccepted(false);
+                setCryptoModal('setup');
+              };
+              
+              createDoc();
             } catch (e) {
               logger.errorSafe("Failed to create user doc client-side", e, { userId: finalUser.uid });
             }
@@ -161,10 +167,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             // User doc doesn't exist yet (Cloud Function might be slow)
             setTermsAccepted(false);
             
-            // NEW: If doc doesn't exist, it's a new user, trigger setup
-            if (!hasLegacyEncryption()) {
-              setCryptoModal('setup');
-            }
+            // Trigger setup for new users (doc missing = new user)
+            setCryptoModal('setup');
             
             logger.warnSafe('User document not found (waiting for trigger)', { userId: finalUser.uid });
           }
