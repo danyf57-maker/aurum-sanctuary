@@ -9,6 +9,7 @@
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
+/functions/node_modules
 
 # testing
 /coverage
@@ -67,6 +68,10 @@ Thumbs.db
 public/sw.js
 public/workbox-*.js
 public/worker-*.js
+public/*.map
+
+# Firebase Functions build output
+/functions/lib
 
 # AI Agent Artifacts
 _bmad-output/
