@@ -16,22 +16,20 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { AuthDialog } from './auth-dialog';
+import { signOut } from '@/lib/firebase/auth';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 
 export function AuthButton() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const { toast } = useToast();
   const router = useRouter();
-  const [isSigningOut, setIsSigningOut] = useState(false);
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
 
   const handleSignOut = async () => {
-    setIsSigningOut(true);
-    await logout();
+    await signOut();
     toast({ title: "Vous avez été déconnecté." });
     router.push('/');
-    setIsSigningOut(false);
   };
 
   if (user) {
@@ -65,7 +63,7 @@ export function AuthButton() {
             </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={handleSignOut} disabled={isSigningOut}>
+          <DropdownMenuItem onClick={handleSignOut}>
             <LogOut className="mr-2 h-4 w-4" />
             <span>Déconnexion</span>
           </DropdownMenuItem>
@@ -77,7 +75,7 @@ export function AuthButton() {
   return (
     <>
       <Button onClick={() => setIsAuthDialogOpen(true)} className="bg-stone-600 text-white hover:bg-stone-700">
-        Se connecter avec Google
+        Connexion
       </Button>
       <AuthDialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen} />
     </>

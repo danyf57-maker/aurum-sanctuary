@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { Loader2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import {
   Dialog,
   DialogContent,
@@ -17,7 +16,6 @@ import { signInWithGoogle } from '@/lib/firebase/auth';
 interface AuthDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  redirectPath?: string;
 }
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
@@ -31,42 +29,23 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-export function AuthDialog({ open, onOpenChange, redirectPath = '/dashboard' }: AuthDialogProps) {
+export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
   const { toast } = useToast();
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
-    try {
-        const { error } = await signInWithGoogle();
-        if (error) {
-          toast({
-            title: 'Erreur de connexion',
-            description: error,
-            variant: 'destructive',
-          });
-          setIsLoading(false);
-          return;
-        } 
-        
-        // Success: Close modal and redirect
-        onOpenChange(false);
-        setIsLoading(false);
-        router.push(redirectPath);
-        
-        toast({
-            title: 'Connexion réussie',
-            description: 'Bienvenue dans votre Sanctuaire.',
-        });
-    } catch (e) {
-        setIsLoading(false);
-        toast({
-            title: 'Erreur inattendue',
-            description: 'Un problème technique est survenu.',
-            variant: 'destructive',
-        });
-    }
+    const { error } = await signInWithGoogle();
+    if (error) {
+      toast({
+        title: 'Erreur de connexion',
+        description: error,
+        variant: 'destructive',
+      });
+       setIsLoading(false);
+    } 
+    // Avec signInWithRedirect, la page va recharger. Pas besoin de fermer le dialogue ici.
+    // onOpenChange(false);
   };
 
   return (

@@ -8,7 +8,6 @@ import { Suspense } from 'react';
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
 import { CookieConsent } from '@/components/legal/CookieConsent';
 import { TermsModal } from '@/components/auth/TermsModal';
-import { GoogleOneTapPrompt } from '@/components/auth/GoogleOneTapPrompt';
 
 import { Cormorant_Garamond, Inter, Dawning_of_a_New_Day } from 'next/font/google';
 
@@ -120,7 +119,6 @@ export default function RootLayout({
       >
         <AuthProvider>
           <TermsModal />
-          <GoogleOneTapPrompt />
           <Suspense fallback={null}>
             <GoogleAnalytics />
           </Suspense>

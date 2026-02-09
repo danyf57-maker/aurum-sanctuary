@@ -17,7 +17,7 @@ import {
   signOut as firebaseSignOut,
   sendPasswordResetEmail,
 } from 'firebase/auth';
-import { auth, isFirebaseWebClientEnabled } from './web-client';
+import { auth } from './web-client';
 import { logger } from '@/lib/logger/safe';
 
 /**
@@ -30,12 +30,6 @@ export function useAuth() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!isFirebaseWebClientEnabled) {
-      setUser(null);
-      setLoading(false);
-      return;
-    }
-
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setLoading(false);
@@ -51,10 +45,6 @@ export function useAuth() {
  * Sign in with Google
  */
 export async function signInWithGoogle() {
-  if (!isFirebaseWebClientEnabled) {
-    return { user: null, error: 'Authentification désactivée.' };
-  }
-
   const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
   if (!googleClientId) {
     const message =
@@ -75,10 +65,6 @@ export async function signInWithGoogle() {
  * Sign in with email and password
  */
 export async function signInWithEmail(email: string, password: string) {
-  if (!isFirebaseWebClientEnabled) {
-    return { user: null, error: 'Authentification désactivée.' };
-  }
-
   try {
     const result = await signInWithEmailAndPassword(auth, email, password);
     return { user: result.user, error: null };
@@ -91,10 +77,6 @@ export async function signInWithEmail(email: string, password: string) {
  * Sign up with email and password
  */
 export async function signUpWithEmail(email: string, password: string) {
-  if (!isFirebaseWebClientEnabled) {
-    return { user: null, error: 'Authentification désactivée.' };
-  }
-
   try {
     const result = await createUserWithEmailAndPassword(auth, email, password);
     return { user: result.user, error: null };
@@ -107,10 +89,6 @@ export async function signUpWithEmail(email: string, password: string) {
  * Sign out current user
  */
 export async function signOut() {
-  if (!isFirebaseWebClientEnabled) {
-    return { error: null };
-  }
-
   try {
     await firebaseSignOut(auth);
     return { error: null };
@@ -123,10 +101,6 @@ export async function signOut() {
  * Send password reset email
  */
 export async function resetPassword(email: string) {
-  if (!isFirebaseWebClientEnabled) {
-    return { error: 'Authentification désactivée.' };
-  }
-
   try {
     await sendPasswordResetEmail(auth, email);
     return { error: null };
@@ -142,10 +116,6 @@ export async function resetPassword(email: string) {
  * @returns ID token string or null if not authenticated
  */
 export async function getIdToken(forceRefresh: boolean = false): Promise<string | null> {
-  if (!isFirebaseWebClientEnabled) {
-    return null;
-  }
-
   const user = auth.currentUser;
   if (!user) {
     return null;

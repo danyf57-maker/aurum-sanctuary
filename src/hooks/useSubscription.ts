@@ -9,7 +9,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/providers/auth-provider';
 import { doc, onSnapshot } from 'firebase/firestore';
-import { firestore, isFirebaseWebClientEnabled } from '@/lib/firebase/web-client';
+import { firestore } from '@/lib/firebase/web-client';
 
 export interface SubscriptionStatus {
     status: 'active' | 'past_due' | 'canceled' | 'trialing' | null;
@@ -27,7 +27,7 @@ export function useSubscription() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (!user || !isFirebaseWebClientEnabled || user.isAnonymous) {
+        if (!user) {
             setSubscription({ status: null });
             setLoading(false);
             return;
@@ -35,29 +35,21 @@ export function useSubscription() {
 
         const userRef = doc(firestore, 'users', user.uid);
 
-        const unsubscribe = onSnapshot(
-            userRef,
-            (doc) => {
-                if (doc.exists()) {
-                    const data = doc.data();
-                    setSubscription({
-                        status: data.subscriptionStatus || null,
-                        stripeCustomerId: data.stripeCustomerId,
-                        subscriptionId: data.subscriptionId,
-                        subscriptionPriceId: data.subscriptionPriceId,
-                        subscriptionCurrentPeriodEnd: data.subscriptionCurrentPeriodEnd?.toDate(),
-                    });
-                } else {
-                    setSubscription({ status: null });
-                }
-                setLoading(false);
-            },
-            () => {
-                // In auth-disabled/dev mode, deny errors are expected: degrade gracefully.
+        const unsubscribe = onSnapshot(userRef, (doc) => {
+            if (doc.exists()) {
+                const data = doc.data();
+                setSubscription({
+                    status: data.subscriptionStatus || null,
+                    stripeCustomerId: data.stripeCustomerId,
+                    subscriptionId: data.subscriptionId,
+                    subscriptionPriceId: data.subscriptionPriceId,
+                    subscriptionCurrentPeriodEnd: data.subscriptionCurrentPeriodEnd?.toDate(),
+                });
+            } else {
                 setSubscription({ status: null });
-                setLoading(false);
             }
-        );
+            setLoading(false);
+        });
 
         return () => unsubscribe();
     }, [user]);

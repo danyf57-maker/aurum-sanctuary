@@ -85,12 +85,6 @@ async function addEntryOnServer(entryData: {
   insight?: string;
 }, publishAsPost: boolean, userEmail: string) {
   try {
-    logger.infoSafe("[addEntryOnServer] Starting entry creation", {
-      hasEncrypted: !!(entryData.encryptedContent && entryData.iv),
-      hasPlaintext: !!entryData.content,
-      publishAsPost
-    });
-
     // Extract userId for routing, but don't store it in the document
     const { userId, ...dataToStore } = entryData;
 
@@ -118,16 +112,12 @@ async function addEntryOnServer(entryData: {
           insight: dataToStore.insight,
         };
 
-    logger.infoSafe("[addEntryOnServer] Entry object prepared, saving to Firestore");
-
     // Save the private journal entry to user's subcollection using Admin SDK API
     const privateDocRef = await db
       .collection("users")
       .doc(userId)
       .collection("entries")
       .add(entryToSave);
-
-    logger.infoSafe("[addEntryOnServer] Entry saved to Firestore", { id: privateDocRef.id });
 
     // If "publish" is checked and the user is Alma, save to publicPosts as well
     if (publishAsPost && userEmail === ALMA_EMAIL) {
@@ -159,9 +149,6 @@ export async function saveJournalEntry(
   prevState: FormState,
   formData: FormData
 ): Promise<FormState> {
-  // DEBUG: Log entry to server action
-  logger.infoSafe("[saveJournalEntry] Server action called");
-
   const validatedFields = formSchema.safeParse({
     encryptedContent: formData.get("encryptedContent"),
     iv: formData.get("iv"),
@@ -174,62 +161,33 @@ export async function saveJournalEntry(
   });
 
   if (!validatedFields.success) {
-    logger.warnSafe("[saveJournalEntry] Validation failed", {
-      errors: validatedFields.error.flatten().fieldErrors
-    });
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: "La validation a échoué.",
     };
   }
 
-  logger.infoSafe("[saveJournalEntry] Validation passed");
-
   const { encryptedContent, iv, tags, publishAsPost, content, sentiment, mood, insight } = validatedFields.data;
-
-  let userId: string | null = null;
-  try {
-    logger.infoSafe("[saveJournalEntry] Attempting to get authenticated user ID");
-    userId = await getAuthedUserId();
-    logger.infoSafe("[saveJournalEntry] Got user ID", { hasUserId: !!userId });
-  } catch (authError) {
-    logger.errorSafe("[saveJournalEntry] Failed to get authenticated user ID", authError);
-    return {
-      message: "Erreur d'authentification. Veuillez vous reconnecter.",
-    };
-  }
-
+  const userId = await getAuthedUserId();
   if (!userId) {
-    logger.warnSafe("[saveJournalEntry] User not authenticated");
     return {
       message: "Utilisateur non authentifié. Veuillez vous reconnecter.",
     };
   }
-
   let isFirstEntry = false;
   let userEmail = '';
 
   try {
     // Get user document using Admin SDK API
     // If db is mocked, this will return a mock document
-    logger.infoSafe("[saveJournalEntry] Fetching user document from Firestore");
     const userDocRef = db.collection('users').doc(userId);
     const userDoc = await userDocRef.get();
-    logger.infoSafe("[saveJournalEntry] User document fetched", { exists: userDoc.exists });
-
     const userData = userDoc.data();
     userEmail = userData?.email || '';
     const entryCount = userData?.entryCount || 0;
     isFirstEntry = entryCount === 0;
 
-    logger.infoSafe("[saveJournalEntry] User data retrieved", {
-      entryCount,
-      isFirstEntry,
-      hasEmail: !!userEmail
-    });
-
     // TABULA RASA: Passer encrypted OU plaintext
-    logger.infoSafe("[saveJournalEntry] Calling addEntryOnServer");
     const entryResult = await addEntryOnServer({
       userId,
       encryptedContent,
@@ -241,8 +199,6 @@ export async function saveJournalEntry(
       mood,
       insight,
     }, publishAsPost, userEmail);
-
-    logger.infoSafe("[saveJournalEntry] Entry saved", { hasError: !!entryResult.error });
 
     if (entryResult.error) {
       throw new Error(entryResult.error);
