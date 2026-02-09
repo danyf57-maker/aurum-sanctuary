@@ -32,8 +32,8 @@ jobs:
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
-          projectId: studio-7696616694-2c1ae
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_AURUM_DIARY_PROD }}
+          projectId: aurum-diary-prod
           channelId: pr-${{ github.event.number }}
           expires: 7d
         env:

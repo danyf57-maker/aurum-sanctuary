@@ -1,6 +1,6 @@
 {
   "projects": {
-    "default": "studio-7696616694-2c1ae",
+    "default": "aurum-diary-prod",
     "dev": "aurum-diary-dev",
     "prod": "aurum-diary-prod"
   },
