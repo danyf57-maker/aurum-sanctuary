@@ -12,6 +12,7 @@ import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
 import { getAuth, Auth } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
 import { getFunctions, Functions } from 'firebase/functions';
+import { logger } from '@/lib/logger/safe';
 
 const firebaseConfig = {
     apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -22,21 +23,16 @@ const firebaseConfig = {
     appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Validate required config
-const requiredConfigKeys = [
-    'apiKey',
-    'authDomain',
-    'projectId',
-    'storageBucket',
-    'messagingSenderId',
-    'appId',
-] as const;
-
-for (const key of requiredConfigKeys) {
-    if (!firebaseConfig[key]) {
-        throw new Error(`Missing Firebase config: NEXT_PUBLIC_FIREBASE_${key.toUpperCase()}`);
-    }
-}
+const hasRequiredConfig = Boolean(
+    firebaseConfig.apiKey &&
+    firebaseConfig.authDomain &&
+    firebaseConfig.projectId &&
+    firebaseConfig.storageBucket &&
+    firebaseConfig.messagingSenderId &&
+    firebaseConfig.appId
+);
+const isBrowser = typeof window !== 'undefined';
+const isFirebaseWebClientEnabled = isBrowser && hasRequiredConfig;
 
 // Initialize Firebase (singleton pattern)
 let app: FirebaseApp;
@@ -44,12 +40,22 @@ let auth: Auth;
 let firestore: Firestore;
 let functions: Functions;
 
-if (typeof window !== 'undefined') {
+if (isFirebaseWebClientEnabled) {
     // Client-side only
     app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
     auth = getAuth(app);
     firestore = getFirestore(app);
     functions = getFunctions(app, 'us-central1'); // Region is important
+} else {
+    // Export typed placeholders to avoid import-time crashes in auth-disabled mode.
+    app = {} as FirebaseApp;
+    auth = {} as Auth;
+    firestore = {} as Firestore;
+    functions = {} as Functions;
 }
 
-export { app, auth, firestore, functions };
+if (isBrowser && !hasRequiredConfig) {
+    logger.warnSafe('Firebase web client disabled: missing NEXT_PUBLIC_FIREBASE_* config');
+}
+
+export { app, auth, firestore, functions, isFirebaseWebClientEnabled };

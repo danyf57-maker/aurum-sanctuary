@@ -67,7 +67,7 @@ export default function DashboardPage() {
                     Vous devez être connecté pour accéder à votre centre de commande.
                 </p>
                 <Button asChild size="lg">
-                    <Link href="/login">Se connecter</Link>
+                    <Link href="/sanctuary/write">Commencer à écrire</Link>
                 </Button>
             </div>
         );
