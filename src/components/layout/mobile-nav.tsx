@@ -6,7 +6,6 @@ import { usePathname, useRouter } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
-import { useAuth, ALMA_EMAIL } from '@/providers/auth-provider';
 
 const Logo = (props: React.SVGProps<SVGSVGElement>) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props}>
@@ -17,8 +16,6 @@ const Logo = (props: React.SVGProps<SVGSVGElement>) => (
 export function MobileNav() {
   const [open, setOpen] = React.useState(false);
   const pathname = usePathname();
-  const { user } = useAuth();
-
   return (
     <div className="md:hidden">
       <Sheet open={open} onOpenChange={setOpen}>
@@ -49,23 +46,9 @@ export function MobileNav() {
               <MobileLink href="/sanctuary/write" onOpenChange={setOpen} active={pathname === '/sanctuary/write'}>
                 Écrire
               </MobileLink>
-              <MobileLink href="/insights" onOpenChange={setOpen} active={pathname === '/insights'}>
-                L'Écho
+              <MobileLink href="/sanctuary/magazine" onOpenChange={setOpen} active={pathname === '/sanctuary/magazine'}>
+                Journal
               </MobileLink>
-              <MobileLink href="/sanctuary" onOpenChange={setOpen} active={pathname === '/sanctuary'}>
-                Le Caveau
-              </MobileLink>
-              <MobileLink href="/blog" onOpenChange={setOpen} active={pathname.startsWith('/blog')}>
-                Blog
-              </MobileLink>
-              <MobileLink href="/settings" onOpenChange={setOpen} active={pathname === '/settings'}>
-                Paramètres
-              </MobileLink>
-              {user?.email === ALMA_EMAIL && (
-                <MobileLink href="/admin" onOpenChange={setOpen} active={pathname.startsWith('/admin')} className="text-amber-600">
-                  Admin
-                </MobileLink>
-              )}
             </div>
           </div>
         </SheetContent>

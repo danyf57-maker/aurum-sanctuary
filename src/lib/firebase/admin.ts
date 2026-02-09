@@ -69,6 +69,7 @@ let auth: Auth;
 let db: Firestore;
 
 try {
+    let isNewApp = false;
     if (getApps().length > 0) {
         app = getApps()[0];
     } else {
@@ -82,16 +83,22 @@ try {
             console.log("Initializing Firebase Admin with Application Default Credentials");
             app = initializeApp();
         }
+        isNewApp = true;
     }
     
     auth = getAuth(app);
     db = getFirestore(app);
 
-    // Configure Firestore settings
-    if (db && typeof db.settings === 'function') {
-        db.settings({
-            ignoreUndefinedProperties: true,
-        });
+    // Configure Firestore only on fresh init.
+    // Calling settings() after Firestore has been used throws and must not break real DB access.
+    if (isNewApp && db && typeof db.settings === 'function') {
+        try {
+            db.settings({
+                ignoreUndefinedProperties: true,
+            });
+        } catch (error) {
+            console.warn("Firestore settings skipped (already initialized).");
+        }
     }
 } catch (error) {
     console.warn("Firebase Admin failed to initialize. Using PROXY MOCKS.", error);

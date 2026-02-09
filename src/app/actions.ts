@@ -23,6 +23,14 @@ const optionalString = () =>
     z.string().optional()
   );
 
+const journalImageSchema = z.object({
+  id: z.string().min(1),
+  url: z.string().url(),
+  path: z.string().min(1),
+  caption: z.string().optional(),
+  name: z.string().min(1),
+});
+
 // TABULA RASA: Schema simplifié pour accepter plaintext
 const formSchema = z.object({
   // Encrypted fields (optional - legacy compatibility)
@@ -30,6 +38,7 @@ const formSchema = z.object({
   iv: optionalString(),
   // Plaintext field (temporary - Biométrie-First migration)
   content: optionalString(),
+  images: optionalString(),
   tags: optionalString(),
   publishAsPost: z.boolean(),
   sentiment: optionalString(),
@@ -48,11 +57,17 @@ export type FormState = {
     publishAsPost?: string[];
     encryptedContent?: string[];
     iv?: string[];
+    images?: string[];
     sentiment?: string[];
     mood?: string[];
     insight?: string[];
   };
   isFirstEntry?: boolean;
+};
+
+export type EntryMutationState = {
+  message?: string;
+  error?: string;
 };
 
 // Helper function to create a unique slug
@@ -72,12 +87,27 @@ function generateTitle(content: string) {
   return words.slice(0, 8).join(' ') + (words.length > 8 ? '...' : '');
 }
 
+function stripImageMarkdown(content: string) {
+  return content
+    .replace(/!\[[^\]]*]\(([^)]+)\)/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function generateExcerpt(content: string, maxLength = 170) {
+  const plain = stripImageMarkdown(content);
+  if (!plain) return "";
+  if (plain.length <= maxLength) return plain;
+  return `${plain.slice(0, maxLength).trim()}...`;
+}
+
 // TABULA RASA: Fonction simplifiée pour accepter encrypted OU plaintext
 async function addEntryOnServer(entryData: {
   userId: string;
   encryptedContent?: string;
   iv?: string;
   content?: string; // NOUVEAU: support plaintext temporaire
+  images?: Array<z.infer<typeof journalImageSchema>>;
   tags: string[];
   createdAt: Date;
   sentiment?: string;
@@ -95,6 +125,7 @@ async function addEntryOnServer(entryData: {
       ? {
           encryptedContent: dataToStore.encryptedContent!,
           iv: dataToStore.iv!,
+          images: dataToStore.images || [],
           tags: dataToStore.tags,
           createdAt: Timestamp.fromDate(entryData.createdAt),
           updatedAt: Timestamp.fromDate(entryData.createdAt),
@@ -104,6 +135,7 @@ async function addEntryOnServer(entryData: {
         }
       : {
           content: dataToStore.content!, // PLAINTEXT (temporaire)
+          images: dataToStore.images || [],
           tags: dataToStore.tags,
           createdAt: Timestamp.fromDate(entryData.createdAt),
           updatedAt: Timestamp.fromDate(entryData.createdAt),
@@ -155,6 +187,7 @@ export async function saveJournalEntry(
     tags: formData.get("tags"),
     publishAsPost: formData.get("publishAsPost") === "on",
     content: formData.get("content"),
+    images: formData.get("images"),
     sentiment: formData.get("sentiment"),
     mood: formData.get("mood"),
     insight: formData.get("insight"),
@@ -167,7 +200,19 @@ export async function saveJournalEntry(
     };
   }
 
-  const { encryptedContent, iv, tags, publishAsPost, content, sentiment, mood, insight } = validatedFields.data;
+  const { encryptedContent, iv, tags, publishAsPost, content, images, sentiment, mood, insight } = validatedFields.data;
+  let parsedImages: Array<z.infer<typeof journalImageSchema>> = [];
+  if (images) {
+    try {
+      const maybeImages = JSON.parse(images);
+      parsedImages = z.array(journalImageSchema).parse(maybeImages);
+    } catch {
+      return {
+        errors: { images: ["Format d'images invalide."] },
+        message: "La validation a échoué.",
+      };
+    }
+  }
   const userId = await getAuthedUserId();
   if (!userId) {
     return {
@@ -193,6 +238,7 @@ export async function saveJournalEntry(
       encryptedContent,
       iv,
       content, // NOUVEAU: support plaintext
+      images: parsedImages,
       tags: tags ? tags.split(",").map((tag) => tag.trim().toLowerCase()).filter(Boolean) : [],
       createdAt: new Date(),
       sentiment,
@@ -203,6 +249,32 @@ export async function saveJournalEntry(
     if (entryResult.error) {
       throw new Error(entryResult.error);
     }
+    if (!entryResult.id) {
+      throw new Error("ID d'entrée manquant après sauvegarde.");
+    }
+
+    // Build magazine card data (cover + excerpt) for gallery-style browsing
+    const coverImageUrl = parsedImages[0]?.url || null;
+    const baseContent = content || encryptedContent || "";
+    const excerpt = generateExcerpt(baseContent);
+    const title = generateTitle(stripImageMarkdown(baseContent) || "Entrée");
+
+    await db
+      .collection("users")
+      .doc(userId)
+      .collection("magazineIssues")
+      .doc(entryResult.id)
+      .set({
+        entryId: entryResult.id,
+        title,
+        excerpt,
+        coverImageUrl,
+        tags: tags ? tags.split(",").map((tag) => tag.trim().toLowerCase()).filter(Boolean) : [],
+        mood: mood || null,
+        sentiment: sentiment || null,
+        createdAt: Timestamp.now(),
+        publishedAt: Timestamp.now(),
+      }, { merge: true });
 
     // Update entry count using Admin SDK API
     // Use set with merge to create document if it doesn't exist (fallback for missing Cloud Function trigger)
@@ -217,6 +289,7 @@ export async function saveJournalEntry(
     }
     revalidatePath("/dashboard");
     revalidatePath("/sanctuary");
+    revalidatePath("/sanctuary/magazine");
 
   } catch (error) {
     logger.errorSafe("Error saving entry", error);
@@ -261,5 +334,109 @@ export async function generateUserInsights() {
   } catch (error: any) {
     logger.errorSafe("Error generating user insights", error);
     return { error: error.message || "Une erreur est survenue lors de la génération des insights." };
+  }
+}
+
+export async function updateJournalEntry(
+  entryId: string,
+  payload: { content: string; tags?: string }
+): Promise<EntryMutationState> {
+  try {
+    const userId = await getAuthedUserId();
+    if (!userId) {
+      return { error: "Utilisateur non authentifié." };
+    }
+
+    const cleanContent = String(payload.content || "").trim();
+    if (!cleanContent) {
+      return { error: "Le contenu ne peut pas être vide." };
+    }
+
+    const nextTags = String(payload.tags || "")
+      .split(",")
+      .map((tag) => tag.trim().toLowerCase())
+      .filter(Boolean);
+
+    const entryRef = db
+      .collection("users")
+      .doc(userId)
+      .collection("entries")
+      .doc(entryId);
+
+    const entryDoc = await entryRef.get();
+    if (!entryDoc.exists) {
+      return { error: "Entrée introuvable." };
+    }
+
+    await entryRef.set(
+      {
+        content: cleanContent,
+        tags: nextTags,
+        updatedAt: Timestamp.now(),
+      },
+      { merge: true }
+    );
+
+    const coverImageUrl = Array.isArray(entryDoc.data()?.images) && entryDoc.data()?.images?.[0]?.url
+      ? String(entryDoc.data()?.images?.[0]?.url)
+      : null;
+    const excerpt = generateExcerpt(cleanContent);
+    const title = generateTitle(stripImageMarkdown(cleanContent) || "Entrée");
+
+    await db
+      .collection("users")
+      .doc(userId)
+      .collection("magazineIssues")
+      .doc(entryId)
+      .set(
+        {
+          entryId,
+          title,
+          excerpt,
+          coverImageUrl,
+          tags: nextTags,
+          updatedAt: Timestamp.now(),
+        },
+        { merge: true }
+      );
+
+    revalidatePath("/sanctuary/magazine");
+    revalidatePath(`/sanctuary/magazine/${entryId}`);
+    revalidatePath("/sanctuary/write");
+    return { message: "Entrée mise à jour." };
+  } catch (error) {
+    logger.errorSafe("Error updating entry", error);
+    return { error: "Impossible de mettre à jour l'entrée." };
+  }
+}
+
+export async function deleteJournalEntry(entryId: string): Promise<EntryMutationState> {
+  try {
+    const userId = await getAuthedUserId();
+    if (!userId) {
+      return { error: "Utilisateur non authentifié." };
+    }
+
+    await db
+      .collection("users")
+      .doc(userId)
+      .collection("entries")
+      .doc(entryId)
+      .delete();
+
+    await db
+      .collection("users")
+      .doc(userId)
+      .collection("magazineIssues")
+      .doc(entryId)
+      .delete();
+
+    revalidatePath("/sanctuary/magazine");
+    revalidatePath(`/sanctuary/magazine/${entryId}`);
+    revalidatePath("/sanctuary/write");
+    return { message: "Entrée supprimée." };
+  } catch (error) {
+    logger.errorSafe("Error deleting entry", error);
+    return { error: "Impossible de supprimer l'entrée." };
   }
 }

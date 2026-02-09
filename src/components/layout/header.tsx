@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { AuthButton } from '@/components/auth/auth-button';
 import { MobileNav } from './mobile-nav';
-import { useAuth, ALMA_EMAIL } from '@/providers/auth-provider';
 
 const Logo = (props: React.SVGProps<SVGSVGElement>) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props}>
@@ -16,7 +15,6 @@ const Logo = (props: React.SVGProps<SVGSVGElement>) => (
 
 export function Header() {
   const pathname = usePathname();
-  const { user } = useAuth();
   const isHomepage = pathname === '/';
 
   // Do not render the header on the homepage to allow for a custom hero header
@@ -64,37 +62,17 @@ export function Header() {
             </Link>
             <nav className="flex items-center gap-6 text-sm">
               <Link
-                href="/dashboard"
-                className="transition-colors hover:text-foreground/80 text-foreground/60"
-              >
-                Tableau de Bord
-              </Link>
-              <Link
-                href="/sanctuary"
-                className="transition-colors hover:text-foreground/80 text-foreground/60"
-              >
-                Journal
-              </Link>
-              <Link
                 href="/sanctuary/write"
                 className="transition-colors hover:text-foreground/80 text-foreground/60"
               >
                 Écrire
               </Link>
               <Link
-                href="/blog"
+                href="/sanctuary/magazine"
                 className="transition-colors hover:text-foreground/80 text-foreground/60"
               >
-                Blog
+                Journal
               </Link>
-              {user?.email === ALMA_EMAIL && (
-                <Link
-                  href="/admin"
-                  className="text-amber-600 transition-colors hover:text-amber-500"
-                >
-                  Admin
-                </Link>
-              )}
             </nav>
           </div>
         )}

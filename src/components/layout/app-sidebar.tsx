@@ -5,11 +5,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { 
-  LayoutDashboard, 
   PenSquare, 
-  Sparkles, 
-  Library, 
-  Settings, 
+  BookOpenText, 
   LogOut,
   ChevronLeft,
   ChevronRight
@@ -21,28 +18,16 @@ import { useState, useEffect } from 'react';
 
 const navItems = [
   {
-    title: "Tableau de Bord",
-    href: "/dashboard",
-    icon: LayoutDashboard,
-    description: "Le Pulse"
-  },
-  {
     title: "Écrire",
     href: "/sanctuary/write",
     icon: PenSquare,
-    description: "La Forge"
+    description: "Écriture"
   },
   {
-    title: "L'Écho",
-    href: "/insights",
-    icon: Sparkles,
-    description: "Analyses IA"
-  },
-  {
-    title: "Le Caveau",
-    href: "/sanctuary",
-    icon: Library,
-    description: "Archives"
+    title: "Journal",
+    href: "/sanctuary/magazine",
+    icon: BookOpenText,
+    description: "Magazine"
   }
 ];
 
@@ -143,20 +128,6 @@ export function AppSidebar() {
 
       {/* Footer Area */}
       <div className="p-4 space-y-2 border-t border-border/40">
-        <Link href="/settings">
-          <div className={cn(
-            "group flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200",
-            pathname === '/settings' 
-              ? "bg-stone-900 text-stone-50" 
-              : "text-stone-600 hover:bg-stone-900/5 hover:text-stone-900"
-          )}>
-            <Settings className="h-5 w-5 shrink-0" />
-            {!isCollapsed && (
-              <span className="font-semibold text-sm">Paramètres</span>
-            )}
-          </div>
-        </Link>
-
         <button 
           onClick={() => logout()}
           className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-stone-600 hover:bg-red-50 hover:text-red-600 transition-all duration-200"

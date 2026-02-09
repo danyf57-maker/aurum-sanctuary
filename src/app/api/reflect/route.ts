@@ -9,16 +9,22 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { auth as adminAuth } from 'firebase-admin';
+import { auth } from '@/lib/firebase/admin';
 import { logger } from '@/lib/logger/safe';
 import { getUserPatterns, batchUpdatePatterns, cleanupStalePatterns } from '@/lib/patterns/storage';
 import { detectPatterns, detectionToStorageFormat } from '@/lib/patterns/detect';
 import { selectPatternsForInjection, formatPatternsForContext } from '@/lib/patterns/inject';
 import {
+  PSYCHOLOGIST_ANALYST_SKILL_ID,
+  PSYCHOLOGIST_ANALYST_SYSTEM_PROMPT,
+} from '@/lib/skills/psychologist-analyst';
+import {
   containsMetaReference,
   validateResponse,
   getCorrectionPrompt,
 } from '@/lib/patterns/anti-meta';
+
+type AurumIntent = 'reflection' | 'conversation' | 'analysis' | 'action';
 
 /**
  * System prompt for reflection (with implicit pattern awareness)
@@ -59,6 +65,55 @@ Règle d'or : parle du PRÉSENT. Utilise le conditionnel pour les nuances ("il y
 
 Ta réponse doit faire entre 2 et 4 phrases courtes. Pas de paragraphes longs.`;
 
+const CONVERSATION_SYSTEM_PROMPT = `Tu es Aurum en mode dialogue.
+
+Objectif:
+- Continuer l'échange de façon naturelle et chaleureuse.
+- Répondre à la dernière intention de l'utilisateur, sans jugement.
+
+Style:
+- 2 à 5 phrases courtes.
+- Concret, empathique, sans jargon.
+- Tu peux poser au plus UNE question ouverte pour relancer le dialogue.`;
+
+const ANALYSIS_SYSTEM_PROMPT = PSYCHOLOGIST_ANALYST_SYSTEM_PROMPT;
+
+const ACTION_SYSTEM_PROMPT = `Tu es Aurum en mode passage à l'action douce.
+
+Objectif:
+- Proposer un pas concret, réaliste, faisable aujourd'hui.
+
+Contraintes:
+- Maximum 3 propositions.
+- Ton doux, non injonctif.
+- Chaque proposition en une ligne, très simple.`;
+
+function detectAurumIntent(content: string): AurumIntent {
+  const text = content.toLowerCase();
+  if (/(que faire|que puis-je faire|plan|prochaine etape|prochaine étape|action|aide moi a agir|aide-moi a agir)/.test(text)) {
+    return 'action';
+  }
+  if (/(analyse|analyse-moi|explique|clarifie|clarifier|comprendre|pourquoi)/.test(text)) {
+    return 'analysis';
+  }
+  if (/(conversation en cours|utilisateur:|aurum:|reponds|réponds|continuer l'echange|continuer l'échange)/.test(text)) {
+    return 'conversation';
+  }
+  return 'reflection';
+}
+
+function getSystemPromptForIntent(intent: AurumIntent): string {
+  if (intent === 'conversation') return CONVERSATION_SYSTEM_PROMPT;
+  if (intent === 'analysis') return ANALYSIS_SYSTEM_PROMPT;
+  if (intent === 'action') return ACTION_SYSTEM_PROMPT;
+  return REFLECTION_SYSTEM_PROMPT;
+}
+
+function getSkillIdForIntent(intent: AurumIntent): string | null {
+  if (intent === 'analysis') return PSYCHOLOGIST_ANALYST_SKILL_ID;
+  return null;
+}
+
 /**
  * POST /api/reflect
  * Body: { content: string, idToken: string }
@@ -72,29 +127,40 @@ export async function POST(request: NextRequest) {
     }
 
     if (!idToken) {
-      return NextResponse.json({ error: 'Token d\'authentification requis' }, { status: 401 });
+      return NextResponse.json(
+        { error: 'Votre session a expiré. Merci de vous reconnecter pour recevoir un reflet.' },
+        { status: 401 }
+      );
     }
 
     // Verify user
     let userId: string;
     try {
-      const decodedToken = await adminAuth().verifyIdToken(idToken);
+      const decodedToken = await auth.verifyIdToken(idToken);
       userId = decodedToken.uid;
     } catch (error) {
       logger.errorSafe('Invalid ID token', error);
-      return NextResponse.json({ error: 'Token invalide' }, { status: 401 });
+      return NextResponse.json(
+        { error: 'Votre session n\'est plus valide. Reconnectez-vous puis réessayez.' },
+        { status: 401 }
+      );
     }
 
     // Check DeepSeek API key
     const apiKey = process.env.DEEPSEEK_API_KEY;
-    if (!apiKey) {
+    if (!apiKey || apiKey.includes('mock')) {
       logger.errorSafe('DeepSeek API key not configured');
-      return NextResponse.json({ error: 'Service temporairement indisponible' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'La clé DeepSeek n\'est pas configurée en environnement local. Ajoutez DEEPSEEK_API_KEY.' },
+        { status: 500 }
+      );
     }
 
     // 1. Detect patterns in current content
     logger.infoSafe('Detecting patterns', { userId });
     const detectionResult = await detectPatterns(content);
+    const intent = detectAurumIntent(content);
+    const skillId = getSkillIdForIntent(intent);
 
     // 2. Get existing user patterns
     const existingPatterns = await getUserPatterns(userId);
@@ -114,7 +180,7 @@ export async function POST(request: NextRequest) {
     const messages: any[] = [
       {
         role: 'system',
-        content: REFLECTION_SYSTEM_PROMPT,
+        content: getSystemPromptForIntent(intent),
       },
     ];
 
@@ -133,7 +199,7 @@ export async function POST(request: NextRequest) {
     });
 
     // 6. Call DeepSeek for reflection
-    logger.infoSafe('Generating reflection', { userId, hasPatterns: !!patternContext });
+    logger.infoSafe('Generating reflection', { userId, hasPatterns: !!patternContext, intent, skillId });
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 20000);
@@ -248,6 +314,8 @@ export async function POST(request: NextRequest) {
     // 9. Return reflection
     return NextResponse.json({
       reflection: reflectionText,
+      intent,
+      skill_used: skillId,
       patterns_detected: detectionResult ? detectionResult.themes.length : 0,
       patterns_used: injectedPatterns ? injectedPatterns.patterns.length : 0,
     });

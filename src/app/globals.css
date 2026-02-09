@@ -66,4 +66,15 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  body.aurum-writing-focus header,
+  body.aurum-writing-focus footer {
+    opacity: 0.1;
+    transition: opacity 260ms ease;
+  }
+
+  body.aurum-writing-focus header:hover,
+  body.aurum-writing-focus footer:hover {
+    opacity: 1;
+  }
 }
