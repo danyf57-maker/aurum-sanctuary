@@ -1,20 +1,34 @@
 {
-    "firestore": {
-        "rules": "firestore.rules",
-        "indexes": "firestore.indexes.json"
-    },
-    "storage": {
-        "rules": "storage.rules"
-    },
-    "hosting": {
-        "source": ".",
-        "ignore": [
-            "firebase.json",
-            "**/.*",
-            "**/node_modules/**"
-        ],
-        "frameworksBackend": {
-            "region": "us-central1"
-        }
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json",
+    "database": "(default)"
+  },
+  "storage": {
+    "rules": "storage.rules",
+    "bucket": "aurum-diary-prod.firebasestorage.app"
+  },
+  "hosting": {
+    "source": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "frameworksBackend": {
+      "region": "us-central1"
     }
+  },
+  "apphosting": {
+    "backendId": "aurum-sanctuary",
+    "rootDir": "/",
+    "ignore": [
+      "node_modules",
+      ".git",
+      "firebase-debug.log",
+      "firebase-debug.*.log",
+      "functions"
+    ],
+    "alwaysDeployFromSource": true
+  }
 }
