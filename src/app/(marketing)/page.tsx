@@ -5,7 +5,7 @@ import HeroIntegrated from '@/components/landing/HeroIntegrated';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
-import { PenSquare, Sparkles, Sprout, Shield, Quote, ArrowRight, Send, ShieldCheck, Lock, Fingerprint, X } from 'lucide-react';
+import { PenSquare, Compass, Eye, Waves, Sprout, Shield, Quote, ArrowRight, Send, ShieldCheck, Lock, Fingerprint, X } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import Link from 'next/link';
@@ -44,7 +44,7 @@ const ExitIntent = () => {
 
                 <div className="text-center">
                     <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-8 text-primary">
-                        <Sparkles className="w-8 h-8" />
+                        <Compass className="w-8 h-8" />
                     </div>
                     <h3 className="text-3xl md:text-4xl font-headline mb-6 text-stone-900">Une dernière chose avant de partir...</h3>
                     <p className="text-stone-500 text-lg mb-10 leading-relaxed font-light">
@@ -240,12 +240,12 @@ export default function Home() {
         {
             icon: <PenSquare />,
             title: "1. Videz votre sac",
-            description: "Déposez vos pensées sans filtre. Libérez immédiatement votre charge mentale dans un espace conçu pour s'effacer et laisser place à votre clarté.",
+            description: "Déposez vos pensées sans filtre. Libérez immédiatement votre charge mentale dans un espace conçu pour libérer votre esprit et stabiliser vos pensées.",
         },
         {
-            icon: <Sparkles />,
+            icon: <Eye />,
             title: "2. Obtenez une perspective",
-            description: "Ne tournez plus en rond. Notre IA bienveillante révèle les schémas invisibles de votre esprit pour transformer votre confusion en insights actionnables.",
+            description: "Ne tournez plus en rond. Aurum révèle les schémas invisibles de votre esprit pour transformer votre confusion en reflets actionnables.",
         },
         {
             icon: <Sprout />,
@@ -258,7 +258,7 @@ export default function Home() {
         {
             name: "Camille, 34 ans",
             initials: "C",
-            quote: "J'étais sceptique à l'idée de confier mes pensées à une IA. Mais Aurum est différent. C'est un miroir bienveillant, pas un juge. Les 'insights' m'ont ouvert les yeux sur des schémas que j'ignorais totalement."
+            quote: "J'étais sceptique à l'idée de confier mes pensées à un algorithme de miroir. Mais Aurum est différent. C'est un miroir bienveillant, pas un juge. Les 'insights' m'ont ouvert les yeux sur des schémas que j'ignorais totalement."
         },
         {
             name: "Léo, 41 ans",
@@ -355,7 +355,7 @@ export default function Home() {
                             {/* Avec Aurum */}
                             <div className="p-10 md:p-20 bg-white/5 relative">
                                 <div className="absolute top-0 right-0 p-8">
-                                    <Sparkles className="w-12 h-12 text-primary/20" />
+                                    <Waves className="w-12 h-12 text-primary/20" />
                                 </div>
                                 <div className="flex items-center gap-3 mb-8 text-primary">
                                     <div className="w-2 h-2 rounded-full bg-current animate-pulse"></div>
@@ -442,7 +442,7 @@ export default function Home() {
                                 </div>
                                 <h3 className="text-xl font-headline mb-3 text-primary">Anonymat Garanti</h3>
                                 <p className="text-sm text-stone-500 font-light leading-relaxed">
-                                    Aucune donnée personnelle n'est liée à vos écrits. L'analyse IA est traitée en local ou via des serveurs sans mémoire résiduelle.
+                                    Aucune donnée personnelle n'est liée à vos écrits. Le moteur d'analyse Aurum opère en local sur votre appareil.
                                 </p>
                             </div>
 
@@ -514,7 +514,7 @@ export default function Home() {
                 {/* SECTION 7: CTA Final & FAQ */}
                 <section className="container py-24 md:py-32 text-center border-t border-black/5">
                     <Button asChild size="lg" className="h-14 px-12 text-base">
-                        <Link href="/sanctuary/write">Commencez votre introspection</Link>
+                        <Link href="/sanctuary/write">Découvrir mon premier reflet</Link>
                     </Button>
                     <div className="mt-6">
                         <span className="text-xs text-stone-400 font-light">Accès immédiat • 100% Chiffré • Utilisation illimitée en version Beta</span>

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Leaf, Lock, Shield, Sparkles } from "lucide-react";
+import { Leaf, Lock, Shield, Eye } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 const LandingV2 = () => {
@@ -196,9 +196,9 @@ const LandingV2 = () => {
                 icon: Shield,
               },
               {
-                title: "Miroir IA",
+                title: "Miroir intérieur",
                 description: "Un reflet bienveillant qui vous aide à identifier vos patterns émotionnels sans jugement.",
-                icon: Sparkles,
+                icon: Eye,
               },
               {
                 title: "Vitesse Pure",

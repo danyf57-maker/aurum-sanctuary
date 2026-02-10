@@ -32,8 +32,8 @@ const dawning = Dawning_of_a_New_Day({
 });
 
 export const metadata: Metadata = {
-  title: 'Aurum | Journal Intime IA & Sanctuaire de Santé Mentale',
-  description: 'Allégez votre charge mentale avec Aurum. Un journal sécurisé qui utilise l\'IA pour transformer vos pensées en clarté. Essayez sans compte.',
+  title: 'Aurum | Le miroir de votre monde intérieur',
+  description: 'Allégez votre charge mentale avec Aurum. Un journal sécurisé pour transformer vos pensées en clarté. Essayez sans compte.',
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
@@ -41,8 +41,8 @@ export const metadata: Metadata = {
     title: "Aurum",
   },
   openGraph: {
-    title: 'Aurum | Transformez le chaos en clarté',
-    description: 'Le journal intime privé par excellence. Chiffrement sur votre appareil, IA locale et design apaisant.',
+    title: 'Aurum : Le miroir de votre monde intérieur.',
+    description: 'Le journal intime privé par excellence. Chiffrement sur votre appareil et design apaisant.',
     url: 'https://aurumdiary.com',
     siteName: 'Aurum Sanctuary',
     images: [
@@ -58,7 +58,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Aurum | Transformez le chaos en clarté',
+    title: 'Aurum : Le miroir de votre monde intérieur.',
     description: 'Le journal intime privé par excellence. Chiffrement sur votre appareil.',
     images: ['/og-image.png'],
   },
@@ -93,7 +93,7 @@ export default function RootLayout({
       priceCurrency: 'EUR',
     },
     featureList: [
-      "Analyse de sentiment IA",
+      "Reflets de sentiment",
       "Chiffrement privé",
       "Journaling guidé"
     ]
