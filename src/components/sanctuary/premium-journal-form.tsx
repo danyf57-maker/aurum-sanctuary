@@ -19,6 +19,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { ReflectionResponse } from './reflection-response';
+import { ReflectionPulse } from './reflection-pulse';
+import { NeuroBreadcrumbs } from './neuro-breadcrumbs';
 import { AuthDialog } from '@/components/auth/auth-dialog';
 import { motion, AnimatePresence } from 'framer-motion';
 import { app } from '@/lib/firebase/web-client';
@@ -655,32 +657,47 @@ export function PremiumJournalForm() {
             {/* Reflection section */}
             {!reflection ? (
               <div className="text-center space-y-6 py-8">
-              <div className="space-y-2">
-                <h3 className="font-headline text-2xl text-stone-900">
-                  Souhaites-tu recevoir un reflet ?
-                </h3>
-                  <p className="text-stone-600 max-w-md mx-auto">
-                    Aurum peut te renvoyer ce qu'il perçoit, sans juger ni diriger.
-                  </p>
-                </div>
-                <Button
-                  onClick={handleRequestReflection}
-                  disabled={isGeneratingReflection}
-                  size="lg"
-                  className="bg-gradient-to-r from-amber-600 to-amber-700 text-white hover:from-amber-700 hover:to-amber-800 px-8 rounded-xl shadow-lg"
-                >
-                  {isGeneratingReflection ? (
-                    <>
-                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                      Aurum réfléchit...
-                    </>
+                <AnimatePresence mode="wait">
+                  {!isGeneratingReflection ? (
+                    <motion.div
+                      key="prompt"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.3 }}
+                      className="space-y-6"
+                    >
+                      <div className="space-y-2">
+                        <h3 className="font-headline text-2xl text-stone-900">
+                          Souhaites-tu recevoir un reflet ?
+                        </h3>
+                        <p className="text-stone-600 max-w-md mx-auto">
+                          Aurum peut te renvoyer ce qu'il perçoit, sans juger ni diriger.
+                        </p>
+                      </div>
+                      <Button
+                        onClick={handleRequestReflection}
+                        size="lg"
+                        className="bg-gradient-to-r from-amber-600 to-amber-700 text-white hover:from-amber-700 hover:to-amber-800 px-8 rounded-xl shadow-lg"
+                      >
+                        <Sparkles className="mr-2 h-5 w-5" />
+                        Recevoir un reflet
+                      </Button>
+                    </motion.div>
                   ) : (
-                    <>
-                      <Sparkles className="mr-2 h-5 w-5" />
-                      Recevoir un reflet
-                    </>
+                    <motion.div
+                      key="loading"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ duration: 0.4, ease: 'easeOut' }}
+                      className="space-y-6 py-4"
+                    >
+                      <ReflectionPulse />
+                      <NeuroBreadcrumbs />
+                    </motion.div>
                   )}
-                </Button>
+                </AnimatePresence>
               </div>
             ) : (
               <div className="space-y-6">
@@ -728,6 +745,19 @@ export function PremiumJournalForm() {
                         )}
                       </Button>
                     </div>
+                    <AnimatePresence>
+                      {isContinuingConversation && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.3 }}
+                          className="pt-3"
+                        >
+                          <NeuroBreadcrumbs className="text-left" />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 </div>
               </div>
