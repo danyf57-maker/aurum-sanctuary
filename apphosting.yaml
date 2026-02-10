@@ -8,6 +8,38 @@ runConfig:
 
 # Environment variables and secrets
 env:
+  # Firebase Client SDK (public config)
+  - variable: NEXT_PUBLIC_FIREBASE_API_KEY
+    value: AIzaSyBQhFZfS6CmlmcYKTtdo21H0VrCxp7pgjc
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+    value: aurum-diary-prod.firebaseapp.com
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    value: aurum-diary-prod
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+    value: aurum-diary-prod.firebasestorage.app
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+    value: "441444254589"
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_FIREBASE_APP_ID
+    value: "1:441444254589:web:fd4f49567496e8478a8214"
+    availability:
+      - BUILD
+      - RUNTIME
+  # Google OAuth
   - variable: NEXT_PUBLIC_GOOGLE_CLIENT_ID
     value: 554520158428-0p0l6s7nl0hth5o50vjuoi44ceqsshmv.apps.googleusercontent.com
     availability:
