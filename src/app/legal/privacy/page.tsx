@@ -42,7 +42,7 @@ export default function PrivacyPolicyPage() {
               <strong>Données de compte :</strong> Lors de la création de votre compte (via Google ou e-mail), nous collectons votre identifiant utilisateur, adresse e-mail, nom d'affichage et URL de photo de profil. Ces données sont utilisées pour vous authentifier, sécuriser votre compte et personnaliser votre expérience.
             </li>
             <li>
-              <strong>Contenu des entrées de journal :</strong> Le contenu que vous écrivez dans votre journal est votre propriété. Nous le stockons de manière sécurisée pour que vous puissiez y accéder. Nous utilisons une analyse par intelligence artificielle (IA) de manière automatisée et anonymisée pour en extraire des indicateurs (sentiment, humeur, insights) qui vous sont restitués. À aucun moment un être humain n'accède au contenu de vos entrées.
+              <strong>Contenu des entrées de journal :</strong> Le contenu que vous écrivez dans votre journal est votre propriété. Nous le stockons de manière sécurisée pour que vous puissiez y accéder. Nous utilisons un moteur d'analyse automatisé et anonymisé pour en extraire des indicateurs (sentiment, humeur, insights) qui vous sont restitués. À aucun moment un être humain n'accède au contenu de vos entrées.
             </li>
             <li>
               <strong>Données d'utilisation et cookies :</strong> Nous utilisons des traceurs (comme le localStorage) pour des fonctionnalités essentielles, telles que le maintien de votre session de connexion ou la gestion de votre consentement aux cookies. Nous n'utilisons pas de cookies de suivi publicitaire.

@@ -5,7 +5,7 @@ import type { Metadata } from 'next';
 import { getPublicPostBySlug } from '@/lib/firebase/firestore';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Sparkles } from 'lucide-react';
+import { ArrowLeft, Compass } from 'lucide-react';
 
 export const revalidate = 3600; // Revalidate every hour
 
@@ -108,7 +108,7 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
                         ))}
                     </div>
                     <div className="text-center bg-amber-50/50 rounded-lg p-8">
-                        <Sparkles className="mx-auto h-8 w-8 text-amber-500 mb-4" />
+                        <Compass className="mx-auto h-8 w-8 text-amber-500 mb-4" />
                         <p className="text-stone-600 italic">Alma partage son journal pour inspirer votre propre voyage intérieur.</p>
                         <Button asChild className="mt-6">
                             <Link href="/">Créez votre sanctuaire privé</Link>
@@ -122,4 +122,3 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
 
 // Ensure prose styles are available. We need to update tailwind config for this.
 // I will also add the official tailwind typography plugin.
-

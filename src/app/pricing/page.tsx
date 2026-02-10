@@ -1,7 +1,7 @@
 
 'use client';
 
-import { Check, X, Sparkles } from 'lucide-react';
+import { Check, X, Compass } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -30,7 +30,7 @@ const plans = [
             { text: "5 conversations avec Aurum", included: true },
             { text: "Historique de 1 mois", included: true },
             { text: "Export des données", included: false },
-            { text: "Analyses IA approfondies", included: false },
+            { text: "Reflets approfondis", included: false },
         ],
         cta: "Commencer gratuitement",
         isRecommended: false,
@@ -47,7 +47,7 @@ const plans = [
             { text: "50 conversations avec Aurum", included: true },
             { text: "Historique complet", included: true },
             { text: "Export des données", included: true },
-            { text: "Analyses IA approfondies", included: false },
+            { text: "Reflets approfondis", included: false },
         ],
         cta: "Choisir Pro",
         isRecommended: true,
@@ -64,7 +64,7 @@ const plans = [
             { text: "Conversations avec Aurum illimitées", included: true },
             { text: "Historique complet", included: true },
             { text: "Export des données", included: true },
-            { text: "Analyses IA approfondies", included: true },
+            { text: "Reflets approfondis", included: true },
         ],
         cta: "Passer Premium",
         isRecommended: false,
@@ -132,7 +132,7 @@ export default function PricingPage() {
                             )}>
                                 {plan.isRecommended && (
                                     <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-semibold flex items-center gap-2">
-                                        <Sparkles className="h-4 w-4" />
+                                        <Compass className="h-4 w-4" />
                                         Recommandé
                                     </div>
                                 )}

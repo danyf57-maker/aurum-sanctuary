@@ -16,6 +16,7 @@ import {
   createUserWithEmailAndPassword,
   signOut as firebaseSignOut,
   sendPasswordResetEmail,
+  sendEmailVerification,
 } from 'firebase/auth';
 import { auth } from './web-client';
 import { logger } from '@/lib/logger/safe';
@@ -67,6 +68,14 @@ export async function signInWithGoogle() {
 export async function signInWithEmail(email: string, password: string) {
   try {
     const result = await signInWithEmailAndPassword(auth, email, password);
+    if (!result.user.emailVerified) {
+      await sendEmailVerification(result.user, {
+        url: `${process.env.NEXT_PUBLIC_APP_URL || window.location.origin}/verify-email`,
+        handleCodeInApp: true,
+      });
+      await firebaseSignOut(auth);
+      return { user: null, error: "EMAIL_NOT_VERIFIED" };
+    }
     return { user: result.user, error: null };
   } catch (error: any) {
     return { user: null, error: error.message };
@@ -79,6 +88,11 @@ export async function signInWithEmail(email: string, password: string) {
 export async function signUpWithEmail(email: string, password: string) {
   try {
     const result = await createUserWithEmailAndPassword(auth, email, password);
+    await sendEmailVerification(result.user, {
+      url: `${process.env.NEXT_PUBLIC_APP_URL || window.location.origin}/verify-email`,
+      handleCodeInApp: true,
+    });
+    await firebaseSignOut(auth);
     return { user: result.user, error: null };
   } catch (error: any) {
     return { user: null, error: error.message };

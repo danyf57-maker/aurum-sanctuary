@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useTransition } from 'react';
 import { useFormStatus, useFormState } from 'react-dom';
-import { Bot, Loader2, Send, User, ShieldAlert } from 'lucide-react';
+import { Eye, Loader2, Send, User, ShieldAlert } from 'lucide-react';
 import { submitAurumMessage } from '@/app/actions/chat';
 import { type ChatMessage } from '@/lib/ai/types';
 import { Button } from '@/components/ui/button';
@@ -121,10 +121,10 @@ export function AurumChat({ prompt }: { prompt?: string }) {
     <Card className="w-full max-w-3xl h-[85vh] flex flex-col shadow-2xl shadow-stone-200/50">
       <CardHeader className="border-b">
         <CardTitle className="font-headline text-2xl flex items-center gap-3">
-          <Bot className="text-amber-600" />
+          <Eye className="text-amber-600" />
           <span>Discuter avec Aurum</span>
         </CardTitle>
-        <CardDescription>Votre confident IA pour une introspection guidée.</CardDescription>
+        <CardDescription>Votre confident pour une introspection guidée.</CardDescription>
         {prompt && (
           <div className="mt-2 rounded-md border bg-amber-50/60 px-3 py-2 text-sm text-amber-900">
             <span className="font-medium">Question‑miroir :</span> {prompt}

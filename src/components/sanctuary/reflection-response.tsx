@@ -8,7 +8,7 @@
  */
 
 import { motion } from 'framer-motion';
-import { Sparkles } from 'lucide-react';
+import { Eye } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface ReflectionResponseProps {
@@ -43,7 +43,7 @@ export function ReflectionResponse({
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">
           <div className="p-2 rounded-full bg-amber-100/60">
-            <Sparkles className="h-4 w-4 text-amber-600" />
+            <Eye className="h-4 w-4 text-amber-600" />
           </div>
           <h3 className="font-headline text-xl text-stone-900">Reflet</h3>
         </div>

@@ -76,7 +76,7 @@ export default function SignupPage() {
         try {
             const name = email.split('@')[0];
             await signUpWithEmail(email, password, name);
-            router.push('/dashboard');
+            router.push('/login?check_email=1');
         } catch (error) {
             // Error toast shown by AuthProvider
         } finally {
@@ -229,6 +229,9 @@ export default function SignupPage() {
                         <Button type="submit" className="w-full" disabled={loading}>
                             {loading ? 'Création...' : 'Créer un compte'}
                         </Button>
+                        <p className="text-xs text-muted-foreground text-center">
+                            Un email de vérification vous sera envoyé pour activer votre compte.
+                        </p>
                     </form>
                 </CardContent>
                 <CardFooter className="flex justify-center">

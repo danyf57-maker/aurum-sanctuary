@@ -5,6 +5,7 @@ import {
   User,
   onAuthStateChanged,
   sendPasswordResetEmail,
+  sendEmailVerification,
   signInWithPopup,
   GoogleAuthProvider,
   signInWithEmailAndPassword,
@@ -41,6 +42,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [termsAccepted, setTermsAccepted] = useState<boolean | null>(null);
   const { toast } = useToast();
+
+  const getEmailVerificationSettings = () => {
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
+    return {
+      url: `${appUrl}/verify-email`,
+      handleCodeInApp: true,
+    };
+  };
 
   useEffect(() => {
     logger.infoSafe('AuthProvider mounted');
@@ -179,14 +188,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signInWithEmail = async (e: string, p: string) => {
     try {
-      await signInWithEmailAndPassword(firebaseAuth, e, p);
+      const cred = await signInWithEmailAndPassword(firebaseAuth, e, p);
+      if (!cred.user.emailVerified) {
+        await sendEmailVerification(cred.user, getEmailVerificationSettings());
+        await signOut(firebaseAuth);
+        toast({
+          title: "Email non vérifié",
+          description: "Nous venons de renvoyer un email de vérification. Vérifiez votre boîte de réception.",
+          variant: "destructive",
+        });
+        throw new Error("EMAIL_NOT_VERIFIED");
+      }
     } catch (error) {
       logger.errorSafe('Email Sign In Failed', error);
-      toast({
-        title: "Erreur de connexion",
-        description: "Email ou mot de passe incorrect.",
-        variant: "destructive",
-      });
+      if ((error as Error)?.message !== "EMAIL_NOT_VERIFIED") {
+        toast({
+          title: "Erreur de connexion",
+          description: "Email ou mot de passe incorrect.",
+          variant: "destructive",
+        });
+      }
       throw error;
     }
   };
@@ -195,6 +216,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const cred = await createUserWithEmailAndPassword(firebaseAuth, e, p);
       await updateProfile(cred.user, { displayName: name });
+      await sendEmailVerification(cred.user, getEmailVerificationSettings());
+      await signOut(firebaseAuth);
+      toast({
+        title: "Vérifiez votre email",
+        description: "Un message de vérification vient d'être envoyé.",
+      });
     } catch (error) {
       logger.errorSafe('Sign Up Failed', error);
       toast({

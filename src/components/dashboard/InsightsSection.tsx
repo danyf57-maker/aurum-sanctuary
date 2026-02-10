@@ -8,7 +8,7 @@ import { UserProfile } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BrainCircuit, Lightbulb, Loader2, Target } from "lucide-react";
+import { Compass, Lightbulb, Loader2, Target, Waves } from "lucide-react";
 
 interface InsightsSectionProps {
     user: UserProfile;
@@ -18,8 +18,8 @@ function SubmitButton() {
     const { pending } = useFormStatus();
     return (
         <Button type="submit" disabled={pending}>
-            {pending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <BrainCircuit className="mr-2 h-4 w-4" />}
-            {pending ? "Analyse en cours..." : "Actualiser mes insights"}
+            {pending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Compass className="mr-2 h-4 w-4" />}
+            {pending ? "Analyse en cours..." : "Actualiser mes reflets"}
         </Button>
     );
 }
@@ -49,13 +49,13 @@ export function InsightsSection({ user }: InsightsSectionProps) {
 
     const formattedDate = insights?.lastUpdatedAt
         ? `Dernière mise à jour le ${new Intl.DateTimeFormat('fr-FR', { dateStyle: 'long', timeStyle: 'short' }).format(new Date(insights.lastUpdatedAt))}`
-        : "Générez vos premiers insights pour commencer.";
+        : "Générez vos premiers reflets pour commencer.";
 
     return (
         <section>
             <Card>
                 <CardHeader>
-                    <CardTitle className="font-headline text-2xl">Vos Insights IA</CardTitle>
+                    <CardTitle className="font-headline text-2xl">Vos reflets</CardTitle>
                     <CardDescription>{formattedDate}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
@@ -72,7 +72,7 @@ export function InsightsSection({ user }: InsightsSectionProps) {
                             </div>
                             <div className="flex items-start gap-4">
                                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                                    <BrainCircuit className="w-5 h-5 text-blue-700" />
+                                    <Waves className="w-5 h-5 text-blue-700" />
                                 </div>
                                 <div>
                                     <h4 className="font-semibold text-stone-800">Schémas Récurrents</h4>
@@ -91,8 +91,8 @@ export function InsightsSection({ user }: InsightsSectionProps) {
                         </div>
                     ) : (
                         <div className="text-center py-8 text-muted-foreground">
-                            <p>Les insights vous aident à prendre du recul sur vos écrits.</p>
-                            <p>Cliquez sur le bouton pour générer votre première analyse.</p>
+                            <p>Les reflets vous aident à prendre du recul sur vos écrits.</p>
+                            <p>Cliquez sur le bouton pour générer votre premier reflet.</p>
                         </div>
                     )}
 

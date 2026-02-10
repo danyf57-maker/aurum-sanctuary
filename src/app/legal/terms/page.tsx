@@ -20,7 +20,7 @@ export default function TermsOfServicePage() {
         <div className="prose prose-lg prose-stone font-body mx-auto">
           <h2>1. Objet du service</h2>
           <p>
-            Aurum est une application de journal intime assisté par une intelligence artificielle (IA), conçue comme un outil d'introspection personnelle. Le service est fourni à titre de démonstration et "en l'état", sans garantie de disponibilité ou de performance.
+            Aurum est une application de journal intime conçue comme un outil d'introspection personnelle. Le service est fourni à titre de démonstration et "en l'état", sans garantie de disponibilité ou de performance.
           </p>
 
           <h2>2. Accès et Compte Utilisateur</h2>
@@ -30,12 +30,12 @@ export default function TermsOfServicePage() {
             
           <h2>3. Contenu de l'utilisateur</h2>
           <p>
-            Vous conservez l'entière propriété intellectuelle du contenu que vous créez sur Aurum. En utilisant le service, vous nous accordez une licence limitée, non-exclusive et mondiale, uniquement dans le but de vous fournir le service (stockage, affichage, analyse IA pour vos propres insights). Nous ne revendiquons aucun droit sur votre contenu.
+            Vous conservez l'entière propriété intellectuelle du contenu que vous créez sur Aurum. En utilisant le service, vous nous accordez une licence limitée, non-exclusive et mondiale, uniquement dans le but de vous fournir le service (stockage, affichage, analyse par le moteur Aurum pour vos propres insights). Nous ne revendiquons aucun droit sur votre contenu.
           </p>
 
-          <h2>4. Utilisation de l'Intelligence Artificielle</h2>
+          <h2>4. Analyse et Reflets</h2>
           <p>
-            Aurum utilise une IA pour analyser vos entrées et vous fournir des insights. Ces analyses sont générées automatiquement et ne doivent pas être considérées comme des conseils médicaux, psychologiques ou professionnels. Elles sont un outil de réflexion et non un diagnostic. Vous reconnaissez que les réponses de l'IA peuvent parfois être imprécises ou non pertinentes.
+            Aurum utilise un moteur d'analyse pour vous fournir des insights. Ces reflets sont générés automatiquement et ne doivent pas être considérés comme des conseils médicaux, psychologiques ou professionnels. Ils sont un outil de réflexion et non un diagnostic. Vous reconnaissez que ces réponses peuvent parfois être imprécises ou non pertinentes.
           </p>
             
           <h2>5. Propriété Intellectuelle d'Aurum</h2>

@@ -28,7 +28,7 @@ export default function TermsPage() {
                     <section>
                         <h2 className="text-2xl font-serif mt-6">2. Description du Service</h2>
                         <p>
-                            Aurum Sanctuary est un service de journalisation de santé mentale assisté par intelligence artificielle. Nous fournissons des outils pour capturer vos pensées, analyser vos émotions et générer des réflexions basées sur vos entrées.
+                            Aurum Sanctuary est un service de journalisation de santé mentale. Nous fournissons des outils pour capturer vos pensées, analyser vos émotions et générer des reflets basés sur vos entrées.
                         </p>
                     </section>
 
@@ -40,7 +40,7 @@ export default function TermsPage() {
                         <ul>
                             <li><strong>Chiffrement Client :</strong> Vos entrées de journal sont chiffrées sur votre appareil avant d'être envoyées à nos serveurs.</li>
                             <li><strong>Architecture Admin-Blind :</strong> Nous utilisons des mécanismes qui empêchent nos administrateurs d'accéder à la clé de déchiffrement de vos données.</li>
-                            <li><strong>Traitement IA :</strong> L'analyse par IA est effectuée dans un environnement sécurisé où vos données sont temporairement déchiffrées uniquement pour le traitement, sans stockage persistant du contenu en clair.</li>
+                            <li><strong>Traitement :</strong> L'analyse par le moteur Aurum est effectuée dans un environnement sécurisé où vos données sont temporairement déchiffrées uniquement pour le traitement, sans stockage persistant du contenu en clair.</li>
                         </ul>
                     </section>
 
@@ -62,7 +62,7 @@ export default function TermsPage() {
                             IMPORTANT : Aurum Sanctuary n'est pas un service médical ou de santé mentale professionnel.
                         </p>
                         <p>
-                            Le contenu généré par l'IA et les outils de l'Application sont destinés à des fins de réflexion personnelle et de bien-être général. Ils ne remplacent pas les conseils, le diagnostic ou le traitement d'un professionnel de santé. Si vous êtes en situation de crise ou avez besoin d'aide médicale, contactez immédiatement un professionnel qualifié ou les services d'urgence.
+                            Le contenu généré par le moteur Aurum et les outils de l'Application sont destinés à des fins de réflexion personnelle et de bien-être général. Ils ne remplacent pas les conseils, le diagnostic ou le traitement d'un professionnel de santé. Si vous êtes en situation de crise ou avez besoin d'aide médicale, contactez immédiatement un professionnel qualifié ou les services d'urgence.
                         </p>
                     </section>
 

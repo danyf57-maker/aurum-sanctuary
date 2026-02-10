@@ -10,6 +10,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { signInWithGoogle } from '@/lib/firebase/auth';
 
@@ -66,6 +67,9 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
           >
             {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <GoogleIcon className="mr-2" />}
             Se connecter avec Google
+          </Button>
+          <Button asChild variant="ghost" className="w-full">
+            <Link href="/login">Continuer avec email</Link>
           </Button>
         </div>
       </DialogContent>

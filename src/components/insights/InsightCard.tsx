@@ -10,7 +10,7 @@ import { useState } from 'react';
 import { doc, updateDoc } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/web-client';
 import { useAuth } from '@/providers/auth-provider';
-import { ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
+import { ChevronDown, ChevronUp, Eye } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface InsightCardProps {
@@ -66,13 +66,13 @@ export function InsightCard({ insight, isPremium, onShowPaywall }: InsightCardPr
                 className="w-full p-6 flex items-center justify-between text-left hover:bg-[#F5F5DC]/80 transition-colors"
             >
                 <div className="flex items-center gap-4 flex-1">
-                    <Sparkles
+                    <Eye
                         className={`w-6 h-6 ${status === 'ready' ? 'text-[#D4AF37]' : 'text-[#8B4513] opacity-50'}`}
                     />
                     <div>
                         <div className="flex items-center gap-2">
                             <h3 className="font-serif text-lg text-[#8B4513]">
-                                Weekly Insight
+                                Reflet hebdomadaire
                             </h3>
                             {status === 'ready' && (
                                 <span className="px-2 py-0.5 bg-[#D4AF37] text-white text-xs rounded-full">
@@ -113,8 +113,8 @@ export function InsightCard({ insight, isPremium, onShowPaywall }: InsightCardPr
                                 }}
                                 className="mt-4 text-[#D4AF37] font-medium hover:underline flex items-center gap-1"
                             >
-                                <Sparkles className="w-4 h-4" />
-                                Unlock full insight
+                                <Eye className="w-4 h-4" />
+                                Déverrouiller le reflet complet
                             </button>
                         )}
                     </div>

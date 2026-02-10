@@ -10,7 +10,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
-import { ImagePlus, Loader2, Sparkles, UploadCloud, X } from 'lucide-react';
+import { ImagePlus, Loader2, Eye, UploadCloud, X } from 'lucide-react';
 import { useAuth } from '@/providers/auth-provider';
 import { saveJournalEntry, type FormState } from '@/app/actions';
 import { Button } from '@/components/ui/button';
@@ -51,6 +51,7 @@ export function PremiumJournalForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [savedContent, setSavedContent] = useState('');
+  const [savedEntryId, setSavedEntryId] = useState<string | null>(null);
   const [draftContent, setDraftContent] = useState('');
   const [draftImages, setDraftImages] = useState<DraftImage[]>([]);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
@@ -264,6 +265,7 @@ export function PremiumJournalForm() {
       if (!result.errors && !result.message) {
         // Success
         setSavedContent(content);
+        setSavedEntryId(result.entryId || null);
         setIsSaved(true);
         setReflection(null); // Reset reflection
         setIsActivelyTyping(false);
@@ -306,7 +308,7 @@ export function PremiumJournalForm() {
     }
   };
 
-  const requestAurumReflection = async (content: string) => {
+  const requestAurumReflection = async (content: string, options?: { entryId?: string | null; userMessage?: string }) => {
     if (!user) {
       throw new Error('Connexion requise.');
     }
@@ -318,6 +320,8 @@ export function PremiumJournalForm() {
         body: JSON.stringify({
           content,
           idToken,
+          entryId: options?.entryId || undefined,
+          userMessage: options?.userMessage,
         }),
       });
 
@@ -347,7 +351,7 @@ export function PremiumJournalForm() {
 
     setIsGeneratingReflection(true);
     try {
-      const data = await requestAurumReflection(savedContent);
+      const data = await requestAurumReflection(savedContent, { entryId: savedEntryId });
       const firstReflection = {
         text: data.reflection,
         patternsUsed: data.patterns_used || 0,
@@ -402,7 +406,10 @@ export function PremiumJournalForm() {
         `Réponds à l'utilisateur dans la continuité de l'échange.`,
       ].join('\n');
 
-      const data = await requestAurumReflection(conversationalInput);
+      const data = await requestAurumReflection(conversationalInput, {
+        entryId: savedEntryId,
+        userMessage: prompt,
+      });
       setConversationTurns((prev) => [
         ...prev,
         {
@@ -426,6 +433,7 @@ export function PremiumJournalForm() {
   const handleNewEntry = () => {
     setIsSaved(false);
     setSavedContent('');
+    setSavedEntryId(null);
     setDraftContent('');
     setDraftImages([]);
     setReflection(null);
@@ -680,7 +688,7 @@ export function PremiumJournalForm() {
                         size="lg"
                         className="bg-gradient-to-r from-amber-600 to-amber-700 text-white hover:from-amber-700 hover:to-amber-800 px-8 rounded-xl shadow-lg"
                       >
-                        <Sparkles className="mr-2 h-5 w-5" />
+                        <Eye className="mr-2 h-5 w-5" />
                         Recevoir un reflet
                       </Button>
                     </motion.div>

@@ -41,7 +41,7 @@ export default function PrivacyPage() {
                         </p>
                         <ul>
                             <li>Fournir et améliorer les fonctionnalités de l'Application.</li>
-                            <li>Générer des réflexions personnalisées via notre IA (traitement éphémère).</li>
+                            <li>Générer des réflexions personnalisées via le moteur Aurum (traitement éphémère).</li>
                             <li>Gérer votre abonnement et vos préférences.</li>
                         </ul>
                     </section>
@@ -54,7 +54,7 @@ export default function PrivacyPage() {
                         <ol>
                             <li><strong>Chiffrement Fort :</strong> Utilisation d'algorithmes standard de l'industrie (AES-256).</li>
                             <li><strong>Admin-Blind :</strong> Les administrateurs système ne peuvent pas déchiffrer votre contenu. Les clés de déchiffrement sont gérées par des services de gestion de clés (KMS) avec des politiques d'accès strictes.</li>
-                            <li><strong>Traitement Éphémère :</strong> Lors de l'analyse par l'IA, le texte est déchiffré uniquement en mémoire vive (RAM) et n'est jamais écrit sur disque en clair.</li>
+                            <li><strong>Traitement Éphémère :</strong> Lors de l'analyse par le moteur Aurum, le texte est déchiffré uniquement en mémoire vive (RAM) et n'est jamais écrit sur disque en clair.</li>
                         </ol>
                     </section>
 

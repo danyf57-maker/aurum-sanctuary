@@ -1,7 +1,7 @@
 /**
  * Typing Indicator Component
  * 
- * Animated dots indicator shown while AI is processing.
+ * Animated dots indicator shown while Aurum is processing.
  * Must appear <400ms after user sends message.
  */
 

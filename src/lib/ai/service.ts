@@ -8,11 +8,12 @@ export class AurumAIService {
     private conversationHistory: ChatMessage[];
     private readonly constitution: string;
 
-    constructor(history: ChatMessage[] = []) {
+    constructor(history: ChatMessage[] = [], skillPrompt?: string) {
         this.constitution = AURUM_CONSTITUTION;
         // On s'assure que la constitution est toujours le premier message système
         this.conversationHistory = [
             { role: MessageRole.System, content: this.constitution },
+            ...(skillPrompt ? [{ role: MessageRole.System, content: skillPrompt }] : []),
             ...history
         ];
     }

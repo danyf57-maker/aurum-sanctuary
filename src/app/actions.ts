@@ -65,6 +65,7 @@ export type FormState = {
     insight?: string[];
   };
   isFirstEntry?: boolean;
+  entryId?: string;
 };
 
 export type EntryMutationState = {
@@ -233,6 +234,7 @@ export async function saveJournalEntry(
     };
   }
   let isFirstEntry = false;
+  let entryId: string | undefined;
   let userEmail = '';
 
   try {
@@ -265,6 +267,7 @@ export async function saveJournalEntry(
     if (!entryResult.id) {
       throw new Error("ID d'entrée manquant après sauvegarde.");
     }
+    entryId = entryResult.id;
 
     // Build magazine card data (cover + excerpt) for gallery-style browsing
     const coverImageUrl = parsedImages[0]?.url || null;
@@ -313,7 +316,7 @@ export async function saveJournalEntry(
   }
 
   // No redirect, component will handle UI changes
-  return { isFirstEntry: isFirstEntry };
+  return { isFirstEntry: isFirstEntry, entryId };
 }
 
 export async function generateUserInsights() {

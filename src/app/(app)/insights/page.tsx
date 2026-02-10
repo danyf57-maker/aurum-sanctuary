@@ -10,7 +10,7 @@ import { useSubscription } from '@/hooks/useSubscription';
 import { InsightCard } from '@/components/insights/InsightCard';
 import { PaywallModal } from '@/components/paywall/PaywallModal';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Sparkles, Crown, BrainCircuit, TrendingUp, PieChart } from 'lucide-react';
+import { Crown, TrendingUp, PieChart, Compass, Eye } from 'lucide-react';
 import { MoodTrendsChart } from '@/components/stats/mood-trends-chart';
 import { SentimentPieChart } from '@/components/stats/sentiment-pie-chart';
 import { SentimentChart } from '@/components/journal/sentiment-chart';
@@ -92,10 +92,10 @@ export default function InsightsPage() {
             <header className="mb-12 flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
                     <h1 className="text-4xl font-bold font-headline tracking-tight text-stone-900">
-                        L'Écho IA
+                        L'Écho Aurum
                     </h1>
                     <p className="text-stone-500 mt-2 font-medium">
-                        Analyse approfondie de vos schémas émotionnels et cognitifs.
+                        Perspective approfondie sur vos schémas émotionnels et cognitifs.
                     </p>
                 </div>
                 {isPremium && (
@@ -144,10 +144,10 @@ export default function InsightsPage() {
                     </motion.div>
                 </section>
 
-                {/* 2. Weekly Insights (AI Synthesis) */}
+                {/* 2. Weekly Insights (Synthesis) */}
                 <section className="space-y-8">
                     <div className="flex items-center gap-2 text-stone-400">
-                        <BrainCircuit className="h-4 w-4" />
+                        <Compass className="h-4 w-4" />
                         <h2 className="text-xs font-bold uppercase tracking-[0.2em]">Synthèses Hebdomadaires</h2>
                     </div>
 
@@ -171,10 +171,10 @@ export default function InsightsPage() {
                         </div>
                     ) : (
                         <div className="bg-stone-50 border-2 border-dashed border-stone-200 rounded-2xl p-12 text-center">
-                            <Sparkles className="w-12 h-12 text-stone-300 mx-auto mb-4" />
+                            <Eye className="w-12 h-12 text-stone-300 mx-auto mb-4" />
                             <h3 className="text-lg font-bold text-stone-400">En attente de données</h3>
                             <p className="text-stone-400 text-sm mt-2 max-w-md mx-auto">
-                                Continuez à écrire pendant 7 jours pour que l'IA puisse générer votre première synthèse hebdomadaire.
+                                Continuez à écrire pendant 7 jours pour générer votre première synthèse hebdomadaire.
                             </p>
                         </div>
                     )}

@@ -1,7 +1,7 @@
 /**
  * Reflection API Route
  *
- * Premium feature: AI reflection with pattern-informed depth.
+ * Premium feature: guided reflection with pattern-informed depth.
  * - Detects patterns in content
  * - Injects max 2 patterns into context
  * - Generates reflection with anti-meta safeguards
@@ -9,7 +9,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/firebase/admin';
+import { auth, db } from '@/lib/firebase/admin';
+import { Timestamp } from 'firebase-admin/firestore';
 import { logger } from '@/lib/logger/safe';
 import { getUserPatterns, batchUpdatePatterns, cleanupStalePatterns } from '@/lib/patterns/storage';
 import { detectPatterns, detectionToStorageFormat } from '@/lib/patterns/detect';
@@ -19,16 +20,12 @@ import {
   PSYCHOLOGIST_ANALYST_SYSTEM_PROMPT,
 } from '@/lib/skills/psychologist-analyst';
 import {
-  UX_PSYCHOLOGY_SKILL_ID,
-  UX_PSYCHOLOGY_SYSTEM_PROMPT,
-} from '@/lib/skills/ux-psychology';
-import {
   containsMetaReference,
   validateResponse,
   getCorrectionPrompt,
 } from '@/lib/patterns/anti-meta';
 
-type AurumIntent = 'reflection' | 'conversation' | 'analysis' | 'action' | 'ux_psychology';
+type AurumIntent = 'reflection' | 'conversation' | 'analysis' | 'action';
 
 /**
  * System prompt for reflection (with implicit pattern awareness)
@@ -51,6 +48,7 @@ Ton ton :
 - Jamais directif ("Comment peux-tu...", "As-tu pensé à...")
 - Jamais performatif (metrics, objectifs, plans d'action)
 - Toujours présent, doux, ouvert
+- Précis et incarné (pas de généralités)
 
 Exemples de ce que tu DOIS faire :
 ✅ "Si cette tension avait une couleur, peut-être serait-elle..."
@@ -61,13 +59,20 @@ Exemples de ce que tu NE DOIS JAMAIS faire :
 ❌ "Je reconnais ce pattern qui revient souvent"
 ❌ "Comment peux-tu améliorer cette situation ?"
 ❌ "As-tu pensé à essayer..."
+❌ "C'est normal de se sentir ainsi."
+❌ "Vous n'êtes pas seul."
 
 Interdictions lexicales STRICTES (tu seras corrigé si tu les utilises) :
-"je reconnais", "déjà", "avant", "souvent", "d'habitude", "encore", "la semaine dernière", "comme les autres fois", "récurrent"
+"je reconnais", "déjà", "avant", "souvent", "d'habitude", "encore", "la semaine dernière", "comme les autres fois", "récurrent", "c'est normal", "tu n'es pas seul", "vous n'êtes pas seul"
 
 Règle d'or : parle du PRÉSENT. Utilise le conditionnel pour les nuances ("il y a peut-être...").
 
-Ta réponse doit faire entre 2 et 4 phrases courtes. Pas de paragraphes longs.`;
+Structure attendue (obligatoire) :
+1) Une phrase qui nomme la matière exacte du texte (une image, un contraste, un geste).
+2) Une phrase qui ouvre un angle neuf, sans diriger.
+3) Optionnel : une question ouverte unique (max 1).
+
+Ta réponse doit faire entre 3 et 5 phrases courtes. Pas de paragraphes longs.`;
 
 const CONVERSATION_SYSTEM_PROMPT = `Tu es Aurum en mode dialogue.
 
@@ -94,9 +99,6 @@ Contraintes:
 
 function detectAurumIntent(content: string): AurumIntent {
   const text = content.toLowerCase();
-  if (/(ux|ui|landing|onboarding|pricing|cta|conversion|funnel|hero section|social proof|hick|cognitive load|goal gradient|dark pattern)/.test(text)) {
-    return 'ux_psychology';
-  }
   if (/(que faire|que puis-je faire|plan|prochaine etape|prochaine étape|action|aide moi a agir|aide-moi a agir)/.test(text)) {
     return 'action';
   }
@@ -110,7 +112,6 @@ function detectAurumIntent(content: string): AurumIntent {
 }
 
 function getSystemPromptForIntent(intent: AurumIntent): string {
-  if (intent === 'ux_psychology') return UX_PSYCHOLOGY_SYSTEM_PROMPT;
   if (intent === 'conversation') return CONVERSATION_SYSTEM_PROMPT;
   if (intent === 'analysis') return ANALYSIS_SYSTEM_PROMPT;
   if (intent === 'action') return ACTION_SYSTEM_PROMPT;
@@ -118,9 +119,25 @@ function getSystemPromptForIntent(intent: AurumIntent): string {
 }
 
 function getSkillIdForIntent(intent: AurumIntent): string | null {
-  if (intent === 'ux_psychology') return UX_PSYCHOLOGY_SKILL_ID;
   if (intent === 'analysis') return PSYCHOLOGIST_ANALYST_SKILL_ID;
   return null;
+}
+
+function isLowQualityReflection(text: string): boolean {
+  const trimmed = text.trim();
+  const sentenceCount = trimmed.split(/[.!?]+/).filter(Boolean).length;
+  if (trimmed.length < 180 || sentenceCount < 3) return true;
+  const genericPhrases = [
+    "c'est normal",
+    "tu n'es pas seul",
+    "vous n'êtes pas seul",
+    "prends soin de toi",
+    "respire",
+    "sois bienveillant",
+    "ça va aller",
+  ];
+  const lowered = trimmed.toLowerCase();
+  return genericPhrases.some((phrase) => lowered.includes(phrase));
 }
 
 /**
@@ -129,7 +146,7 @@ function getSkillIdForIntent(intent: AurumIntent): string | null {
  */
 export async function POST(request: NextRequest) {
   try {
-    const { content, idToken } = await request.json();
+    const { content, idToken, entryId, userMessage } = await request.json();
 
     if (!content) {
       return NextResponse.json({ error: 'Le contenu est requis' }, { status: 400 });
@@ -248,7 +265,7 @@ export async function POST(request: NextRequest) {
     if (!reflectionText) {
       logger.errorSafe('Empty reflection from DeepSeek');
       return NextResponse.json(
-        { error: 'Réponse vide du service d\'IA' },
+        { error: 'Réponse vide du service Aurum' },
         { status: 500 }
       );
     }
@@ -307,6 +324,47 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Quality gate for first reflection (and general responses)
+    if (isLowQualityReflection(reflectionText)) {
+      logger.warnSafe('Low-quality reflection detected, regenerating', { userId });
+      const regenerateMessages = [
+        {
+          role: 'system',
+          content: getSystemPromptForIntent(intent),
+        },
+        {
+          role: 'system',
+          content: "Ta réponse précédente était trop générique. Recommence avec une image précise, un contraste clair et une ouverture subtile. Minimum 3 phrases courtes.",
+        },
+        {
+          role: 'user',
+          content: content,
+        },
+      ];
+
+      const retryResponse = await fetch('https://api.deepseek.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: 'deepseek-chat',
+          messages: regenerateMessages,
+          temperature: 0.7,
+          max_tokens: 320,
+        }),
+      });
+
+      if (retryResponse.ok) {
+        const retryData = await retryResponse.json();
+        const retryText = retryData.choices?.[0]?.message?.content;
+        if (retryText && !isLowQualityReflection(retryText)) {
+          reflectionText = retryText;
+        }
+      }
+    }
+
     // 8. Update patterns in background (non-blocking)
     if (detectionResult) {
       const storageFormat = detectionToStorageFormat(detectionResult);
@@ -317,6 +375,34 @@ export async function POST(request: NextRequest) {
       // Cleanup stale patterns (fire and forget)
       cleanupStalePatterns(userId).catch(() => {
         // Silent fail, non-critical
+      });
+    }
+
+    // Persist conversation turns when entryId is available
+    if (entryId && typeof entryId === 'string') {
+      const conversationRef = db
+        .collection('users')
+        .doc(userId)
+        .collection('entries')
+        .doc(entryId)
+        .collection('aurumConversation');
+
+      if (userMessage && typeof userMessage === 'string') {
+        await conversationRef.add({
+          role: 'user',
+          text: userMessage.trim(),
+          createdAt: Timestamp.now(),
+          intent,
+          skillId,
+        });
+      }
+
+      await conversationRef.add({
+        role: 'aurum',
+        text: reflectionText,
+        createdAt: Timestamp.now(),
+        intent,
+        skillId,
       });
     }
 

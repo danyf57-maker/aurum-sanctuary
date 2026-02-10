@@ -10,6 +10,7 @@ import { checkRateLimit } from '@/lib/ratelimit';
 import { logAuditEvent } from '@/lib/audit';
 import { auth } from 'firebase-admin';
 import { logger } from '@/lib/logger/safe';
+import { PSYCHOLOGIST_ANALYST_SYSTEM_PROMPT } from '@/lib/skills/psychologist-analyst';
 
 async function getUserIdFromToken(token: string | null): Promise<string | null> {
     if (!token) return null;
@@ -72,9 +73,18 @@ export async function submitAurumMessage(
         };
     }
 
-    // 2. Logique de l'IA
+    // 2. Logique d'Aurum
+    const detectSkillPrompt = (text: string): string | undefined => {
+        const lowered = text.toLowerCase();
+        if (/(analyse|analyse-moi|clarifie|clarifier|comprendre|pourquoi)/.test(lowered)) {
+            return PSYCHOLOGIST_ANALYST_SYSTEM_PROMPT;
+        }
+        return undefined;
+    };
+
     const chatHistory = (history || []) as ChatMessage[];
-    const aurumService = new AurumAIService(chatHistory);
+    const skillPrompt = detectSkillPrompt(message);
+    const aurumService = new AurumAIService(chatHistory, skillPrompt);
 
     try {
         const response = await aurumService.generateResponse(message);

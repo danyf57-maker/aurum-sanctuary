@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { JournalEntry } from "@/lib/types";
 import { motion } from "framer-motion";
-import { Sparkles, Activity, ShieldCheck } from "lucide-react";
+import { Activity, ShieldCheck, Waves } from "lucide-react";
 
 type ClarityScoreCardProps = {
   entries: JournalEntry[];
@@ -47,7 +47,7 @@ export function ClarityScoreCard({ entries }: ClarityScoreCardProps) {
   return (
     <Card className="relative overflow-hidden border-none bg-stone-900 text-stone-50 shadow-2xl">
       <div className="absolute top-0 right-0 p-8 opacity-10">
-        <Sparkles className="h-32 w-32" />
+        <Waves className="h-32 w-32" />
       </div>
       
       <CardContent className="p-8">

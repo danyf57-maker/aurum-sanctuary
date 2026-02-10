@@ -1,7 +1,7 @@
 /**
  * Mirror Chat API Route (Vercel Edge Runtime)
  * 
- * Provides streaming AI responses for Mirror Chat using DeepSeek LLM.
+ * Provides streaming responses for Mirror Chat using DeepSeek LLM.
  * Enforces authentication, rate limiting, and safe logging.
  */
 
@@ -111,7 +111,7 @@ export async function POST(req: NextRequest) {
         // User-friendly error message
         const errorMessage = error instanceof Error
             ? (error.message.includes('timeout')
-                ? 'The AI is taking too long to respond. Please try again.'
+                ? 'Aurum met trop de temps à répondre. Veuillez réessayer.'
                 : 'Something went wrong. Please try again.')
             : 'An unexpected error occurred.';
 

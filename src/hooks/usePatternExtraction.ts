@@ -28,7 +28,7 @@ export function usePatternExtraction() {
     /**
      * Simple keyword-based emotion detection
      * 
-     * For V1, we use keyword matching. V2 can use AI for better accuracy.
+     * For V1, we use keyword matching. V2 can use deeper patterning for better accuracy.
      */
     const detectEmotionLabels = (text: string): string[] => {
         const lowerText = text.toLowerCase();

@@ -27,14 +27,18 @@ function LoginForm() {
     const searchParams = useSearchParams();
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+    const [info, setInfo] = useState<string | null>(null);
 
     // Get redirect URL from query params, default to /dashboard
     const redirectUrl = searchParams.get('redirect') || '/dashboard';
+    const verified = searchParams.get('verified');
+    const checkEmail = searchParams.get('check_email');
 
     const handleEmailLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setErrors({});
         setLoading(true);
+        setInfo(null);
 
         const formData = new FormData(e.currentTarget);
         const email = formData.get('email') as string;
@@ -58,6 +62,9 @@ function LoginForm() {
             router.push(redirectUrl);
         } catch (error) {
             // Error toast shown by AuthProvider
+            if ((error as Error)?.message === 'EMAIL_NOT_VERIFIED') {
+                setInfo("Votre email n'est pas encore vérifié. Nous venons de renvoyer un message.");
+            }
         } finally {
             setLoading(false);
         }
@@ -96,6 +103,21 @@ function LoginForm() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                    {verified && (
+                        <div className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
+                            Email vérifié. Vous pouvez vous connecter.
+                        </div>
+                    )}
+                    {checkEmail && (
+                        <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+                            Un email de vérification vient d'être envoyé. Merci de vérifier votre boîte de réception.
+                        </div>
+                    )}
+                    {info && (
+                        <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+                            {info}
+                        </div>
+                    )}
                     {/* Google OAuth Button */}
                     <Button
                         type="button"

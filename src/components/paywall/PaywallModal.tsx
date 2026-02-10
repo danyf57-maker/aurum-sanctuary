@@ -11,7 +11,7 @@ import { useState } from 'react';
 import { useAuth } from '@/providers/auth-provider';
 import { getStripe } from '@/lib/stripe/client';
 import { Button } from '@/components/ui/button';
-import { Sparkles, X, Loader2 } from 'lucide-react';
+import { Compass, X, Loader2 } from 'lucide-react';
 
 interface PaywallModalProps {
     isOpen: boolean;
@@ -83,7 +83,7 @@ export function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
                 {/* Icon */}
                 <div className="flex justify-center mb-6">
                     <div className="w-16 h-16 rounded-full bg-[#D4AF37]/10 flex items-center justify-center">
-                        <Sparkles className="w-8 h-8 text-[#D4AF37]" />
+                        <Compass className="w-8 h-8 text-[#D4AF37]" />
                     </div>
                 </div>
 

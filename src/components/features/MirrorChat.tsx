@@ -1,7 +1,7 @@
 /**
  * Mirror Chat Component
  * 
- * Main UI for Mirror Chat - reflective listening AI.
+ * Main UI for Mirror Chat - reflective listening.
  * Minimized by default, expandable on click.
  */
 

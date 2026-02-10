@@ -8,7 +8,7 @@ import { getEntries } from '@/lib/firebase/firestore';
 import { JournalEntry } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { ShieldAlert, PenSquare, ArrowRight, Sparkles } from 'lucide-react';
+import { ShieldAlert, PenSquare, ArrowRight, Eye } from 'lucide-react';
 import { StatsSummaryCards } from '@/components/stats/stats-summary-cards';
 import { EntryHeatmap } from '@/components/stats/entry-heatmap';
 import { ClarityScoreCard } from '@/components/dashboard/clarity-score-card';
@@ -111,7 +111,7 @@ export default function DashboardPage() {
                 </motion.div>
 
                 <div className="grid gap-8 md:grid-cols-12">
-                    {/* 2. Last AI Insight (L'Écho) */}
+                    {/* 2. Last Insight (L'Écho) */}
                     <motion.div 
                         className="md:col-span-8"
                         initial={{ opacity: 0, x: -20 }}
@@ -122,9 +122,9 @@ export default function DashboardPage() {
                             <LastInsightCard entry={lastEntryWithAnalysis} />
                         ) : (
                             <div className="h-full rounded-2xl border-2 border-dashed border-stone-200 flex flex-col items-center justify-center p-8 text-center bg-stone-50">
-                                <Sparkles className="h-8 w-8 text-stone-300 mb-4" />
+                                <Eye className="h-8 w-8 text-stone-300 mb-4" />
                                 <h3 className="font-bold text-stone-400">Aucun Écho</h3>
-                                <p className="text-sm text-stone-400 mt-1 max-w-[200px]">Écrivez pour recevoir une analyse de l'IA.</p>
+                                <p className="text-sm text-stone-400 mt-1 max-w-[200px]">Écrivez pour recevoir un reflet d'Aurum.</p>
                             </div>
                         )}
                     </motion.div>

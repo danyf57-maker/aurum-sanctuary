@@ -1,8 +1,8 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2, Sparkles, Trash2 } from 'lucide-react';
+import { Eye, Loader2, Trash2 } from 'lucide-react';
 import { updateJournalEntry, deleteJournalEntry } from '@/app/actions';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -10,12 +10,21 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/providers/auth-provider';
 import { ReflectionResponse } from './reflection-response';
+import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
+import { firestore as clientDb } from '@/lib/firebase/web-client';
 
 type EntryImage = {
   id: string;
   url: string;
   caption?: string;
   name?: string;
+};
+
+type ConversationTurn = {
+  id: string;
+  role: 'user' | 'aurum';
+  text: string;
+  createdAt?: Date;
 };
 
 interface MagazineEntryEditorProps {
@@ -43,6 +52,7 @@ export function MagazineEntryEditor({
   const [question, setQuestion] = useState('');
   const [isAskingAurum, setIsAskingAurum] = useState(false);
   const [aurumReply, setAurumReply] = useState<string | null>(null);
+  const [conversation, setConversation] = useState<ConversationTurn[]>([]);
 
   const hasChanges = useMemo(() => {
     return content !== initialContent || tags !== initialTags.join(', ');
@@ -127,6 +137,8 @@ export function MagazineEntryEditor({
         body: JSON.stringify({
           content: payload,
           idToken,
+          entryId,
+          userMessage: cleanQuestion,
         }),
       });
 
@@ -147,6 +159,38 @@ export function MagazineEntryEditor({
       setIsAskingAurum(false);
     }
   };
+
+  useEffect(() => {
+    if (!user) {
+      setConversation([]);
+      return;
+    }
+
+    const conversationRef = collection(
+      clientDb,
+      'users',
+      user.uid,
+      'entries',
+      entryId,
+      'aurumConversation'
+    );
+    const q = query(conversationRef, orderBy('createdAt', 'asc'));
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const turns = snapshot.docs.map((doc) => {
+        const data = doc.data() as { role?: string; text?: string; createdAt?: { toDate?: () => Date } };
+        return {
+          id: doc.id,
+          role: data.role === 'user' ? 'user' : 'aurum',
+          text: String(data.text || ''),
+          createdAt: data.createdAt?.toDate?.(),
+        } as ConversationTurn;
+      });
+      setConversation(turns);
+    });
+
+    return () => unsubscribe();
+  }, [entryId, user]);
 
   return (
     <div className="space-y-6">
@@ -234,7 +278,7 @@ export function MagazineEntryEditor({
 
       <div className="rounded-2xl border border-amber-200/40 bg-amber-50/30 p-4 md:p-6 space-y-4">
         <div className="flex items-center gap-2 text-stone-900">
-          <Sparkles className="h-4 w-4 text-amber-600" />
+          <Eye className="h-4 w-4 text-amber-600" />
           <h3 className="font-medium">Demander l'avis d'Aurum</h3>
         </div>
         <Textarea
@@ -264,6 +308,24 @@ export function MagazineEntryEditor({
           <ReflectionResponse reflection={aurumReply} />
         )}
       </div>
+
+      {conversation.length > 0 && (
+        <div className="rounded-2xl border border-stone-200 bg-white/70 p-4 md:p-6 space-y-3">
+          <h3 className="font-medium text-stone-900">Échanges avec Aurum</h3>
+          <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
+            {conversation.map((turn) => (
+              <div
+                key={turn.id}
+                className={turn.role === 'user'
+                  ? 'ml-auto max-w-[92%] rounded-xl bg-stone-900 text-stone-50 px-3 py-2 text-sm'
+                  : 'mr-auto max-w-[92%] rounded-xl bg-amber-50 text-stone-800 px-3 py-2 text-sm border border-amber-100'}
+              >
+                {turn.text}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -8,7 +8,7 @@ import { WelcomePresence } from '@/components/sanctuary/welcome-presence';
 import { PremiumJournalForm } from '@/components/sanctuary/premium-journal-form';
 import { AuthDialog } from '@/components/auth/auth-dialog';
 import { Button } from '@/components/ui/button';
-import { Sparkles } from 'lucide-react';
+import { Eye } from 'lucide-react';
 
 export default function WritePage() {
     const { user, loading } = useAuth();
@@ -30,7 +30,7 @@ export default function WritePage() {
             <div className="container max-w-3xl mx-auto py-20 px-4">
                 <div className="rounded-3xl border border-stone-200 bg-white/90 p-8 md:p-12 text-center shadow-sm space-y-6">
                     <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-amber-50 text-amber-700">
-                        <Sparkles className="h-5 w-5" />
+                        <Eye className="h-5 w-5" />
                     </div>
                     <h1 className="font-headline text-4xl text-stone-900 tracking-tight">
                         Entre dans ton Sanctuaire

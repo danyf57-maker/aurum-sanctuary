@@ -2,7 +2,7 @@
 import { JournalEntry } from "@/lib/types";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Smile, Meh, Frown, Sparkles } from 'lucide-react';
+import { Smile, Meh, Frown, Eye } from 'lucide-react';
 
 type JournalCardProps = {
   entry: JournalEntry;
@@ -53,7 +53,7 @@ export function JournalCard({ entry, style, className }: JournalCardProps) {
           </p>
           {entry.insight && (
              <div className="flex items-start gap-3 mt-4 pt-4 border-t border-dashed">
-                <Sparkles className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                <Eye className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
                 <p className="font-body text-sm text-amber-700 italic">{entry.insight}</p>
               </div>
           )}
