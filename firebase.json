@@ -5,8 +5,7 @@
     "database": "(default)"
   },
   "storage": {
-    "rules": "storage.rules",
-    "bucket": "aurum-diary-prod.firebasestorage.app"
+    "rules": "storage.rules"
   },
   "hosting": {
     "source": ".",
