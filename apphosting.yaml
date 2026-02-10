@@ -39,6 +39,15 @@ env:
     availability:
       - BUILD
       - RUNTIME
+  # Secrets (from Secret Manager)
+  - variable: DEEPSEEK_API_KEY
+    secret: deepseek_api_key
+    availability:
+      - RUNTIME
+  - variable: STRIPE_SECRET_KEY
+    secret: STRIPE_SECRET_KEY
+    availability:
+      - RUNTIME
   # Google OAuth
   - variable: NEXT_PUBLIC_GOOGLE_CLIENT_ID
     value: 554520158428-0p0l6s7nl0hth5o50vjuoi44ceqsshmv.apps.googleusercontent.com
