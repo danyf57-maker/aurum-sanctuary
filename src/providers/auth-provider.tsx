@@ -13,7 +13,7 @@ import {
   updateProfile,
   signOut
 } from 'firebase/auth';
-import { doc, getDoc, setDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth as firebaseAuth, firestore as db } from '@/lib/firebase/web-client';
 import { logger } from '@/lib/logger/safe';
 import { useToast } from '@/hooks/use-toast';
@@ -92,31 +92,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           if (!userSnap.exists()) {
             logger.warnSafe("Creating user doc client-side because Cloud Trigger is missing.", { userId: finalUser.uid });
             try {
-              // DETACHED DOC CREATION: Don't await the whole chain, just start it
-              const createDoc = async () => {
-                await setDoc(userRef, {
-                  uid: finalUser.uid,
-                  email: finalUser.email,
-                  displayName: finalUser.displayName,
-                  photoURL: finalUser.photoURL,
-                  createdAt: serverTimestamp(),
-                  stripeCustomerId: null,
-                  subscriptionStatus: 'free',
-                  entryCount: 0,
-                }, { merge: true });
+              await setDoc(userRef, {
+                uid: finalUser.uid,
+                email: finalUser.email,
+                displayName: finalUser.displayName,
+                photoURL: finalUser.photoURL,
+                createdAt: serverTimestamp(),
+                stripeCustomerId: null,
+                subscriptionStatus: 'free',
+                entryCount: 0,
+              }, { merge: true });
 
-                // Init settings
-                await setDoc(doc(db, "users", finalUser.uid, "settings", "legal"), {
-                  termsAccepted: false,
-                  termsAcceptedAt: null,
-                  updatedAt: serverTimestamp(),
-                });
+              await setDoc(doc(db, "users", finalUser.uid, "settings", "legal"), {
+                termsAccepted: false,
+                termsAcceptedAt: null,
+                updatedAt: serverTimestamp(),
+              });
 
-                logger.infoSafe("User doc created client-side", { userId: finalUser.uid });
-                setTermsAccepted(false);
-              };
-              
-              createDoc();
+              logger.infoSafe("User doc created client-side", { userId: finalUser.uid });
+              setTermsAccepted(false);
+              userSnap = await getDoc(userRef);
             } catch (e) {
               logger.errorSafe("Failed to create user doc client-side", e, { userId: finalUser.uid });
             }
@@ -160,7 +155,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signInWithGoogle = async () => {
     try {
       const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
-      console.log("GOOGLE_CLIENT_ID check:", googleClientId ? `${googleClientId.substring(0, 5)}...` : "MISSING");
+      logger.infoSafe('Google Client ID check', { present: !!googleClientId });
       if (!googleClientId) {
         const message =
           "NEXT_PUBLIC_GOOGLE_CLIENT_ID est manquant. Ajoutez-le pour activer la connexion Google.";

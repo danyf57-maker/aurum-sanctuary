@@ -43,6 +43,7 @@ export default function SignupPage() {
         confirmPassword?: string;
         acceptTerms?: string;
     }>({});
+    const [info, setInfo] = useState<string | null>(null);
 
     const handleEmailSignup = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -78,7 +79,10 @@ export default function SignupPage() {
             await signUpWithEmail(email, password, name);
             router.push('/login?check_email=1');
         } catch (error) {
-            // Error toast shown by AuthProvider
+            if ((error as Error)?.message === 'EMAIL_NOT_VERIFIED') {
+                setInfo("Vérifiez votre boîte de réception pour activer votre compte.");
+            }
+            // Other error toasts shown by AuthProvider
         } finally {
             setLoading(false);
         }
@@ -88,9 +92,10 @@ export default function SignupPage() {
         setLoading(true);
         try {
             await signInWithGoogle();
-            // Redirect handled by Google OAuth
+            // Redirect handled by auth state change
         } catch (error) {
             // Error toast shown by AuthProvider
+        } finally {
             setLoading(false);
         }
     };
@@ -116,6 +121,11 @@ export default function SignupPage() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                    {info && (
+                        <div className="rounded-md bg-blue-50 p-3 text-sm text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+                            {info}
+                        </div>
+                    )}
                     {/* Google OAuth Button */}
                     <Button
                         type="button"

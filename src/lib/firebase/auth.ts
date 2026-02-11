@@ -13,7 +13,6 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
   signOut as firebaseSignOut,
   sendPasswordResetEmail,
   sendEmailVerification,
@@ -50,7 +49,7 @@ export async function signInWithGoogle() {
   if (!googleClientId) {
     const message =
       "NEXT_PUBLIC_GOOGLE_CLIENT_ID est manquant. Ajoutez-le pour activer la connexion Google.";
-    console.warn(message);
+    logger.warnSafe(message);
     return { user: null, error: message };
   }
   const provider = new GoogleAuthProvider();
@@ -76,23 +75,6 @@ export async function signInWithEmail(email: string, password: string) {
       await firebaseSignOut(auth);
       return { user: null, error: "EMAIL_NOT_VERIFIED" };
     }
-    return { user: result.user, error: null };
-  } catch (error: any) {
-    return { user: null, error: error.message };
-  }
-}
-
-/**
- * Sign up with email and password
- */
-export async function signUpWithEmail(email: string, password: string) {
-  try {
-    const result = await createUserWithEmailAndPassword(auth, email, password);
-    await sendEmailVerification(result.user, {
-      url: `${process.env.NEXT_PUBLIC_APP_URL || window.location.origin}/verify-email`,
-      handleCodeInApp: true,
-    });
-    await firebaseSignOut(auth);
     return { user: result.user, error: null };
   } catch (error: any) {
     return { user: null, error: error.message };
