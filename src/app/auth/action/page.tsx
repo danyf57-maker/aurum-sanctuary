@@ -11,18 +11,18 @@
  * This replaces the default Firebase Auth action handler with a branded experience.
  */
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { applyActionCode, verifyPasswordResetCode, confirmPasswordReset } from 'firebase/auth';
 import { auth } from '@/lib/firebase/web-client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle2, XCircle, Loader2, Mail } from 'lucide-react';
+import { CheckCircle2, XCircle, Loader2 } from 'lucide-react';
 
 type ActionMode = 'verifyEmail' | 'resetPassword' | 'recoverEmail' | null;
 
-export default function AuthActionPage() {
+function AuthActionContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -219,5 +219,26 @@ export default function AuthActionPage() {
         )}
       </Card>
     </div>
+  );
+}
+
+export default function AuthActionPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-background">
+          <Card className="w-full max-w-md">
+            <CardHeader className="text-center">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+                <Loader2 className="h-8 w-8 text-primary animate-spin" />
+              </div>
+              <CardTitle className="font-headline text-2xl">Chargement...</CardTitle>
+            </CardHeader>
+          </Card>
+        </div>
+      }
+    >
+      <AuthActionContent />
+    </Suspense>
   );
 }
