@@ -115,7 +115,9 @@ export default function MagazinePage() {
                 </div>
                 <div className="space-y-3 p-5">
                   <h2 className="line-clamp-2 font-headline text-2xl text-stone-900">{issue.title}</h2>
-                  <p className="line-clamp-4 text-sm leading-relaxed text-stone-600">{issue.excerpt || 'Sans extrait.'}</p>
+                  {issue.excerpt && issue.excerpt !== issue.title && (
+                    <p className="line-clamp-4 text-sm leading-relaxed text-stone-600">{issue.excerpt}</p>
+                  )}
                 </div>
               </article>
             </Link>
