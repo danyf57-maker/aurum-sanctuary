@@ -7,11 +7,11 @@ import { Button } from "@/components/ui/button";
 const HeroIntegrated = () => {
   const placeholders = useMemo(
     () => [
-      "Une intuition...",
-      "Une petite victoire...",
-      "Un rêve au réveil...",
-      "Ce qui vous pèse...",
-      "Une gratitude...",
+      "Écrivez ce qui vous passe par la tête...",
+      "Vos pensées sont sauvegardées automatiquement...",
+      "Aurum les transforme en clarté...",
+      "Connectez-vous pour retrouver vos écrits...",
+      "Votre espace privé, vos règles...",
     ],
     []
   );
@@ -20,6 +20,21 @@ const HeroIntegrated = () => {
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // Charger le texte sauvegardé au montage
+  useEffect(() => {
+    const saved = localStorage.getItem('aurum-landing-draft');
+    if (saved) {
+      setThought(saved);
+    }
+  }, []);
+
+  // Sauvegarder automatiquement quand l'utilisateur écrit
+  useEffect(() => {
+    if (thought) {
+      localStorage.setItem('aurum-landing-draft', thought);
+    }
+  }, [thought]);
 
   useEffect(() => {
     const current = placeholders[placeholderIndex];

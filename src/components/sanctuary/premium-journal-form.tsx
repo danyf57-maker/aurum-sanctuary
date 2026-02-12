@@ -76,6 +76,21 @@ export function PremiumJournalForm() {
     }, 1600);
   };
 
+  // Récupérer le texte de la landing page après connexion
+  useEffect(() => {
+    const savedDraft = localStorage.getItem('aurum-landing-draft');
+    if (savedDraft && !draftContent) {
+      setDraftContent(savedDraft);
+      // Nettoyer le localStorage après récupération
+      localStorage.removeItem('aurum-landing-draft');
+      // Afficher une notification
+      toast({
+        title: "Votre texte a été récupéré",
+        description: "Continuez d'écrire où vous vous étiez arrêté.",
+      });
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   const uploadImageToStorage = async (file: File): Promise<DraftImage> => {
     if (!user) throw new Error('Connexion requise pour ajouter une image.');
     const storage = getStorage(app);
