@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vérification de votre email - Aurum</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      background-color: #f5f5f4;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .email-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+    }
+    .header {
+      background: linear-gradient(135deg, #C5A059 0%, #D4B068 100%);
+      padding: 40px 20px;
+      text-align: center;
+    }
+    .logo {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 36px;
+      font-weight: 700;
+      color: #ffffff;
+      margin: 0;
+      letter-spacing: 2px;
+    }
+    .subtitle {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 14px;
+      margin-top: 8px;
+      font-weight: 400;
+    }
+    .content {
+      padding: 48px 32px;
+      background-color: #F9F7F2;
+    }
+    .greeting {
+      font-size: 24px;
+      color: #2A2A2A;
+      margin-bottom: 24px;
+      font-weight: 600;
+    }
+    .message {
+      font-size: 16px;
+      line-height: 1.6;
+      color: #52525b;
+      margin-bottom: 32px;
+    }
+    .button-container {
+      text-align: center;
+      margin: 40px 0;
+    }
+    .button {
+      display: inline-block;
+      padding: 16px 40px;
+      background: linear-gradient(135deg, #C5A059 0%, #D4B068 100%);
+      color: #ffffff !important;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 16px;
+      box-shadow: 0 4px 12px rgba(197, 160, 89, 0.3);
+      transition: all 0.3s ease;
+    }
+    .button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(197, 160, 89, 0.4);
+    }
+    .alternative-link {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid #e7e5e4;
+      font-size: 14px;
+      color: #71717a;
+      line-height: 1.6;
+    }
+    .alternative-link a {
+      color: #C5A059;
+      text-decoration: none;
+      word-break: break-all;
+    }
+    .footer {
+      background-color: #1c1917;
+      padding: 32px;
+      text-align: center;
+    }
+    .footer-text {
+      color: #a8a29e;
+      font-size: 13px;
+      line-height: 1.6;
+      margin: 8px 0;
+    }
+    .footer-link {
+      color: #C5A059;
+      text-decoration: none;
+    }
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #e7e5e4 50%, transparent);
+      margin: 24px 0;
+    }
+    @media only screen and (max-width: 600px) {
+      .content {
+        padding: 32px 24px;
+      }
+      .greeting {
+        font-size: 20px;
+      }
+      .button {
+        display: block;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="email-container">
+    <!-- Header -->
+    <div class="header">
+      <h1 class="logo">AURUM</h1>
+      <p class="subtitle">Le miroir de votre monde intérieur</p>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+      <h2 class="greeting">Bienvenue dans votre sanctuaire ✨</h2>
+
+      <p class="message">
+        Merci de vous être inscrit sur <strong>Aurum</strong>. Nous sommes ravis de vous accompagner dans votre voyage d'introspection et de clarté mentale.
+      </p>
+
+      <p class="message">
+        Pour commencer à utiliser votre journal sécurisé et privé, veuillez vérifier votre adresse email en cliquant sur le bouton ci-dessous :
+      </p>
+
+      <!-- CTA Button -->
+      <div class="button-container">
+        <a href="%LINK%" class="button">Vérifier mon email</a>
+      </div>
+
+      <div class="divider"></div>
+
+      <p class="message">
+        <strong>Pourquoi Aurum ?</strong><br>
+        • 🔒 <strong>Chiffrement privé</strong> : Vos pensées restent privées, même pour nous<br>
+        • ✨ <strong>Reflets de sentiment</strong> : Découvrez vos patterns émotionnels<br>
+        • 📝 <strong>Journaling guidé</strong> : Des questions pour aller plus loin
+      </p>
+
+      <!-- Alternative Link -->
+      <div class="alternative-link">
+        <p>
+          <strong>Le bouton ne fonctionne pas ?</strong><br>
+          Copiez et collez ce lien dans votre navigateur :
+        </p>
+        <a href="%LINK%">%LINK%</a>
+      </div>
+
+      <div class="divider"></div>
+
+      <p class="message" style="font-size: 14px; color: #71717a;">
+        Ce lien de vérification expirera dans <strong>24 heures</strong>.<br>
+        Si vous n'avez pas créé de compte Aurum, vous pouvez ignorer cet email en toute sécurité.
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p class="footer-text">
+        <strong>Aurum</strong> - Votre sanctuaire numérique
+      </p>
+      <p class="footer-text">
+        <a href="https://aurumdiary.com" class="footer-link">aurumdiary.com</a> ·
+        <a href="https://aurumdiary.com/legal/privacy" class="footer-link">Confidentialité</a> ·
+        <a href="https://aurumdiary.com/legal/terms" class="footer-link">CGU</a>
+      </p>
+      <p class="footer-text" style="margin-top: 16px;">
+        © 2025 Aurum. Tous droits réservés.
+      </p>
+    </div>
+  </div>
+</body>
+</html>

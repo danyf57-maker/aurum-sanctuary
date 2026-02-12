@@ -46,8 +46,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const getEmailVerificationSettings = () => {
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
     return {
-      url: `${appUrl}/verify-email`,
-      handleCodeInApp: true,
+      url: `${appUrl}/auth/action`,
+      handleCodeInApp: false, // False to use the custom action handler page
     };
   };
 
