@@ -8,14 +8,7 @@
  */
 
 import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin';
-
-// Initialize Firebase Admin (only once)
-if (!admin.apps.length) {
-    admin.initializeApp();
-}
-
-const firestore = admin.firestore();
+import { admin, firestore } from './admin';
 
 /**
  * onCreate trigger for entries subcollection

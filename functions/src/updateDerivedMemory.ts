@@ -9,12 +9,8 @@
  */
 
 import { onDocumentCreated } from 'firebase-functions/v2/firestore';
-import { getFirestore, FieldValue } from 'firebase-admin/firestore';
-import { initializeApp } from 'firebase-admin/app';
-
-// Initialize Firebase Admin
-initializeApp();
-const firestore = getFirestore();
+import { FieldValue } from 'firebase-admin/firestore';
+import { firestore } from './admin';
 
 /**
  * Update DerivedMemoryLite when a new entry is created

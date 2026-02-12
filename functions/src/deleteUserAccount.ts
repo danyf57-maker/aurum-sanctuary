@@ -10,9 +10,7 @@
  */
 
 import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin';
-
-const db = admin.firestore();
+import { admin, firestore as db } from './admin';
 
 // Helper function to delete a collection recursively
 async function deleteCollection(collectionPath: string, batchSize: number) {
