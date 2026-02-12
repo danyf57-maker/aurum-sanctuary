@@ -11,6 +11,91 @@
 
 ---
 
+## 🤝 Transmettre le projet à un développeur
+
+### Ce que vous devez faire
+
+#### 1. **Donner accès GitHub**
+
+1. Allez sur https://github.com/danyf57-maker/aurum-sanctuary/settings/access
+2. Cliquez sur **Invite a collaborator**
+3. Entrez l'email ou username GitHub du développeur
+4. Choisissez le rôle : **Write** (pour push) ou **Admin** (accès complet)
+
+#### 2. **Donner accès Firebase**
+
+1. Allez sur https://console.firebase.google.com/u/0/project/aurum-diary-prod/settings/iam
+2. Cliquez sur **Add member**
+3. Entrez l'email Google du développeur
+4. Choisissez le rôle : **Editor** (recommandé) ou **Owner** (accès complet)
+5. Cliquez sur **Add**
+
+#### 3. **Partager les variables d'environnement**
+
+⚠️ **IMPORTANT** : Ne jamais envoyer les secrets par email ou Slack non chiffré !
+
+**Options sécurisées :**
+- 📦 **1Password** / **LastPass** : Partagez un coffre sécurisé
+- 🔐 **Bitwarden** : Partagez un dossier de mots de passe
+- 💬 **Signal** : Message chiffré de bout en bout
+- 🔑 **Keybase** : Partage de fichiers chiffré
+
+**Fichier à partager :** `.env.local` (à la racine du projet)
+
+Contenu minimum requis :
+```env
+DEEPSEEK_API_KEY=sk-...
+FIREBASE_SERVICE_ACCOUNT_KEY_B64=ewogICJ0eXBlIjo...
+UPSTASH_REDIS_REST_TOKEN="AYx4AAIncD..."
+STRIPE_SECRET_KEY=sk_test_...
+```
+
+#### 4. **Envoyer la documentation**
+
+Envoyez au développeur :
+```
+📧 Objet : Accès Aurum Sanctuary
+
+Salut [Nom],
+
+Tu as maintenant accès au projet Aurum Sanctuary :
+
+📂 Repository GitHub : https://github.com/danyf57-maker/aurum-sanctuary
+🔥 Firebase Console : https://console.firebase.google.com/u/0/project/aurum-diary-prod
+🌐 Production : https://aurum-diary-prod.web.app
+
+📖 Documentation complète : Voir HANDOVER.md dans le repo
+
+Les variables d'environnement (.env.local) sont partagées via [1Password/Signal/etc.].
+
+Pour démarrer :
+1. Clone le repo : git clone https://github.com/danyf57-maker/aurum-sanctuary.git
+2. Lis HANDOVER.md (tout est dedans)
+3. Setup en 15 min max
+
+N'hésite pas si tu as des questions !
+```
+
+#### 5. **Walkthrough optionnel (recommandé)**
+
+📞 **Call de 30 min** pour présenter :
+- Architecture du projet (5 min)
+- Démo locale (5 min)
+- Workflow de déploiement (5 min)
+- Questions & réponses (15 min)
+
+### ✅ Checklist de transmission
+
+- [ ] Accès GitHub donné (collaborateur)
+- [ ] Accès Firebase donné (Editor)
+- [ ] Variables `.env.local` partagées (sécurisé)
+- [ ] Email de bienvenue envoyé avec liens
+- [ ] (Optionnel) Call de walkthrough planifié
+
+**Une fois fait, le dev peut commencer seul en suivant ce guide !**
+
+---
+
 ## 🛠️ Setup développement local
 
 ### 1. Cloner le repository
