@@ -76,6 +76,14 @@ service cloud.firestore {
       }
 
       // -------------------------------------------------------
+      // Collections (User-created groupings)
+      // -------------------------------------------------------
+      match /collections/{collectionId} {
+        allow read: if isOwner(userId);
+        allow write: if isOwner(userId);
+      }
+
+      // -------------------------------------------------------
       // Derived Memory (Stats)
       // -------------------------------------------------------
       match /derivedMemory/{docId} {
