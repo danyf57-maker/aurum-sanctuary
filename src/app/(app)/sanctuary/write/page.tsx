@@ -87,22 +87,6 @@ export default function WritePage() {
                             </div>
                         </div>
                     </div>
-
-                    {/* Subtle feature hints below */}
-                    <div className="mt-12 grid grid-cols-3 gap-8 text-center">
-                        <div className="space-y-2">
-                            <div className="text-2xl">✍️</div>
-                            <p className="text-xs text-stone-600 font-medium">Écriture guidée</p>
-                        </div>
-                        <div className="space-y-2">
-                            <div className="text-2xl">🔮</div>
-                            <p className="text-xs text-stone-600 font-medium">Reflets IA</p>
-                        </div>
-                        <div className="space-y-2">
-                            <div className="text-2xl">📖</div>
-                            <p className="text-xs text-stone-600 font-medium">Magazine privé</p>
-                        </div>
-                    </div>
                 </div>
                 <AuthDialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen} />
             </div>
