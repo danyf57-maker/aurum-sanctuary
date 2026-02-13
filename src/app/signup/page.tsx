@@ -16,7 +16,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Shield } from 'lucide-react';
 
 const signupSchema = z.object({
     email: z.string().email('Email invalide'),
@@ -122,6 +122,12 @@ export default function SignupPage() {
                     <CardDescription>
                         Rejoignez Aurum Sanctuary et commencez votre voyage
                     </CardDescription>
+                    <div className="flex items-center gap-2 mt-3 px-3 py-2 bg-emerald-50 dark:bg-emerald-950/30 rounded-lg border border-emerald-200 dark:border-emerald-800">
+                        <Shield className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                        <p className="text-sm text-emerald-700 dark:text-emerald-300 font-medium">
+                            Vos données sont chiffrées de bout en bout
+                        </p>
+                    </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     {info && (
