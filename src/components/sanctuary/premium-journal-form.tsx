@@ -25,6 +25,7 @@ import { AuthDialog } from '@/components/auth/auth-dialog';
 import { motion, AnimatePresence } from 'framer-motion';
 import { app } from '@/lib/firebase/web-client';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { useEncryption } from '@/hooks/useEncryption';
 
 type DraftImage = {
   id: string;
@@ -42,6 +43,7 @@ type ConversationTurn = {
 
 export function PremiumJournalForm() {
   const { user } = useAuth();
+  const { isReady: encryptionReady, encrypt } = useEncryption();
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -235,11 +237,19 @@ export function PremiumJournalForm() {
         throw new Error("Attends la fin de l'upload des images.");
       }
 
-      // TABULA RASA: Pas de chiffrement, envoi direct en plaintext
+      // Encrypt content before saving (AES-256-GCM client-side)
+      if (!encryptionReady) {
+        throw new Error("Chiffrement pas encore prêt. Attends quelques secondes et réessaie.");
+      }
+
+      const encryptedData = await encrypt(content);
+
       let analysis: any = null;
-      // Build payload for server action (plaintext mode)
+      // Build payload for server action (encrypted mode)
       const payload = new FormData();
-      payload.set('content', content);
+      payload.set('encryptedContent', encryptedData.ciphertext);
+      payload.set('iv', encryptedData.iv);
+      payload.set('version', encryptedData.version.toString());
       payload.set('idToken', idTokenForServer);
       payload.set(
         'images',

@@ -31,12 +31,13 @@ const journalImageSchema = z.object({
   name: z.string().min(1),
 });
 
-// TABULA RASA: Schema simplifié pour accepter plaintext
+// Schema for encrypted mode (AES-256-GCM)
 const formSchema = z.object({
-  // Encrypted fields (optional - legacy compatibility)
+  // Encrypted fields
   encryptedContent: optionalString(),
   iv: optionalString(),
-  // Plaintext field (temporary - Biométrie-First migration)
+  version: optionalString(), // Encryption version for future migration
+  // Plaintext field (optional - legacy compatibility)
   content: optionalString(),
   idToken: optionalString(),
   images: optionalString(),
@@ -58,6 +59,7 @@ export type FormState = {
     publishAsPost?: string[];
     encryptedContent?: string[];
     iv?: string[];
+    version?: string[];
     idToken?: string[];
     images?: string[];
     sentiment?: string[];
@@ -104,12 +106,13 @@ function generateExcerpt(content: string, maxLength = 170) {
   return `${plain.slice(0, maxLength).trim()}...`;
 }
 
-// TABULA RASA: Fonction simplifiée pour accepter encrypted OU plaintext
+// Accept encrypted (AES-256-GCM) OR plaintext (legacy)
 async function addEntryOnServer(entryData: {
   userId: string;
   encryptedContent?: string;
   iv?: string;
-  content?: string; // NOUVEAU: support plaintext temporaire
+  version?: string;
+  content?: string; // Legacy: support plaintext for backward compatibility
   images?: Array<z.infer<typeof journalImageSchema>>;
   tags: string[];
   createdAt: Date;
@@ -121,13 +124,12 @@ async function addEntryOnServer(entryData: {
     // Extract userId for routing, but don't store it in the document
     const { userId, ...dataToStore } = entryData;
 
-    // TABULA RASA: Sauvegarder encrypted OU plaintext
-    // Si encryptedContent existe, on utilise l'ancien format
-    // Sinon, on sauvegarde directement content en clair (temporaire)
+    // Save encrypted (AES-256-GCM) OR plaintext (legacy)
     const entryToSave = entryData.encryptedContent && entryData.iv
       ? {
           encryptedContent: dataToStore.encryptedContent!,
           iv: dataToStore.iv!,
+          version: dataToStore.version || '1', // Default to version 1
           images: dataToStore.images || [],
           tags: dataToStore.tags,
           createdAt: Timestamp.fromDate(entryData.createdAt),
@@ -137,7 +139,7 @@ async function addEntryOnServer(entryData: {
           insight: dataToStore.insight,
         }
       : {
-          content: dataToStore.content!, // PLAINTEXT (temporaire)
+          content: dataToStore.content!, // PLAINTEXT (legacy)
           images: dataToStore.images || [],
           tags: dataToStore.tags,
           createdAt: Timestamp.fromDate(entryData.createdAt),
@@ -187,6 +189,7 @@ export async function saveJournalEntry(
   const validatedFields = formSchema.safeParse({
     encryptedContent: formData.get("encryptedContent"),
     iv: formData.get("iv"),
+    version: formData.get("version"),
     tags: formData.get("tags"),
     publishAsPost: formData.get("publishAsPost") === "on",
     content: formData.get("content"),
@@ -204,7 +207,7 @@ export async function saveJournalEntry(
     };
   }
 
-  const { encryptedContent, iv, tags, publishAsPost, content, idToken, images, sentiment, mood, insight } = validatedFields.data;
+  const { encryptedContent, iv, version, tags, publishAsPost, content, idToken, images, sentiment, mood, insight } = validatedFields.data;
   let parsedImages: Array<z.infer<typeof journalImageSchema>> = [];
   if (images) {
     try {
@@ -247,12 +250,13 @@ export async function saveJournalEntry(
     const entryCount = userData?.entryCount || 0;
     isFirstEntry = entryCount === 0;
 
-    // TABULA RASA: Passer encrypted OU plaintext
+    // Pass encrypted data (AES-256-GCM) OR plaintext (legacy)
     const entryResult = await addEntryOnServer({
       userId,
       encryptedContent,
       iv,
-      content, // NOUVEAU: support plaintext
+      version,
+      content, // Legacy: support plaintext
       images: parsedImages,
       tags: tags ? tags.split(",").map((tag) => tag.trim().toLowerCase()).filter(Boolean) : [],
       createdAt: new Date(),
@@ -271,9 +275,14 @@ export async function saveJournalEntry(
 
     // Build magazine card data (cover + excerpt) for gallery-style browsing
     const coverImageUrl = parsedImages[0]?.url || null;
-    const baseContent = content || encryptedContent || "";
-    const excerpt = generateExcerpt(baseContent);
-    const title = generateTitle(stripImageMarkdown(baseContent) || "Entrée");
+    // For encrypted content, use placeholder text (cannot decrypt server-side)
+    const isEncrypted = !!encryptedContent;
+    const excerpt = isEncrypted
+      ? "Entrée chiffrée • Contenu privé"
+      : generateExcerpt(content || "");
+    const title = isEncrypted
+      ? "Entrée privée"
+      : generateTitle(stripImageMarkdown(content || "") || "Entrée");
 
     await db
       .collection("users")

@@ -24,7 +24,7 @@ if (stripeKey === 'sk_test_mock') {
  * 
  * const products = await stripe.products.list();
  */
-export const stripe = stripeKey 
+export const stripe = stripeKey
     ? new Stripe(stripeKey, {
         apiVersion: '2024-06-20',
         typescript: true,

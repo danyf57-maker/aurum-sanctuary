@@ -24,6 +24,7 @@ import {
   validateResponse,
   getCorrectionPrompt,
 } from '@/lib/patterns/anti-meta';
+import { rateLimit, RateLimitPresets } from '@/lib/rate-limit';
 
 type AurumIntent = 'reflection' | 'conversation' | 'analysis' | 'action';
 
@@ -187,6 +188,27 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'Votre session n\'est plus valide. Reconnectez-vous puis réessayez.' },
         { status: 401 }
+      );
+    }
+
+    // Rate limiting check
+    const rateLimitResult = await rateLimit(RateLimitPresets.reflect(userId));
+    if (!rateLimitResult.success) {
+      const minutesUntilReset = Math.ceil((rateLimitResult.reset - Date.now()) / 60000);
+
+      return NextResponse.json(
+        {
+          error: `Trop de demandes de reflets. Réessaye dans ${minutesUntilReset} minute${minutesUntilReset > 1 ? 's' : ''}.`,
+          retryAfter: rateLimitResult.reset,
+        },
+        {
+          status: 429,
+          headers: {
+            'X-RateLimit-Limit': rateLimitResult.limit.toString(),
+            'X-RateLimit-Remaining': '0',
+            'X-RateLimit-Reset': rateLimitResult.reset.toString(),
+          },
+        }
       );
     }
 
