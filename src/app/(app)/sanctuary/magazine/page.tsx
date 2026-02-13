@@ -32,6 +32,7 @@ import {
   setDoc,
   startAfter,
   updateDoc,
+  writeBatch,
 } from 'firebase/firestore';
 import { useAuth } from '@/providers/auth-provider';
 import { firestore as db } from '@/lib/firebase/web-client';
@@ -158,6 +159,26 @@ function computeStreak(dates: Date[]): number {
   return streak;
 }
 
+function stripImageMarkdown(content: string) {
+  return content
+    .replace(/!\[[^\]]*]\(([^)]+)\)/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function generateIssueTitle(content: string) {
+  const words = content.split(/\s+/).filter(Boolean);
+  if (words.length === 0) return 'Entree';
+  return words.slice(0, 8).join(' ') + (words.length > 8 ? '...' : '');
+}
+
+function generateIssueExcerpt(content: string, maxLength = 170) {
+  const plain = stripImageMarkdown(content);
+  if (!plain) return '';
+  if (plain.length <= maxLength) return plain;
+  return `${plain.slice(0, maxLength).trim()}...`;
+}
+
 export default function MagazinePage() {
   const { user, loading } = useAuth();
   const [issues, setIssues] = useState<MagazineIssue[]>([]);
@@ -179,6 +200,7 @@ export default function MagazinePage() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [digest, setDigest] = useState('');
   const [isDigestLoading, setIsDigestLoading] = useState(false);
+  const [isBackfilling, setIsBackfilling] = useState(false);
   const [themeTemplate, setThemeTemplate] = useState<ThemeTemplate>('minimal');
   const loadMoreSentinelRef = useRef<HTMLDivElement | null>(null);
 
@@ -538,6 +560,57 @@ export default function MagazinePage() {
     }
   };
 
+  const handleBackfillMagazine = async () => {
+    if (!user) return;
+    setIsBackfilling(true);
+    try {
+      // Try secure server-side backfill first.
+      const response = await fetch('/api/magazine/backfill', { method: 'POST' });
+      if (!response.ok) {
+        // Fallback: rebuild client-side when session cookie is unavailable.
+        const entriesRef = collection(db, 'users', user.uid, 'entries');
+        const entriesSnap = await getDocs(query(entriesRef, orderBy('createdAt', 'desc'), limit(200)));
+        const batch = writeBatch(db);
+
+        for (const docSnap of entriesSnap.docs) {
+          const data = docSnap.data() as Record<string, unknown>;
+          const isEncrypted = Boolean(data.encryptedContent);
+          const content = typeof data.content === 'string' ? data.content : '';
+          const title = isEncrypted ? 'Entree privee' : generateIssueTitle(content);
+          const excerpt = isEncrypted ? 'Entree chiffree • Contenu prive' : generateIssueExcerpt(content);
+          const images = Array.isArray(data.images) ? data.images : [];
+          const firstImage = images[0] as { url?: string } | undefined;
+
+          const issueRef = doc(db, 'users', user.uid, 'magazineIssues', docSnap.id);
+          batch.set(
+            issueRef,
+            {
+              entryId: docSnap.id,
+              title,
+              excerpt,
+              coverImageUrl: firstImage?.url || null,
+              tags: Array.isArray(data.tags) ? data.tags : [],
+              mood: data.mood || null,
+              sentiment: data.sentiment || null,
+              createdAt: data.createdAt || serverTimestamp(),
+              publishedAt: data.createdAt || serverTimestamp(),
+              updatedAt: serverTimestamp(),
+            },
+            { merge: true },
+          );
+        }
+
+        await batch.commit();
+      }
+
+      setLastDoc(null);
+      setHasMore(true);
+      await fetchIssuesPage({ reset: true });
+    } finally {
+      setIsBackfilling(false);
+    }
+  };
+
   const smartPrompts = useMemo(() => {
     const prompts: string[] = [];
 
@@ -599,12 +672,23 @@ export default function MagazinePage() {
           </div>
           <p className="text-stone-700">Aucune edition pour l'instant.</p>
           <p className="mt-1 text-sm text-stone-500">Ecris une entree avec une image pour composer ton magazine.</p>
-          <Button asChild className="mt-5 bg-stone-900 text-stone-50 hover:bg-stone-800">
-            <Link href="/sanctuary/write">
-              <PenSquare className="mr-2 h-4 w-4" />
-              Ecrire une entree
-            </Link>
-          </Button>
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+            <Button asChild className="bg-stone-900 text-stone-50 hover:bg-stone-800">
+              <Link href="/sanctuary/write">
+                <PenSquare className="mr-2 h-4 w-4" />
+                Ecrire une entree
+              </Link>
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => void handleBackfillMagazine()}
+              disabled={isBackfilling}
+              className="border-stone-300 text-stone-700"
+            >
+              {isBackfilling ? 'Reconstruction...' : 'Reconstruire le magazine'}
+            </Button>
+          </div>
         </div>
       ) : (
         <div className="space-y-6">
