@@ -131,6 +131,26 @@ export const RateLimitPresets = {
   }),
 
   /**
+   * Pattern analysis endpoint: 5 requests per hour
+   */
+  analyzePatterns: (identifier: string): RateLimitConfig => ({
+    identifier,
+    limit: 5,
+    window: 3600,
+    namespace: 'api:analyze-patterns',
+  }),
+
+  /**
+   * Weekly digest endpoint: 1 request per day
+   */
+  generateDigest: (identifier: string): RateLimitConfig => ({
+    identifier,
+    limit: 1,
+    window: 86400,
+    namespace: 'api:generate-digest',
+  }),
+
+  /**
    * Auth endpoints: 10 requests per minute
    */
   auth: (identifier: string): RateLimitConfig => ({
