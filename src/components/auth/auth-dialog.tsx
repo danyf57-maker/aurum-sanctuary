@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Eye, EyeOff } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -10,9 +10,10 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
+import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { signInWithGoogle } from '@/lib/firebase/auth';
+import { useAuth } from '@/providers/auth-provider';
 
 interface AuthDialogProps {
   open: boolean;
@@ -32,7 +33,13 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
 
 export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
   const { toast } = useToast();
+  const { signUpWithEmail, signInWithEmail } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [mode, setMode] = useState<'signup' | 'login'>('signup');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
@@ -44,21 +51,53 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
         variant: 'destructive',
       });
        setIsLoading(false);
-    } 
+    }
     // Avec signInWithRedirect, la page va recharger. Pas besoin de fermer le dialogue ici.
-    // onOpenChange(false);
+  };
+
+  const handleEmailSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      if (mode === 'signup') {
+        if (!name.trim()) {
+          toast({
+            title: 'Nom requis',
+            description: 'Veuillez entrer votre nom.',
+            variant: 'destructive',
+          });
+          setIsLoading(false);
+          return;
+        }
+        await signUpWithEmail(email, password, name);
+        onOpenChange(false);
+      } else {
+        await signInWithEmail(email, password);
+        onOpenChange(false);
+      }
+    } catch (error) {
+      // Les erreurs sont gérées par le provider
+      setIsLoading(false);
+    }
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[450px]">
         <DialogHeader>
-          <DialogTitle className="font-headline text-2xl text-center">Entrez dans le Sanctuaire</DialogTitle>
+          <DialogTitle className="font-headline text-2xl text-center">
+            {mode === 'signup' ? 'Créer mon compte' : 'Se connecter'}
+          </DialogTitle>
           <DialogDescription className="text-center">
-            Connectez-vous pour préserver vos pensées dorées.
+            {mode === 'signup'
+              ? 'Commencez votre voyage vers la clarté'
+              : 'Retrouvez votre sanctuaire'}
           </DialogDescription>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
+
+        <div className="space-y-4 py-4">
+          {/* Google Button */}
           <Button
             variant="outline"
             onClick={handleGoogleSignIn}
@@ -66,11 +105,91 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
             className="w-full"
           >
             {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <GoogleIcon className="mr-2" />}
-            Se connecter avec Google
+            Continuer avec Google
           </Button>
-          <Button asChild variant="ghost" className="w-full">
-            <Link href="/login">Continuer avec email</Link>
-          </Button>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">Ou</span>
+            </div>
+          </div>
+
+          {/* Email Form */}
+          <form onSubmit={handleEmailSubmit} className="space-y-3">
+            {mode === 'signup' && (
+              <Input
+                type="text"
+                placeholder="Votre nom"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                disabled={isLoading}
+              />
+            )}
+
+            <Input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              disabled={isLoading}
+            />
+
+            <div className="relative">
+              <Input
+                type={showPassword ? "text" : "password"}
+                placeholder="Mot de passe"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                disabled={isLoading}
+                className="pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600"
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
+
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {mode === 'signup' ? 'Créer mon compte' : 'Me connecter'}
+            </Button>
+          </form>
+
+          {/* Toggle Mode */}
+          <div className="text-center text-sm text-muted-foreground">
+            {mode === 'signup' ? (
+              <>
+                Déjà un compte ?{' '}
+                <button
+                  type="button"
+                  onClick={() => setMode('login')}
+                  className="text-primary hover:underline font-medium"
+                >
+                  Se connecter
+                </button>
+              </>
+            ) : (
+              <>
+                Pas encore de compte ?{' '}
+                <button
+                  type="button"
+                  onClick={() => setMode('signup')}
+                  className="text-primary hover:underline font-medium"
+                >
+                  Créer un compte
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </DialogContent>
     </Dialog>
