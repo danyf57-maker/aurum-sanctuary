@@ -62,18 +62,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (firebaseUser) {
         // Sync token to cookie for middleware via API route (HttpOnly)
-        try {
-          const token = await firebaseUser.getIdToken();
-          await fetch('/api/auth/session', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ idToken: token }),
-          });
-        } catch (e) {
-          logger.errorSafe('Failed to sync auth token to cookie via API', e);
-        }
+        // This runs on EVERY auth state check (including page reload),
+        // which refreshes the cookie and prevents session expiration.
+        const syncCookie = async (attempt = 0): Promise<void> => {
+          try {
+            const token = await firebaseUser.getIdToken(attempt > 0);
+            const res = await fetch('/api/auth/session', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ idToken: token }),
+            });
+            if (!res.ok && attempt < 1) {
+              return syncCookie(attempt + 1);
+            }
+          } catch (e) {
+            if (attempt < 1) {
+              return syncCookie(attempt + 1);
+            }
+            logger.errorSafe('Failed to sync auth token to cookie via API (after retry)', e);
+          }
+        };
+        await syncCookie();
 
         const isAlma = firebaseUser.email === ALMA_EMAIL;
 

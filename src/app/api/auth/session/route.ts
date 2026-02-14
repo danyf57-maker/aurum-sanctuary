@@ -17,8 +17,8 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Missing ID token' }, { status: 400 });
         }
 
-        // Set session expiration to 5 days
-        const expiresIn = 60 * 60 * 24 * 5 * 1000;
+        // Set session expiration to 14 days
+        const expiresIn = 60 * 60 * 24 * 14 * 1000;
         const authName = (auth as any)?.name;
         const isMockAuth = typeof authName === 'string' && authName.includes('mock');
 
