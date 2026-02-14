@@ -333,12 +333,19 @@ export function PremiumJournalForm() {
     }
   };
 
-  const requestAurumReflection = async (content: string, options?: { entryId?: string | null; userMessage?: string }) => {
-    if (!user) {
-      throw new Error('Connexion requise.');
-    }
+  /**
+   * Stream a reflection from /api/reflect via SSE.
+   * Calls `onToken` for every new token so the UI updates in real-time.
+   * Returns the full text once the stream completes.
+   */
+  const streamReflection = async (
+    content: string,
+    onToken: (partial: string) => void,
+    options?: { entryId?: string | null; userMessage?: string },
+  ): Promise<string> => {
+    if (!user) throw new Error('Connexion requise.');
 
-    const callReflect = async (idToken: string) =>
+    const callReflect = (idToken: string) =>
       fetch('/api/reflect', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -353,22 +360,52 @@ export function PremiumJournalForm() {
     let idToken = await user.getIdToken();
     let response = await callReflect(idToken);
 
-    // If token is stale, retry once with a forced refresh.
     if (response.status === 401) {
       idToken = await user.getIdToken(true);
       response = await callReflect(idToken);
     }
 
     if (!response.ok) {
-      const error = await response.json();
-      const rawMessage = error?.error || 'Erreur lors de la génération du reflet';
+      const error = await response.json().catch(() => ({}));
       if (response.status === 401) {
         throw new Error("Session expirée. Recharge la page puis reconnecte-toi si nécessaire.");
       }
-      throw new Error(rawMessage);
+      throw new Error(error?.error || 'Erreur lors de la génération du reflet');
     }
 
-    return response.json();
+    if (!response.body) throw new Error('Réponse vide');
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let fullText = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      const chunk = decoder.decode(value, { stream: true });
+      const lines = chunk.split('\n');
+
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        try {
+          const data = JSON.parse(line.slice(6));
+          if (data.token) {
+            fullText += data.token;
+            onToken(fullText);
+          } else if (data.replace) {
+            // Anti-meta sanitized replacement
+            fullText = data.replace;
+            onToken(fullText);
+          }
+          // data.done = true → stream ended, metadata available
+        } catch {
+          // skip malformed
+        }
+      }
+    }
+
+    return fullText;
   };
 
   const handleRequestReflection = async () => {
@@ -376,26 +413,24 @@ export function PremiumJournalForm() {
 
     setIsGeneratingReflection(true);
     try {
-      const data = await requestAurumReflection(savedContent, { entryId: savedEntryId });
-      const firstReflection = {
-        text: data.reflection,
-        patternsUsed: data.patterns_used || 0,
-      };
-      setReflection(firstReflection);
-      setConversationTurns([
-        {
-          id: `aurum-${Date.now()}`,
-          role: 'aurum',
-          text: firstReflection.text,
+      const text = await streamReflection(
+        savedContent,
+        (partial) => {
+          setReflection({ text: partial, patternsUsed: 0 });
+          setConversationTurns([
+            { id: `aurum-${Date.now()}`, role: 'aurum', text: partial },
+          ]);
         },
+        { entryId: savedEntryId },
+      );
+      // Final state with complete text
+      setReflection({ text, patternsUsed: 0 });
+      setConversationTurns([
+        { id: `aurum-${Date.now()}`, role: 'aurum', text },
       ]);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Une erreur est survenue.';
-      toast({
-        title: 'Erreur',
-        description: message,
-        variant: 'destructive',
-      });
+      toast({ title: 'Erreur', description: message, variant: 'destructive' });
     } finally {
       setIsGeneratingReflection(false);
     }
@@ -431,25 +466,27 @@ export function PremiumJournalForm() {
         `Réponds à l'utilisateur dans la continuité de l'échange.`,
       ].join('\n');
 
-      const data = await requestAurumReflection(conversationalInput, {
-        entryId: savedEntryId,
-        userMessage: prompt,
-      });
-      setConversationTurns((prev) => [
-        ...prev,
-        {
-          id: `aurum-${Date.now()}`,
-          role: 'aurum',
-          text: data.reflection,
+      const aurumTurnId = `aurum-${Date.now()}`;
+      const text = await streamReflection(
+        conversationalInput,
+        (partial) => {
+          setConversationTurns((prev) => {
+            const existing = prev.find((t) => t.id === aurumTurnId);
+            if (existing) {
+              return prev.map((t) => t.id === aurumTurnId ? { ...t, text: partial } : t);
+            }
+            return [...prev, { id: aurumTurnId, role: 'aurum', text: partial }];
+          });
         },
-      ]);
+        { entryId: savedEntryId, userMessage: prompt },
+      );
+      // Ensure final text is set
+      setConversationTurns((prev) =>
+        prev.map((t) => t.id === aurumTurnId ? { ...t, text } : t)
+      );
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Une erreur est survenue.';
-      toast({
-        title: 'Erreur',
-        description: message,
-        variant: 'destructive',
-      });
+      toast({ title: 'Erreur', description: message, variant: 'destructive' });
     } finally {
       setIsContinuingConversation(false);
     }

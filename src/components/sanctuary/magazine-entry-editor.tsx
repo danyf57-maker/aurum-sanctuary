@@ -147,8 +147,37 @@ export function MagazineEntryEditor({
         throw new Error(data?.error || "Aurum n'a pas pu répondre.");
       }
 
-      const data = await response.json();
-      setAurumReply(String(data.reflection || ''));
+      if (!response.body) throw new Error('Réponse vide');
+
+      // Read SSE stream
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let fullText = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split('\n');
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          try {
+            const evt = JSON.parse(line.slice(6));
+            if (evt.token) {
+              fullText += evt.token;
+              setAurumReply(fullText);
+            } else if (evt.replace) {
+              fullText = evt.replace;
+              setAurumReply(fullText);
+            }
+          } catch {
+            // skip malformed
+          }
+        }
+      }
+
+      setAurumReply(fullText);
     } catch (error) {
       toast({
         title: 'Erreur',

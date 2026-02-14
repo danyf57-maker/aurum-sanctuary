@@ -20,9 +20,7 @@ import {
   PSYCHOLOGIST_ANALYST_SYSTEM_PROMPT,
 } from '@/lib/skills/psychologist-analyst';
 import {
-  containsMetaReference,
   validateResponse,
-  getCorrectionPrompt,
 } from '@/lib/patterns/anti-meta';
 import { rateLimit, RateLimitPresets } from '@/lib/rate-limit';
 
@@ -142,23 +140,6 @@ function getSkillIdForIntent(intent: AurumIntent): string | null {
   return null;
 }
 
-function isLowQualityReflection(text: string): boolean {
-  const trimmed = text.trim();
-  const sentenceCount = trimmed.split(/[.!?]+/).filter(Boolean).length;
-  if (trimmed.length < 180 || sentenceCount < 3) return true;
-  const genericPhrases = [
-    "c'est normal",
-    "tu n'es pas seul",
-    "vous n'êtes pas seul",
-    "prends soin de toi",
-    "respire",
-    "sois bienveillant",
-    "ça va aller",
-  ];
-  const lowered = trimmed.toLowerCase();
-  return genericPhrases.some((phrase) => lowered.includes(phrase));
-}
-
 /**
  * POST /api/reflect
  * Body: { content: string, idToken: string }
@@ -222,14 +203,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 1. Detect patterns in current content
-    logger.infoSafe('Detecting patterns', { userId });
-    const detectionResult = await detectPatterns(content);
+    // 1. Detect intent (instant, no API call)
     const intent = detectAurumIntent(content);
     const skillId = getSkillIdForIntent(intent);
 
-    // 2. Get existing user patterns
-    const existingPatterns = await getUserPatterns(userId);
+    // 2. Detect patterns + get existing patterns IN PARALLEL
+    logger.infoSafe('Detecting patterns (parallel)', { userId });
+    const [detectionResult, existingPatterns] = await Promise.all([
+      detectPatterns(content),
+      getUserPatterns(userId),
+    ]);
 
     // 3. Select patterns for injection (max 2)
     const injectedPatterns = selectPatternsForInjection(
@@ -250,7 +233,6 @@ export async function POST(request: NextRequest) {
       },
     ];
 
-    // Add pattern context as system message (if patterns exist)
     if (patternContext) {
       messages.push({
         role: 'system',
@@ -258,14 +240,13 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Add user content
     messages.push({
       role: 'user',
       content: content,
     });
 
-    // 6. Call DeepSeek for reflection
-    logger.infoSafe('Generating reflection', { userId, hasPatterns: !!patternContext, intent, skillId });
+    // 6. Call DeepSeek with STREAMING
+    logger.infoSafe('Generating reflection (streaming)', { userId, hasPatterns: !!patternContext, intent, skillId });
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 20000);
@@ -281,6 +262,7 @@ export async function POST(request: NextRequest) {
         messages,
         temperature: 0.8,
         max_tokens: 300,
+        stream: true,
       }),
       signal: controller.signal,
     });
@@ -299,160 +281,117 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const data = await response.json();
-    let reflectionText = data.choices[0]?.message?.content;
-
-    if (!reflectionText) {
-      logger.errorSafe('Empty reflection from DeepSeek');
+    if (!response.body) {
       return NextResponse.json(
         { error: 'Réponse vide du service Aurum' },
         { status: 500 }
       );
     }
 
-    // 7. Validate response (anti-meta check)
-    const validation = validateResponse(reflectionText);
+    // 7. Stream response to client via SSE
+    // Background tasks (pattern update, conversation persist) run after stream ends
+    const deepSeekBody = response.body;
+    const encoder = new TextEncoder();
+    const decoder = new TextDecoder();
+    let fullText = '';
 
-    if (!validation.valid) {
-      if (validation.correctedText) {
-        // Use sanitized version
-        logger.infoSafe('Using sanitized reflection', { userId });
-        reflectionText = validation.correctedText;
-      } else if (validation.needsRegeneration) {
-        // Regenerate with correction prompt
-        logger.warnSafe('Regenerating reflection due to meta-references', { userId });
+    const stream = new ReadableStream({
+      async start(ctrl) {
+        const reader = deepSeekBody.getReader();
+        try {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
 
-        const correctionMessages = [
-          ...messages,
-          {
-            role: 'assistant',
-            content: reflectionText,
-          },
-          {
-            role: 'user',
-            content: getCorrectionPrompt(reflectionText),
-          },
-        ];
+            const chunk = decoder.decode(value, { stream: true });
+            const lines = chunk.split('\n');
 
-        const correctionResponse = await fetch('https://api.deepseek.com/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${apiKey}`,
-          },
-          body: JSON.stringify({
-            model: 'deepseek-chat',
-            messages: correctionMessages,
-            temperature: 0.7,
-            max_tokens: 300,
-          }),
-        });
+            for (const line of lines) {
+              if (!line.startsWith('data: ')) continue;
+              const data = line.slice(6).trim();
+              if (data === '[DONE]') continue;
 
-        if (correctionResponse.ok) {
-          const correctionData = await correctionResponse.json();
-          const correctedText = correctionData.choices[0]?.message?.content;
-
-          if (correctedText && !containsMetaReference(correctedText)) {
-            reflectionText = correctedText;
-            logger.infoSafe('Successfully regenerated reflection', { userId });
-          } else {
-            logger.warnSafe('Regeneration still contains meta-references', { userId });
-            // Use original but sanitized as fallback
-            reflectionText = validation.correctedText || reflectionText;
+              try {
+                const parsed = JSON.parse(data);
+                const token = parsed.choices?.[0]?.delta?.content;
+                if (token) {
+                  fullText += token;
+                  // SSE format: data: <json>\n\n
+                  ctrl.enqueue(encoder.encode(`data: ${JSON.stringify({ token })}\n\n`));
+                }
+              } catch {
+                // Skip malformed JSON chunks
+              }
+            }
           }
+
+          // Send anti-meta sanitized text if needed
+          const validation = validateResponse(fullText);
+          if (!validation.valid && validation.correctedText) {
+            fullText = validation.correctedText;
+            // Send a replacement event so client uses sanitized version
+            ctrl.enqueue(encoder.encode(`data: ${JSON.stringify({ replace: fullText })}\n\n`));
+          }
+
+          // Send final metadata
+          ctrl.enqueue(encoder.encode(`data: ${JSON.stringify({
+            done: true,
+            intent,
+            skill_used: skillId,
+            patterns_detected: detectionResult ? detectionResult.themes.length : 0,
+            patterns_used: injectedPatterns ? injectedPatterns.patterns.length : 0,
+          })}\n\n`));
+
+          ctrl.close();
+        } catch (err) {
+          ctrl.error(err);
         }
-      }
-    }
 
-    // Quality gate for first reflection (and general responses)
-    if (isLowQualityReflection(reflectionText)) {
-      logger.warnSafe('Low-quality reflection detected, regenerating', { userId });
-      const regenerateMessages = [
-        {
-          role: 'system',
-          content: getSystemPromptForIntent(intent),
-        },
-        {
-          role: 'system',
-          content: "Ta réponse précédente était trop générique. Recommence avec une image précise, un contraste clair et une ouverture subtile. Minimum 3 phrases courtes.",
-        },
-        {
-          role: 'user',
-          content: content,
-        },
-      ];
-
-      const retryResponse = await fetch('https://api.deepseek.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({
-          model: 'deepseek-chat',
-          messages: regenerateMessages,
-          temperature: 0.7,
-          max_tokens: 320,
-        }),
-      });
-
-      if (retryResponse.ok) {
-        const retryData = await retryResponse.json();
-        const retryText = retryData.choices?.[0]?.message?.content;
-        if (retryText && !isLowQualityReflection(retryText)) {
-          reflectionText = retryText;
+        // 8. Background: update patterns (non-blocking, after stream)
+        if (detectionResult) {
+          const storageFormat = detectionToStorageFormat(detectionResult);
+          batchUpdatePatterns(userId, storageFormat).catch((error) => {
+            logger.errorSafe('Failed to update patterns (non-blocking)', error, { userId });
+          });
+          cleanupStalePatterns(userId).catch(() => {});
         }
-      }
-    }
 
-    // 8. Update patterns in background (non-blocking)
-    if (detectionResult) {
-      const storageFormat = detectionToStorageFormat(detectionResult);
-      batchUpdatePatterns(userId, storageFormat).catch((error) => {
-        logger.errorSafe('Failed to update patterns (non-blocking)', error, { userId });
-      });
+        // Persist conversation turns
+        if (entryId && typeof entryId === 'string') {
+          const conversationRef = db
+            .collection('users')
+            .doc(userId)
+            .collection('entries')
+            .doc(entryId)
+            .collection('aurumConversation');
 
-      // Cleanup stale patterns (fire and forget)
-      cleanupStalePatterns(userId).catch(() => {
-        // Silent fail, non-critical
-      });
-    }
+          if (userMessage && typeof userMessage === 'string') {
+            conversationRef.add({
+              role: 'user',
+              text: userMessage.trim(),
+              createdAt: Timestamp.now(),
+              intent,
+              skillId,
+            }).catch(() => {});
+          }
 
-    // Persist conversation turns when entryId is available
-    if (entryId && typeof entryId === 'string') {
-      const conversationRef = db
-        .collection('users')
-        .doc(userId)
-        .collection('entries')
-        .doc(entryId)
-        .collection('aurumConversation');
+          conversationRef.add({
+            role: 'aurum',
+            text: fullText,
+            createdAt: Timestamp.now(),
+            intent,
+            skillId,
+          }).catch(() => {});
+        }
+      },
+    });
 
-      if (userMessage && typeof userMessage === 'string') {
-        await conversationRef.add({
-          role: 'user',
-          text: userMessage.trim(),
-          createdAt: Timestamp.now(),
-          intent,
-          skillId,
-        });
-      }
-
-      await conversationRef.add({
-        role: 'aurum',
-        text: reflectionText,
-        createdAt: Timestamp.now(),
-        intent,
-        skillId,
-      });
-    }
-
-    // 9. Return reflection
-    return NextResponse.json({
-      reflection: reflectionText,
-      intent,
-      skill_used: skillId,
-      patterns_detected: detectionResult ? detectionResult.themes.length : 0,
-      patterns_used: injectedPatterns ? injectedPatterns.patterns.length : 0,
+    return new Response(stream, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+      },
     });
   } catch (error) {
     logger.errorSafe('Error generating reflection', error);
