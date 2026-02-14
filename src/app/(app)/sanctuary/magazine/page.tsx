@@ -2,18 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import {
-  ArrowDownAZ,
-  ArrowDownWideNarrow,
-  BookImage,
-  CalendarDays,
-  LayoutGrid,
-  PenSquare,
-  Search,
-  Star,
-  List,
-  SquarePen,
-} from "lucide-react";
+import { BookImage, PenSquare } from "lucide-react";
 import {
   addDoc,
   arrayRemove,
@@ -39,7 +28,6 @@ import { firestore as db } from "@/lib/firebase/web-client";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MagazineStats } from "@/components/sanctuary/magazine-stats";
-import { MagazineTimeline } from "@/components/sanctuary/magazine-timeline";
 import { MoodChart } from "@/components/sanctuary/mood-chart";
 import {
   CollectionManager,
@@ -51,8 +39,6 @@ import {
 } from "@/components/sanctuary/insights-panel";
 import { WritingPrompt } from "@/components/sanctuary/writing-prompt";
 import { MagazineThemePicker } from "@/components/sanctuary/magazine-theme-picker";
-import { MagazineCalendar } from "@/components/sanctuary/magazine-calendar";
-import { motion } from "framer-motion";
 
 type MagazineIssue = {
   id: string;
@@ -64,9 +50,6 @@ type MagazineIssue = {
   mood: string | null;
 };
 
-type PeriodFilter = "7d" | "30d" | "3m" | "1y" | "all";
-type SortBy = "date" | "title";
-type ViewMode = "grid" | "timeline" | "calendar";
 type ThemeTemplate = "minimal" | "elegant" | "magazine" | "zen";
 
 const PAGE_SIZE = 20;
@@ -78,14 +61,6 @@ const moodToScore: Record<string, number> = {
   joyeux: 5,
   energique: 5,
 };
-const moodToCardClass: Record<string, string> = {
-  joyeux: "border-l-4 border-l-yellow-400",
-  calme: "border-l-4 border-l-blue-400",
-  anxieux: "border-l-4 border-l-orange-400",
-  triste: "border-l-4 border-l-indigo-400",
-  energique: "border-l-4 border-l-green-400",
-  neutre: "border-l-4 border-l-stone-300",
-};
 const moodToChartColor: Record<string, string> = {
   joyeux: "#FACC15",
   calme: "#60A5FA",
@@ -93,13 +68,6 @@ const moodToChartColor: Record<string, string> = {
   triste: "#818CF8",
   energique: "#4ADE80",
   neutre: "#A8A29E",
-};
-
-const themeCardClasses: Record<ThemeTemplate, string> = {
-  minimal: "rounded-3xl border border-stone-200 bg-white shadow-sm",
-  elegant: "rounded-[2.5rem] border border-stone-200 bg-white shadow-sm",
-  magazine: "rounded-2xl border border-stone-300 bg-white shadow-md",
-  zen: "rounded-3xl border border-stone-100 bg-stone-50 shadow-sm",
 };
 
 function parseCreatedAt(value: unknown): Date | null {
@@ -198,17 +166,8 @@ export default function MagazinePage() {
   const { user, loading } = useAuth();
   const [issues, setIssues] = useState<MagazineIssue[]>([]);
   const [isLoadingIssues, setIsLoadingIssues] = useState(true);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [period, setPeriod] = useState<PeriodFilter>("all");
-  const [sortBy, setSortBy] = useState<SortBy>("date");
-  const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [favorites, setFavorites] = useState<string[]>([]);
-  const [favoriteLoadingIds, setFavoriteLoadingIds] = useState<string[]>([]);
   const [entryCount, setEntryCount] = useState(0);
-  const [lastDoc, setLastDoc] =
-    useState<QueryDocumentSnapshot<DocumentData> | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const [collections, setCollections] = useState<MagazineCollection[]>([]);
   const [selectedCollectionId, setSelectedCollectionId] = useState("all");
@@ -218,10 +177,7 @@ export default function MagazinePage() {
   const [isDigestLoading, setIsDigestLoading] = useState(false);
   const [isBackfilling, setIsBackfilling] = useState(false);
   const [themeTemplate, setThemeTemplate] = useState<ThemeTemplate>("minimal");
-  const loadMoreSentinelRef = useRef<HTMLDivElement | null>(null);
   const lastDocRef = useRef<QueryDocumentSnapshot<DocumentData> | null>(null);
-  const hasMoreRef = useRef(true);
-  const isLoadingMoreRef = useRef(false);
 
   const fetchIssuesPage = useCallback(
     async ({ reset }: { reset: boolean }) => {
@@ -230,11 +186,6 @@ export default function MagazinePage() {
       if (reset) {
         setIsLoadingIssues(true);
         lastDocRef.current = null;
-        hasMoreRef.current = true;
-      } else {
-        if (!hasMoreRef.current || isLoadingMoreRef.current) return;
-        isLoadingMoreRef.current = true;
-        setIsLoadingMore(true);
       }
 
       try {
@@ -282,9 +233,7 @@ export default function MagazinePage() {
         );
         lastDocRef.current =
           validDocs.length > 0 ? validDocs[validDocs.length - 1] : null;
-        hasMoreRef.current = snap.docs.length === PAGE_SIZE;
-        setLastDoc(lastDocRef.current);
-        setHasMore(hasMoreRef.current);
+        setHasMore(snap.docs.length === PAGE_SIZE);
 
         if (reset) {
           setIssues(nextBatch);
@@ -304,9 +253,6 @@ export default function MagazinePage() {
       } finally {
         if (reset) {
           setIsLoadingIssues(false);
-        } else {
-          isLoadingMoreRef.current = false;
-          setIsLoadingMore(false);
         }
       }
     },
@@ -373,29 +319,6 @@ export default function MagazinePage() {
   }, [fetchCollections, fetchIssuesPage, user]);
 
   useEffect(() => {
-    if (
-      !loadMoreSentinelRef.current ||
-      !hasMore ||
-      isLoadingIssues ||
-      isLoadingMore
-    )
-      return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const first = entries[0];
-        if (first?.isIntersecting) {
-          void fetchIssuesPage({ reset: false });
-        }
-      },
-      { rootMargin: "250px 0px" }
-    );
-
-    observer.observe(loadMoreSentinelRef.current);
-    return () => observer.disconnect();
-  }, [fetchIssuesPage, hasMore, isLoadingIssues, isLoadingMore]);
-
-  useEffect(() => {
     const stored = window.localStorage.getItem(
       "aurum:magazine-theme"
     ) as ThemeTemplate | null;
@@ -408,64 +331,13 @@ export default function MagazinePage() {
     window.localStorage.setItem("aurum:magazine-theme", themeTemplate);
   }, [themeTemplate]);
 
-  const allTags = useMemo(() => {
-    return Array.from(new Set(issues.flatMap((issue) => issue.tags))).sort(
-      (a, b) => a.localeCompare(b)
-    );
-  }, [issues]);
-
-  const selectedCollection = useMemo(
-    () =>
-      collections.find(
-        (collection) => collection.id === selectedCollectionId
-      ) || null,
-    [collections, selectedCollectionId]
-  );
-
   const filteredIssues = useMemo(() => {
-    const now = new Date();
-    const queryText = searchQuery.trim().toLowerCase();
-
-    const minDateByPeriod: Record<Exclude<PeriodFilter, "all">, Date> = {
-      "7d": new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000),
-      "30d": new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000),
-      "3m": new Date(now.getFullYear(), now.getMonth() - 3, now.getDate()),
-      "1y": new Date(now.getFullYear() - 1, now.getMonth(), now.getDate()),
-    };
-
-    return issues
-      .filter((issue) => {
-        if (!queryText) return true;
-        const haystack = `${issue.title} ${issue.excerpt}`.toLowerCase();
-        return haystack.includes(queryText);
-      })
-      .filter((issue) => {
-        if (selectedTags.length === 0) return true;
-        return issue.tags.some((tag) => selectedTags.includes(tag));
-      })
-      .filter((issue) => {
-        if (period === "all" || !issue.createdAt) return true;
-        return issue.createdAt >= minDateByPeriod[period];
-      })
-      .filter((issue) => {
-        if (!selectedCollection || selectedCollectionId === "all") return true;
-        return selectedCollection.entryIds.includes(issue.id);
-      })
-      .sort((a, b) => {
-        if (sortBy === "title") return a.title.localeCompare(b.title);
-        const dateA = a.createdAt ? a.createdAt.getTime() : 0;
-        const dateB = b.createdAt ? b.createdAt.getTime() : 0;
-        return dateB - dateA;
-      });
-  }, [
-    issues,
-    period,
-    searchQuery,
-    selectedTags,
-    sortBy,
-    selectedCollection,
-    selectedCollectionId,
-  ]);
+    return issues.sort((a, b) => {
+      const dateA = a.createdAt ? a.createdAt.getTime() : 0;
+      const dateB = b.createdAt ? b.createdAt.getTime() : 0;
+      return dateB - dateA;
+    });
+  }, [issues]);
 
   const stats = useMemo(() => {
     const datedEntries = issues
@@ -533,19 +405,10 @@ export default function MagazinePage() {
     }));
   }, [filteredIssues]);
 
-  const toggleTag = (tag: string) => {
-    setSelectedTags((prev) =>
-      prev.includes(tag)
-        ? prev.filter((entry) => entry !== tag)
-        : [...prev, tag]
-    );
-  };
-
   const toggleFavorite = async (issueId: string) => {
-    if (!user || favoriteLoadingIds.includes(issueId)) return;
+    if (!user) return;
 
     const isFavorite = favorites.includes(issueId);
-    setFavoriteLoadingIds((prev) => [...prev, issueId]);
     setFavorites((prev) =>
       isFavorite ? prev.filter((id) => id !== issueId) : [...prev, issueId]
     );
@@ -560,8 +423,6 @@ export default function MagazinePage() {
       setFavorites((prev) =>
         isFavorite ? [...prev, issueId] : prev.filter((id) => id !== issueId)
       );
-    } finally {
-      setFavoriteLoadingIds((prev) => prev.filter((id) => id !== issueId));
     }
   };
 
@@ -735,7 +596,6 @@ export default function MagazinePage() {
         await batch.commit();
       }
 
-      setLastDoc(null);
       setHasMore(true);
       await fetchIssuesPage({ reset: true });
     } finally {
@@ -897,302 +757,26 @@ export default function MagazinePage() {
             </section>
           )}
 
-          <section className="rounded-2xl border border-stone-200 bg-white/80 p-4 shadow-sm backdrop-blur-sm">
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-[1fr_auto_auto_auto] md:items-center">
-              <label className="relative block">
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Rechercher un titre ou un extrait..."
-                  className="h-10 w-full rounded-xl border border-stone-300 bg-stone-50 pl-9 pr-3 text-sm text-stone-900 outline-none transition-colors placeholder:text-stone-400 focus:border-[#C5A059] focus:bg-white"
-                />
-              </label>
-
-              <label className="inline-flex items-center gap-2 text-sm text-stone-600">
-                {sortBy === "date" ? (
-                  <ArrowDownWideNarrow className="h-4 w-4" />
-                ) : (
-                  <ArrowDownAZ className="h-4 w-4" />
-                )}
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as SortBy)}
-                  className="h-10 rounded-xl border border-stone-300 bg-stone-50 px-3 text-sm text-stone-900 outline-none transition-colors focus:border-[#C5A059] focus:bg-white"
-                >
-                  <option value="date">Tri: Date recente</option>
-                  <option value="title">Tri: Titre A-Z</option>
-                </select>
-              </label>
-
-              <select
-                value={period}
-                onChange={(e) => setPeriod(e.target.value as PeriodFilter)}
-                className="h-10 rounded-xl border border-stone-300 bg-stone-50 px-3 text-sm text-stone-900 outline-none transition-colors focus:border-[#C5A059] focus:bg-white"
-              >
-                <option value="all">Periode: Tout</option>
-                <option value="7d">Derniers 7 jours</option>
-                <option value="30d">Derniers 30 jours</option>
-                <option value="3m">3 derniers mois</option>
-                <option value="1y">Derniere annee</option>
-              </select>
-
-              <div className="inline-flex rounded-xl border border-stone-300 bg-stone-50 p-1">
-                <button
-                  type="button"
-                  onClick={() => setViewMode("grid")}
-                  className={`rounded-lg px-2 py-1 ${
-                    viewMode === "grid"
-                      ? "bg-white text-stone-900"
-                      : "text-stone-500"
-                  }`}
-                >
-                  <LayoutGrid className="h-4 w-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setViewMode("timeline")}
-                  className={`rounded-lg px-2 py-1 ${
-                    viewMode === "timeline"
-                      ? "bg-white text-stone-900"
-                      : "text-stone-500"
-                  }`}
-                >
-                  <List className="h-4 w-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setViewMode("calendar")}
-                  className={`rounded-lg px-2 py-1 ${
-                    viewMode === "calendar"
-                      ? "bg-white text-stone-900"
-                      : "text-stone-500"
-                  }`}
-                >
-                  <CalendarDays className="h-4 w-4" />
-                </button>
-              </div>
+          <div className="rounded-2xl border border-dashed border-stone-300 bg-stone-50/60 p-10 text-center">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-sm">
+              <BookImage className="h-6 w-6 text-stone-500" />
             </div>
-
-            {allTags.length > 0 && (
-              <div className="mt-4 flex flex-wrap gap-2">
-                {allTags.map((tag) => {
-                  const active = selectedTags.includes(tag);
-                  return (
-                    <button
-                      key={tag}
-                      type="button"
-                      onClick={() => toggleTag(tag)}
-                      className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
-                        active
-                          ? "border-[#C5A059] bg-[#C5A059]/10 text-[#7A5D24]"
-                          : "border-stone-300 bg-stone-50 text-stone-600 hover:border-stone-400"
-                      }`}
-                    >
-                      {tag}
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-          </section>
-
-          {filteredIssues.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-stone-300 bg-stone-50/60 p-10 text-center">
-              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-sm">
-                <BookImage className="h-6 w-6 text-stone-500" />
-              </div>
-              <p className="text-stone-700">
-                Aucune edition ne correspond a tes filtres.
-              </p>
-              <p className="mt-1 text-sm text-stone-500">
-                Ajuste ta recherche, les tags ou la periode.
-              </p>
-            </div>
-          ) : viewMode === "timeline" ? (
-            <MagazineTimeline issues={filteredIssues} favorites={favorites} />
-          ) : viewMode === "calendar" ? (
-            <MagazineCalendar issues={filteredIssues} favorites={favorites} />
-          ) : (
-            <motion.div
-              variants={{
-                hidden: { opacity: 0 },
-                show: { opacity: 1, transition: { staggerChildren: 0.06 } },
-              }}
-              initial="hidden"
-              animate="show"
-              className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3"
-            >
-              {filteredIssues.map((issue) => {
-                const isFavorite = favorites.includes(issue.id);
-                const isFavoriteLoading = favoriteLoadingIds.includes(issue.id);
-                const moodClass = issue.mood ? moodToCardClass[issue.mood] : "";
-                const issueCollections = collections.filter((collectionItem) =>
-                  collectionItem.entryIds.includes(issue.id)
-                );
-
-                return (
-                  <Link
-                    key={issue.id}
-                    href={`/sanctuary/magazine/${issue.id}`}
-                    className="group block"
-                  >
-                    <motion.article
-                      variants={{
-                        hidden: { opacity: 0, y: 16 },
-                        show: { opacity: 1, y: 0 },
-                      }}
-                      className={`overflow-hidden ${themeCardClasses[themeTemplate]} transition-all duration-200 group-hover:-translate-y-0.5 group-hover:shadow-md ${moodClass}`}
-                    >
-                      <div className="relative aspect-[16/10] w-full bg-stone-100">
-                        <button
-                          type="button"
-                          onClick={(event) => {
-                            event.preventDefault();
-                            event.stopPropagation();
-                            void toggleFavorite(issue.id);
-                          }}
-                          disabled={isFavoriteLoading}
-                          className={`absolute right-3 top-3 z-10 rounded-full border bg-white/90 p-2 shadow-sm transition-colors ${
-                            isFavorite
-                              ? "border-[#C5A059] text-[#C5A059]"
-                              : "border-stone-200 text-stone-500 hover:text-[#C5A059]"
-                          }`}
-                          aria-label={
-                            isFavorite
-                              ? "Retirer des favoris"
-                              : "Ajouter aux favoris"
-                          }
-                        >
-                          <Star
-                            className={`h-4 w-4 ${
-                              isFavorite ? "fill-[#C5A059]" : ""
-                            }`}
-                          />
-                        </button>
-
-                        <div className="absolute left-3 top-3 z-10 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-                          <button
-                            type="button"
-                            onClick={(event) => {
-                              event.preventDefault();
-                              event.stopPropagation();
-                              window.location.assign(
-                                `/sanctuary/magazine/${issue.id}`
-                              );
-                            }}
-                            className="rounded-full border border-stone-200 bg-white/90 p-2 text-stone-600 shadow-sm hover:text-[#C5A059]"
-                            aria-label="Editer"
-                          >
-                            <SquarePen className="h-4 w-4" />
-                          </button>
-                        </div>
-
-                        {issue.coverImageUrl ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            src={issue.coverImageUrl}
-                            alt={issue.title}
-                            className="h-full w-full object-cover"
-                          />
-                        ) : (
-                          <div className="flex h-full items-center justify-center text-stone-400">
-                            <BookImage className="h-8 w-8" />
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="space-y-3 p-5">
-                        <div className="flex items-start justify-between gap-2">
-                          <h2 className="line-clamp-2 font-headline text-2xl text-stone-900">
-                            {issue.title}
-                          </h2>
-                          {isFavorite && (
-                            <span className="rounded-full bg-[#C5A059]/10 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-[#7A5D24]">
-                              Favori
-                            </span>
-                          )}
-                        </div>
-
-                        {issue.excerpt && issue.excerpt !== issue.title && (
-                          <p className="line-clamp-4 text-sm leading-relaxed text-stone-600">
-                            {issue.excerpt}
-                          </p>
-                        )}
-
-                        {issueCollections.length > 0 && (
-                          <div className="flex flex-wrap gap-1">
-                            {issueCollections.map((collectionItem) => (
-                              <button
-                                key={`${issue.id}-${collectionItem.id}`}
-                                type="button"
-                                onClick={(event) => {
-                                  event.preventDefault();
-                                  event.stopPropagation();
-                                  void toggleEntryInCollection(
-                                    collectionItem.id,
-                                    issue.id
-                                  );
-                                }}
-                                className="rounded-full border border-stone-300 bg-stone-50 px-2 py-1 text-[10px] uppercase tracking-[0.15em] text-stone-600"
-                              >
-                                {collectionItem.name}
-                              </button>
-                            ))}
-                          </div>
-                        )}
-
-                        {selectedCollectionId !== "all" && (
-                          <button
-                            type="button"
-                            onClick={(event) => {
-                              event.preventDefault();
-                              event.stopPropagation();
-                              void toggleEntryInCollection(
-                                selectedCollectionId,
-                                issue.id
-                              );
-                            }}
-                            className="rounded-xl border border-[#C5A059]/40 bg-[#C5A059]/10 px-3 py-1 text-xs text-[#7A5D24]"
-                          >
-                            {selectedCollection?.entryIds.includes(issue.id)
-                              ? "Retirer de la collection"
-                              : "Ajouter a la collection"}
-                          </button>
-                        )}
-                      </div>
-                    </motion.article>
-                  </Link>
-                );
-              })}
-            </motion.div>
-          )}
-
-          <p className="text-xs text-stone-500">
-            Resultats: {filteredIssues.length}
-          </p>
-
-          {isLoadingMore && viewMode === "grid" && (
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-              <Skeleton className="h-[340px] rounded-3xl" />
-              <Skeleton className="h-[340px] rounded-3xl" />
-              <Skeleton className="h-[340px] rounded-3xl" />
-            </div>
-          )}
-
-          {viewMode === "grid" && (
-            <div
-              ref={loadMoreSentinelRef}
-              className="h-1 w-full"
-              aria-hidden="true"
-            />
-          )}
-          {viewMode === "grid" && !hasMore && (
-            <p className="text-center text-xs text-stone-500">
-              Toutes les entrees sont chargees.
+            <p className="text-stone-700">
+              Vos entrées sont maintenant dans le Journal.
             </p>
-          )}
+            <p className="mt-1 text-sm text-stone-500">
+              Retrouvez toutes vos écritures et échanges avec Aurum dans la page
+              Journal.
+            </p>
+            <div className="mt-5">
+              <Button
+                asChild
+                className="bg-stone-900 text-stone-50 hover:bg-stone-800"
+              >
+                <Link href="/sanctuary">Voir le Journal</Link>
+              </Button>
+            </div>
+          </div>
         </div>
       )}
     </div>
