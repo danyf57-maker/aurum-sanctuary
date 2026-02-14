@@ -235,7 +235,26 @@ export default function MagazinePage() {
 
         // Vérifier que le curseur a un createdAt valide avant d'utiliser startAfter
         // pour éviter l'erreur "Cannot read properties of undefined (reading 'toMillis')"
-        const hasValidCursor = cursor && cursor.data()?.createdAt != null;
+        const cursorData = cursor?.data();
+        const createdAt = cursorData?.createdAt;
+
+        // Debug logging pour diagnostiquer la source de l'erreur
+        console.log("[Magazine Debug] Cursor:", cursor ? "exists" : "null");
+        console.log("[Magazine Debug] cursorData:", cursorData);
+        console.log("[Magazine Debug] createdAt:", createdAt);
+        console.log("[Magazine Debug] typeof createdAt:", typeof createdAt);
+        console.log(
+          "[Magazine Debug] createdAt?.toMillis:",
+          typeof createdAt?.toMillis
+        );
+
+        const hasValidCursor =
+          cursor &&
+          cursorData &&
+          createdAt &&
+          typeof createdAt.toMillis === "function";
+
+        console.log("[Magazine Debug] hasValidCursor:", hasValidCursor);
 
         const q = hasValidCursor
           ? query(
