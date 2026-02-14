@@ -204,6 +204,9 @@ export default function MagazinePage() {
   const [isBackfilling, setIsBackfilling] = useState(false);
   const [themeTemplate, setThemeTemplate] = useState<ThemeTemplate>('minimal');
   const loadMoreSentinelRef = useRef<HTMLDivElement | null>(null);
+  const lastDocRef = useRef<QueryDocumentSnapshot<DocumentData> | null>(null);
+  const hasMoreRef = useRef(true);
+  const isLoadingMoreRef = useRef(false);
 
   const fetchIssuesPage = useCallback(
     async ({ reset }: { reset: boolean }) => {
@@ -211,22 +214,28 @@ export default function MagazinePage() {
 
       if (reset) {
         setIsLoadingIssues(true);
+        lastDocRef.current = null;
+        hasMoreRef.current = true;
       } else {
-        if (!hasMore || isLoadingMore) return;
+        if (!hasMoreRef.current || isLoadingMoreRef.current) return;
+        isLoadingMoreRef.current = true;
         setIsLoadingMore(true);
       }
 
       try {
         const issuesRef = collection(db, 'users', user.uid, 'magazineIssues');
-        const q = reset || !lastDoc
-          ? query(issuesRef, orderBy('createdAt', 'desc'), limit(PAGE_SIZE))
-          : query(issuesRef, orderBy('createdAt', 'desc'), startAfter(lastDoc), limit(PAGE_SIZE));
+        const cursor = reset ? null : lastDocRef.current;
+        const q = cursor
+          ? query(issuesRef, orderBy('createdAt', 'desc'), startAfter(cursor), limit(PAGE_SIZE))
+          : query(issuesRef, orderBy('createdAt', 'desc'), limit(PAGE_SIZE));
 
         const snap = await getDocs(q);
         const nextBatch = snap.docs.map(toIssue);
 
-        setLastDoc(snap.docs.length > 0 ? snap.docs[snap.docs.length - 1] : null);
-        setHasMore(snap.docs.length === PAGE_SIZE);
+        lastDocRef.current = snap.docs.length > 0 ? snap.docs[snap.docs.length - 1] : null;
+        hasMoreRef.current = snap.docs.length === PAGE_SIZE;
+        setLastDoc(lastDocRef.current);
+        setHasMore(hasMoreRef.current);
 
         if (reset) {
           setIssues(nextBatch);
@@ -240,33 +249,39 @@ export default function MagazinePage() {
             return merged;
           });
         }
-      } catch {
+      } catch (err) {
+        console.error('[Magazine] fetchIssuesPage error:', err);
         if (reset) setIssues([]);
       } finally {
         if (reset) {
           setIsLoadingIssues(false);
         } else {
+          isLoadingMoreRef.current = false;
           setIsLoadingMore(false);
         }
       }
     },
-    [hasMore, isLoadingMore, lastDoc, user],
+    [user],
   );
 
   const fetchCollections = useCallback(async () => {
     if (!user) return;
-    const collectionsRef = collection(db, 'users', user.uid, 'collections');
-    const snap = await getDocs(collectionsRef);
-    const nextCollections = snap.docs.map((docSnap) => {
-      const data = docSnap.data() as Record<string, unknown>;
-      return {
-        id: docSnap.id,
-        name: String(data.name || 'Collection'),
-        color: String(data.color || '#C5A059'),
-        entryIds: Array.isArray(data.entryIds) ? data.entryIds.map((id) => String(id)) : [],
-      } satisfies MagazineCollection;
-    });
-    setCollections(nextCollections);
+    try {
+      const collectionsRef = collection(db, 'users', user.uid, 'collections');
+      const snap = await getDocs(collectionsRef);
+      const nextCollections = snap.docs.map((docSnap) => {
+        const data = docSnap.data() as Record<string, unknown>;
+        return {
+          id: docSnap.id,
+          name: String(data.name || 'Collection'),
+          color: String(data.color || '#C5A059'),
+          entryIds: Array.isArray(data.entryIds) ? data.entryIds.map((id) => String(id)) : [],
+        } satisfies MagazineCollection;
+      });
+      setCollections(nextCollections);
+    } catch (err) {
+      console.error('[Magazine] fetchCollections error:', err);
+    }
   }, [user]);
 
   useEffect(() => {
@@ -282,8 +297,6 @@ export default function MagazinePage() {
     let cancelled = false;
 
     const bootstrap = async () => {
-      setLastDoc(null);
-      setHasMore(true);
       await fetchIssuesPage({ reset: true });
       await fetchCollections();
 
