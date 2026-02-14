@@ -107,7 +107,15 @@ function parseCreatedAt(value: unknown): Date | null {
   if (value instanceof Date) return value;
   if (typeof value === "object" && value !== null && "toDate" in value) {
     const maybeToDate = (value as { toDate?: () => Date }).toDate;
-    if (typeof maybeToDate === "function") return maybeToDate();
+    // Appeler toDate avec le contexte (this) pour éviter l'erreur "Cannot read properties of undefined (reading 'toMillis')"
+    if (typeof maybeToDate === "function") {
+      try {
+        return (value as { toDate: () => Date }).toDate();
+      } catch (e) {
+        console.warn("[parseCreatedAt] Failed to call toDate:", e);
+        return null;
+      }
+    }
   }
   if (typeof value === "object" && value !== null && "seconds" in value) {
     const seconds = Number((value as { seconds?: number }).seconds);

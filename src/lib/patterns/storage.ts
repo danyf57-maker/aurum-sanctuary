@@ -5,16 +5,19 @@
  * Collection: users/{uid}/patterns/{themeId}
  */
 
-import { db } from '@/lib/firebase/admin';
-import { Pattern, ThemeId } from './types';
-import { logger } from '@/lib/logger/safe';
+import { db } from "@/lib/firebase/admin";
+import { Pattern, ThemeId } from "./types";
+import { logger } from "@/lib/logger/safe";
 
 /**
  * Get all patterns for a user
  */
 export async function getUserPatterns(userId: string): Promise<Pattern[]> {
   try {
-    const patternsRef = db.collection('users').doc(userId).collection('patterns');
+    const patternsRef = db
+      .collection("users")
+      .doc(userId)
+      .collection("patterns");
     const snapshot = await patternsRef.get();
 
     if (snapshot.empty) {
@@ -26,8 +29,8 @@ export async function getUserPatterns(userId: string): Promise<Pattern[]> {
       return {
         theme_id: data.theme_id as ThemeId,
         frequency: data.frequency,
-        last_seen: data.last_seen.toDate(),
-        first_seen: data.first_seen.toDate(),
+        last_seen: data.last_seen?.toDate?.() || new Date(),
+        first_seen: data.first_seen?.toDate?.() || new Date(),
         emotional_tone: data.emotional_tone,
         intensity_avg: data.intensity_avg,
         confidence: data.confidence,
@@ -36,7 +39,7 @@ export async function getUserPatterns(userId: string): Promise<Pattern[]> {
       };
     });
   } catch (error) {
-    logger.errorSafe('Failed to fetch user patterns', error, { userId });
+    logger.errorSafe("Failed to fetch user patterns", error, { userId });
     return [];
   }
 }
@@ -50,9 +53,9 @@ export async function getUserPattern(
 ): Promise<Pattern | null> {
   try {
     const patternRef = db
-      .collection('users')
+      .collection("users")
       .doc(userId)
-      .collection('patterns')
+      .collection("patterns")
       .doc(themeId);
 
     const doc = await patternRef.get();
@@ -65,8 +68,8 @@ export async function getUserPattern(
     return {
       theme_id: data.theme_id as ThemeId,
       frequency: data.frequency,
-      last_seen: data.last_seen.toDate(),
-      first_seen: data.first_seen.toDate(),
+      last_seen: data.last_seen?.toDate?.() || new Date(),
+      first_seen: data.first_seen?.toDate?.() || new Date(),
       emotional_tone: data.emotional_tone,
       intensity_avg: data.intensity_avg,
       confidence: data.confidence,
@@ -74,7 +77,10 @@ export async function getUserPattern(
       half_life_days: data.half_life_days || 30,
     };
   } catch (error) {
-    logger.errorSafe('Failed to fetch user pattern', error, { userId, themeId });
+    logger.errorSafe("Failed to fetch user pattern", error, {
+      userId,
+      themeId,
+    });
     return null;
   }
 }
@@ -89,7 +95,8 @@ function calculateDecayScore(
   halfLifeDays: number
 ): number {
   const now = new Date();
-  const daysSinceLastSeen = (now.getTime() - lastSeen.getTime()) / (1000 * 60 * 60 * 24);
+  const daysSinceLastSeen =
+    (now.getTime() - lastSeen.getTime()) / (1000 * 60 * 60 * 24);
 
   // Exponential decay
   const timeDecay = Math.exp(-(daysSinceLastSeen / halfLifeDays));
@@ -112,9 +119,9 @@ export async function upsertPattern(
 ): Promise<void> {
   try {
     const patternRef = db
-      .collection('users')
+      .collection("users")
       .doc(userId)
-      .collection('patterns')
+      .collection("patterns")
       .doc(themeId);
 
     const doc = await patternRef.get();
@@ -159,7 +166,7 @@ export async function upsertPattern(
       });
     }
   } catch (error) {
-    logger.errorSafe('Failed to upsert pattern', error, { userId, themeId });
+    logger.errorSafe("Failed to upsert pattern", error, { userId, themeId });
     throw error;
   }
 }
@@ -190,7 +197,7 @@ export async function batchUpdatePatterns(
       )
     );
   } catch (error) {
-    logger.errorSafe('Failed to batch update patterns', error, { userId });
+    logger.errorSafe("Failed to batch update patterns", error, { userId });
     throw error;
   }
 }
@@ -213,21 +220,21 @@ export async function cleanupStalePatterns(userId: string): Promise<void> {
 
     stalePatterns.forEach((pattern) => {
       const ref = db
-        .collection('users')
+        .collection("users")
         .doc(userId)
-        .collection('patterns')
+        .collection("patterns")
         .doc(pattern.theme_id);
       batch.delete(ref);
     });
 
     await batch.commit();
 
-    logger.infoSafe('Cleaned up stale patterns', {
+    logger.infoSafe("Cleaned up stale patterns", {
       userId,
       deletedCount: stalePatterns.length,
     });
   } catch (error) {
-    logger.errorSafe('Failed to cleanup stale patterns', error, { userId });
+    logger.errorSafe("Failed to cleanup stale patterns", error, { userId });
     // Non-critical, don't throw
   }
 }
