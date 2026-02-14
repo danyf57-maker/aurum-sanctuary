@@ -217,7 +217,7 @@ function SanctuaryPageContent() {
               </h1>
               <p className="mt-2 text-muted-foreground">
                 Bienvenue dans votre sanctuaire,{" "}
-                {user.displayName || "cher explorateur"}.
+                {(user.displayName ?? "") || "cher explorateur"}.
               </p>
             </div>
           </div>

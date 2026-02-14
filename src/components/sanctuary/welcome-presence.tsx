@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 /**
  * Welcome Presence Screen
@@ -7,10 +7,10 @@
  * Sets the emotional tone - no metrics, just presence.
  */
 
-import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { X } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface WelcomePresenceProps {
   userName?: string;
@@ -22,7 +22,7 @@ export function WelcomePresence({ userName }: WelcomePresenceProps) {
 
   useEffect(() => {
     // Check if already shown this session
-    const shownThisSession = sessionStorage.getItem('aurum_welcome_shown');
+    const shownThisSession = sessionStorage.getItem("aurum_welcome_shown");
 
     if (!shownThisSession) {
       // Show after brief delay (let page load)
@@ -39,14 +39,14 @@ export function WelcomePresence({ userName }: WelcomePresenceProps) {
   const handleDismiss = () => {
     setIsVisible(false);
     setHasBeenShown(true);
-    sessionStorage.setItem('aurum_welcome_shown', 'true');
+    sessionStorage.setItem("aurum_welcome_shown", "true");
   };
 
   if (hasBeenShown) {
     return null;
   }
 
-  const firstName = userName?.split(' ')[0] || 'cher explorateur';
+  const firstName = (userName ?? "").split(" ")[0] || "cher explorateur";
 
   return (
     <AnimatePresence>
@@ -67,17 +67,17 @@ export function WelcomePresence({ userName }: WelcomePresenceProps) {
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            transition={{ duration: 0.4, ease: 'easeOut' }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
             className="fixed inset-x-4 top-[20vh] md:inset-x-auto md:left-1/2 md:-translate-x-1/2 md:w-full md:max-w-lg z-50"
           >
             <div
               className={cn(
-                'relative',
-                'bg-gradient-to-b from-amber-50/95 via-stone-50/95 to-white/95',
-                'backdrop-blur-md',
-                'rounded-2xl shadow-2xl',
-                'border border-amber-200/40',
-                'p-8 md:p-10'
+                "relative",
+                "bg-gradient-to-b from-amber-50/95 via-stone-50/95 to-white/95",
+                "backdrop-blur-md",
+                "rounded-2xl shadow-2xl",
+                "border border-amber-200/40",
+                "p-8 md:p-10"
               )}
             >
               {/* Close button */}
@@ -101,11 +101,10 @@ export function WelcomePresence({ userName }: WelcomePresenceProps) {
 
                 {/* Message */}
                 <div className="space-y-4 text-stone-700 leading-relaxed">
-                  <p className="text-lg">
-                    Cet espace est le tien.
-                  </p>
+                  <p className="text-lg">Cet espace est le tien.</p>
                   <p className="text-base">
-                    Ici, rien ne presse. Rien ne mesure. Aurum t'accompagne, sans te diriger.
+                    Ici, rien ne presse. Rien ne mesure. Aurum t'accompagne,
+                    sans te diriger.
                   </p>
                   <p className="text-sm text-stone-500 italic">
                     Écris ce qui demande à être posé. Le reste viendra.

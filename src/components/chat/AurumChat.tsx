@@ -1,23 +1,29 @@
-'use client';
+"use client";
 
-import { useEffect, useRef, useState, useTransition } from 'react';
-import { useFormStatus, useFormState } from 'react-dom';
-import { Eye, Loader2, Send, User, ShieldAlert } from 'lucide-react';
-import { submitAurumMessage } from '@/app/actions/chat';
-import { type ChatMessage } from '@/lib/ai/types';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { cn } from '@/lib/utils';
-import { useAuth } from '@/providers/auth-provider';
-import { useToast } from '@/hooks/use-toast';
-
+import { useEffect, useRef, useState, useTransition } from "react";
+import { useFormStatus, useFormState } from "react-dom";
+import { Eye, Loader2, Send, User, ShieldAlert } from "lucide-react";
+import { submitAurumMessage } from "@/app/actions/chat";
+import { type ChatMessage } from "@/lib/ai/types";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardFooter,
+} from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { cn } from "@/lib/utils";
+import { useAuth } from "@/providers/auth-provider";
+import { useToast } from "@/hooks/use-toast";
 
 const initialState = {
-  response: '',
+  response: "",
   history: [],
   error: undefined,
 };
@@ -26,7 +32,11 @@ function SubmitButton() {
   const { pending } = useFormStatus();
   return (
     <Button type="submit" size="icon" disabled={pending}>
-      {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+      {pending ? (
+        <Loader2 className="h-4 w-4 animate-spin" />
+      ) : (
+        <Send className="h-4 w-4" />
+      )}
       <span className="sr-only">Envoyer</span>
     </Button>
   );
@@ -70,7 +80,7 @@ export function AurumChat({ prompt }: { prompt?: string }) {
       setHistory(state.history);
       formRef.current?.reset();
       if (textareaRef.current) {
-        textareaRef.current.style.height = 'auto';
+        textareaRef.current.style.height = "auto";
       }
     }
   }, [state, history.length, toast]);
@@ -79,19 +89,19 @@ export function AurumChat({ prompt }: { prompt?: string }) {
     if (scrollAreaRef.current) {
       scrollAreaRef.current.scrollTo({
         top: scrollAreaRef.current.scrollHeight,
-        behavior: 'smooth',
+        behavior: "smooth",
       });
     }
   }, [history]);
 
   const handleTextareaInput = (event: React.FormEvent<HTMLTextAreaElement>) => {
     const textarea = event.currentTarget;
-    textarea.style.height = 'auto';
+    textarea.style.height = "auto";
     textarea.style.height = `${textarea.scrollHeight}px`;
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
+    if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
       formRef.current?.requestSubmit();
     }
@@ -102,7 +112,9 @@ export function AurumChat({ prompt }: { prompt?: string }) {
       <Card className="w-full max-w-3xl">
         <CardHeader>
           <CardTitle>Accès non autorisé</CardTitle>
-          <CardDescription>Vous devez être connecté pour discuter avec Aurum.</CardDescription>
+          <CardDescription>
+            Vous devez être connecté pour discuter avec Aurum.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Alert variant="destructive">
@@ -124,7 +136,9 @@ export function AurumChat({ prompt }: { prompt?: string }) {
           <Eye className="text-amber-600" />
           <span>Discuter avec Aurum</span>
         </CardTitle>
-        <CardDescription>Votre confident pour une introspection guidée.</CardDescription>
+        <CardDescription>
+          Votre confident pour une introspection guidée.
+        </CardDescription>
         {prompt && (
           <div className="mt-2 rounded-md border bg-amber-50/60 px-3 py-2 text-sm text-amber-900">
             <span className="font-medium">Question‑miroir :</span> {prompt}
@@ -137,23 +151,35 @@ export function AurumChat({ prompt }: { prompt?: string }) {
             {history.map((msg, index) => (
               <div
                 key={index}
-                className={cn('flex items-start gap-4', { 'justify-end': msg.role === 'user' })}
+                className={cn("flex items-start gap-4", {
+                  "justify-end": msg.role === "user",
+                })}
               >
-                {msg.role === 'assistant' && (
+                {msg.role === "assistant" && (
                   <Avatar className="h-8 w-8 border">
-                    <AvatarFallback className="bg-amber-100 text-amber-700">A</AvatarFallback>
+                    <AvatarFallback className="bg-amber-100 text-amber-700">
+                      A
+                    </AvatarFallback>
                   </Avatar>
                 )}
-                <div className={cn('max-w-md rounded-lg p-3', {
-                  'bg-secondary text-secondary-foreground': msg.role === 'user',
-                  'bg-stone-100 dark:bg-stone-800': msg.role === 'assistant'
-                })}>
+                <div
+                  className={cn("max-w-md rounded-lg p-3", {
+                    "bg-secondary text-secondary-foreground":
+                      msg.role === "user",
+                    "bg-stone-100 dark:bg-stone-800": msg.role === "assistant",
+                  })}
+                >
                   <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
                 </div>
-                {msg.role === 'user' && (
+                {msg.role === "user" && (
                   <Avatar className="h-8 w-8 border">
-                    <AvatarImage src={user.photoURL ?? undefined} alt={user.displayName ?? "User"} />
-                    <AvatarFallback><User size={16} /></AvatarFallback>
+                    <AvatarImage
+                      src={user.photoURL ?? undefined}
+                      alt={(user.displayName ?? "") || "User"}
+                    />
+                    <AvatarFallback>
+                      <User size={16} />
+                    </AvatarFallback>
                   </Avatar>
                 )}
               </div>
@@ -161,7 +187,9 @@ export function AurumChat({ prompt }: { prompt?: string }) {
             {isPending && (
               <div className="flex items-start gap-4">
                 <Avatar className="h-8 w-8 border">
-                  <AvatarFallback className="bg-amber-100 text-amber-700">A</AvatarFallback>
+                  <AvatarFallback className="bg-amber-100 text-amber-700">
+                    A
+                  </AvatarFallback>
                 </Avatar>
                 <div className="max-w-md rounded-lg p-3 bg-stone-100 dark:bg-stone-800 flex items-center justify-center">
                   <Loader2 className="h-5 w-5 animate-spin text-amber-600" />

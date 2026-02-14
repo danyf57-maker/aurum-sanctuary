@@ -167,16 +167,16 @@ export function AppSidebar() {
                 {user.photoURL ? (
                   <img
                     src={user.photoURL}
-                    alt={user.displayName || ""}
+                    alt={(user.displayName ?? "") || ""}
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  user.displayName?.charAt(0) || "U"
+                  (user.displayName ?? "").charAt(0) || "U"
                 )}
               </div>
               <div className="flex flex-col min-w-0">
                 <span className="text-xs font-bold truncate text-stone-900">
-                  {user.displayName || "Utilisateur"}
+                  {(user.displayName ?? "") || "Utilisateur"}
                 </span>
                 <span className="text-[10px] text-stone-500 truncate">
                   Membre Aurum
