@@ -1,5 +1,3 @@
-
-
 export type JournalEntry = {
   id: string;
   userId: string;
@@ -9,6 +7,7 @@ export type JournalEntry = {
   sentiment: string;
   mood: string;
   insight: string;
+  images?: { url: string; caption?: string }[];
 };
 
 export type PublicPost = {
@@ -27,14 +26,14 @@ export type UserInsights = {
   recurringPatterns: string;
   gentleAdvice: string;
   lastUpdatedAt: Date;
-}
+};
 
 export type UserProfile = {
-    uid: string;
-    email?: string | null;
-    displayName?: string | null;
-    photoURL?: string | null;
-    createdAt: Date;
-    insights?: UserInsights;
-    entryCount?: number;
-}
+  uid: string;
+  email?: string | null;
+  displayName?: string | null;
+  photoURL?: string | null;
+  createdAt: Date;
+  insights?: UserInsights;
+  entryCount?: number;
+};
