@@ -45,6 +45,7 @@ import { CollectionManager, type MagazineCollection } from '@/components/sanctua
 import { InsightsPanel, type WritingPatterns } from '@/components/sanctuary/insights-panel';
 import { WritingPrompt } from '@/components/sanctuary/writing-prompt';
 import { MagazineThemePicker } from '@/components/sanctuary/magazine-theme-picker';
+import { MagazineCalendar } from '@/components/sanctuary/magazine-calendar';
 import { motion } from 'framer-motion';
 
 type MagazineIssue = {
@@ -384,7 +385,7 @@ export default function MagazinePage() {
 
     const avgWordsSource = issues
       .map((issue) => `${issue.title} ${issue.excerpt}`)
-      .filter((text) => !text.includes('Entree chiffree'));
+      .filter((text) => !text.includes('Ouvrir pour lire'));
     const totalWords = avgWordsSource.reduce((sum, text) => sum + countWords(text), 0);
 
     return {
@@ -422,28 +423,6 @@ export default function MagazinePage() {
       value,
       color: moodToChartColor[mood] || '#A8A29E',
     }));
-  }, [filteredIssues]);
-
-  const calendarDays = useMemo(() => {
-    const dateCounts = new Map<string, number>();
-    for (const issue of filteredIssues) {
-      if (!issue.createdAt) continue;
-      const key = `${issue.createdAt.getFullYear()}-${issue.createdAt.getMonth()}-${issue.createdAt.getDate()}`;
-      dateCounts.set(key, (dateCounts.get(key) || 0) + 1);
-    }
-
-    const days: Array<{ label: string; count: number }> = [];
-    for (let i = 83; i >= 0; i -= 1) {
-      const date = new Date();
-      date.setDate(date.getDate() - i);
-      const key = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
-      days.push({
-        label: date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }),
-        count: dateCounts.get(key) || 0,
-      });
-    }
-
-    return days;
   }, [filteredIssues]);
 
   const toggleTag = (tag: string) => {
@@ -576,8 +555,19 @@ export default function MagazinePage() {
           const data = docSnap.data() as Record<string, unknown>;
           const isEncrypted = Boolean(data.encryptedContent);
           const content = typeof data.content === 'string' ? data.content : '';
-          const title = isEncrypted ? 'Entree privee' : generateIssueTitle(content);
-          const excerpt = isEncrypted ? 'Entree chiffree • Contenu prive' : generateIssueExcerpt(content);
+
+          // Format date for encrypted entries
+          let dateTitle = '';
+          if (isEncrypted && data.createdAt) {
+            const entryDate = data.createdAt instanceof Date
+              ? data.createdAt
+              : (data.createdAt as any).toDate?.() || new Date();
+            const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long' };
+            dateTitle = `Réflexion du ${entryDate.toLocaleDateString('fr-FR', options)}`;
+          }
+
+          const title = isEncrypted ? dateTitle : generateIssueTitle(content);
+          const excerpt = isEncrypted ? 'Ouvrir pour lire' : generateIssueExcerpt(content);
           const images = Array.isArray(data.images) ? data.images : [];
           const firstImage = images[0] as { url?: string } | undefined;
 
@@ -836,17 +826,7 @@ export default function MagazinePage() {
           ) : viewMode === 'timeline' ? (
             <MagazineTimeline issues={filteredIssues} favorites={favorites} />
           ) : viewMode === 'calendar' ? (
-            <section className="rounded-2xl border border-stone-200 bg-white p-4 shadow-sm">
-              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-stone-600">Calendrier d'ecriture (12 semaines)</p>
-              <div className="mt-4 grid grid-cols-12 gap-2">
-                {calendarDays.map((day) => {
-                  const intensity = day.count >= 4 ? 'bg-[#C5A059]' : day.count >= 3 ? 'bg-[#C5A059]/70' : day.count >= 2 ? 'bg-[#C5A059]/40' : day.count >= 1 ? 'bg-[#C5A059]/20' : 'bg-stone-100';
-                  return (
-                    <div key={day.label} title={`${day.label} • ${day.count} entree(s)`} className={`h-5 w-5 rounded ${intensity} border border-stone-200`} />
-                  );
-                })}
-              </div>
-            </section>
+            <MagazineCalendar issues={filteredIssues} favorites={favorites} />
           ) : (
             <motion.div
               variants={{
