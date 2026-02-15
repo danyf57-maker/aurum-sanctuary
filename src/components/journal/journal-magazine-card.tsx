@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { BookImage, Calendar, Clock } from "lucide-react";
 import { JournalEntry } from "@/lib/types";
@@ -28,17 +28,33 @@ function formatDate(date: Date): { day: string; time: string } {
   return { day, time };
 }
 
-function generateTitle(content: string): string {
-  const words = content.split(/\s+/).filter(Boolean);
+function generateTitle(
+  content: string | null,
+  encryptedContent?: string | null
+): string {
+  // If content is null/empty but encryptedContent exists, show encrypted entry title
+  const safeContent = content ?? "";
+  if (!safeContent && encryptedContent) {
+    return "Entrée chiffrée";
+  }
+  const words = safeContent.split(/\s+/).filter(Boolean);
   if (words.length === 0) return "Entrée";
   return words.slice(0, 8).join(" ") + (words.length > 8 ? "..." : "");
 }
 
-function generateExcerpt(content: string, maxLength = 150): string {
-  const plain = content.replace(/!\[[^\]]*\]\([^)]+\)/g, "").trim();
+function generateExcerpt(
+  content: string | null,
+  encryptedContent?: string | null
+): string {
+  const safeContent = content ?? "";
+  // If content is null/empty but encryptedContent exists, show placeholder
+  if (!safeContent && encryptedContent) {
+    return "Contenu chiffré - Ouvrir pour lire";
+  }
+  const plain = safeContent.replace(/!\[[^\]]*\]\([^)]+\)/g, "").trim();
   if (!plain) return "";
-  if (plain.length <= maxLength) return plain;
-  return `${plain.slice(0, maxLength).trim()}...`;
+  if (plain.length <= 150) return plain;
+  return `${plain.slice(0, 150).trim()}...`;
 }
 
 function getMoodColor(mood?: string): string {
@@ -79,9 +95,10 @@ export function JournalMagazineCard({
   index = 0,
 }: JournalMagazineCardProps) {
   const { day, time } = formatDate(entry.createdAt);
-  const title = generateTitle(entry.content);
-  const excerpt = generateExcerpt(entry.content);
+  const title = generateTitle(entry.content, entry.encryptedContent);
+  const excerpt = generateExcerpt(entry.content, entry.encryptedContent);
   const coverImage = entry.images?.[0]?.url;
+  const [imageError, setImageError] = useState(false);
   const moodBorder = getMoodColor(entry.mood);
   const sentimentBadge = getSentimentBadge(entry.sentiment);
 
@@ -100,13 +117,13 @@ export function JournalMagazineCard({
         >
           {/* Image à la une */}
           <div className="relative aspect-[16/10] w-full bg-stone-100 overflow-hidden">
-            {coverImage ? (
-              <Image
+            {coverImage && !imageError ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
                 src={coverImage}
                 alt={title}
-                fill
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
+                onError={() => setImageError(true)}
               />
             ) : (
               <div className="flex h-full items-center justify-center text-stone-400">

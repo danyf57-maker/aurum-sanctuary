@@ -2,6 +2,7 @@ export type JournalEntry = {
   id: string;
   userId: string;
   content: string;
+  encryptedContent?: string;
   tags: string[];
   createdAt: Date;
   sentiment: string;
