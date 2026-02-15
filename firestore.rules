@@ -54,8 +54,13 @@ service cloud.firestore {
       // -------------------------------------------------------
       match /entries/{entryId} {
         allow read: if isOwner(userId);
-        // Create/Update allowed if fields are encrypted (not validated here strictly, but enforced by client app logic)
-        allow write: if isOwner(userId); 
+        allow write: if isOwner(userId);
+
+        // Aurum Conversation (sub-collection of entries)
+        match /aurumConversation/{turnId} {
+          allow read: if isOwner(userId);
+          allow write: if false; // Written by server only
+        }
       }
 
       // -------------------------------------------------------
