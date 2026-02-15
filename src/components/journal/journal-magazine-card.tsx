@@ -109,7 +109,7 @@ export function JournalMagazineCard({
       transition={{ duration: 0.4, delay: index * 0.05 }}
     >
       <Link
-        href={`/sanctuary/entry/${entry.id}`}
+        href={`/sanctuary/magazine/${entry.id}`}
         className="group block h-full"
       >
         <Card
