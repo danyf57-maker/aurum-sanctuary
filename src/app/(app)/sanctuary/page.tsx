@@ -12,7 +12,7 @@ import { useAuth } from '@/providers/auth-provider';
 import { JournalEntry } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import placeholderImages from '@/lib/placeholder-images.json';
-import { PenSquare, ShieldAlert, Sparkles, BookOpen, Flame, CalendarDays } from 'lucide-react';
+import { PenSquare, ShieldAlert, BookOpen, Flame, CalendarDays } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { motion } from 'framer-motion';
@@ -55,19 +55,15 @@ function AurumExchangePreview({ exchanges }: { exchanges: AurumExchange[] }) {
   const latestAurum = aurumMessages[0];
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="mt-4 rounded-xl border border-amber-200/30 bg-gradient-to-br from-amber-50/60 to-stone-50/40 p-4"
-    >
-      <div className="mb-2 flex items-center gap-2">
-        <Sparkles className="h-3.5 w-3.5 text-amber-500" />
-        <span className="text-xs font-medium uppercase tracking-wider text-amber-700">
+    <div className="border-t border-amber-100/60 bg-gradient-to-br from-amber-50/40 to-white px-5 py-3">
+      <div className="mb-1.5 flex items-center gap-1.5">
+        <Flame className="h-3 w-3 text-amber-500" />
+        <span className="text-[10px] font-medium uppercase tracking-wider text-amber-600">
           Réflexion d&apos;Aurum
         </span>
       </div>
-      <p className="line-clamp-3 text-sm leading-relaxed text-stone-700">{latestAurum.text}</p>
-    </motion.div>
+      <p className="line-clamp-2 text-xs leading-relaxed text-stone-600">{latestAurum.text}</p>
+    </div>
   );
 }
 
@@ -96,10 +92,10 @@ function EntryWithExchange({
   return (
     <motion.div
       variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}
-      className="flex flex-col"
     >
-      <JournalMagazineCard entry={entry} index={index} />
-      {!loading && exchanges.length > 0 && <AurumExchangePreview exchanges={exchanges} />}
+      <JournalMagazineCard entry={entry} index={index} exchangePreview={
+        !loading && exchanges.length > 0 ? <AurumExchangePreview exchanges={exchanges} /> : undefined
+      } />
     </motion.div>
   );
 }

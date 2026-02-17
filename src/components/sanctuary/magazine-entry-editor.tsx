@@ -1,17 +1,25 @@
-'use client';
+"use client";
 
-import { useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Eye, Loader2, Trash2 } from 'lucide-react';
-import { updateJournalEntry, deleteJournalEntry } from '@/app/actions';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
-import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/providers/auth-provider';
-import { ReflectionResponse } from './reflection-response';
-import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
-import { firestore as clientDb } from '@/lib/firebase/web-client';
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useCallback,
+  type KeyboardEvent,
+} from "react";
+import { useRouter } from "next/navigation";
+import { Loader2, Trash2, Send, Flame } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { updateJournalEntry, deleteJournalEntry } from "@/app/actions";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/providers/auth-provider";
+import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
+import { firestore as clientDb } from "@/lib/firebase/web-client";
+import { cn } from "@/lib/utils";
 
 type EntryImage = {
   id: string;
@@ -22,7 +30,7 @@ type EntryImage = {
 
 type ConversationTurn = {
   id: string;
-  role: 'user' | 'aurum';
+  role: "user" | "aurum";
   text: string;
   createdAt?: Date;
 };
@@ -33,6 +41,14 @@ interface MagazineEntryEditorProps {
   initialTags: string[];
   images: EntryImage[];
   readOnly: boolean;
+}
+
+function formatTime(date?: Date) {
+  if (!date) return null;
+  return date.toLocaleTimeString("fr-FR", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 export function MagazineEntryEditor({
@@ -46,17 +62,40 @@ export function MagazineEntryEditor({
   const { user } = useAuth();
   const { toast } = useToast();
   const [content, setContent] = useState(initialContent);
-  const [tags, setTags] = useState(initialTags.join(', '));
+  const [tags, setTags] = useState(initialTags.join(", "));
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [question, setQuestion] = useState('');
+  const [question, setQuestion] = useState("");
   const [isAskingAurum, setIsAskingAurum] = useState(false);
-  const [aurumReply, setAurumReply] = useState<string | null>(null);
+  const [streamingReply, setStreamingReply] = useState<string | null>(null);
   const [conversation, setConversation] = useState<ConversationTurn[]>([]);
 
+  const chatEndRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
   const hasChanges = useMemo(() => {
-    return content !== initialContent || tags !== initialTags.join(', ');
+    return content !== initialContent || tags !== initialTags.join(", ");
   }, [content, initialContent, initialTags, tags]);
+
+  const scrollToBottom = useCallback(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, []);
+
+  // Auto-scroll on new messages or streaming
+  useEffect(() => {
+    scrollToBottom();
+  }, [conversation, streamingReply, scrollToBottom]);
+
+  // Auto-resize textarea
+  const handleTextareaChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      setQuestion(e.currentTarget.value);
+      const el = e.currentTarget;
+      el.style.height = "auto";
+      el.style.height = Math.min(el.scrollHeight, 160) + "px";
+    },
+    []
+  );
 
   const onSave = async () => {
     if (readOnly) return;
@@ -65,16 +104,16 @@ export function MagazineEntryEditor({
       const result = await updateJournalEntry(entryId, { content, tags });
       if (result.error) {
         toast({
-          title: 'Erreur',
+          title: "Erreur",
           description: result.error,
-          variant: 'destructive',
+          variant: "destructive",
         });
         return;
       }
 
       toast({
-        title: 'Mise à jour réussie',
-        description: 'Ton entrée a été mise à jour.',
+        title: "Mise à jour réussie",
+        description: "Ton entrée a été mise à jour.",
       });
       router.refresh();
     } finally {
@@ -84,24 +123,24 @@ export function MagazineEntryEditor({
 
   const onDelete = async () => {
     if (readOnly) return;
-    const confirmed = window.confirm('Supprimer définitivement cette entrée ?');
+    const confirmed = window.confirm("Supprimer définitivement cette entrée ?");
     if (!confirmed) return;
     setIsDeleting(true);
     try {
       const result = await deleteJournalEntry(entryId);
       if (result.error) {
         toast({
-          title: 'Erreur',
+          title: "Erreur",
           description: result.error,
-          variant: 'destructive',
+          variant: "destructive",
         });
         return;
       }
       toast({
-        title: 'Entrée supprimée',
-        description: 'L’entrée a été retirée du journal.',
+        title: "Entrée supprimée",
+        description: "L'entrée a été retirée du journal.",
       });
-      router.push('/sanctuary/magazine');
+      router.push("/sanctuary/magazine");
       router.refresh();
     } finally {
       setIsDeleting(false);
@@ -111,29 +150,37 @@ export function MagazineEntryEditor({
   const onAskAurum = async () => {
     if (!user) {
       toast({
-        title: 'Connexion requise',
+        title: "Connexion requise",
         description: "Reconnecte-toi pour demander l'avis d'Aurum.",
-        variant: 'destructive',
+        variant: "destructive",
       });
       return;
     }
     const cleanQuestion = question.trim();
     if (!cleanQuestion) return;
 
+    setQuestion("");
     setIsAskingAurum(true);
+    setStreamingReply("");
+
+    // Reset textarea height
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+    }
+
     try {
       const idToken = await user.getIdToken();
       const payload = [
-        'Voici mon entrée de journal:',
+        "Voici mon entrée de journal:",
         content,
-        '',
+        "",
         "Ma question à Aurum:",
         cleanQuestion,
-      ].join('\n');
+      ].join("\n");
 
-      const response = await fetch('/api/reflect', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/reflect", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           content: payload,
           idToken,
@@ -147,29 +194,29 @@ export function MagazineEntryEditor({
         throw new Error(data?.error || "Aurum n'a pas pu répondre.");
       }
 
-      if (!response.body) throw new Error('Réponse vide');
+      if (!response.body) throw new Error("Réponse vide");
 
       // Read SSE stream
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
-      let fullText = '';
+      let fullText = "";
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
 
         const chunk = decoder.decode(value, { stream: true });
-        const lines = chunk.split('\n');
+        const lines = chunk.split("\n");
         for (const line of lines) {
-          if (!line.startsWith('data: ')) continue;
+          if (!line.startsWith("data: ")) continue;
           try {
             const evt = JSON.parse(line.slice(6));
             if (evt.token) {
               fullText += evt.token;
-              setAurumReply(fullText);
+              setStreamingReply(fullText);
             } else if (evt.replace) {
               fullText = evt.replace;
-              setAurumReply(fullText);
+              setStreamingReply(fullText);
             }
           } catch {
             // skip malformed
@@ -177,15 +224,28 @@ export function MagazineEntryEditor({
         }
       }
 
-      setAurumReply(fullText);
+      setStreamingReply(null);
     } catch (error) {
       toast({
-        title: 'Erreur',
-        description: error instanceof Error ? error.message : "Aurum n'a pas pu répondre.",
-        variant: 'destructive',
+        title: "Erreur",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Aurum n'a pas pu répondre.",
+        variant: "destructive",
       });
+      setStreamingReply(null);
     } finally {
       setIsAskingAurum(false);
+    }
+  };
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      if (question.trim() && !isAskingAurum) {
+        onAskAurum();
+      }
     }
   };
 
@@ -197,21 +257,25 @@ export function MagazineEntryEditor({
 
     const conversationRef = collection(
       clientDb,
-      'users',
+      "users",
       user.uid,
-      'entries',
+      "entries",
       entryId,
-      'aurumConversation'
+      "aurumConversation"
     );
-    const q = query(conversationRef, orderBy('createdAt', 'asc'));
+    const q = query(conversationRef, orderBy("createdAt", "asc"));
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const turns = snapshot.docs.map((doc) => {
-        const data = doc.data() as { role?: string; text?: string; createdAt?: { toDate?: () => Date } };
+        const data = doc.data() as {
+          role?: string;
+          text?: string;
+          createdAt?: { toDate?: () => Date };
+        };
         return {
           id: doc.id,
-          role: data.role === 'user' ? 'user' : 'aurum',
-          text: String(data.text || ''),
+          role: data.role === "user" ? "user" : "aurum",
+          text: String(data.text || ""),
           createdAt: data.createdAt?.toDate?.(),
         } as ConversationTurn;
       });
@@ -221,16 +285,27 @@ export function MagazineEntryEditor({
     return () => unsubscribe();
   }, [entryId, user]);
 
+  const hasConversation =
+    conversation.length > 0 || streamingReply !== null || isAskingAurum;
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
+      {/* Images */}
       {images.length > 0 && (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {images.map((image) => (
-            <figure key={image.id} className="overflow-hidden rounded-2xl border border-stone-200 bg-white">
+            <figure
+              key={image.id}
+              className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm"
+            >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={image.url} alt={image.caption || image.name || 'Image'} className="h-auto w-full object-cover" />
+              <img
+                src={image.url}
+                alt={image.caption || image.name || "Image"}
+                className="h-auto w-full object-cover"
+              />
               {(image.caption || image.name) && (
-                <figcaption className="px-3 py-2 text-xs text-stone-600">
+                <figcaption className="px-3 py-2 text-xs text-stone-500">
                   {image.caption || image.name}
                 </figcaption>
               )}
@@ -239,8 +314,12 @@ export function MagazineEntryEditor({
         </div>
       )}
 
+      {/* Tags */}
       <div className="space-y-2">
-        <label htmlFor="entry-tags" className="text-sm font-medium text-stone-700">
+        <label
+          htmlFor="entry-tags"
+          className="text-sm font-medium text-stone-700"
+        >
           Étiquettes
         </label>
         <Input
@@ -252,8 +331,12 @@ export function MagazineEntryEditor({
         />
       </div>
 
+      {/* Content */}
       <div className="space-y-2">
-        <label htmlFor="entry-content" className="text-sm font-medium text-stone-700">
+        <label
+          htmlFor="entry-content"
+          className="text-sm font-medium text-stone-700"
+        >
           Contenu
         </label>
         <Textarea
@@ -265,11 +348,13 @@ export function MagazineEntryEditor({
         />
         {readOnly && (
           <p className="text-xs text-amber-700">
-            Cette entrée est au format chiffré legacy et n’est pas éditable ici.
+            Cette entrée est au format chiffré legacy et n&apos;est pas éditable
+            ici.
           </p>
         )}
       </div>
 
+      {/* Action buttons */}
       <div className="flex flex-wrap items-center gap-3">
         <Button
           onClick={onSave}
@@ -282,7 +367,7 @@ export function MagazineEntryEditor({
               Enregistrement...
             </>
           ) : (
-            'Enregistrer'
+            "Enregistrer"
           )}
         </Button>
         <Button
@@ -305,56 +390,165 @@ export function MagazineEntryEditor({
         </Button>
       </div>
 
-      <div className="rounded-2xl border border-amber-200/40 bg-amber-50/30 p-4 md:p-6 space-y-4">
-        <div className="flex items-center gap-2 text-stone-900">
-          <Eye className="h-4 w-4 text-amber-600" />
-          <h3 className="font-medium">Demander l'avis d'Aurum</h3>
+      {/* Golden separator */}
+      <div className="relative py-2">
+        <div className="h-px w-full bg-gradient-to-r from-transparent via-amber-300/60 to-transparent" />
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-3">
+          <Flame className="h-4 w-4 text-amber-400" />
         </div>
-        <Textarea
-          value={question}
-          onChange={(event) => setQuestion(event.currentTarget.value)}
-          placeholder="Pose ta question à partir de cette entrée..."
-          className="min-h-[92px]"
-          disabled={isAskingAurum}
-        />
-        <div className="flex justify-end">
-          <Button
-            onClick={onAskAurum}
-            disabled={isAskingAurum || !question.trim()}
-            className="bg-amber-700 text-white hover:bg-amber-800"
-          >
-            {isAskingAurum ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Aurum réfléchit...
-              </>
-            ) : (
-              "Demander l'avis d'Aurum"
-            )}
-          </Button>
-        </div>
-        {aurumReply && (
-          <ReflectionResponse reflection={aurumReply} />
-        )}
       </div>
 
-      {conversation.length > 0 && (
-        <div className="rounded-2xl border border-stone-200 bg-white/70 p-4 md:p-6 space-y-3">
-          <h3 className="font-medium text-stone-900">Échanges avec Aurum</h3>
-          <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
-            {conversation.map((turn) => (
-              <div
-                key={turn.id}
-                className={turn.role === 'user'
-                  ? 'ml-auto max-w-[92%] rounded-xl bg-stone-900 text-stone-50 px-3 py-2 text-sm'
-                  : 'mr-auto max-w-[92%] rounded-xl bg-amber-50 text-stone-800 px-3 py-2 text-sm border border-amber-100'}
-              >
-                {turn.text}
-              </div>
-            ))}
+      {/* Aurum Conversation Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className={cn(
+          "relative overflow-hidden",
+          "rounded-2xl",
+          "border border-amber-200/50",
+          "bg-gradient-to-b from-amber-50/40 via-white to-white",
+          "shadow-lg shadow-amber-100/30"
+        )}
+      >
+        {/* Subtle glow */}
+        <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-200/10 via-transparent to-amber-200/10 rounded-2xl blur-xl -z-10" />
+
+        {/* Header */}
+        <div className="px-5 py-4 md:px-7 md:py-5 border-b border-amber-100/60">
+          <div className="flex items-center gap-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-amber-600 shadow-sm">
+              <Flame className="h-4 w-4 text-white" />
+            </div>
+            <div>
+              <h3 className="font-headline text-lg text-stone-900 tracking-wide">
+                Échanges avec Aurum
+              </h3>
+              <p className="text-xs text-stone-400">
+                Ton compagnon de réflexion
+              </p>
+            </div>
           </div>
         </div>
-      )}
+
+        {/* Conversation area */}
+        <div
+          className={cn(
+            "px-5 md:px-7 overflow-y-auto scroll-smooth",
+            hasConversation ? "max-h-[420px] py-5" : "py-3"
+          )}
+        >
+          {!hasConversation && (
+            <p className="text-sm text-stone-400 italic text-center py-4">
+              Pose une question pour commencer l&apos;échange...
+            </p>
+          )}
+
+          <div className="space-y-4">
+            <AnimatePresence initial={false}>
+              {conversation.map((turn) => (
+                <motion.div
+                  key={turn.id}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  className={cn(
+                    "flex flex-col",
+                    turn.role === "user" ? "items-end" : "items-start"
+                  )}
+                >
+                  <div
+                    className={cn(
+                      "max-w-[85%] px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap",
+                      turn.role === "user"
+                        ? "rounded-2xl rounded-br-md bg-stone-900 text-stone-50"
+                        : "rounded-2xl rounded-bl-md bg-gradient-to-br from-amber-50 to-white border border-amber-200/50 text-stone-800 shadow-sm"
+                    )}
+                  >
+                    {turn.text}
+                  </div>
+                  {turn.createdAt && (
+                    <span className="mt-1 px-1 text-[10px] text-stone-300">
+                      {formatTime(turn.createdAt)}
+                    </span>
+                  )}
+                </motion.div>
+              ))}
+            </AnimatePresence>
+
+            {/* Streaming reply */}
+            {streamingReply !== null && (
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                className="flex flex-col items-start"
+              >
+                <div className="max-w-[85%] px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap rounded-2xl rounded-bl-md bg-gradient-to-br from-amber-50 to-white border border-amber-200/50 text-stone-800 shadow-sm">
+                  {streamingReply || (
+                    <span className="inline-flex items-center gap-1.5 text-amber-600">
+                      <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
+                      <span
+                        className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse"
+                        style={{ animationDelay: "0.2s" }}
+                      />
+                      <span
+                        className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse"
+                        style={{ animationDelay: "0.4s" }}
+                      />
+                    </span>
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </div>
+
+          <div ref={chatEndRef} />
+        </div>
+
+        {/* Input area */}
+        <div className="border-t border-amber-100/60 bg-white/80 backdrop-blur-sm px-5 py-3 md:px-7 md:py-4">
+          <div className="flex items-end gap-3">
+            <textarea
+              ref={textareaRef}
+              value={question}
+              onChange={handleTextareaChange}
+              onKeyDown={handleKeyDown}
+              placeholder="Écris à Aurum..."
+              disabled={isAskingAurum}
+              rows={1}
+              className={cn(
+                "flex-1 resize-none rounded-xl border border-stone-200 bg-stone-50/50",
+                "px-4 py-2.5 text-sm leading-relaxed",
+                "placeholder:text-stone-400",
+                "focus:outline-none focus:ring-2 focus:ring-amber-300/50 focus:border-amber-300",
+                "disabled:opacity-50 disabled:cursor-not-allowed",
+                "transition-all duration-200"
+              )}
+            />
+            <button
+              onClick={onAskAurum}
+              disabled={isAskingAurum || !question.trim()}
+              className={cn(
+                "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl",
+                "transition-all duration-200",
+                question.trim() && !isAskingAurum
+                  ? "bg-gradient-to-br from-amber-500 to-amber-700 text-white shadow-md shadow-amber-200/50 hover:shadow-lg hover:shadow-amber-200/60 hover:scale-105 active:scale-95"
+                  : "bg-stone-100 text-stone-300 cursor-not-allowed"
+              )}
+            >
+              {isAskingAurum ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Send className="h-4 w-4" />
+              )}
+            </button>
+          </div>
+          <p className="mt-2 text-[10px] text-stone-300 text-center">
+            Entrée pour envoyer, Shift+Entrée pour un saut de ligne
+          </p>
+        </div>
+      </motion.div>
     </div>
   );
 }

@@ -43,8 +43,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [termsAccepted, setTermsAccepted] = useState<boolean | null>(null);
   const { toast } = useToast();
 
+  const resolveAppUrl = () => {
+    const fallbackOrigin = window.location.origin;
+    const configuredUrl = process.env.NEXT_PUBLIC_APP_URL?.trim();
+
+    if (!configuredUrl) return fallbackOrigin;
+
+    try {
+      const parsed = new URL(configuredUrl);
+      const isConfiguredLocalhost = parsed.hostname === 'localhost' || parsed.hostname === '127.0.0.1';
+      const isRuntimeLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+      if (isConfiguredLocalhost && !isRuntimeLocalhost) {
+        logger.warnSafe('Ignoring NEXT_PUBLIC_APP_URL localhost value in non-local runtime', {
+          configuredUrl: parsed.origin,
+          runtimeOrigin: fallbackOrigin,
+        });
+        return fallbackOrigin;
+      }
+
+      return parsed.origin;
+    } catch {
+      logger.warnSafe('Invalid NEXT_PUBLIC_APP_URL format, falling back to window origin', {
+        configuredUrl,
+        runtimeOrigin: fallbackOrigin,
+      });
+      return fallbackOrigin;
+    }
+  };
+
   const getEmailVerificationSettings = () => {
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
+    const appUrl = resolveAppUrl();
     return {
       url: `${appUrl}/auth/action`,
       handleCodeInApp: false, // False to use the custom action handler page

@@ -31,7 +31,7 @@ function StatCard({ icon: Icon, label, value }: StatCardProps) {
 export function MagazineStats({ totalEntries, streakDays, thisMonthCount, avgWords }: MagazineStatsProps) {
   return (
     <section className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
-      <StatCard icon={BookImage} label="Entrees" value={String(totalEntries)} />
+      <StatCard icon={BookImage} label="Entrées" value={String(totalEntries)} />
       <StatCard icon={Flame} label="Streak" value={`${streakDays} j`} />
       <StatCard icon={Calendar} label="Ce mois" value={String(thisMonthCount)} />
       <StatCard icon={Type} label="Moy. mots" value={String(avgWords)} />

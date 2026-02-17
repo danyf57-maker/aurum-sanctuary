@@ -11,6 +11,7 @@ import { Card, CardContent } from "@/components/ui/card";
 interface JournalMagazineCardProps {
   entry: JournalEntry;
   index?: number;
+  exchangePreview?: React.ReactNode;
 }
 
 function formatDate(date: Date): { day: string; time: string } {
@@ -49,7 +50,7 @@ function generateExcerpt(
   const safeContent = content ?? "";
   // If content is null/empty but encryptedContent exists, show placeholder
   if (!safeContent && encryptedContent) {
-    return "Contenu chiffré - Ouvrir pour lire";
+    return "Contenu chiffré";
   }
   const plain = safeContent.replace(/!\[[^\]]*\]\([^)]+\)/g, "").trim();
   if (!plain) return "";
@@ -75,24 +76,11 @@ function getMoodColor(mood?: string): string {
   }
 }
 
-function getSentimentBadge(sentiment?: string): {
-  label: string;
-  variant: "default" | "secondary" | "destructive" | "outline";
-} {
-  switch (sentiment?.toLowerCase()) {
-    case "positive":
-      return { label: "Positif", variant: "default" };
-    case "negative":
-      return { label: "Négatif", variant: "destructive" };
-    case "neutral":
-    default:
-      return { label: "Neutre", variant: "secondary" };
-  }
-}
 
 export function JournalMagazineCard({
   entry,
   index = 0,
+  exchangePreview,
 }: JournalMagazineCardProps) {
   const { day, time } = formatDate(entry.createdAt);
   const title = generateTitle(entry.content, entry.encryptedContent);
@@ -100,8 +88,6 @@ export function JournalMagazineCard({
   const coverImage = entry.images?.[0]?.url;
   const [imageError, setImageError] = useState(false);
   const moodBorder = getMoodColor(entry.mood);
-  const sentimentBadge = getSentimentBadge(entry.sentiment);
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -133,16 +119,6 @@ export function JournalMagazineCard({
 
             {/* Overlay gradient */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-            {/* Sentiment badge */}
-            <div className="absolute top-3 right-3">
-              <Badge
-                variant={sentimentBadge.variant}
-                className="text-xs shadow-sm"
-              >
-                {sentimentBadge.label}
-              </Badge>
-            </div>
           </div>
 
           {/* Content */}
@@ -206,6 +182,8 @@ export function JournalMagazineCard({
               </div>
             )}
           </CardContent>
+
+          {exchangePreview}
         </Card>
       </Link>
     </motion.div>

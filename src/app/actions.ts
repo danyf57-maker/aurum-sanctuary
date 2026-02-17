@@ -278,10 +278,10 @@ export async function saveJournalEntry(
     // For encrypted content, use placeholder text (cannot decrypt server-side)
     const isEncrypted = !!encryptedContent;
     const excerpt = isEncrypted
-      ? "Entrée chiffrée • Contenu privé"
+      ? "Contenu chiffré"
       : generateExcerpt(content || "");
     const title = isEncrypted
-      ? "Entrée privée"
+      ? "Entrée chiffrée"
       : generateTitle(stripImageMarkdown(content || "") || "Entrée");
 
     await db

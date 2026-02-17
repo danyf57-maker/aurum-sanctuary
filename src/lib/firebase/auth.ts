@@ -20,6 +20,35 @@ import {
 import { auth } from './web-client';
 import { logger } from '@/lib/logger/safe';
 
+function resolveAppUrl(): string {
+  const fallbackOrigin = window.location.origin;
+  const configuredUrl = process.env.NEXT_PUBLIC_APP_URL?.trim();
+
+  if (!configuredUrl) return fallbackOrigin;
+
+  try {
+    const parsed = new URL(configuredUrl);
+    const isConfiguredLocalhost = parsed.hostname === 'localhost' || parsed.hostname === '127.0.0.1';
+    const isRuntimeLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+    if (isConfiguredLocalhost && !isRuntimeLocalhost) {
+      logger.warnSafe('Ignoring NEXT_PUBLIC_APP_URL localhost value in non-local runtime', {
+        configuredUrl: parsed.origin,
+        runtimeOrigin: fallbackOrigin,
+      });
+      return fallbackOrigin;
+    }
+
+    return parsed.origin;
+  } catch {
+    logger.warnSafe('Invalid NEXT_PUBLIC_APP_URL format, falling back to window origin', {
+      configuredUrl,
+      runtimeOrigin: fallbackOrigin,
+    });
+    return fallbackOrigin;
+  }
+}
+
 /**
  * Hook to get current authenticated user
  * 
@@ -69,8 +98,8 @@ export async function signInWithEmail(email: string, password: string) {
     const result = await signInWithEmailAndPassword(auth, email, password);
     if (!result.user.emailVerified) {
       await sendEmailVerification(result.user, {
-        url: `${process.env.NEXT_PUBLIC_APP_URL || window.location.origin}/verify-email`,
-        handleCodeInApp: true,
+        url: `${resolveAppUrl()}/auth/action`,
+        handleCodeInApp: false,
       });
       await firebaseSignOut(auth);
       return { user: null, error: "EMAIL_NOT_VERIFIED" };

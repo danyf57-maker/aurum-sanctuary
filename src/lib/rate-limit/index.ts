@@ -141,6 +141,26 @@ export const RateLimitPresets = {
   }),
 
   /**
+   * Wellbeing analysis endpoint: 3 requests per day
+   */
+  analyzeWellbeing: (identifier: string): RateLimitConfig => ({
+    identifier,
+    limit: 3,
+    window: 86400,
+    namespace: 'api:analyze-wellbeing',
+  }),
+
+  /**
+   * Personality analysis endpoint: 3 requests per day
+   */
+  analyzePersonality: (identifier: string): RateLimitConfig => ({
+    identifier,
+    limit: 3,
+    window: 86400,
+    namespace: 'api:analyze-personality',
+  }),
+
+  /**
    * Weekly digest endpoint: 1 request per day
    */
   generateDigest: (identifier: string): RateLimitConfig => ({

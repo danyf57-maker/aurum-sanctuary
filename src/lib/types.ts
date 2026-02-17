@@ -29,6 +29,43 @@ export type UserInsights = {
   lastUpdatedAt: Date;
 };
 
+export type RyffDimensionScores = {
+  acceptationDeSoi: number;
+  developpementPersonnel: number;
+  sensDeLaVie: number;
+  maitriseEnvironnement: number;
+  autonomie: number;
+  relationsPositives: number;
+};
+
+export type WellbeingScore = {
+  id?: string;
+  source: 'ai' | 'questionnaire' | 'combined';
+  computedAt: Date;
+  entryCount?: number;
+  scores: RyffDimensionScores;
+  aiConfidence?: number;
+  narrative?: string;
+};
+
+export type PersonalityScores = {
+  determination: number;
+  influence: number;
+  stabilite: number;
+  rigueur: number;
+};
+
+export type PersonalityResult = {
+  id?: string;
+  source: 'ai' | 'questionnaire' | 'combined';
+  computedAt: Date;
+  entryCount?: number;
+  scores: PersonalityScores;
+  archetype?: string;
+  aiConfidence?: number;
+  narrative?: string;
+};
+
 export type UserProfile = {
   uid: string;
   email?: string | null;
