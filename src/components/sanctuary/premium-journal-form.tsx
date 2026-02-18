@@ -10,7 +10,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
-import { ImagePlus, Loader2, Eye, UploadCloud, X } from 'lucide-react';
+import { ImagePlus, Loader2, Eye, Lock, UploadCloud, X } from 'lucide-react';
 import { useAuth } from '@/providers/auth-provider';
 import { saveJournalEntry, type FormState } from '@/app/actions';
 import { Button } from '@/components/ui/button';
@@ -710,108 +710,182 @@ export function PremiumJournalForm() {
             key="saved"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="space-y-6"
+            transition={{ duration: 0.5, ease: 'easeOut' }}
+            className="space-y-8"
           >
-            {/* Saved confirmation */}
-            <div className="text-center space-y-4 py-8">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-50 rounded-full border border-amber-200/50">
-                <div className="h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
-                <span className="text-sm text-amber-800 font-medium">Pensée préservée</span>
+            {/* Premium saved confirmation */}
+            <div className="relative overflow-hidden rounded-[28px] bg-[linear-gradient(180deg,rgba(255,255,255,0.95),rgba(248,244,234,0.88))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] p-8 md:p-12">
+              {/* Decorative golden glow */}
+              <div className="absolute -top-20 -right-20 h-40 w-40 rounded-full bg-[#C5A059]/8 blur-3xl" />
+              <div className="absolute -bottom-20 -left-20 h-40 w-40 rounded-full bg-[#D4AF37]/6 blur-3xl" />
+
+              <div className="relative text-center space-y-6">
+                {/* Animated checkmark */}
+                <motion.div
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 0.2, type: 'spring', stiffness: 200 }}
+                  className="mx-auto"
+                >
+                  <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-[#D4AF37]/20 to-[#C5A059]/20 ring-1 ring-[#C5A059]/20">
+                    <motion.svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#C5A059"
+                      strokeWidth={2}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="h-7 w-7"
+                    >
+                      <motion.path
+                        d="M5 13l4 4L19 7"
+                        initial={{ pathLength: 0 }}
+                        animate={{ pathLength: 1 }}
+                        transition={{ duration: 0.6, delay: 0.5, ease: 'easeOut' }}
+                      />
+                    </motion.svg>
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.4 }}
+                  className="space-y-3"
+                >
+                  <h2 className="font-headline text-3xl md:text-4xl text-stone-900 tracking-tight">
+                    Pensée préservée
+                  </h2>
+                  <div className="flex items-center justify-center gap-2 text-sm text-stone-500">
+                    <Lock className="h-3.5 w-3.5 text-[#C5A059]" />
+                    <span>Chiffrée et en sécurité</span>
+                  </div>
+                </motion.div>
+
+                {/* Decorative separator */}
+                <motion.div
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ duration: 0.6, delay: 0.6 }}
+                  className="mx-auto h-px w-24 bg-gradient-to-r from-transparent via-[#C5A059]/40 to-transparent"
+                />
               </div>
-              <p className="text-stone-600 text-sm">
-                Ton écriture est chiffrée et en sécurité.
-              </p>
             </div>
 
             {/* Reflection section */}
             {!reflection ? (
-              <div className="text-center space-y-6 py-8">
-                <AnimatePresence mode="wait">
-                  {!isGeneratingReflection ? (
-                    <motion.div
-                      key="prompt"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.3 }}
-                      className="space-y-6"
-                    >
+              <AnimatePresence mode="wait">
+                {!isGeneratingReflection ? (
+                  <motion.div
+                    key="prompt"
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.4, delay: 0.3 }}
+                    className="relative overflow-hidden rounded-[28px] bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(248,244,234,0.82))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] p-8 md:p-12 text-center"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/3 via-transparent to-[#C5A059]/3 pointer-events-none" />
+                    <div className="relative space-y-6">
+                      <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#C5A059]/10">
+                        <Eye className="h-5 w-5 text-[#C5A059]" />
+                      </div>
                       <div className="space-y-2">
-                        <h3 className="font-headline text-2xl text-stone-900">
-                          Souhaites-tu recevoir un reflet ?
+                        <h3 className="font-headline text-2xl md:text-3xl text-stone-900 tracking-tight">
+                          Recevoir un reflet
                         </h3>
-                        <p className="text-stone-600 max-w-md mx-auto">
-                          Aurum peut te renvoyer ce qu'il perçoit, sans juger ni diriger.
+                        <p className="text-stone-500 max-w-sm mx-auto leading-relaxed">
+                          Aurum te renvoie ce qu&apos;il perçoit dans tes mots, sans juger ni diriger.
                         </p>
                       </div>
                       <Button
                         onClick={handleRequestReflection}
                         size="lg"
-                        className="bg-gradient-to-r from-amber-600 to-amber-700 text-white hover:from-amber-700 hover:to-amber-800 px-8 rounded-xl shadow-lg"
+                        className="group h-12 px-8 bg-gradient-to-r from-[#D4AF37] to-[#C5A059] text-stone-900 hover:from-[#C5A059] hover:to-[#D4AF37] rounded-2xl shadow-[0_8px_24px_rgba(212,175,55,0.25)] font-semibold transition-all duration-300 hover:shadow-[0_12px_32px_rgba(212,175,55,0.35)] hover:scale-[1.02]"
                       >
-                        <Eye className="mr-2 h-5 w-5" />
-                        Recevoir un reflet
+                        <Eye className="mr-2 h-4.5 w-4.5 transition-transform group-hover:scale-110" />
+                        Découvrir mon reflet
                       </Button>
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      key="loading"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      transition={{ duration: 0.4, ease: 'easeOut' }}
-                      className="space-y-6 py-4"
-                    >
+                    </div>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="loading"
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.97 }}
+                    transition={{ duration: 0.4, ease: 'easeOut' }}
+                    className="rounded-[28px] bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(248,244,234,0.82))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] p-8 md:p-12"
+                  >
+                    <div className="space-y-6 py-4">
                       <ReflectionPulse />
                       <NeuroBreadcrumbs />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             ) : (
-              <div className="space-y-6">
+              <motion.div
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+                className="space-y-6"
+              >
                 <ReflectionResponse
                   reflection={reflection.text}
                   patternsUsed={reflection.patternsUsed}
                 />
-                <div className="space-y-3 rounded-2xl border border-stone-200 bg-white/80 p-4">
-                  <h4 className="font-medium text-stone-900">Continuer l'échange avec Aurum</h4>
+
+                {/* Conversation continuation */}
+                <div className="rounded-[28px] bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(248,244,234,0.82))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] p-6 md:p-8 space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-full bg-gradient-to-br from-[#D4AF37]/20 to-[#C5A059]/20 flex items-center justify-center">
+                      <Eye className="h-3.5 w-3.5 text-[#C5A059]" />
+                    </div>
+                    <h4 className="font-headline text-lg text-stone-900">
+                      Continuer avec Aurum
+                    </h4>
+                  </div>
+
                   {conversationTurns.length > 1 && (
-                    <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
+                    <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
                       {conversationTurns.slice(1).map((turn) => (
-                        <div
+                        <motion.div
                           key={turn.id}
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.3 }}
                           className={turn.role === 'user'
-                            ? 'ml-auto max-w-[92%] rounded-xl bg-stone-900 text-stone-50 px-3 py-2 text-sm'
-                            : 'mr-auto max-w-[92%] rounded-xl bg-amber-50 text-stone-800 px-3 py-2 text-sm border border-amber-100'}
+                            ? 'ml-auto max-w-[88%] rounded-2xl bg-stone-900 text-stone-50 px-4 py-3 text-sm leading-relaxed'
+                            : 'mr-auto max-w-[88%] rounded-2xl bg-[#C5A059]/8 text-stone-800 px-4 py-3 text-sm leading-relaxed border border-[#C5A059]/15'}
                         >
                           {turn.text}
-                        </div>
+                        </motion.div>
                       ))}
                     </div>
                   )}
-                  <div className="space-y-2">
+
+                  <div className="space-y-3">
                     <Textarea
                       value={conversationInput}
                       onChange={(event) => setConversationInput(event.currentTarget.value)}
-                      placeholder="Ecris ta reponse a Aurum..."
-                      className="min-h-[88px] resize-y"
+                      placeholder="Écris ta réponse à Aurum..."
+                      className="min-h-[88px] resize-y rounded-2xl border-stone-200 bg-white/60 [font-family:var(--font-cormorant)] text-lg text-stone-800 placeholder:text-stone-400 focus:border-[#C5A059]/30 focus:ring-[#C5A059]/10"
                     />
                     <div className="flex justify-end">
                       <Button
                         type="button"
                         onClick={handleContinueConversation}
                         disabled={isContinuingConversation || !conversationInput.trim()}
-                        className="bg-amber-700 text-white hover:bg-amber-800"
+                        className="bg-gradient-to-r from-[#D4AF37] to-[#C5A059] text-stone-900 hover:from-[#C5A059] hover:to-[#D4AF37] rounded-xl px-6 font-semibold shadow-[0_6px_18px_rgba(212,175,55,0.2)] transition-all duration-300 hover:shadow-[0_8px_24px_rgba(212,175,55,0.3)]"
                       >
                         {isContinuingConversation ? (
                           <>
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Aurum repond...
+                            Aurum réfléchit...
                           </>
                         ) : (
-                          'Continuer avec Aurum'
+                          'Envoyer'
                         )}
                       </Button>
                     </div>
@@ -822,7 +896,7 @@ export function PremiumJournalForm() {
                           animate={{ opacity: 1, height: 'auto' }}
                           exit={{ opacity: 0, height: 0 }}
                           transition={{ duration: 0.3 }}
-                          className="pt-3"
+                          className="pt-2"
                         >
                           <NeuroBreadcrumbs className="text-left" />
                         </motion.div>
@@ -830,19 +904,24 @@ export function PremiumJournalForm() {
                     </AnimatePresence>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             )}
 
             {/* New entry button */}
-            <div className="text-center pt-6">
-              <Button
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.8 }}
+              className="text-center pt-4"
+            >
+              <button
                 onClick={handleNewEntry}
-                variant="ghost"
-                className="text-stone-600 hover:text-stone-900"
+                type="button"
+                className="text-sm text-stone-400 hover:text-stone-700 transition-colors duration-200 underline underline-offset-4 decoration-stone-300/50 hover:decoration-stone-400"
               >
                 Nouvelle entrée
-              </Button>
-            </div>
+              </button>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
