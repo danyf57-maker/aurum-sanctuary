@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
       },
       body: JSON.stringify({
         model: 'deepseek-chat',
-        temperature: 0.4,
+        temperature: 1.5,
         messages: [
           {
             role: 'system',

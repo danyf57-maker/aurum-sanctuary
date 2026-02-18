@@ -40,7 +40,7 @@ export async function callDeepSeek(
     const {
         timeout = DEFAULT_TIMEOUT,
         maxTokens = DEFAULT_MAX_TOKENS,
-        temperature = 0.7,
+        temperature = 1.5,
     } = options;
 
     // Build full prompt with context

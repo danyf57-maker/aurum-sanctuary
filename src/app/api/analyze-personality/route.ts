@@ -158,7 +158,7 @@ ${JSON.stringify(safeEntries)}`;
       body: JSON.stringify({
         model: 'deepseek-chat',
         response_format: { type: 'json_object' },
-        temperature: 0.25,
+        temperature: 1.5,
         messages: [
           {
             role: 'system',

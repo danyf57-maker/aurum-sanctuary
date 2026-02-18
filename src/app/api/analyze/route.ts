@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
             content: content
           }
         ],
-        temperature: 0.7,
+        temperature: 1.5,
         response_format: { type: 'json_object' }
       }),
       signal: controller.signal,

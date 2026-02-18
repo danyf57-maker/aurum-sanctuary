@@ -907,19 +907,25 @@ export function PremiumJournalForm() {
               </motion.div>
             )}
 
-            {/* New entry button */}
+            {/* Invitation to write again */}
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.8 }}
-              className="text-center pt-4"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7, duration: 0.5 }}
             >
               <button
                 onClick={handleNewEntry}
                 type="button"
-                className="text-sm text-stone-400 hover:text-stone-700 transition-colors duration-200 underline underline-offset-4 decoration-stone-300/50 hover:decoration-stone-400"
+                className="group w-full rounded-[28px] border border-dashed border-[#C5A059]/25 bg-[linear-gradient(180deg,rgba(255,255,255,0.6),rgba(248,244,234,0.4))] hover:border-[#C5A059]/40 hover:bg-[linear-gradient(180deg,rgba(255,255,255,0.85),rgba(248,244,234,0.7))] transition-all duration-500 p-8 md:p-10 text-center cursor-pointer"
               >
-                Nouvelle entrée
+                <div className="space-y-3">
+                  <p className="font-headline text-xl md:text-2xl text-stone-400 group-hover:text-stone-600 transition-colors duration-500 tracking-tight">
+                    Autre chose à poser&nbsp;?
+                  </p>
+                  <p className="text-sm text-stone-300 group-hover:text-stone-500 transition-colors duration-500">
+                    Ouvre un nouvel espace d&apos;écriture
+                  </p>
+                </div>
               </button>
             </motion.div>
           </motion.div>
