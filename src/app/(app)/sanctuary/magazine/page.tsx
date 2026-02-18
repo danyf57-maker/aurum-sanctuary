@@ -5,7 +5,6 @@ import Link from "next/link";
 import { BookImage, PenSquare } from "lucide-react";
 import {
   addDoc,
-  arrayRemove,
   collection,
   deleteDoc,
   doc,
@@ -16,23 +15,18 @@ import {
   query,
   QueryDocumentSnapshot,
   serverTimestamp,
-  updateDoc,
   writeBatch,
 } from "firebase/firestore";
 import { useAuth } from "@/providers/auth-provider";
 import { firestore as db } from "@/lib/firebase/web-client";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MoodChart } from "@/components/sanctuary/mood-chart";
 import {
   CollectionManager,
   type MagazineCollection,
 } from "@/components/sanctuary/collection-manager";
-import {
-  InsightsPanel,
-  type WritingPatterns,
-} from "@/components/sanctuary/insights-panel";
-import { WritingPrompt } from "@/components/sanctuary/writing-prompt";
+import { DashboardStats } from "@/components/sanctuary/dashboard-stats";
+import type { AurumConversationStats } from "@/components/sanctuary/dashboard-aurum";
 import { WellbeingRadar } from "@/components/sanctuary/wellbeing-radar";
 import { RyffQuestionnaire } from "@/components/sanctuary/ryff-questionnaire";
 import { PersonalityRadar } from "@/components/sanctuary/personality-radar";
@@ -54,22 +48,6 @@ type MagazineIssue = {
   mood: string | null;
 };
 
-const moodToScore: Record<string, number> = {
-  triste: 1,
-  anxieux: 2,
-  neutre: 3,
-  calme: 4,
-  joyeux: 5,
-  energique: 5,
-};
-const moodToChartColor: Record<string, string> = {
-  joyeux: "#FACC15",
-  calme: "#60A5FA",
-  anxieux: "#FB923C",
-  triste: "#818CF8",
-  energique: "#4ADE80",
-  neutre: "#A8A29E",
-};
 
 function parseCreatedAt(value: unknown): Date | null {
   if (!value) return null;
@@ -127,11 +105,12 @@ export default function MagazinePage() {
   const [isLoadingIssues, setIsLoadingIssues] = useState(true);
   const [collections, setCollections] = useState<MagazineCollection[]>([]);
   const [selectedCollectionId, setSelectedCollectionId] = useState("all");
-  const [patterns, setPatterns] = useState<WritingPatterns | null>(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [digest, setDigest] = useState("");
-  const [isDigestLoading, setIsDigestLoading] = useState(false);
   const [isBackfilling, setIsBackfilling] = useState(false);
+
+  // Aurum stats
+  const [aurumStats, setAurumStats] =
+    useState<AurumConversationStats | null>(null);
+  const [isAurumLoading, setIsAurumLoading] = useState(false);
 
   // Wellbeing (Ryff)
   const [wellbeingScore, setWellbeingScore] = useState<WellbeingScore | null>(
@@ -264,12 +243,100 @@ export default function MagazinePage() {
     }
   }, [user]);
 
+  const fetchAurumStats = useCallback(async () => {
+    if (!user || issues.length === 0) return;
+    setIsAurumLoading(true);
+    try {
+      const recentEntries = issues.slice(0, 50);
+      let totalConversations = 0;
+      let totalMessages = 0;
+      let thisMonth = 0;
+      const messagesByMonthMap = new Map<string, number>();
+      const now = new Date();
+      const currentMonthKey = now.toLocaleDateString("fr-FR", {
+        month: "short",
+        year: "2-digit",
+      });
+
+      // Initialize last 6 months
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const key = d.toLocaleDateString("fr-FR", {
+          month: "short",
+          year: "2-digit",
+        });
+        messagesByMonthMap.set(key, 0);
+      }
+
+      // Check conversations for each entry (batched)
+      const batchSize = 10;
+      for (let i = 0; i < recentEntries.length; i += batchSize) {
+        const batch = recentEntries.slice(i, i + batchSize);
+        const results = await Promise.all(
+          batch.map(async (entry) => {
+            const convRef = collection(
+              db,
+              "users",
+              user.uid,
+              "entries",
+              entry.id,
+              "aurumConversation"
+            );
+            const snap = await getDocs(convRef);
+            return { entry, count: snap.size };
+          })
+        );
+
+        for (const { entry, count } of results) {
+          if (count > 0) {
+            totalConversations++;
+            totalMessages += count;
+            if (entry.createdAt) {
+              const monthKey = entry.createdAt.toLocaleDateString("fr-FR", {
+                month: "short",
+                year: "2-digit",
+              });
+              if (messagesByMonthMap.has(monthKey)) {
+                messagesByMonthMap.set(
+                  monthKey,
+                  (messagesByMonthMap.get(monthKey) || 0) + count
+                );
+              }
+              if (monthKey === currentMonthKey) {
+                thisMonth++;
+              }
+            }
+          }
+        }
+      }
+
+      const messagesByMonth = Array.from(messagesByMonthMap.entries()).map(
+        ([month, count]) => ({ month, count })
+      );
+
+      setAurumStats({
+        totalConversations,
+        totalMessages,
+        thisMonth,
+        avgMessagesPerConversation:
+          totalConversations > 0 ? totalMessages / totalConversations : 0,
+        messagesByMonth,
+        recentThemes: [],
+      });
+    } catch (err) {
+      console.error("[Magazine] fetchAurumStats error:", err);
+    } finally {
+      setIsAurumLoading(false);
+    }
+  }, [user, issues]);
+
   useEffect(() => {
     if (!user) {
       setIssues([]);
       setCollections([]);
       setWellbeingScore(null);
       setPersonalityResult(null);
+      setAurumStats(null);
       setIsLoadingIssues(false);
       return;
     }
@@ -292,40 +359,18 @@ export default function MagazinePage() {
     };
   }, [fetchCollections, fetchIssues, fetchLatestWellbeingScore, fetchLatestPersonalityScore, user]);
 
+  // Fetch Aurum stats after issues are loaded
+  useEffect(() => {
+    if (issues.length > 0) {
+      void fetchAurumStats();
+    }
+  }, [issues.length, fetchAurumStats]);
+
   const nonEncryptedCount = useMemo(
     () =>
       issues.filter((i) => !i.excerpt?.includes("Contenu chiffré")).length,
     [issues]
   );
-
-  const moodSeries = useMemo(() => {
-    return issues
-      .filter(
-        (issue) => issue.createdAt && issue.mood && moodToScore[issue.mood]
-      )
-      .slice(0, 30)
-      .reverse()
-      .map((issue) => ({
-        dateLabel: (issue.createdAt as Date).toLocaleDateString("fr-FR", {
-          day: "2-digit",
-          month: "2-digit",
-        }),
-        score: moodToScore[issue.mood as string],
-      }));
-  }, [issues]);
-
-  const moodDistribution = useMemo(() => {
-    const counts = new Map<string, number>();
-    for (const issue of issues) {
-      const mood = issue.mood || "neutre";
-      counts.set(mood, (counts.get(mood) || 0) + 1);
-    }
-    return Array.from(counts.entries()).map(([mood, value]) => ({
-      mood,
-      value,
-      color: moodToChartColor[mood] || "#A8A29E",
-    }));
-  }, [issues]);
 
   const createCollection = async (name: string, color: string) => {
     if (!user) return;
@@ -344,63 +389,6 @@ export default function MagazinePage() {
     await deleteDoc(doc(db, "users", user.uid, "collections", collectionId));
     if (selectedCollectionId === collectionId) setSelectedCollectionId("all");
     await fetchCollections();
-  };
-
-  const handleAnalyzePatterns = async () => {
-    if (!user || issues.length < 3) return;
-    setIsAnalyzing(true);
-    try {
-      const payload = issues.slice(0, 30).map((issue) => ({
-        id: issue.id,
-        title: issue.title,
-        excerpt: issue.excerpt,
-        tags: issue.tags,
-        mood: issue.mood,
-        createdAt: issue.createdAt ? issue.createdAt.toISOString() : null,
-      }));
-
-      const response = await fetch("/api/analyze-patterns", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ entries: payload, userId: user.uid }),
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        setPatterns(data as WritingPatterns);
-      }
-    } catch {
-      // silent
-    } finally {
-      setIsAnalyzing(false);
-    }
-  };
-
-  const handleGenerateDigest = async () => {
-    if (!user || issues.length === 0) return;
-    setIsDigestLoading(true);
-    try {
-      const payload = issues.slice(0, 30).map((issue) => ({
-        id: issue.id,
-        title: issue.title,
-        excerpt: issue.excerpt,
-        tags: issue.tags,
-        mood: issue.mood,
-        createdAt: issue.createdAt ? issue.createdAt.toISOString() : null,
-      }));
-
-      const response = await fetch("/api/generate-digest", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ entries: payload, userId: user.uid }),
-      });
-      const data = (await response.json()) as { digest?: string };
-      if (response.ok && data.digest) setDigest(data.digest);
-    } catch {
-      // silent
-    } finally {
-      setIsDigestLoading(false);
-    }
   };
 
   const handleAnalyzeWellbeing = async () => {
@@ -640,34 +628,6 @@ export default function MagazinePage() {
     }
   };
 
-  const smartPrompts = useMemo(() => {
-    const prompts: string[] = [];
-
-    const lastEntryDate = issues
-      .filter((issue) => issue.createdAt)
-      .map((issue) => issue.createdAt as Date)
-      .sort((a, b) => b.getTime() - a.getTime())[0];
-
-    if (lastEntryDate) {
-      const daysSince = Math.floor(
-        (Date.now() - lastEntryDate.getTime()) / (24 * 60 * 60 * 1000)
-      );
-      if (daysSince >= 3) {
-        prompts.push(
-          "Cela fait quelques jours sans écriture. Qu'est-ce qui t'a marqué récemment ?"
-        );
-      }
-    }
-
-    if (patterns?.themes?.[0]) {
-      prompts.push(
-        `Tu reviens souvent sur "${patterns.themes[0].name}". Que veux-tu approfondir sur ce thème ?`
-      );
-    }
-
-    return prompts.slice(0, 3);
-  }, [issues, patterns]);
-
   if (loading || isLoadingIssues) {
     return (
       <div className="container max-w-7xl space-y-6 py-8 md:py-12">
@@ -779,12 +739,12 @@ export default function MagazinePage() {
             isSubmitting={isPersonalitySubmitting}
           />
 
-          {moodSeries.length >= 5 && (
-            <MoodChart
-              last30Days={moodSeries}
-              distribution={moodDistribution}
-            />
-          )}
+          {/* Dashboard Statistiques */}
+          <DashboardStats
+            issues={issues}
+            aurumStats={aurumStats}
+            isAurumLoading={isAurumLoading}
+          />
 
           {collections.length > 0 && (
             <CollectionManager
@@ -795,18 +755,6 @@ export default function MagazinePage() {
               onDeleteCollection={deleteCollectionById}
             />
           )}
-
-          <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
-            <InsightsPanel
-              patterns={patterns}
-              digest={digest}
-              isAnalyzing={isAnalyzing}
-              isDigestLoading={isDigestLoading}
-              onAnalyze={handleAnalyzePatterns}
-              onGenerateDigest={handleGenerateDigest}
-            />
-            <WritingPrompt prompts={smartPrompts} />
-          </div>
         </div>
       )}
     </div>

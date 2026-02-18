@@ -20,11 +20,15 @@ import {
   PSYCHOLOGIST_ANALYST_SYSTEM_PROMPT,
 } from '@/lib/skills/psychologist-analyst';
 import {
+  PHILOSOPHY_SKILL_ID,
+  PHILOSOPHY_SYSTEM_PROMPT,
+} from '@/lib/skills/philosophy';
+import {
   validateResponse,
 } from '@/lib/patterns/anti-meta';
 import { rateLimit, RateLimitPresets } from '@/lib/rate-limit';
 
-type AurumIntent = 'reflection' | 'conversation' | 'analysis' | 'action';
+type AurumIntent = 'reflection' | 'conversation' | 'analysis' | 'action' | 'philosophy';
 
 /**
  * System prompt for reflection (with implicit pattern awareness)
@@ -76,6 +80,7 @@ Style :
 - Pas de jargon, pas de platitudes, pas de #, jamais de réponse tronquée.`;
 
 const ANALYSIS_SYSTEM_PROMPT = PSYCHOLOGIST_ANALYST_SYSTEM_PROMPT;
+const PHILOSOPHY_MODE_SYSTEM_PROMPT = PHILOSOPHY_SYSTEM_PROMPT;
 
 const ACTION_SYSTEM_PROMPT = `Tu es Aurum. La personne te demande un pas concret.
 
@@ -93,6 +98,9 @@ function detectAurumIntent(content: string): AurumIntent {
   if (/(que faire|que puis-je faire|plan|prochaine etape|prochaine étape|action|aide moi a agir|aide-moi a agir)/.test(text)) {
     return 'action';
   }
+  if (/(philosophie|philosophique|epistemologie|épistémologie|metaphysique|métaphysique|ethique|éthique|platon|aristote|kant|nietzsche|stoicisme|stoïcisme|existentialisme)/.test(text)) {
+    return 'philosophy';
+  }
   if (/(analyse|analyse-moi|explique|clarifie|clarifier|comprendre|pourquoi)/.test(text)) {
     return 'analysis';
   }
@@ -106,11 +114,13 @@ function getSystemPromptForIntent(intent: AurumIntent): string {
   if (intent === 'conversation') return CONVERSATION_SYSTEM_PROMPT;
   if (intent === 'analysis') return ANALYSIS_SYSTEM_PROMPT;
   if (intent === 'action') return ACTION_SYSTEM_PROMPT;
+  if (intent === 'philosophy') return PHILOSOPHY_MODE_SYSTEM_PROMPT;
   return REFLECTION_SYSTEM_PROMPT;
 }
 
 function getSkillIdForIntent(intent: AurumIntent): string | null {
   if (intent === 'analysis') return PSYCHOLOGIST_ANALYST_SKILL_ID;
+  if (intent === 'philosophy') return PHILOSOPHY_SKILL_ID;
   return null;
 }
 

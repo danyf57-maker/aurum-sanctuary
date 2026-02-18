@@ -11,6 +11,7 @@ import { logAuditEvent } from '@/lib/audit';
 import { auth } from 'firebase-admin';
 import { logger } from '@/lib/logger/safe';
 import { PSYCHOLOGIST_ANALYST_SYSTEM_PROMPT } from '@/lib/skills/psychologist-analyst';
+import { PHILOSOPHY_SYSTEM_PROMPT } from '@/lib/skills/philosophy';
 
 async function getUserIdFromToken(token: string | null): Promise<string | null> {
     if (!token) return null;
@@ -76,6 +77,9 @@ export async function submitAurumMessage(
     // 2. Logique d'Aurum
     const detectSkillPrompt = (text: string): string | undefined => {
         const lowered = text.toLowerCase();
+        if (/(philosophie|philosophique|epistemologie|épistémologie|metaphysique|métaphysique|ethique|éthique|platon|aristote|kant|nietzsche|stoicisme|stoïcisme|existentialisme)/.test(lowered)) {
+            return PHILOSOPHY_SYSTEM_PROMPT;
+        }
         if (/(analyse|analyse-moi|clarifie|clarifier|comprendre|pourquoi)/.test(lowered)) {
             return PSYCHOLOGIST_ANALYST_SYSTEM_PROMPT;
         }
