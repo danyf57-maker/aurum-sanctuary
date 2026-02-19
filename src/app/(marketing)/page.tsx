@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import HeroIntegrated from '@/components/landing/HeroIntegrated';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import { PenSquare, Compass, Eye, Waves, Sprout, Shield, Quote, ArrowRight, Send, ShieldCheck, Lock, Fingerprint, X } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -240,23 +239,6 @@ const QuizSection = () => {
     );
 };
 
-const AlmaCard = ({ title, time, entry, response }: { title: string, time: string, entry: string, response: string }) => (
-    <div className="flex-1 bg-white/60 backdrop-blur-md p-10 rounded-sm border border-white/40 shadow-sm transition-all duration-500 ease-out hover:-translate-y-2 hover:shadow-xl hover:bg-white/80 min-w-[300px] group overflow-hidden relative">
-        <div className="absolute top-0 left-0 w-1 h-0 bg-primary/40 transition-all duration-700 group-hover:h-full"></div>
-        <div className="flex justify-between text-[10px] uppercase tracking-[0.2em] text-stone-400 mb-6 font-medium">
-            <span>{title}</span>
-            <span>{time}</span>
-        </div>
-        <p className="font-handwriting text-2xl text-stone-800 mb-8 leading-relaxed italic">
-            "{entry}"
-        </p>
-        <div className="w-8 h-px bg-primary/30 mb-6 transition-all duration-700 ease-in-out group-hover:w-full group-hover:bg-primary/60"></div>
-        <p className="text-sm italic text-stone-600 leading-relaxed font-light">
-            {response}
-        </p>
-    </div>
-);
-
 const FloatingCTA = ({ visible }: { visible: boolean }) => (
     <AnimatePresence>
         {visible && (
@@ -297,27 +279,6 @@ export default function Home() {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
-
-    const almaJournalEntries = [
-        {
-            title: "SYNDROME DE L'IMPOSTEUR",
-            time: "Mardi, 14h02",
-            entry: "Ils ont applaudi ma présentation. Pourquoi j'ai l'impression d'avoir volé leur admiration ? J'attends qu'ils découvrent que je n'ai aucune idée de ce que je fais.",
-            response: "Le succès ne chasse pas la peur, il la met en lumière. Ce vertige est la preuve de ta compétence, pas de ton imposture."
-        },
-        {
-            title: "ANXIÉTÉ INSOMNIE",
-            time: "Dimanche, 03h15",
-            entry: "La liste des tâches tourne en boucle. Si je dors maintenant, j'ai peur d'oublier l'essentiel pour demain. Mon cerveau refuse le bouton off.",
-            response: "Ta mémoire est faillible, ce Sanctuaire ne l'est pas. Dépose tout ici. Ton esprit a la permission de s'éteindre."
-        },
-        {
-            title: "FATIGUE ÉMOTIONNELLE",
-            time: "Lundi, 19h30",
-            entry: "J'ai dit 'ça va super' douze fois aujourd'hui. Je crois que je ne sais même plus ce que je ressens vraiment sous le masque.",
-            response: "La dissonance émotionnelle est épuisante. Ici, tu n'as pas de public. Dis-nous la vérité."
-        }
-    ];
 
     const howItWorks = [
         {
@@ -467,40 +428,6 @@ export default function Home() {
                     </div>
                     {/* Decorative Background */}
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/20 blur-[160px] rounded-full pointer-events-none"></div>
-                </section>
-
-                {/* SECTION 4: Le Journal d'Alma */}
-                <section className="py-24 md:py-32 bg-gradient-to-b from-background to-stone-200/30">
-                    <div className="container">
-                        <div className="text-center max-w-2xl mx-auto mb-20">
-                            <h2 className="text-5xl font-headline mb-4">D'une pensée à une prise de conscience</h2>
-                            <p className="text-muted-foreground">
-                                Le Journal d'Alma est une fenêtre sur l'introspection. Découvrez comment de simples mots peuvent se transformer en révélations.
-                            </p>
-                        </div>
-
-                        {/* Desktop Grid */}
-                        <div className="hidden md:flex gap-8">
-                            {almaJournalEntries.map((item, index) => (
-                                <AlmaCard key={index} {...item} />
-                            ))}
-                        </div>
-
-                        {/* Mobile Carousel */}
-                        <div className="md:hidden">
-                            <Carousel opts={{ loop: true }}>
-                                <CarouselContent className="-ml-4">
-                                    {almaJournalEntries.map((item, index) => (
-                                        <CarouselItem key={index} className="pl-4 basis-11/12">
-                                            <div className="p-1 h-full">
-                                                <AlmaCard {...item} />
-                                            </div>
-                                        </CarouselItem>
-                                    ))}
-                                </CarouselContent>
-                            </Carousel>
-                        </div>
-                    </div>
                 </section>
 
                 {/* SECTION 5: Trust & Privacy (Enhanced) */}
