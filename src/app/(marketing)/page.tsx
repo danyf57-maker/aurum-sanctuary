@@ -364,7 +364,7 @@ export default function Home() {
                                 <ul className="space-y-6">
                                     {[
                                         "Sommeil retrouvé et esprit apaisé",
-                                        "Insights clairs sur vos patterns",
+                                        "Repères clairs sur vos schémas",
                                         "Maîtrise de son paysage intérieur",
                                         "Clarté d'esprit au quotidien"
                                     ].map((item, i) => (
