@@ -1,7 +1,25 @@
 
+import type { Metadata } from "next";
 import Link from 'next/link';
 import { getPublicPosts } from '@/lib/firebase/firestore';
 import { BlogCard } from '@/components/blog/blog-card';
+
+export const metadata: Metadata = {
+    title: "Le Journal d'Alma",
+    description:
+        "Articles et réflexions sur l'introspection, la charge mentale et la clarté émotionnelle.",
+    alternates: {
+        canonical: "https://aurumdiary.com/blog",
+    },
+    openGraph: {
+        title: "Le Journal d'Alma",
+        description:
+            "Articles et réflexions sur l'introspection, la charge mentale et la clarté émotionnelle.",
+        url: "https://aurumdiary.com/blog",
+        type: "website",
+        locale: "fr_FR",
+    },
+};
 
 export default async function BlogPage() {
     let posts: any[] = [];

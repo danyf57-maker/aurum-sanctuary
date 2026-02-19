@@ -39,10 +39,13 @@ export async function generateMetadata({
   return {
     title: `${post.title} | Aurum Journal`,
     description: excerpt,
+    alternates: {
+      canonical: `https://aurumdiary.com/blog/${params.slug}`,
+    },
     openGraph: {
       title: post.title,
       description: excerpt,
-      url: `https://aurum-sanctuary.vercel.app/blog/${params.slug}`,
+      url: `https://aurumdiary.com/blog/${params.slug}`,
       type: "article",
       publishedTime: publishedTime,
       authors: ["Alma"],
@@ -79,9 +82,43 @@ export default async function BlogArticlePage({
   }).format(new Date(post.publishedAt));
 
   const readingTime = calculateReadingTime(post.content);
+  const postUrl = `https://aurumdiary.com/blog/${params.slug}`;
+  const blogPostingJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.content.substring(0, 160).replace(/\n/g, " "),
+    articleSection: "Introspection",
+    keywords: post.tags?.join(", "),
+    datePublished: post.publishedAt.toISOString(),
+    dateModified: post.publishedAt.toISOString(),
+    author: {
+      "@type": "Person",
+      name: "Alma",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "Aurum",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://aurumdiary.com/og-image.png",
+      },
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": postUrl,
+    },
+    url: postUrl,
+    image: "https://aurumdiary.com/og-image.png",
+    inLanguage: "fr-FR",
+  };
 
   return (
     <article className="bg-stone-50/50 min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostingJsonLd) }}
+      />
       <div className="container max-w-4xl mx-auto py-20 md:py-28 animate-fade-in">
         <header className="mb-12">
           <Button asChild variant="ghost" className="mb-8">

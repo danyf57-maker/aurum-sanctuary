@@ -10,7 +10,14 @@ import { getAuth, Auth } from 'firebase-admin/auth';
 import { getFirestore, Firestore } from 'firebase-admin/firestore';
 
 // Server-only constants
+export const PRIMARY_ADMIN_EMAIL = 'danyf57@gmail.com';
 export const ALMA_EMAIL = 'alma.lawson@aurum.inc';
+export const ADMIN_EMAILS = [PRIMARY_ADMIN_EMAIL] as const;
+
+export function isAdminEmail(email?: string | null) {
+    if (!email) return false;
+    return ADMIN_EMAILS.includes(email.toLowerCase() as typeof ADMIN_EMAILS[number]);
+}
 
 /**
  * Robust Proxy Mock for Firestore/Auth
@@ -27,12 +34,12 @@ function createMock(name: string): any {
                 return () => Promise.resolve({ 
                     id: 'mock-id', 
                     exists: false, 
-                    data: () => ({ email: ALMA_EMAIL, entryCount: 0 }),
+                    data: () => ({ email: PRIMARY_ADMIN_EMAIL, entryCount: 0 }),
                     ref: createMock(name)
                 });
             }
             if (prop === 'verifySessionCookie' || prop === 'verifyIdToken' || prop === 'createSessionCookie') {
-                return () => Promise.resolve({ uid: 'mock-uid', email: ALMA_EMAIL });
+                return () => Promise.resolve({ uid: 'mock-uid', email: PRIMARY_ADMIN_EMAIL });
             }
             if (prop === 'INTERNAL') return {};
             if (prop === 'options') return {};

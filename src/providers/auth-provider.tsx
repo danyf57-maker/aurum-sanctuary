@@ -33,9 +33,15 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
-// Client-side constant for UI display only
-// ⚠️ DO NOT import in server actions - use @/lib/firebase/admin instead
+// Client-side constants for UI gating only.
+// ⚠️ DO NOT import in server actions - use @/lib/firebase/admin instead.
+export const ADMIN_EMAILS = ['danyf57@gmail.com'] as const;
 export const ALMA_EMAIL = 'alma.lawson@aurum.inc';
+
+export function isAdminEmail(email?: string | null) {
+  if (!email) return false;
+  return ADMIN_EMAILS.includes(email.toLowerCase() as typeof ADMIN_EMAILS[number]);
+}
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -114,12 +120,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         await syncCookie();
 
         const isAlma = firebaseUser.email === ALMA_EMAIL;
+        const isAdmin = isAdminEmail(firebaseUser.email);
 
         // Use a type assertion or helper if needed, but for now just pass firebaseUser
         const finalUser = firebaseUser;
         setUser(finalUser);
 
-        if (!isAlma) {
+        if (!isAdmin) {
           // Listen to user document (created by server-side trigger)
           const userRef = doc(db, "users", finalUser.uid);
 
@@ -171,7 +178,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             logger.warnSafe('User document not found (waiting for trigger)', { userId: finalUser.uid });
           }
         } else {
-          setTermsAccepted(true); // Special user always accepted
+          setTermsAccepted(true); // Admin user always accepted
         }
       } else {
         setUser(null);

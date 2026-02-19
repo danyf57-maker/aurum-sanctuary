@@ -11,6 +11,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe/server';
 import { firestore as db } from '@/lib/firebase/admin';
 import Stripe from 'stripe';
+import { trackServerEvent } from '@/lib/analytics/server';
 
 // Disable body parsing - Stripe needs raw body for signature verification
 export const runtime = 'nodejs';
@@ -127,6 +128,16 @@ export async function POST(req: NextRequest) {
                             status: 'succeeded',
                             createdAt: new Date(),
                         });
+
+                        await trackServerEvent('purchase', {
+                            userId,
+                            params: {
+                                amount: invoice.amount_paid,
+                                currency: invoice.currency,
+                                invoiceId: invoice.id,
+                            },
+                            path: '/pricing',
+                        });
                     }
                 }
                 break;
@@ -167,6 +178,16 @@ export async function POST(req: NextRequest) {
             case 'checkout.session.completed': {
                 const session = event.data.object as Stripe.Checkout.Session;
                 console.log(`✅ Checkout session completed: ${session.id}`);
+                const userId = session.metadata?.firebaseUid || null;
+                await trackServerEvent('checkout_start', {
+                    userId,
+                    params: {
+                        checkoutSessionId: session.id,
+                        amountTotal: session.amount_total,
+                        currency: session.currency,
+                    },
+                    path: '/pricing',
+                });
 
                 // The subscription.created event will handle the Firestore update
                 // This is just for logging

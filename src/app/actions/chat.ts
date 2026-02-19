@@ -12,6 +12,7 @@ import { auth } from 'firebase-admin';
 import { logger } from '@/lib/logger/safe';
 import { PSYCHOLOGIST_ANALYST_SYSTEM_PROMPT } from '@/lib/skills/psychologist-analyst';
 import { PHILOSOPHY_SYSTEM_PROMPT } from '@/lib/skills/philosophy';
+import { trackServerEvent } from '@/lib/analytics/server';
 
 async function getUserIdFromToken(token: string | null): Promise<string | null> {
     if (!token) return null;
@@ -95,6 +96,11 @@ export async function submitAurumMessage(
 
         // 3. Log d'audit
         await logAuditEvent(userId, 'MESSAGE_SENT', { messageLength: message.length });
+        await trackServerEvent('aurum_message_sent', {
+            userId,
+            path: '/sanctuary/write',
+            params: { messageLength: message.length },
+        });
 
         const newHistory: ChatMessage[] = [
             ...chatHistory,

@@ -12,6 +12,7 @@ import { useRouter } from 'next/navigation';
 import { useFormStatus } from 'react-dom';
 import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
+import { trackEvent } from '@/lib/analytics/client';
 
 export const dynamic = 'force-dynamic';
 
@@ -103,6 +104,12 @@ export default function PricingPage() {
     const router = useRouter();
 
     const handleFormAction = async (formData: FormData) => {
+        const priceId = String(formData.get('priceId') || '');
+        void trackEvent({
+            name: "checkout_start",
+            params: { priceId, source: "pricing_page" },
+        });
+
         if (!user) {
             router.push('/sanctuary/write'); // ou afficher un modal de connexion
             return;

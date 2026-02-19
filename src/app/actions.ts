@@ -3,13 +3,14 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { db, auth, ALMA_EMAIL } from "@/lib/firebase/admin";
+import { db, auth, isAdminEmail } from "@/lib/firebase/admin";
 import { Timestamp } from "firebase-admin/firestore";
 import slugify from "slugify";
 import { generateInsights } from "@/lib/ai/deepseek";
 import { getEntries as getEntriesForUser } from "@/lib/firebase/firestore";
 import { getAuthedUserId } from "@/app/actions/auth";
 import { logger } from "@/lib/logger/safe";
+import { trackServerEvent } from "@/lib/analytics/server";
 
 const requiredString = (message: string) =>
   z.preprocess(
@@ -157,7 +158,7 @@ async function addEntryOnServer(entryData: {
       .add(entryToSave);
 
     // If "publish" is checked and the user is Alma, save to publicPosts as well
-    if (publishAsPost && userEmail === ALMA_EMAIL) {
+    if (publishAsPost && isAdminEmail(userEmail)) {
       if (!entryData.content) {
         throw new Error("Contenu manquant pour la publication publique.");
       }
@@ -309,7 +310,25 @@ export async function saveJournalEntry(
       updatedAt: Timestamp.now(),
     }, { merge: true });
 
-    if (publishAsPost && userEmail === ALMA_EMAIL) {
+    await trackServerEvent("entry_created", {
+      userId,
+      userEmail,
+      path: "/sanctuary/write",
+      params: {
+        tagsCount: tags ? tags.split(",").filter(Boolean).length : 0,
+        publishedAsPost: publishAsPost,
+      },
+    });
+
+    if (isFirstEntry) {
+      await trackServerEvent("first_entry", {
+        userId,
+        userEmail,
+        path: "/sanctuary/write",
+      });
+    }
+
+    if (publishAsPost && isAdminEmail(userEmail)) {
       revalidatePath("/blog");
     }
     revalidatePath("/dashboard");

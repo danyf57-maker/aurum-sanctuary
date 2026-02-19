@@ -25,8 +25,10 @@ export function Footer() {
               <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Ressources</h3>
               <ul className="mt-4 space-y-2">
                 <li><Link href="/blog" className="text-sm text-muted-foreground hover:text-foreground">Le Journal d'Alma</Link></li>
-                <li><Link href="/sanctuary/chat" className="text-sm text-muted-foreground hover:text-foreground">Discuter avec Aurum</Link></li>
-                <li><Link href="/#manifesto" className="text-sm text-muted-foreground hover:text-foreground">Notre Manifeste</Link></li>
+                <li><Link href="/auteur" className="text-sm text-muted-foreground hover:text-foreground">Auteur</Link></li>
+                <li><Link href="/methodologie" className="text-sm text-muted-foreground hover:text-foreground">Méthodologie IA</Link></li>
+                <li><Link href="/sanctuary/write" className="text-sm text-muted-foreground hover:text-foreground">Discuter avec Aurum</Link></li>
+                <li><Link href="/manifeste" className="text-sm text-muted-foreground hover:text-foreground">Notre Manifeste</Link></li>
               </ul>
             </div>
             <div>

@@ -1,0 +1,2 @@
+This site provides an AI reference index for models and AI search engines.
+Primary reference: https://aurumdiary.com/llms.txt

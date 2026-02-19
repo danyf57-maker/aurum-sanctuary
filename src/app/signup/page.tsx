@@ -6,8 +6,8 @@
 
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/providers/auth-provider";
 import { z } from "zod";
@@ -23,7 +23,17 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Eye, EyeOff, Shield } from "lucide-react";
+import { Eye, EyeOff, Shield, Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
+import { trackEvent } from "@/lib/analytics/client";
+
+interface QuizData {
+  answers: string[];
+  completedAt: string;
+  profile: string | null;
+}
+
+const QUIZ_STORAGE_KEY = "aurum-quiz-data";
 
 const signupSchema = z
   .object({
@@ -44,9 +54,10 @@ const signupSchema = z
     path: ["confirmPassword"],
   });
 
-export default function SignupPage() {
+function SignupPage() {
   const { signUpWithEmail, signInWithGoogle, loading: authLoading } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{
     email?: string;
@@ -57,6 +68,25 @@ export default function SignupPage() {
   const [info, setInfo] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [quizData, setQuizData] = useState<QuizData | null>(null);
+  const [showQuizTeaser, setShowQuizTeaser] = useState(false);
+
+  // Check for quiz completion
+  useEffect(() => {
+    const quizComplete = searchParams.get("quiz") === "complete";
+    if (quizComplete) {
+      const saved = localStorage.getItem(QUIZ_STORAGE_KEY);
+      if (saved) {
+        try {
+          const data: QuizData = JSON.parse(saved);
+          setQuizData(data);
+          setShowQuizTeaser(true);
+        } catch {
+          // Invalid quiz data, ignore
+        }
+      }
+    }
+  }, [searchParams]);
 
   const handleEmailSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -95,7 +125,11 @@ export default function SignupPage() {
     try {
       const name = (email ?? "").split("@")[0];
       await signUpWithEmail(email, password, name);
-      router.push("/sanctuary/write");
+      void trackEvent({
+        name: "signup",
+        params: { method: "email", source: "signup_page" },
+      });
+      router.push("/login?check_email=1");
     } catch (error) {
       if ((error as Error)?.message === "EMAIL_NOT_VERIFIED") {
         setInfo("Vérifiez votre boîte de réception pour activer votre compte.");
@@ -110,6 +144,10 @@ export default function SignupPage() {
     setLoading(true);
     try {
       await signInWithGoogle();
+      void trackEvent({
+        name: "signup",
+        params: { method: "google", source: "signup_page" },
+      });
       // Redirect handled by auth state change
     } catch (error) {
       // Error toast shown by AuthProvider
@@ -137,6 +175,28 @@ export default function SignupPage() {
           <CardDescription>
             Rejoignez Aurum Sanctuary et commencez votre voyage
           </CardDescription>
+
+          {/* Quiz Teaser */}
+          {showQuizTeaser && quizData?.profile && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-4 p-4 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 rounded-xl border border-amber-200 dark:border-amber-800"
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <Sparkles className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                <span className="text-xs font-semibold uppercase tracking-wider text-amber-700 dark:text-amber-300">
+                  Votre profil vous attend
+                </span>
+              </div>
+              <p className="text-sm text-amber-800 dark:text-amber-200">
+                Votre profil de réflexion est prêt ! Créez votre compte pour
+                découvrir votre résultat personnalisé et commencer votre
+                expérience.
+              </p>
+            </motion.div>
+          )}
+
           <div className="flex items-center gap-2 mt-3 px-3 py-2 bg-emerald-50 dark:bg-emerald-950/30 rounded-lg border border-emerald-200 dark:border-emerald-800">
             <Shield className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
             <p className="text-sm text-emerald-700 dark:text-emerald-300 font-medium">
@@ -323,5 +383,23 @@ export default function SignupPage() {
         </CardFooter>
       </Card>
     </div>
+  );
+}
+
+// Wrap in Suspense for useSearchParams
+export default function SignupPageWrapper() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center">
+          <div className="text-center">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto"></div>
+            <p className="mt-4 text-muted-foreground">Chargement...</p>
+          </div>
+        </div>
+      }
+    >
+      <SignupPage />
+    </Suspense>
   );
 }

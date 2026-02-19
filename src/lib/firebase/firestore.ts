@@ -4,7 +4,6 @@ import {
   where,
   getDocs,
   orderBy,
-  Timestamp,
   limit as firestoreLimit,
   getDoc,
   doc,
@@ -121,28 +120,6 @@ export async function getUniqueTags(userId: string): Promise<string[]> {
   }
 }
 
-// Données de départ pour le blog d'Alma
-const almaInitialPosts = [
-  {
-    title: "Ce succès qui me donne le vertige",
-    content:
-      "Ils ont applaudi ma présentation. Pourquoi j'ai l'impression d'avoir volé leur admiration ? J'attends juste le moment où ils découvriront que je n'ai aucune idée de ce que je fais. Chaque compliment ressemble à un sursis. Le succès ne chasse pas la peur, il la met en lumière. Ce vertige est la preuve de ma compétence, pas de mon imposture. C'est ce que je me répète, en boucle.",
-    tags: ["syndrome de l'imposteur", "carrière", "anxiété"],
-  },
-  {
-    title: "Mon cerveau refuse le bouton 'off'",
-    content:
-      "La nuit, la liste des tâches tourne en boucle dans ma tête. Chaque détail, chaque e-mail en attente, chaque conversation à venir. Si je m'endors maintenant, j'ai cette peur irrationnelle d'oublier l'essentiel pour demain. Mon esprit refuse de s'éteindre. Il est à la fois mon outil le plus précieux et ma cage la plus solide. Ce sanctuaire est le seul endroit où je peux déposer tout ça, en espérant trouver le silence.",
-    tags: ["anxiété", "insomnie", "charge mentale"],
-  },
-  {
-    title: "La fatigue d'être 'super'",
-    content:
-      "J'ai dit 'ça va super' douze fois aujourd'hui. C'est devenu un réflexe, un masque si bien ajusté que j'oublie parfois le visage qu'il cache. Je crois que je ne sais même plus ce que je ressens vraiment sous cette façade. La dissonance entre mon état interne et l'image que je projette est épuisante. Ici, au moins, je n'ai pas de public. Ici, je peux juste dire la vérité : aujourd'hui, ça ne va pas.",
-    tags: ["fatigue émotionnelle", "introspection", "masque social"],
-  },
-];
-
 function createSlug(text: string) {
   return slugify(text, {
     lower: true,
@@ -152,45 +129,68 @@ function createSlug(text: string) {
 }
 
 export async function getPublicPosts(limit?: number): Promise<PublicPost[]> {
-  // BYPASS FIRESTORE FOR BUILD
-  const baseDate = new Date();
-  return almaInitialPosts
-    .map((post, index) => {
-      const postDate = new Date(
-        baseDate.getTime() - index * 24 * 60 * 60 * 1000
-      );
+  try {
+    const postsRef = collection(db, publicPostsCollectionName);
+    let postsQuery = query(
+      postsRef,
+      where("isPublic", "==", true),
+      orderBy("publishedAt", "desc")
+    );
+
+    if (limit) {
+      postsQuery = query(postsQuery, firestoreLimit(limit));
+    }
+
+    const snapshot = await getDocs(postsQuery);
+    return snapshot.docs.map((postDoc) => {
+      const data = postDoc.data();
       return {
-        id: `initial-${index}`,
-        title: post.title,
-        content: post.content,
-        tags: post.tags,
-        slug: createSlug(post.title),
-        publishedAt: postDate,
-        userId: "ALMA_SPECIAL_USER_ID",
-        isPublic: true,
-      };
-    })
-    .slice(0, limit);
+        id: postDoc.id,
+        title: data.title || "Sans titre",
+        content: data.content || "",
+        tags: data.tags || [],
+        slug: data.slug || createSlug(data.title || postDoc.id),
+        publishedAt: data.publishedAt?.toDate?.() || new Date(),
+        userId: data.userId || "",
+        isPublic: data.isPublic === true,
+      } as PublicPost;
+    });
+  } catch (error) {
+    console.error("Error fetching public posts:", error);
+    return [];
+  }
 }
 
 export async function getPublicPostBySlug(
   slug: string
 ): Promise<PublicPost | null> {
-  // BYPASS FIRESTORE FOR BUILD
-  const initialPost = almaInitialPosts.find(
-    (p) => createSlug(p.title) === slug
-  );
-  if (initialPost) {
+  try {
+    const postsRef = collection(db, publicPostsCollectionName);
+    const postQuery = query(
+      postsRef,
+      where("isPublic", "==", true),
+      where("slug", "==", slug),
+      firestoreLimit(1)
+    );
+    const snapshot = await getDocs(postQuery);
+    if (snapshot.empty) {
+      return null;
+    }
+
+    const postDoc = snapshot.docs[0];
+    const data = postDoc.data();
     return {
-      id: `initial-slug-${slug}`,
-      title: initialPost.title,
-      content: initialPost.content,
-      tags: initialPost.tags,
-      slug: createSlug(initialPost.title),
-      publishedAt: new Date(),
-      userId: "ALMA_SPECIAL_USER_ID",
-      isPublic: true,
-    };
+      id: postDoc.id,
+      title: data.title || "Sans titre",
+      content: data.content || "",
+      tags: data.tags || [],
+      slug: data.slug || slug,
+      publishedAt: data.publishedAt?.toDate?.() || new Date(),
+      userId: data.userId || "",
+      isPublic: data.isPublic === true,
+    } as PublicPost;
+  } catch (error) {
+    console.error("Error fetching public post by slug:", error);
+    return null;
   }
-  return null;
 }

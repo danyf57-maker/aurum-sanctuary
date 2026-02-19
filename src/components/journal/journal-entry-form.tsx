@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Loader2 } from 'lucide-react';
-import { useAuth, ALMA_EMAIL } from '@/providers/auth-provider';
+import { useAuth, isAdminEmail } from '@/providers/auth-provider';
 import { saveJournalEntry, type FormState } from "@/app/actions";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -156,7 +156,7 @@ export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
       if (analysis?.insight) payload.set("insight", analysis.insight);
 
       // Only send raw content for Alma public posts
-      if (publishAsPost && user?.email === ALMA_EMAIL) {
+      if (publishAsPost && isAdminEmail(user?.email)) {
         payload.set("content", content);
       }
 
@@ -227,7 +227,7 @@ export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
     target.style.height = `${target.scrollHeight}px`;
   };
 
-  const isAlma = user?.email === ALMA_EMAIL;
+  const isAlma = isAdminEmail(user?.email);
 
   return (
     <>
