@@ -81,23 +81,101 @@ const QuizSection = () => {
 
     const questions = [
         {
-            q: "Comment vous sentez-vous aujourd'hui ?",
-            options: ["Sérénité", "Turbulence", "Réflexion", "Action"]
+            q: "Quand vous pensez à votre journée, qu'est-ce qui ressort le plus ?",
+            options: [
+                { label: "D", text: "J'ai beaucoup de choses à faire et je veux avancer vite" },
+                { label: "I", text: "J'ai besoin de connecter avec les autres et partager" },
+                { label: "S", text: "Je cherche la tranquillité et l'harmonie" },
+                { label: "C", text: "J'analyse les situations avant d'agir" },
+            ],
         },
         {
-            q: "Quel est votre objectif principal ?",
-            options: ["Clarté Mentale", "Paix Intérieure", "Croissance", "Présence"]
+            q: "Face à une situation difficile, votre première réaction est de :",
+            options: [
+                { label: "D", text: "Prendre le problème en main et trouver une solution" },
+                { label: "I", text: "En parler pour voir différentes perspectives" },
+                { label: "S", text: "Retrouver mon calme avant de réagir" },
+                { label: "C", text: "Comprendre tous les détails avant de décider" },
+            ],
         },
         {
-            q: "Combien de temps avez-vous pour vous ?",
-            options: ["2 min", "5 min", "15 min+"]
-        }
+            q: "Si vous ouvriez votre journal maintenant, vous écririez sur :",
+            options: [
+                { label: "D", text: "Vos objectifs et ce que vous voulez accomplir" },
+                { label: "I", text: "Vos interactions et ce qui vous a touché émotionnellement" },
+                { label: "S", text: "Votre besoin de paix et de stabilité" },
+                { label: "C", text: "Vos réflexions profondes et analyses" },
+            ],
+        },
+        {
+            q: "Ce que vous cherchez avant tout en ce moment :",
+            options: [
+                { label: "D", text: "Du momentum et de l'action" },
+                { label: "I", text: "De la connexion et de l'inspiration" },
+                { label: "S", text: "De la sécurité et du réconfort" },
+                { label: "C", text: "De la clarté et de la structure" },
+            ],
+        },
     ];
 
-    const handleAnswer = (option: string) => {
-        setAnswers([...answers, option]);
-        setStep(step + 1);
+    const profileMap: Record<string, { title: string; description: string }> = {
+        D: {
+            title: "Dominance (D) • Le Pionnier",
+            description: "Vous aimez avancer vite et décider. Votre journal vous aide à canaliser cette énergie.",
+        },
+        I: {
+            title: "Influence (I) • Le Connecteur",
+            description: "Vous êtes guidé par les relations et les émotions. Votre journal devient un espace d'expression.",
+        },
+        S: {
+            title: "Stabilité (S) • L'Ancre",
+            description: "Vous cherchez la paix et la constance. Votre journal vous offre un refuge stable.",
+        },
+        C: {
+            title: "Conformité (C) • L'Architecte",
+            description: "Vous aimez comprendre avant d'agir. Votre journal devient votre laboratoire d'idées.",
+        },
+        MIXTE: {
+            title: "Profil mixte • L'Équilibriste",
+            description: "Vous combinez plusieurs forces. Votre journal s'adapte à votre complexité.",
+        },
     };
+
+    const getProfile = (currentAnswers: string[]) => {
+        const counts = { D: 0, I: 0, S: 0, C: 0 };
+        currentAnswers.forEach((a) => {
+            if (a in counts) counts[a as keyof typeof counts] += 1;
+        });
+        const max = Math.max(counts.D, counts.I, counts.S, counts.C);
+        const winners = (Object.keys(counts) as Array<keyof typeof counts>).filter(
+            (key) => counts[key] === max
+        );
+        return winners.length === 1 ? winners[0] : "MIXTE";
+    };
+
+    const handleAnswer = (option: string) => {
+        const nextAnswers = [...answers, option];
+        setAnswers(nextAnswers);
+
+        const nextStep = step + 1;
+        if (nextStep === questions.length) {
+            const profile = getProfile(nextAnswers);
+            const quizData = {
+                answers: nextAnswers,
+                completedAt: new Date().toISOString(),
+                profile,
+            };
+            try {
+                localStorage.setItem("aurum-quiz-data", JSON.stringify(quizData));
+            } catch {
+                // No-op if storage is unavailable
+            }
+        }
+        setStep(nextStep);
+    };
+
+    const finalProfile = getProfile(answers);
+    const profile = profileMap[finalProfile];
 
     return (
         <section className="py-24 md:py-40 bg-stone-50/50">
@@ -113,16 +191,19 @@ const QuizSection = () => {
                                 transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                                 className="text-center"
                             >
-                                <span className="text-primary/60 text-[10px] uppercase tracking-widest mb-6 block font-bold">Évaluation de Bien-être • {step + 1}/{questions.length}</span>
+                                <span className="text-primary/60 text-[10px] uppercase tracking-widest mb-6 block font-bold">Test DISC • {step + 1}/{questions.length}</span>
                                 <h3 className="text-3xl md:text-5xl font-headline mb-12 text-stone-900">{questions[step].q}</h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     {questions[step].options.map((option) => (
                                         <button
-                                            key={option}
-                                            onClick={() => handleAnswer(option)}
-                                            className="p-6 rounded-2xl bg-stone-50 border border-stone-100 hover:border-primary/40 hover:bg-primary/5 transition-all text-lg font-light text-stone-700 shadow-sm hover:shadow-md active:scale-[0.98]"
+                                            key={option.text}
+                                            onClick={() => handleAnswer(option.label)}
+                                            className="p-6 rounded-2xl bg-stone-50 border border-stone-100 hover:border-primary/40 hover:bg-primary/5 transition-all text-left text-stone-700 shadow-sm hover:shadow-md active:scale-[0.98]"
                                         >
-                                            {option}
+                                            <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-primary/10 text-primary text-xs font-bold mr-2">
+                                                {option.label}
+                                            </span>
+                                            <span className="text-base font-light">{option.text}</span>
                                         </button>
                                     ))}
                                 </div>
@@ -138,12 +219,14 @@ const QuizSection = () => {
                                 <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-8 text-primary">
                                     <ShieldCheck className="w-10 h-10" />
                                 </div>
-                                <h3 className="text-3xl md:text-5xl font-headline mb-6 text-stone-900">Votre profil est prêt.</h3>
+                                <h3 className="text-3xl md:text-5xl font-headline mb-6 text-stone-900">Votre profil DISC est prêt.</h3>
                                 <p className="text-stone-500 text-lg mb-12 max-w-xl mx-auto leading-relaxed">
-                                    Basé sur vos réponses, nous avons préparé un sanctuaire personnalisé pour votre {answers[1]?.toLowerCase() || "bien-être"}. Découvrez votre première analyse offerte.
+                                    <span className="font-medium text-stone-700">{profile.title}</span>
+                                    <br />
+                                    {profile.description}
                                 </p>
                                 <Button size="lg" className="h-16 px-16 text-lg rounded-2xl shadow-xl hover:shadow-2xl transition-all" asChild>
-                                    <Link href="/sanctuary/write">Commencer l'Expérience</Link>
+                                    <Link href={`/signup?quiz=complete&profile=${finalProfile}`}>Créer mon compte pour voir mon résultat</Link>
                                 </Button>
                             </motion.div>
                         )}
