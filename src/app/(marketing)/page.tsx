@@ -387,6 +387,11 @@ export default function Home() {
                     </div>
                 </section>
 
+                {/* SECTION 2: Interactive Quiz (DISC) */}
+                <div id="evaluation">
+                    <QuizSection />
+                </div>
+
                 {/* SECTION 3: How It Works */}
                 <section className="py-24 md:py-32 container">
                     <div className="text-center max-w-2xl mx-auto mb-16">
@@ -561,11 +566,6 @@ export default function Home() {
                         {/* Security page removed - TABULA RASA */}
                     </div>
                 </section>
-
-                {/* SECTION 5.1: Interactive Quiz */}
-                <div id="evaluation">
-                    <QuizSection />
-                </div>
 
                 {/* SECTION 6: Social Proof / Testimonials */}
                 <section className="py-24 md:py-32 bg-stone-100/50">
