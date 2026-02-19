@@ -167,21 +167,21 @@ export default function Home() {
   const howItWorks = [
     {
       icon: <PenSquare />,
-      title: "1. Vide ton sac",
+      title: "1. Tu écris librement",
       description:
-        "Dépose tes pensées sans filtre. Libère immédiatement ta charge mentale dans un espace conçu pour libérer ton esprit et stabiliser tes pensées.",
+        "Tu poses ce que tu vis, sans pression ni performance, dans un espace privé.",
     },
     {
       icon: <Eye />,
-      title: "2. Obtiens une perspective",
+      title: "2. Aurum repère les thèmes",
       description:
-        "Ne tourne plus en rond. Aurum révèle les schémas invisibles de ton esprit pour transformer ta confusion en reflets actionnables.",
+        "Aurum met en lumière les tensions, les patterns et les points de bascule dans tes écrits.",
     },
     {
       icon: <Sprout />,
-      title: "3. Retrouve le contrôle",
+      title: "3. Tu repars avec plus de clarté",
       description:
-        "Prends de la hauteur. Cultive activement ton paysage émotionnel pour ne plus subir tes journées, mais les vivre avec une présence renouvelée.",
+        "Tu vois mieux ce qui se joue en toi et tu avances avec une direction plus nette.",
     },
   ];
 
@@ -252,8 +252,8 @@ export default function Home() {
               Et si tu comprenais enfin comment tu penses ?
             </h2>
             <p className="text-stone-600 font-light text-lg">
-              4 questions pour t'offrir une clarté mentale rapide, dans un cadre
-              privé et sécurisé.
+              4 questions pour révéler ton profil de réflexion. Ton résultat
+              personnalisé t&apos;attend.
             </p>
           </div>
         </section>
@@ -263,11 +263,10 @@ export default function Home() {
         <section className="py-24 md:py-32 container">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-4xl font-headline mb-4">
-              De la surcharge à la clarté, rapidement
+              Comment ça marche
             </h2>
             <p className="text-muted-foreground">
-              Un rituel simple pour retrouver de la clarté mentale en quelques
-              minutes, en privé.
+              En 5 minutes, tu transformes le flou en direction.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
@@ -367,11 +366,11 @@ export default function Home() {
                 Ton Intégrité, Notre Priorité
               </span>
               <h2 className="text-4xl md:text-6xl font-headline mb-6">
-                Ta clarté mentale reste privée.
+                Ton espace reste privé.
               </h2>
               <p className="text-stone-500 font-light text-lg">
-                Nous avons conçu Aurum autour d'une idée simple : ton monde
-                intérieur ne regarde que toi. Pas même nous.
+                Ton monde intérieur n&apos;appartient qu&apos;à toi. Aurum t&apos;aide
+                à clarifier sans exposer ton intimité.
               </p>
             </div>
 
@@ -395,11 +394,11 @@ export default function Home() {
                   <Fingerprint className="w-6 h-6" />
                 </div>
                 <h3 className="text-xl font-headline mb-3 text-primary">
-                  Anonymat Garanti
+                  Espace non public
                 </h3>
                 <p className="text-sm text-stone-500 font-light leading-relaxed">
-                  Aucune donnée personnelle n'est liée à tes écrits. Le moteur
-                  d'analyse Aurum opère en local sur ton appareil.
+                  Tes pages ne sont pas visibles publiquement. Tu écris pour toi,
+                  pas pour un fil social.
                 </p>
               </div>
 
@@ -408,11 +407,11 @@ export default function Home() {
                   <ShieldCheck className="w-6 h-6" />
                 </div>
                 <h3 className="text-xl font-headline mb-3 text-primary">
-                  Droit à l'Oubli
+                  Limites claires
                 </h3>
                 <p className="text-sm text-stone-500 font-light leading-relaxed">
-                  Tu restes propriétaire de tes données à 100%. Exporte tes
-                  journaux ou supprime ton compte en un clic, sans délai.
+                  Aurum n&apos;établit pas de diagnostic médical. En cas de détresse
+                  aiguë, une aide humaine doit être contactée en priorité.
                 </p>
               </div>
             </div>
@@ -491,6 +490,10 @@ export default function Home() {
 
         {/* SECTION 7: CTA Final & FAQ */}
         <section className="container py-24 md:py-32 text-center border-t border-black/5">
+          <h2 className="text-4xl font-headline mb-4">Commence aujourd&apos;hui</h2>
+          <p className="text-muted-foreground mb-8">
+            Une première page suffit pour y voir plus clair.
+          </p>
           <Button asChild size="lg" className="h-14 px-12 text-base">
             <Link
               href="/signup"
