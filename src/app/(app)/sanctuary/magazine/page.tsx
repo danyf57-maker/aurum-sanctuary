@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { BookImage, PenSquare } from "lucide-react";
+import { AlignLeft, Archive, BookImage, ImageIcon, PenSquare, RefreshCw } from "lucide-react";
 import {
   addDoc,
   collection,
@@ -641,25 +641,65 @@ export default function MagazinePage() {
 
   return (
     <div className="container max-w-7xl py-8 md:py-12">
-      <header className="mb-10 space-y-2">
+      <header className="mb-10">
+        <div className="mb-4 h-px w-10 bg-amber-600/50" />
         <h1 className="font-headline text-4xl tracking-tight text-stone-900">
           Magazine
         </h1>
-        <p className="text-stone-600">
-          Tes pensées en vue éditoriale : image à la une, extrait, mémoire.
+        <p className="mt-2 max-w-xl text-stone-500">
+          La lecture éditoriale et analytique de ton parcours. Aurum y assemble tes pages pour faire émerger les thèmes, les extraits marquants et ton évolution.
         </p>
       </header>
 
       {issues.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-stone-300 bg-stone-50/60 p-10 text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-sm">
-            <BookImage className="h-6 w-6 text-stone-500" />
+        <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
+          {/* Zone héro */}
+          <div className="border-b border-stone-100 bg-gradient-to-b from-stone-50 to-white px-10 py-12 text-center">
+            <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-50 ring-1 ring-amber-200/70">
+              <BookImage className="h-7 w-7 text-amber-700" />
+            </div>
+            <h2 className="text-lg font-semibold text-stone-900">
+              Ton parcours, révélé par Aurum
+            </h2>
+            <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-stone-500">
+              Aurum assemble tes pages enregistrées et tes tests pour faire émerger
+              les thèmes récurrents, les extraits marquants et ton évolution dans le temps.
+            </p>
           </div>
-          <p className="text-stone-700">Aucune édition pour l&apos;instant.</p>
-          <p className="mt-1 text-sm text-stone-500">
-            Écris une entrée avec une image pour composer ton magazine.
-          </p>
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+
+          {/* Piliers — ce que fait le Magazine */}
+          <div className="grid divide-x divide-stone-100 sm:grid-cols-3">
+            <div className="flex flex-col items-center p-7 text-center">
+              <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">
+                <ImageIcon className="h-4 w-4 text-stone-600" />
+              </div>
+              <p className="text-sm font-medium text-stone-900">Thèmes & extraits</p>
+              <p className="mt-1.5 text-xs leading-relaxed text-stone-500">
+                Les fils conducteurs de tes écrits, mis en lumière automatiquement par Aurum.
+              </p>
+            </div>
+            <div className="flex flex-col items-center p-7 text-center">
+              <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">
+                <AlignLeft className="h-4 w-4 text-stone-600" />
+              </div>
+              <p className="text-sm font-medium text-stone-900">Évolution</p>
+              <p className="mt-1.5 text-xs leading-relaxed text-stone-500">
+                Ton profil de bien-être et de personnalité tracé dans le temps, page après page.
+              </p>
+            </div>
+            <div className="flex flex-col items-center p-7 text-center">
+              <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">
+                <Archive className="h-4 w-4 text-stone-600" />
+              </div>
+              <p className="text-sm font-medium text-stone-900">Vue éditoriale</p>
+              <p className="mt-1.5 text-xs leading-relaxed text-stone-500">
+                Chaque page devient une édition avec image, extrait et date. Ton journal, magnifié.
+              </p>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex flex-wrap items-center justify-center gap-3 border-t border-stone-100 bg-stone-50/60 px-10 py-6">
             <Button
               asChild
               className="bg-stone-900 text-stone-50 hover:bg-stone-800"
@@ -674,9 +714,10 @@ export default function MagazinePage() {
               variant="outline"
               onClick={() => void handleBackfillMagazine()}
               disabled={isBackfilling}
-              className="border-stone-300 text-stone-700"
+              className="border-stone-200 text-stone-600 hover:bg-stone-100"
             >
-              {isBackfilling ? "Reconstruction..." : "Reconstruire le magazine"}
+              <RefreshCw className={`mr-2 h-4 w-4 ${isBackfilling ? "animate-spin" : ""}`} />
+              {isBackfilling ? "Reconstruction..." : "Reconstruire depuis le journal"}
             </Button>
           </div>
         </div>

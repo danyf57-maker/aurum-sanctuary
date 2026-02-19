@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState, Suspense } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { JournalMagazineCard } from '@/components/journal/journal-magazine-card';
 import { TagFilter } from '@/components/journal/tag-filter';
@@ -11,8 +10,7 @@ import { getEntries, getUniqueTags } from '@/lib/firebase/firestore';
 import { useAuth } from '@/providers/auth-provider';
 import { JournalEntry } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
-import placeholderImages from '@/lib/placeholder-images.json';
-import { PenSquare, ShieldAlert, BookOpen, Flame, CalendarDays } from 'lucide-react';
+import { PenSquare, ShieldAlert, BookOpen, Flame, CalendarDays, Heart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { motion } from 'framer-motion';
@@ -218,8 +216,9 @@ function SanctuaryPageContent() {
       <div className="container max-w-7xl py-8 md:py-12">
         {/* Header portfolio */}
         <header className="mb-10">
+          <div className="mb-4 h-px w-10 bg-amber-600/50" />
           <h1 className="font-headline text-4xl tracking-tight text-stone-900">Journal</h1>
-          {totalEntries > 0 && (
+          {totalEntries > 0 ? (
             <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-stone-500">
               <span className="inline-flex items-center gap-1.5">
                 <BookOpen className="h-4 w-4" />
@@ -236,6 +235,10 @@ function SanctuaryPageContent() {
                 </span>
               )}
             </div>
+          ) : (
+            <p className="mt-2 max-w-xl text-stone-500">
+              L&apos;archive de toutes tes pages enregistrées, dans la durée.
+            </p>
           )}
           {tags.length > 0 && (
             <div className="mt-5">
@@ -259,19 +262,64 @@ function SanctuaryPageContent() {
             ))}
           </motion.div>
         ) : (
-          <div className="flex flex-col items-center rounded-2xl border-2 border-dashed border-stone-300 py-20 text-center">
-            <Image
-              src={placeholderImages['sanctuary-empty'].src}
-              alt={placeholderImages['sanctuary-empty'].alt}
-              width={placeholderImages['sanctuary-empty'].width}
-              height={placeholderImages['sanctuary-empty'].height}
-              data-ai-hint={placeholderImages['sanctuary-empty'].hint}
-              className="mb-8 h-auto w-full max-w-sm rounded-lg opacity-80"
-            />
-            <h3 className="text-xl font-semibold">Votre sanctuaire attend.</h3>
-            <p className="mt-2 text-muted-foreground">
-              Le voyage de mille lieues commence par un seul mot.
-            </p>
+          <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
+            {/* Zone héro */}
+            <div className="border-b border-stone-100 bg-gradient-to-b from-stone-50 to-white px-10 py-12 text-center">
+              <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-50 ring-1 ring-amber-200/70">
+                <BookOpen className="h-7 w-7 text-amber-700" />
+              </div>
+              <h2 className="text-lg font-semibold text-stone-900">
+                L&apos;archive de toutes tes pages
+              </h2>
+              <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-stone-500">
+                Chaque page enregistrée depuis <span className="font-medium text-stone-700">Écrire</span> apparaît ici,
+                classée dans la durée. Ton journal, c&apos;est ta mémoire complète.
+              </p>
+            </div>
+
+            {/* Piliers */}
+            <div className="grid divide-x divide-stone-100 sm:grid-cols-3">
+              <div className="flex flex-col items-center p-7 text-center">
+                <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">
+                  <CalendarDays className="h-4 w-4 text-stone-600" />
+                </div>
+                <p className="text-sm font-medium text-stone-900">Chronologie</p>
+                <p className="mt-1.5 text-xs leading-relaxed text-stone-500">
+                  Toutes tes pages dans l&apos;ordre où tu les as écrites, sans rien perdre.
+                </p>
+              </div>
+              <div className="flex flex-col items-center p-7 text-center">
+                <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">
+                  <Heart className="h-4 w-4 text-stone-600" />
+                </div>
+                <p className="text-sm font-medium text-stone-900">Filtres & humeurs</p>
+                <p className="mt-1.5 text-xs leading-relaxed text-stone-500">
+                  Retrouve une page par humeur, étiquette ou période. Ton passé, navigable.
+                </p>
+              </div>
+              <div className="flex flex-col items-center p-7 text-center">
+                <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">
+                  <BookOpen className="h-4 w-4 text-stone-600" />
+                </div>
+                <p className="text-sm font-medium text-stone-900">Consultation</p>
+                <p className="mt-1.5 text-xs leading-relaxed text-stone-500">
+                  Relis, modifie ou approfondit n&apos;importe quelle entrée avec Aurum.
+                </p>
+              </div>
+            </div>
+
+            {/* Action */}
+            <div className="flex items-center justify-center border-t border-stone-100 bg-stone-50/60 px-10 py-6">
+              <Button
+                asChild
+                className="bg-stone-900 text-stone-50 hover:bg-stone-800"
+              >
+                <Link href="/sanctuary/write">
+                  <PenSquare className="mr-2 h-4 w-4" />
+                  Écrire ma première page
+                </Link>
+              </Button>
+            </div>
           </div>
         )}
       </div>
