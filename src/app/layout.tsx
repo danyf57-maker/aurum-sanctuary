@@ -41,8 +41,8 @@ export const metadata: Metadata = {
     title: "Aurum",
   },
   openGraph: {
-    title: 'Aurum : Le miroir de votre monde intérieur.',
-    description: 'Le journal intime privé par excellence. Chiffrement sur votre appareil et design apaisant.',
+    title: 'Aurum – Journal Intime en Ligne & Application de Journaling | Bien-être Mental',
+    description: 'Aurum est l\'application de journaling pour gérer votre charge mentale, comprendre vos émotions et réduire le stress. Journal intime en ligne 100% chiffré. Essayez gratuitement.',
     url: 'https://aurumdiary.com',
     siteName: 'Aurum Sanctuary',
     images: [
@@ -58,8 +58,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Aurum : Le miroir de votre monde intérieur.',
-    description: 'Le journal intime privé par excellence. Chiffrement sur votre appareil.',
+    title: 'Aurum – Journal Intime en Ligne & Application de Journaling | Bien-être Mental',
+    description: 'Aurum est l\'application de journaling pour gérer votre charge mentale, comprendre vos émotions et réduire le stress. Journal intime en ligne 100% chiffré. Essayez gratuitement.',
     images: ['/og-image.png'],
   },
   alternates: {
