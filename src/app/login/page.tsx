@@ -30,7 +30,7 @@ function LoginForm() {
     const [info, setInfo] = useState<string | null>(null);
 
     // Get redirect URL from query params, default to /dashboard
-    const redirectUrl = searchParams.get('redirect') || '/dashboard';
+    const redirectUrl = searchParams.get('redirect') || '/sanctuary/write';
     const verified = searchParams.get('verified');
     const checkEmail = searchParams.get('check_email');
 

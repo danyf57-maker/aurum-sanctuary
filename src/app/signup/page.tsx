@@ -95,7 +95,7 @@ export default function SignupPage() {
     try {
       const name = (email ?? "").split("@")[0];
       await signUpWithEmail(email, password, name);
-      router.push("/login?check_email=1");
+      router.push("/sanctuary/write");
     } catch (error) {
       if ((error as Error)?.message === "EMAIL_NOT_VERIFIED") {
         setInfo("Vérifiez votre boîte de réception pour activer votre compte.");
