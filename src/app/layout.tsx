@@ -32,8 +32,8 @@ const dawning = Dawning_of_a_New_Day({
 });
 
 export const metadata: Metadata = {
-  title: 'Aurum | Le miroir de votre monde intérieur',
-  description: 'Allégez votre charge mentale avec Aurum. Un journal sécurisé pour transformer vos pensées en clarté. Essayez sans compte.',
+  title: 'Aurum – Journal Intime en Ligne & Application de Journaling | Bien-être Mental',
+  description: 'Aurum est l\'application de journaling pour gérer votre charge mentale, comprendre vos émotions et réduire le stress. Journal intime en ligne 100% chiffré. Essayez gratuitement.',
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
@@ -93,9 +93,11 @@ export default function RootLayout({
       priceCurrency: 'EUR',
     },
     featureList: [
-      "Reflets de sentiment",
-      "Chiffrement privé",
-      "Journaling guidé"
+      "Journal intime en ligne chiffré AES-256",
+      "Gestion de la charge mentale",
+      "Suivi des émotions et de l'humeur",
+      "Journal guidé avec intelligence artificielle",
+      "Alternative privée à Rosebud"
     ]
   };
 
