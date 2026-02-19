@@ -60,7 +60,7 @@ const ExitIntent = () => {
                             size="lg"
                             className="h-16 px-12 text-lg rounded-2xl w-full sm:w-auto"
                         >
-                            Faire le test (30 s)
+                            Faire le Test (30s)
                         </Button>
                         <button
                             onClick={() => { setShow(false); setDismissed(true); }}
@@ -245,7 +245,7 @@ export default function Home() {
         {
             icon: <Eye />,
             title: "2. Obtenez une perspective",
-            description: "Ne tournez plus en rond. Aurum révèle les schémas invisibles de votre esprit pour transformer votre confusion en pistes concrètes.",
+            description: "Ne tournez plus en rond. Aurum révèle les schémas invisibles de votre esprit pour transformer votre confusion en reflets actionnables.",
         },
         {
             icon: <Sprout />,
@@ -258,7 +258,7 @@ export default function Home() {
         {
             name: "Camille, 34 ans",
             initials: "C",
-            quote: "J'étais sceptique à l'idée de confier mes pensées à un algorithme de miroir. Mais Aurum est différent. C'est un miroir bienveillant, pas un juge. Les éclairages d'Aurum m'ont ouvert les yeux sur des schémas que j'ignorais totalement."
+            quote: "J'étais sceptique à l'idée de confier mes pensées à un algorithme de miroir. Mais Aurum est différent. C'est un miroir bienveillant, pas un juge. Les 'insights' m'ont ouvert les yeux sur des schémas que j'ignorais totalement."
         },
         {
             name: "Léo, 41 ans",
@@ -275,7 +275,7 @@ export default function Home() {
     const faqs = [
         {
             question: "Qui peut lire mes données ?",
-            answer: "Personne. Nous utilisons une architecture à l'aveugle côté administration (admin-blind), avec chiffrement AES-256 côté client. Vos entrées sont chiffrées avec votre clé privée avant d'être envoyées. Techniquement, même avec un accès total à nos serveurs, il est impossible de déchiffrer vos écrits sans votre mot de passe."
+            answer: "Personne. Nous utilisons une architecture 'Admin-Blind' avec chiffrement AES-256 côté client. Vos entrées sont chiffrées avec votre clé privée avant d'être envoyées. Techniquement, même avec un accès total à nos serveurs, il est impossible de déchiffrer vos écrits sans votre mot de passe."
         },
         {
             question: "Comment Aurum aide à la santé mentale ?",
@@ -450,7 +450,7 @@ export default function Home() {
                                 <div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center mb-6 text-primary">
                                     <ShieldCheck className="w-6 h-6" />
                                 </div>
-                                <h3 className="text-xl font-headline mb-3 text-primary">Droit à l'oubli</h3>
+                                <h3 className="text-xl font-headline mb-3 text-primary">Droit à l'Oubli</h3>
                                 <p className="text-sm text-stone-500 font-light leading-relaxed">
                                     Vous restez propriétaire de vos données à 100%. Exportez vos journaux ou supprimez votre compte en un clic, sans délai.
                                 </p>
