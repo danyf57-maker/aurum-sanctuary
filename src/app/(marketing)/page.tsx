@@ -47,7 +47,7 @@ const ExitIntent = () => {
                     </div>
                     <h3 className="text-3xl md:text-4xl font-headline mb-6 text-stone-900">Une dernière chose avant de partir...</h3>
                     <p className="text-stone-500 text-lg mb-10 leading-relaxed font-light">
-                        Vous ne savez pas par où commencer ? Faites notre évaluation de bien-être en 30 secondes pour obtenir votre profil personnalisé.
+                        Tu ne sais pas par où commencer ? Fais notre évaluation de bien-être en 30 secondes pour obtenir ton profil personnalisé.
                     </p>
                     <div className="flex flex-col gap-4 items-center">
                         <Button
@@ -80,7 +80,7 @@ const QuizSection = () => {
 
     const questions = [
         {
-            q: "Quand vous pensez à votre journée, qu'est-ce qui ressort le plus ?",
+            q: "Quand tu penses à ta journée, qu'est-ce qui ressort le plus ?",
             options: [
                 { label: "D", text: "J'ai beaucoup de choses à faire et je veux avancer vite" },
                 { label: "I", text: "J'ai besoin de connecter avec les autres et partager" },
@@ -89,7 +89,7 @@ const QuizSection = () => {
             ],
         },
         {
-            q: "Face à une situation difficile, votre première réaction est de :",
+            q: "Face à une situation difficile, ta première réaction est de :",
             options: [
                 { label: "D", text: "Prendre le problème en main et trouver une solution" },
                 { label: "I", text: "En parler pour voir différentes perspectives" },
@@ -98,16 +98,16 @@ const QuizSection = () => {
             ],
         },
         {
-            q: "Si vous ouvriez votre journal maintenant, vous écririez sur :",
+            q: "Si tu ouvrais ton journal maintenant, tu écrirais sur :",
             options: [
-                { label: "D", text: "Vos objectifs et ce que vous voulez accomplir" },
-                { label: "I", text: "Vos interactions et ce qui vous a touché émotionnellement" },
-                { label: "S", text: "Votre besoin de paix et de stabilité" },
-                { label: "C", text: "Vos réflexions profondes et analyses" },
+                { label: "D", text: "Tes objectifs et ce que tu veux accomplir" },
+                { label: "I", text: "Tes interactions et ce qui t'a touché émotionnellement" },
+                { label: "S", text: "Ton besoin de paix et de stabilité" },
+                { label: "C", text: "Tes réflexions profondes et analyses" },
             ],
         },
         {
-            q: "Ce que vous cherchez avant tout en ce moment :",
+            q: "Ce que tu cherches avant tout en ce moment :",
             options: [
                 { label: "D", text: "Du momentum et de l'action" },
                 { label: "I", text: "De la connexion et de l'inspiration" },
@@ -120,23 +120,23 @@ const QuizSection = () => {
     const profileMap: Record<string, { title: string; description: string }> = {
         D: {
             title: "Dominance (D) • Le Pionnier",
-            description: "Vous aimez avancer vite et décider. Votre journal vous aide à canaliser cette énergie.",
+            description: "Tu aimes avancer vite et décider. Ton journal t'aide à canaliser cette énergie.",
         },
         I: {
             title: "Influence (I) • Le Connecteur",
-            description: "Vous êtes guidé par les relations et les émotions. Votre journal devient un espace d'expression.",
+            description: "Tu es guidé par les relations et les émotions. Ton journal devient un espace d'expression.",
         },
         S: {
             title: "Stabilité (S) • L'Ancre",
-            description: "Vous cherchez la paix et la constance. Votre journal vous offre un refuge stable.",
+            description: "Tu cherches la paix et la constance. Ton journal t'offre un refuge stable.",
         },
         C: {
             title: "Conformité (C) • L'Architecte",
-            description: "Vous aimez comprendre avant d'agir. Votre journal devient votre laboratoire d'idées.",
+            description: "Tu aimes comprendre avant d'agir. Ton journal devient ton laboratoire d'idées.",
         },
         MIXTE: {
             title: "Profil mixte • L'Équilibriste",
-            description: "Vous combinez plusieurs forces. Votre journal s'adapte à votre complexité.",
+            description: "Tu combines plusieurs forces. Ton journal s'adapte à ta complexité.",
         },
     };
 
@@ -218,7 +218,7 @@ const QuizSection = () => {
                                 <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-8 text-primary">
                                     <ShieldCheck className="w-10 h-10" />
                                 </div>
-                                <h3 className="text-3xl md:text-5xl font-headline mb-6 text-stone-900">Votre profil DISC est prêt.</h3>
+                                <h3 className="text-3xl md:text-5xl font-headline mb-6 text-stone-900">Ton profil DISC est prêt.</h3>
                                 <p className="text-stone-500 text-lg mb-12 max-w-xl mx-auto leading-relaxed">
                                     <span className="font-medium text-stone-700">{profile.title}</span>
                                     <br />
@@ -283,18 +283,18 @@ export default function Home() {
     const howItWorks = [
         {
             icon: <PenSquare />,
-            title: "1. Videz votre sac",
-            description: "Déposez vos pensées sans filtre. Libérez immédiatement votre charge mentale dans un espace conçu pour libérer votre esprit et stabiliser vos pensées.",
+            title: "1. Vide ton sac",
+            description: "Dépose tes pensées sans filtre. Libère immédiatement ta charge mentale dans un espace conçu pour libérer ton esprit et stabiliser tes pensées.",
         },
         {
             icon: <Eye />,
             title: "2. Obtenez une perspective",
-            description: "Ne tournez plus en rond. Aurum révèle les schémas invisibles de votre esprit pour transformer votre confusion en reflets actionnables.",
+            description: "Ne tourne plus en rond. Aurum révèle les schémas invisibles de ton esprit pour transformer ta confusion en reflets actionnables.",
         },
         {
             icon: <Sprout />,
             title: "3. Retrouvez le contrôle",
-            description: "Prenez de la hauteur. Cultivez activement votre paysage émotionnel pour ne plus subir vos journées, mais les vivre avec une présence renouvelée.",
+            description: "Prends de la hauteur. Cultive activement ton paysage émotionnel pour ne plus subir tes journées, mais les vivre avec une présence renouvelée.",
         }
     ];
 
@@ -319,15 +319,15 @@ export default function Home() {
     const faqs = [
         {
             question: "Qui peut lire mes données ?",
-            answer: "Personne. Nous utilisons une architecture 'Admin-Blind' avec chiffrement AES-256 côté client. Vos entrées sont chiffrées avec votre clé privée avant d'être envoyées. Techniquement, même avec un accès total à nos serveurs, il est impossible de déchiffrer vos écrits sans votre mot de passe."
+            answer: "Personne. Nous utilisons une architecture 'Admin-Blind' avec chiffrement AES-256 côté client. Tes entrées sont chiffrées avec ta clé privée avant d'être envoyées. Techniquement, même avec un accès total à nos serveurs, il est impossible de déchiffrer tes écrits sans ton mot de passe."
         },
         {
             question: "Comment Aurum aide à la santé mentale ?",
-            answer: "Aurum est un outil d'introspection, pas un substitut à une thérapie. Il vous offre un espace sécurisé pour extérioriser vos pensées et vous aide à identifier des schémas émotionnels. Cet acte d'écriture et de réflexion peut être une composante bénéfique d'une bonne hygiène mentale."
+            answer: "Aurum est un outil d'introspection, pas un substitut à une thérapie. Il t'offre un espace sécurisé pour extérioriser tes pensées et t'aide à identifier des schémas émotionnels. Cet acte d'écriture et de réflexion peut être une composante bénéfique d'une bonne hygiène mentale."
         },
         {
             question: "Est-ce gratuit ?",
-            answer: "Oui, Aurum propose une offre gratuite généreuse pour vous permettre de commencer votre voyage. Des plans payants sont disponibles pour ceux qui souhaitent un usage plus intensif et des fonctionnalités avancées, ce qui nous permet de maintenir et d'améliorer le service en toute indépendance."
+            answer: "Oui, Aurum propose une offre gratuite généreuse pour te permettre de commencer ton voyage. Des plans payants sont disponibles pour celles et ceux qui souhaitent un usage plus intensif et des fonctionnalités avancées, ce qui nous permet de maintenir et d'améliorer le service en toute indépendance."
         }
     ];
 
@@ -340,10 +340,10 @@ export default function Home() {
                 <section className="py-24 md:py-32 bg-stone-100/50">
                     <div className="container max-w-3xl mx-auto text-center">
                         <h2 className="text-4xl md:text-5xl font-headline mb-6">
-                            Cultivez votre clarté.
+                            Cultive ta clarté.
                         </h2>
                         <div className="prose prose-lg lg:prose-xl mx-auto text-foreground/80 font-light">
-                            <p>Aurum est l'outil qui vous permet de nommer, de trier et de comprendre ce qui pousse en vous. Pour que vous puissiez cultiver la paix, et pas le chaos.</p>
+                            <p>Aurum est l'outil qui te permet de nommer, de trier et de comprendre ce qui pousse en toi. Pour que tu puisses cultiver la paix, et pas le chaos.</p>
                         </div>
                     </div>
                 </section>
@@ -413,7 +413,7 @@ export default function Home() {
                                 <ul className="space-y-6">
                                     {[
                                         "Sommeil retrouvé et esprit apaisé",
-                                        "Insights clairs sur vos patterns",
+                                        "Insights clairs sur tes patterns",
                                         "Maîtrise de son paysage intérieur",
                                         "Clarté d'esprit au quotidien"
                                     ].map((item, i) => (
@@ -434,9 +434,9 @@ export default function Home() {
                 <section className="py-24 md:py-40 bg-white">
                     <div className="container">
                         <div className="text-center max-w-3xl mx-auto mb-20">
-                            <span className="text-primary/60 text-[10px] uppercase tracking-[0.3em] font-bold mb-4 block">Votre Intégrité, Notre Priorité</span>
-                            <h2 className="text-4xl md:text-6xl font-headline mb-6">Un sanctuaire où vous êtes le seul maître.</h2>
-                            <p className="text-stone-500 font-light text-lg">Nous avons conçu Aurum autour d'une idée simple : votre monde intérieur ne regarde que vous. Pas même nous.</p>
+                            <span className="text-primary/60 text-[10px] uppercase tracking-[0.3em] font-bold mb-4 block">Ton Intégrité, Notre Priorité</span>
+                            <h2 className="text-4xl md:text-6xl font-headline mb-6">Un sanctuaire où tu es le seul maître.</h2>
+                            <p className="text-stone-500 font-light text-lg">Nous avons conçu Aurum autour d'une idée simple : ton monde intérieur ne regarde que toi. Pas même nous.</p>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-20">
@@ -446,7 +446,7 @@ export default function Home() {
                                 </div>
                                 <h3 className="text-xl font-headline mb-3 text-primary">Confidentialité Absolue</h3>
                                 <p className="text-sm text-stone-500 font-light leading-relaxed mb-4">
-                                    Vos pensées sont chiffrées (AES-256) directement sur votre appareil. Même nous ne pouvons pas lire vos secrets.
+                                    Tes pensées sont chiffrées (AES-256) directement sur ton appareil. Même nous ne pouvons pas lire tes secrets.
                                 </p>
                                 {/* Security page removed - TABULA RASA */}
                             </div>
@@ -457,7 +457,7 @@ export default function Home() {
                                 </div>
                                 <h3 className="text-xl font-headline mb-3 text-primary">Anonymat Garanti</h3>
                                 <p className="text-sm text-stone-500 font-light leading-relaxed">
-                                    Aucune donnée personnelle n'est liée à vos écrits. Le moteur d'analyse Aurum opère en local sur votre appareil.
+                                    Aucune donnée personnelle n'est liée à tes écrits. Le moteur d'analyse Aurum opère en local sur ton appareil.
                                 </p>
                             </div>
 
@@ -467,7 +467,7 @@ export default function Home() {
                                 </div>
                                 <h3 className="text-xl font-headline mb-3 text-primary">Droit à l'Oubli</h3>
                                 <p className="text-sm text-stone-500 font-light leading-relaxed">
-                                    Vous restez propriétaire de vos données à 100%. Exportez vos journaux ou supprimez votre compte en un clic, sans délai.
+                                    Tu restes propriétaire de tes données à 100%. Exporte tes journaux ou supprime ton compte en un clic, sans délai.
                                 </p>
                             </div>
                         </div>
@@ -477,7 +477,7 @@ export default function Home() {
                                 <div className="max-w-xl text-center md:text-left">
                                     <h4 className="text-3xl font-headline mb-4">Notre Manifeste de Confiance</h4>
                                     <p className="text-stone-400 font-light leading-relaxed">
-                                        "Nous ne vendons pas de publicité. Nous ne vendons pas vos données. Nous vendons de la clarté et de la tranquillité d'esprit. Votre journal n'est pas un produit, c'est votre jardin sacré."
+                                        "Nous ne vendons pas de publicité. Nous ne vendons pas tes données. Nous vendons de la clarté et de la tranquillité d'esprit. Ton journal n'est pas un produit, c'est ton jardin sacré."
                                     </p>
                                 </div>
                                 <div className="flex flex-col items-center gap-4">

@@ -10,7 +10,7 @@ const HeroIntegrated = () => {
       "Une intuition...",
       "Une petite victoire...",
       "Un rêve au réveil...",
-      "Ce qui vous pèse...",
+      "Ce qui te pèse...",
       "Une gratitude...",
     ],
     []
@@ -51,10 +51,10 @@ const HeroIntegrated = () => {
               APPLICATION DE JOURNALING & BIEN-ÊTRE MENTAL
             </p>
             <h1 className="font-headline text-4xl md:text-6xl text-stone-900">
-              Votre esprit est plein. Allégez-le ici.
+              Ton esprit est plein. Allège-le ici.
             </h1>
             <p className="font-body text-lg md:text-xl text-stone-600">
-              Un sanctuaire secret pour transformer votre chaos intérieur en une clarté immédiate.
+              Un sanctuaire secret pour transformer ton chaos intérieur en une clarté immédiate.
             </p>
           </div>
 
@@ -80,7 +80,7 @@ const HeroIntegrated = () => {
                 </Link>
               </Button>
               <span className="font-body text-xs uppercase tracking-[0.2em] text-stone-500">
-                100% Chiffré • Anonyme • Votre jardin privé.
+                100% Chiffré • Anonyme • Ton jardin privé.
               </span>
             </div>
           </div>
