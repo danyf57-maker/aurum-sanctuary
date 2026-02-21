@@ -762,7 +762,7 @@ export default function MagazinePage() {
       {landingAssessment && (
         <div className="mb-6 rounded-2xl border border-amber-200/70 bg-amber-50/40 p-5 md:p-6">
           <p className="text-[11px] uppercase tracking-[0.2em] text-amber-700/80">
-            Test d'entrée
+            Parcours d'entrée
           </p>
           <h2 className="mt-2 text-xl font-semibold text-stone-900">
             {landingAssessment.profileTitle}
@@ -789,7 +789,7 @@ export default function MagazinePage() {
               Ton parcours, révélé par Aurum
             </h2>
             <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-stone-500">
-              Aurum assemble tes pages enregistrées et tes tests pour faire émerger
+              Aurum assemble tes pages enregistrées et tes parcours guidés pour faire émerger
               les thèmes récurrents, les extraits marquants et ton évolution dans le temps.
             </p>
           </div>

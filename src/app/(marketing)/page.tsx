@@ -61,7 +61,7 @@ const ExitIntent = () => {
                             size="lg"
                             className="h-16 px-12 text-lg rounded-2xl w-full sm:w-auto"
                         >
-                            Faire le Test (30s)
+                            Faire le parcours (30s)
                         </Button>
                         <button
                             onClick={() => { setShow(false); setDismissed(true); }}
@@ -303,7 +303,7 @@ const QuizSection = () => {
                                 transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                                 className="text-center"
                             >
-                                <span className="text-primary/60 text-[10px] uppercase tracking-widest mb-6 block font-bold">Test de personnalité • {step + 1}/{questions.length}</span>
+                                <span className="text-primary/60 text-[10px] uppercase tracking-widest mb-6 block font-bold">Parcours de réflexion • {step + 1}/{questions.length}</span>
                                 <h3 className="text-3xl md:text-5xl font-headline mb-12 text-stone-900">{questions[step].q}</h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     {questions[step].options.map((option) => (
