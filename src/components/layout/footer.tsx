@@ -18,7 +18,7 @@ export function Footer() {
               <Logo className="h-8 w-8 text-amber-600" />
               <span className="font-bold text-xl font-headline">Aurum</span>
             </div>
-            <p className="text-muted-foreground text-sm">Le silence qui t'écoute.</p>
+            <p className="text-muted-foreground text-sm">Le silence qui vous écoute.</p>
           </div>
           <div className="md:col-span-3 grid grid-cols-2 sm:grid-cols-4 gap-8">
             <div>
@@ -53,7 +53,7 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-12 border-t border-stone-200 dark:border-stone-800 pt-8 flex flex-col sm:flex-row justify-between items-center">
-          <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} Aurum. Un espace pour toi.</p>
+          <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} Aurum. Un espace pour vous.</p>
           <p className="text-xs text-muted-foreground/50 mt-4 sm:mt-0">Application fictive à but de démonstration.</p>
         </div>
       </div>

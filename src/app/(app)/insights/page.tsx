@@ -177,7 +177,7 @@ export default function InsightsPage() {
                                 Continuez à écrire pendant 7 jours pour générer votre première synthèse hebdomadaire.
                             </p>
                             <p className="text-stone-400 text-xs mt-3 italic">
-                                Ecrire un peu chaque jour aide a y voir plus clair. - Aurum
+                                &ldquo;Un mot après l&apos;autre.&rdquo; - Margaret Atwood
                             </p>
                         </div>
                     )}

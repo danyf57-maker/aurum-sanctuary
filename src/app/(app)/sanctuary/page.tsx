@@ -276,7 +276,7 @@ function SanctuaryPageContent() {
                 classée dans la durée. Ton journal, c&apos;est ta mémoire complète.
               </p>
               <p className="mx-auto mt-3 max-w-md text-xs italic text-stone-400">
-                Un paragraphe suffit pour commencer. - Aurum
+                &ldquo;Écrire, c&apos;est commencer à y voir plus clair.&rdquo; - Joan Didion (adapté)
               </p>
             </div>
 

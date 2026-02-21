@@ -10,7 +10,7 @@ const HeroIntegrated = () => {
       "Une intuition...",
       "Une petite victoire...",
       "Un rêve au réveil...",
-      "Ce qui te pèse...",
+      "Ce qui vous pèse...",
       "Une gratitude...",
     ],
     []
@@ -48,17 +48,17 @@ const HeroIntegrated = () => {
         <div className="mx-auto flex max-w-4xl flex-col items-center gap-10 text-center">
           <div className="space-y-4">
             <p className="font-body text-xs uppercase tracking-[0.35em] text-[#D4AF37] font-semibold">
-              APPLICATION DE JOURNALING & BIEN-ÊTRE MENTAL
+              INSTANT DE SÉRÉNITÉ
             </p>
             <h1 className="font-headline text-4xl md:text-6xl text-stone-900">
-              Ta tête est pleine de bazars ?
+              Votre esprit est plein. Allégez-le ici.
             </h1>
             <p className="font-body text-lg md:text-xl text-stone-600">
-              Range tes pensées ici. C'est ton carnet secret pour te sentir mieux.
+              Un sanctuaire secret pour transformer votre chaos intérieur en une clarté immédiate.
             </p>
             <p className="font-body text-sm italic text-stone-500">
-              &ldquo;Écrire un peu chaque jour aide à te sentir mieux.&rdquo;{" "}
-              <span className="not-italic">- Aurum</span>
+              &ldquo;Nous écrivons pour goûter la vie deux fois.&rdquo;{" "}
+              <span className="not-italic">- Anaïs Nin</span>
             </p>
           </div>
 
@@ -84,7 +84,7 @@ const HeroIntegrated = () => {
                 </Link>
               </Button>
               <span className="font-body text-xs uppercase tracking-[0.2em] text-stone-500">
-                100% Chiffré • Anonyme • Ton jardin privé.
+                100% Chiffré • Anonyme • Votre jardin privé.
               </span>
             </div>
           </div>

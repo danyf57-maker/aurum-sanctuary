@@ -26,11 +26,19 @@ export default function WritePage() {
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const writingQuotes = [
-    { text: "Écrire, c'est te donner de l'air.", author: "Aurum" },
-    { text: "Un paragraphe suffit pour commencer.", author: "Aurum" },
+    { text: "J'écris pour découvrir ce que je pense.", author: "Joan Didion" },
+    { text: "Un mot après l'autre, c'est le pouvoir.", author: "Margaret Atwood" },
     {
-      text: "Quand tu écris, tes idées se rangent.",
-      author: "Aurum",
+      text: "Écrire est une forme de thérapie.",
+      author: "Graham Greene (attribution courante)",
+    },
+    {
+      text: "Écrire, c'est une façon de parler sans être interrompu.",
+      author: "Jules Renard",
+    },
+    {
+      text: "Il n'y a pas de plus grande agonie que de porter une histoire non racontée en soi.",
+      author: "Maya Angelou",
     },
   ];
   const [quoteIndex, setQuoteIndex] = useState(0);
