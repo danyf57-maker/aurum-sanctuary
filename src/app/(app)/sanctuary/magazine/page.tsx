@@ -48,6 +48,14 @@ type MagazineIssue = {
   mood: string | null;
 };
 
+type LandingAssessment = {
+  id: string;
+  profile: string;
+  profileTitle: string;
+  answers: string[];
+  completedAt: Date | null;
+};
+
 
 function parseCreatedAt(value: unknown): Date | null {
   if (!value) return null;
@@ -128,6 +136,8 @@ export default function MagazinePage() {
   const [personalityQuestionnaireOpen, setPersonalityQuestionnaireOpen] =
     useState(false);
   const [isPersonalitySubmitting, setIsPersonalitySubmitting] = useState(false);
+  const [landingAssessment, setLandingAssessment] =
+    useState<LandingAssessment | null>(null);
 
   const fetchIssues = useCallback(async () => {
     if (!user) return;
@@ -243,6 +253,36 @@ export default function MagazinePage() {
     }
   }, [user]);
 
+  const fetchLatestLandingAssessment = useCallback(async () => {
+    if (!user) return;
+    try {
+      const assessmentsRef = collection(db, "users", user.uid, "assessments");
+      const q = query(assessmentsRef, orderBy("createdAt", "desc"), limit(20));
+      const snap = await getDocs(q);
+      const docSnap = snap.docs.find(
+        (item) => String(item.data().source || "") === "landing-quiz"
+      );
+      if (!docSnap) {
+        setLandingAssessment(null);
+        return;
+      }
+
+      const d = docSnap.data() as Record<string, unknown>;
+      const completedAt = parseCreatedAt(d.createdAt) ?? parseCreatedAt(d.completedAt);
+
+      setLandingAssessment({
+        id: docSnap.id,
+        profile: String(d.profile || "MIXTE"),
+        profileTitle: String(d.profileTitle || "Profil personnel"),
+        answers: Array.isArray(d.answers) ? d.answers.map((item) => String(item)) : [],
+        completedAt,
+      });
+    } catch (err) {
+      console.error("[Magazine] fetchLatestLandingAssessment error:", err);
+      setLandingAssessment(null);
+    }
+  }, [user]);
+
   const fetchAurumStats = useCallback(async () => {
     if (!user || issues.length === 0) return;
     setIsAurumLoading(true);
@@ -351,13 +391,22 @@ export default function MagazinePage() {
       await fetchLatestWellbeingScore();
       if (cancelled) return;
       await fetchLatestPersonalityScore();
+      if (cancelled) return;
+      await fetchLatestLandingAssessment();
     };
 
     void bootstrap();
     return () => {
       cancelled = true;
     };
-  }, [fetchCollections, fetchIssues, fetchLatestWellbeingScore, fetchLatestPersonalityScore, user]);
+  }, [
+    fetchCollections,
+    fetchIssues,
+    fetchLatestLandingAssessment,
+    fetchLatestWellbeingScore,
+    fetchLatestPersonalityScore,
+    user,
+  ]);
 
   // Fetch Aurum stats after issues are loaded
   useEffect(() => {
@@ -650,6 +699,25 @@ export default function MagazinePage() {
           La lecture éditoriale et analytique de ton parcours. Aurum y assemble tes pages pour faire émerger les thèmes, les extraits marquants et ton évolution.
         </p>
       </header>
+
+      {landingAssessment && (
+        <div className="mb-6 rounded-2xl border border-amber-200/70 bg-amber-50/40 p-5 md:p-6">
+          <p className="text-[11px] uppercase tracking-[0.2em] text-amber-700/80">
+            Test d'entrée
+          </p>
+          <h2 className="mt-2 text-xl font-semibold text-stone-900">
+            {landingAssessment.profileTitle}
+          </h2>
+          <p className="mt-2 text-sm text-stone-600">
+            Résultat enregistré dans Magazine{landingAssessment.completedAt
+              ? ` le ${landingAssessment.completedAt.toLocaleDateString("fr-FR")}`
+              : ""}.
+          </p>
+          <p className="mt-1 text-xs text-stone-500">
+            Réponses captées: {landingAssessment.answers.length}
+          </p>
+        </div>
+      )}
 
       {issues.length === 0 ? (
         <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
