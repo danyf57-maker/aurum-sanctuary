@@ -55,7 +55,7 @@ const signupSchema = z
   });
 
 function SignupPage() {
-  const { signUpWithEmail, signInWithGoogle, loading: authLoading } = useAuth();
+  const { user, signUpWithEmail, signInWithGoogle, loading: authLoading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
@@ -70,10 +70,17 @@ function SignupPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [quizData, setQuizData] = useState<QuizData | null>(null);
   const [showQuizTeaser, setShowQuizTeaser] = useState(false);
+  const quizComplete = searchParams.get("quiz") === "complete";
+  const redirectAfterGoogle = quizComplete ? "/sanctuary/magazine" : "/dashboard";
+
+  useEffect(() => {
+    if (!authLoading && user) {
+      router.replace(redirectAfterGoogle);
+    }
+  }, [authLoading, redirectAfterGoogle, router, user]);
 
   // Check for quiz completion
   useEffect(() => {
-    const quizComplete = searchParams.get("quiz") === "complete";
     if (quizComplete) {
       const saved = localStorage.getItem(QUIZ_STORAGE_KEY);
       if (saved) {
@@ -160,7 +167,7 @@ function SignupPage() {
           params: { method: "google", profile_result: quizData.profile },
         });
       }
-      // Redirect handled by auth state change
+      router.push(redirectAfterGoogle);
     } catch (error) {
       // Error toast shown by AuthProvider
     } finally {
