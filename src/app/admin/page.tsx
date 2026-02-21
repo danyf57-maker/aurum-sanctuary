@@ -34,6 +34,13 @@ type AdminAnalyticsResponse = {
     checkoutStarts: number;
     purchases: number;
   };
+  quizFunnel: {
+    started: number;
+    completed: number;
+    resultViewed: number;
+    ctaClicked: number;
+    signupWithQuiz: number;
+  };
   chart: Array<{ date: string; users: number }>;
   recentEvents: Array<{ id: string; name: string; user: string; date: string; details: string }>;
   topLeads: Array<{
@@ -191,6 +198,50 @@ export default function AdminDashboard() {
               <div className="flex justify-between text-sm"><span>1re écriture</span><span className="font-semibold">{data.funnel.firstEntries} ({pct(data.funnel.firstEntries, data.funnel.signups)}%)</span></div>
               <div className="flex justify-between text-sm"><span>Checkout start</span><span className="font-semibold">{data.funnel.checkoutStarts} ({pct(data.funnel.checkoutStarts, data.funnel.firstEntries)}%)</span></div>
               <div className="flex justify-between text-sm"><span>Paiements</span><span className="font-semibold">{data.funnel.purchases} ({pct(data.funnel.purchases, data.funnel.checkoutStarts)}%)</span></div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="grid grid-cols-1 gap-6 mt-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Filter className="h-4 w-4" />
+                Funnel Quiz (30 jours)
+              </CardTitle>
+              <CardDescription>
+                Départ quiz → résultat → clic CTA → inscription attribuée au quiz
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="flex justify-between text-sm">
+                <span>Quiz démarrés</span>
+                <span className="font-semibold">{data.quizFunnel.started}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span>Quiz complétés</span>
+                <span className="font-semibold">
+                  {data.quizFunnel.completed} ({pct(data.quizFunnel.completed, data.quizFunnel.started)}%)
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span>Résultat vu</span>
+                <span className="font-semibold">
+                  {data.quizFunnel.resultViewed} ({pct(data.quizFunnel.resultViewed, data.quizFunnel.completed)}%)
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span>CTA résultat cliqué</span>
+                <span className="font-semibold">
+                  {data.quizFunnel.ctaClicked} ({pct(data.quizFunnel.ctaClicked, data.quizFunnel.resultViewed)}%)
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span>Inscriptions après quiz</span>
+                <span className="font-semibold">
+                  {data.quizFunnel.signupWithQuiz} ({pct(data.quizFunnel.signupWithQuiz, data.quizFunnel.ctaClicked)}%)
+                </span>
+              </div>
             </CardContent>
           </Card>
         </div>

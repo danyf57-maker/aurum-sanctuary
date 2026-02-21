@@ -111,6 +111,21 @@ export async function GET() {
     const wau = uniqueIdentities(eventsLast7d);
 
     const signupsMonthly = events.filter((event) => event.name === "signup").length;
+    const quizStartedMonthly = events.filter(
+      (event) => event.name === "quiz_started"
+    ).length;
+    const quizCompletedMonthly = events.filter(
+      (event) => event.name === "quiz_complete"
+    ).length;
+    const quizResultViewedMonthly = events.filter(
+      (event) => event.name === "quiz_result_viewed"
+    ).length;
+    const quizCtaClickedMonthly = events.filter(
+      (event) => event.name === "quiz_cta_clicked"
+    ).length;
+    const signupWithQuizMonthly = events.filter(
+      (event) => event.name === "signup_with_quiz"
+    ).length;
     const firstEntriesMonthly = events.filter((event) => event.name === "first_entry").length;
     const checkoutStartsMonthly = events.filter(
       (event) => event.name === "checkout_start"
@@ -200,6 +215,13 @@ export async function GET() {
         firstEntries: firstEntriesMonthly,
         checkoutStarts: checkoutStartsMonthly,
         purchases: purchasesMonthly,
+      },
+      quizFunnel: {
+        started: quizStartedMonthly,
+        completed: quizCompletedMonthly,
+        resultViewed: quizResultViewedMonthly,
+        ctaClicked: quizCtaClickedMonthly,
+        signupWithQuiz: signupWithQuizMonthly,
       },
       chart: Array.from(chartByDate.values()),
       recentEvents,
