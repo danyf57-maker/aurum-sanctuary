@@ -56,6 +56,14 @@ type LandingAssessment = {
   completedAt: Date | null;
 };
 
+const PROFILE_TITLES: Record<string, string> = {
+  D: "Le Pionnier",
+  I: "Le Connecteur",
+  S: "L'Ancre",
+  C: "L'Architecte",
+  MIXTE: "Profil mixte • L'Équilibriste",
+};
+
 
 function parseCreatedAt(value: unknown): Date | null {
   if (!value) return null;
@@ -257,26 +265,77 @@ export default function MagazinePage() {
     if (!user) return;
     try {
       const assessmentsRef = collection(db, "users", user.uid, "assessments");
-      const q = query(assessmentsRef, orderBy("createdAt", "desc"), limit(20));
-      const snap = await getDocs(q);
-      const docSnap = snap.docs.find(
-        (item) => String(item.data().source || "") === "landing-quiz"
-      );
-      if (!docSnap) {
-        setLandingAssessment(null);
+      const snap = await getDocs(assessmentsRef);
+      const landingDocs = snap.docs
+        .filter((item) => String(item.data().source || "").startsWith("landing-quiz"))
+        .map((item) => {
+          const d = item.data() as Record<string, unknown>;
+          const completedAt =
+            parseCreatedAt(d.createdAt) ?? parseCreatedAt(d.completedAt) ?? new Date(0);
+          return { item, d, completedAt };
+        })
+        .sort((a, b) => b.completedAt.getTime() - a.completedAt.getTime());
+
+      if (landingDocs.length > 0) {
+        const latest = landingDocs[0];
+        setLandingAssessment({
+          id: latest.item.id,
+          profile: String(latest.d.profile || "MIXTE"),
+          profileTitle: String(latest.d.profileTitle || "Profil personnel"),
+          answers: Array.isArray(latest.d.answers)
+            ? latest.d.answers.map((entry) => String(entry))
+            : [],
+          completedAt: latest.completedAt,
+        });
         return;
       }
 
-      const d = docSnap.data() as Record<string, unknown>;
-      const completedAt = parseCreatedAt(d.createdAt) ?? parseCreatedAt(d.completedAt);
+      // Fallback: synchroniser le quiz stocké localement si aucun résultat n'existe encore en base.
+      if (typeof window !== "undefined") {
+        try {
+          const raw = localStorage.getItem("aurum-quiz-data");
+          if (!raw) {
+            setLandingAssessment(null);
+            return;
+          }
 
-      setLandingAssessment({
-        id: docSnap.id,
-        profile: String(d.profile || "MIXTE"),
-        profileTitle: String(d.profileTitle || "Profil personnel"),
-        answers: Array.isArray(d.answers) ? d.answers.map((item) => String(item)) : [],
-        completedAt,
-      });
+          const localQuiz = JSON.parse(raw) as {
+            answers?: unknown;
+            profile?: unknown;
+            completedAt?: unknown;
+          };
+          const profile = String(localQuiz.profile || "MIXTE");
+          const answers = Array.isArray(localQuiz.answers)
+            ? localQuiz.answers.map((entry) => String(entry))
+            : [];
+          const completedAt = (() => {
+            const parsed = parseCreatedAt(localQuiz.completedAt);
+            return parsed ?? new Date();
+          })();
+          const profileTitle = PROFILE_TITLES[profile] || "Profil personnel";
+
+          const created = await addDoc(assessmentsRef, {
+            source: "landing-quiz",
+            profile,
+            profileTitle,
+            answers,
+            completedAt: completedAt.toISOString(),
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+          });
+
+          setLandingAssessment({
+            id: created.id,
+            profile,
+            profileTitle,
+            answers,
+            completedAt,
+          });
+        } catch (error) {
+          console.error("[Magazine] local quiz sync error:", error);
+          setLandingAssessment(null);
+        }
+      }
     } catch (err) {
       console.error("[Magazine] fetchLatestLandingAssessment error:", err);
       setLandingAssessment(null);
