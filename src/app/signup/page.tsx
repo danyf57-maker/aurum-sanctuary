@@ -6,7 +6,7 @@
 
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, Suspense, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/providers/auth-provider";
@@ -26,6 +26,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff, Shield, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { trackEvent } from "@/lib/analytics/client";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { firestore as db } from "@/lib/firebase/web-client";
 
 interface QuizData {
   answers: string[];
@@ -34,6 +36,7 @@ interface QuizData {
 }
 
 const QUIZ_STORAGE_KEY = "aurum-quiz-data";
+const QUIZ_SYNC_KEY = "aurum-quiz-synced-at";
 
 const signupSchema = z
   .object({
@@ -70,8 +73,44 @@ function SignupPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [quizData, setQuizData] = useState<QuizData | null>(null);
   const [showQuizTeaser, setShowQuizTeaser] = useState(false);
+  const quizSyncInProgressRef = useRef(false);
   const quizComplete = searchParams.get("quiz") === "complete";
   const redirectAfterGoogle = quizComplete ? "/sanctuary/magazine" : "/dashboard";
+
+  useEffect(() => {
+    if (!user || !quizComplete || !quizData?.profile || quizSyncInProgressRef.current) return;
+
+    const syncedAt = localStorage.getItem(QUIZ_SYNC_KEY);
+    if (syncedAt && syncedAt === quizData.completedAt) return;
+
+    quizSyncInProgressRef.current = true;
+    const profileTitleMap: Record<string, string> = {
+      D: "Le Pionnier",
+      I: "Le Connecteur",
+      S: "L'Ancre",
+      C: "L'Architecte",
+      MIXTE: "Profil mixte • L'Équilibriste",
+    };
+
+    void addDoc(collection(db, "users", user.uid, "assessments"), {
+      source: "landing-quiz",
+      profile: quizData.profile,
+      profileTitle: profileTitleMap[quizData.profile] || "Profil personnel",
+      answers: quizData.answers || [],
+      completedAt: quizData.completedAt,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    })
+      .then(() => {
+        localStorage.setItem(QUIZ_SYNC_KEY, quizData.completedAt);
+      })
+      .catch((error) => {
+        console.error("Failed to sync quiz data after signup:", error);
+      })
+      .finally(() => {
+        quizSyncInProgressRef.current = false;
+      });
+  }, [quizComplete, quizData, user]);
 
   useEffect(() => {
     if (!authLoading && user) {
@@ -93,7 +132,7 @@ function SignupPage() {
         }
       }
     }
-  }, [searchParams]);
+  }, [quizComplete, searchParams]);
 
   const handleEmailSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
