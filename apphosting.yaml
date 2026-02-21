@@ -50,7 +50,7 @@ env:
       - RUNTIME
   # Google OAuth
   - variable: NEXT_PUBLIC_GOOGLE_CLIENT_ID
-    value: 554520158428-0p0l6s7nl0hth5o50vjuoi44ceqsshmv.apps.googleusercontent.com
+    value: 441444254589-sb7d3bv2tt9r0s7a8korcbsvrb2bpf7l.apps.googleusercontent.com
     availability:
       - BUILD
       - RUNTIME
