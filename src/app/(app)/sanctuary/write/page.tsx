@@ -25,12 +25,28 @@ export default function WritePage() {
   const { user, loading } = useAuth();
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const writingQuotes = [
+    { text: "Écrire, c'est te donner de l'air.", author: "Aurum" },
+    { text: "Un paragraphe suffit pour commencer.", author: "Aurum" },
+    {
+      text: "Quand tu écris, tes idées se rangent.",
+      author: "Aurum",
+    },
+  ];
+  const [quoteIndex, setQuoteIndex] = useState(0);
 
   useEffect(() => {
     // Trigger entrance animation
     const timer = setTimeout(() => setIsVisible(true), 100);
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    const rotation = setInterval(() => {
+      setQuoteIndex((prev) => (prev + 1) % writingQuotes.length);
+    }, 7000);
+    return () => clearInterval(rotation);
+  }, [writingQuotes.length]);
 
   if (loading) {
     return (
@@ -236,6 +252,14 @@ export default function WritePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
+              <div className="mb-6 rounded-2xl border border-stone-200 bg-white/60 px-5 py-4 text-center">
+                <p className="text-sm italic text-stone-600">
+                  &ldquo;{writingQuotes[quoteIndex]?.text}&rdquo;
+                  <span className="ml-1 not-italic text-stone-500">
+                    - {writingQuotes[quoteIndex]?.author}
+                  </span>
+                </p>
+              </div>
               <PremiumJournalForm />
             </motion.div>
           </motion.main>

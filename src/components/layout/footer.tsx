@@ -27,6 +27,7 @@ export function Footer() {
                 <li><Link href="/blog" className="text-sm text-muted-foreground hover:text-foreground">Le Journal d'Alma</Link></li>
                 <li><Link href="/sanctuary/chat" className="text-sm text-muted-foreground hover:text-foreground">Discuter avec Aurum</Link></li>
                 <li><Link href="/#manifesto" className="text-sm text-muted-foreground hover:text-foreground">Notre Manifeste</Link></li>
+                <li><Link href="/sources-citations" className="text-sm text-muted-foreground hover:text-foreground">Sources des citations</Link></li>
               </ul>
             </div>
             <div>

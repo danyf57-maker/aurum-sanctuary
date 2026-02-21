@@ -56,6 +56,10 @@ const HeroIntegrated = () => {
             <p className="font-body text-lg md:text-xl text-stone-600">
               Range tes pensées ici. C'est ton carnet secret pour te sentir mieux.
             </p>
+            <p className="font-body text-sm italic text-stone-500">
+              &ldquo;Écrire un peu chaque jour aide à te sentir mieux.&rdquo;{" "}
+              <span className="not-italic">- Aurum</span>
+            </p>
           </div>
 
           <div className="w-full">

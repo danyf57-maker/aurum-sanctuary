@@ -275,6 +275,9 @@ function SanctuaryPageContent() {
                 Chaque page enregistrée depuis <span className="font-medium text-stone-700">Écrire</span> apparaît ici,
                 classée dans la durée. Ton journal, c&apos;est ta mémoire complète.
               </p>
+              <p className="mx-auto mt-3 max-w-md text-xs italic text-stone-400">
+                Un paragraphe suffit pour commencer. - Aurum
+              </p>
             </div>
 
             {/* Piliers */}

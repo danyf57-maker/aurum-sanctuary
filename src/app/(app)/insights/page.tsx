@@ -176,6 +176,9 @@ export default function InsightsPage() {
                             <p className="text-stone-400 text-sm mt-2 max-w-md mx-auto">
                                 Continuez à écrire pendant 7 jours pour générer votre première synthèse hebdomadaire.
                             </p>
+                            <p className="text-stone-400 text-xs mt-3 italic">
+                                Ecrire un peu chaque jour aide a y voir plus clair. - Aurum
+                            </p>
                         </div>
                     )}
                 </section>
