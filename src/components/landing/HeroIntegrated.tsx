@@ -54,7 +54,7 @@ const HeroIntegrated = () => {
               Ton esprit est plein. Allège-le ici.
             </h1>
             <p className="font-body text-lg md:text-xl text-stone-600">
-              Un sanctuaire secret pour transformer ton chaos intérieur en une clarté immédiate.
+              Quand ta tête est pleine, écris ici pour remettre tes idées dans l'ordre.
             </p>
           </div>
 
