@@ -51,10 +51,10 @@ const HeroIntegrated = () => {
               APPLICATION DE JOURNALING & BIEN-ÊTRE MENTAL
             </p>
             <h1 className="font-headline text-4xl md:text-6xl text-stone-900">
-              Ton esprit est plein. Allège-le ici.
+              Ta tête est pleine de bazars ?
             </h1>
             <p className="font-body text-lg md:text-xl text-stone-600">
-              Quand ta tête est pleine, écris ici pour remettre tes idées dans l'ordre.
+              Range tes pensées ici. C'est ton carnet secret pour te sentir mieux.
             </p>
           </div>
 

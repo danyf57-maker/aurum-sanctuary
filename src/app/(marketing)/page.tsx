@@ -1,12 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import HeroIntegrated from '@/components/landing/HeroIntegrated';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { PenSquare, Compass, Eye, Waves, Sprout, Shield, Quote, ArrowRight, Send, ShieldCheck, Lock, Fingerprint, X } from 'lucide-react';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Compass, ArrowRight, ShieldCheck, Lock, Fingerprint, X } from 'lucide-react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -190,7 +188,7 @@ const QuizSection = () => {
                                 transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                                 className="text-center"
                             >
-                                <span className="text-primary/60 text-[10px] uppercase tracking-widest mb-6 block font-bold">Test DISC • {step + 1}/{questions.length}</span>
+                                <span className="text-primary/60 text-[10px] uppercase tracking-widest mb-6 block font-bold">Test de personnalité • {step + 1}/{questions.length}</span>
                                 <h3 className="text-3xl md:text-5xl font-headline mb-12 text-stone-900">{questions[step].q}</h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     {questions[step].options.map((option) => (
@@ -218,7 +216,7 @@ const QuizSection = () => {
                                 <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-8 text-primary">
                                     <ShieldCheck className="w-10 h-10" />
                                 </div>
-                                <h3 className="text-3xl md:text-5xl font-headline mb-6 text-stone-900">Ton profil DISC est prêt.</h3>
+                                <h3 className="text-3xl md:text-5xl font-headline mb-6 text-stone-900">Ton profil est prêt.</h3>
                                 <p className="text-stone-500 text-lg mb-12 max-w-xl mx-auto leading-relaxed">
                                     <span className="font-medium text-stone-700">{profile.title}</span>
                                     <br />
@@ -261,9 +259,6 @@ const FloatingCTA = ({ visible }: { visible: boolean }) => (
         )}
     </AnimatePresence>
 );
-
-
-
 export default function Home() {
     const [showCTA, setShowCTA] = useState(false);
 
@@ -279,42 +274,6 @@ export default function Home() {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
-
-    const howItWorks = [
-        {
-            icon: <PenSquare />,
-            title: "1. Vide ton sac",
-            description: "Dépose tes pensées sans filtre. Libère immédiatement ta charge mentale dans un espace conçu pour libérer ton esprit et stabiliser tes pensées.",
-        },
-        {
-            icon: <Eye />,
-            title: "2. Obtenez une perspective",
-            description: "Ne tourne plus en rond. Aurum révèle les schémas invisibles de ton esprit pour transformer ta confusion en reflets actionnables.",
-        },
-        {
-            icon: <Sprout />,
-            title: "3. Retrouvez le contrôle",
-            description: "Prends de la hauteur. Cultive activement ton paysage émotionnel pour ne plus subir tes journées, mais les vivre avec une présence renouvelée.",
-        }
-    ];
-
-    const testimonials = [
-        {
-            name: "Camille, 34 ans",
-            initials: "C",
-            quote: "J'étais sceptique à l'idée de confier mes pensées à un algorithme de miroir. Mais Aurum est différent. C'est un miroir bienveillant, pas un juge. Les 'insights' m'ont ouvert les yeux sur des schémas que j'ignorais totalement."
-        },
-        {
-            name: "Léo, 41 ans",
-            initials: "L",
-            quote: "Ma charge mentale était énorme. Le simple fait d'écrire, de 'déposer' mes angoisses dans Aurum chaque soir, a eu un effet libérateur. C'est plus qu'un journal, c'est une soupape de sécurité."
-        },
-        {
-            name: "Jeanne, 28 ans",
-            initials: "J",
-            quote: "Aurum ne donne pas de réponses, il aide à poser les bonnes questions. C'est un compagnon de route silencieux sur le chemin de l'introspection, sans la pression d'une performance."
-        }
-    ];
 
     const faqs = [
         {
@@ -336,98 +295,62 @@ export default function Home() {
             <HeroIntegrated />
 
             <div id="sanctuary-content" className="bg-background text-foreground">
-                {/* SECTION 1: Métaphore du jardin (Simple & Strong) */}
+                {/* SECTION 1: Problem */}
                 <section className="py-24 md:py-32 bg-stone-100/50">
                     <div className="container max-w-3xl mx-auto text-center">
                         <h2 className="text-4xl md:text-5xl font-headline mb-6">
-                            Cultive ta clarté.
+                            C'est comment, une tête en bazar ?
                         </h2>
                         <div className="prose prose-lg lg:prose-xl mx-auto text-foreground/80 font-light">
-                            <p>Aurum est l'outil qui te permet de nommer, de trier et de comprendre ce qui pousse en toi. Pour que tu puisses cultiver la paix, et pas le chaos.</p>
+                            <p>
+                                C'est quand les pensées tournent en rond sans s'arrêter. Ça peut empêcher de dormir, rendre triste
+                                ou énervé. On a parfois l'impression d'être coincé.
+                            </p>
                         </div>
                     </div>
                 </section>
 
-                {/* SECTION 2: Interactive Quiz (DISC) */}
+                {/* SECTION 2: Solution */}
+                <section className="py-24 md:py-32 bg-white">
+                    <div className="container max-w-3xl mx-auto text-center">
+                        <h2 className="text-4xl md:text-5xl font-headline mb-6">
+                            Le super-pouvoir de l'écriture.
+                        </h2>
+                        <p className="text-stone-600 font-light text-lg leading-relaxed">
+                            Écrire tes pensées, même les plus secrètes, c'est comme leur dire "Stop !". Ça les calme.
+                            Aurum est ton outil pour faire ça, en toute sécurité.
+                        </p>
+                    </div>
+                </section>
+
+                {/* SECTION 3: Interactive personality quiz (kept) */}
                 <div id="evaluation">
                     <QuizSection />
                 </div>
 
-                {/* SECTION 3: How It Works */}
-                <section className="py-24 md:py-32 container">
-                    <div className="text-center max-w-2xl mx-auto mb-16">
-                        <h2 className="text-4xl font-headline mb-4">La fin de la surcharge mentale</h2>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
-                        {howItWorks.map((feature) => (
-                            <div key={feature.title} className="flex flex-col items-center">
-                                <div className="text-primary w-16 h-16 rounded-full flex items-center justify-center bg-primary/10 mb-6">
-                                    {React.cloneElement(feature.icon as React.ReactElement, { className: "w-8 h-8" })}
-                                </div>
-                                <h3 className="text-2xl font-headline text-primary mb-3">{feature.title}</h3>
-                                <p className="text-muted-foreground text-sm max-w-xs leading-relaxed">{feature.description}</p>
-                            </div>
-                        ))}
-                    </div>
-                </section>
-
-                {/* SECTION 3.5: Avant / Après */}
-                <section className="py-24 md:py-40 bg-stone-900 text-white overflow-hidden relative">
-                    <div className="container relative z-10">
-                        <div className="text-center max-w-2xl mx-auto mb-20">
-                            <h2 className="text-4xl md:text-6xl font-headline mb-6">Le contraste Aurum</h2>
-                            <p className="text-stone-400 font-light text-lg">Pourquoi continuer à naviguer dans le brouillard ?</p>
+                {/* SECTION 4: Scientific social proof */}
+                <section className="py-24 md:py-32 bg-stone-100/50">
+                    <div className="container max-w-4xl mx-auto">
+                        <div className="text-center max-w-3xl mx-auto mb-14">
+                            <h2 className="text-4xl md:text-5xl font-headline mb-6">Ce n'est pas de la magie, c'est un phénomène observé.</h2>
+                            <p className="text-stone-600 font-light text-lg leading-relaxed">
+                                Des chercheurs se sont penchés sur le pouvoir de l'écriture. Dans leurs études, ils ont fait des découvertes surprenantes :
+                            </p>
                         </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-px bg-white/10 rounded-[2.5rem] overflow-hidden border border-white/10 backdrop-blur-sm">
-                            {/* Sans Aurum */}
-                            <div className="p-10 md:p-20 bg-stone-900/50">
-                                <div className="flex items-center gap-3 mb-8 text-red-400/80">
-                                    <div className="w-2 h-2 rounded-full bg-current"></div>
-                                    <span className="text-[10px] uppercase tracking-[0.3em] font-bold">Sans Aurum</span>
-                                </div>
-                                <ul className="space-y-6">
-                                    {[
-                                        "Pensées en boucle et insomnies",
-                                        "Difficulté à identifier ses déclencheurs",
-                                        "Sentiment de subir ses émotions",
-                                        "Chaos mental persistant"
-                                    ].map((item, i) => (
-                                        <li key={i} className="flex gap-4 text-stone-400 font-light">
-                                            <span className="text-red-400/50 flex-shrink-0">—</span>
-                                            {item}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-
-                            {/* Avec Aurum */}
-                            <div className="p-10 md:p-20 bg-white/5 relative">
-                                <div className="absolute top-0 right-0 p-8">
-                                    <Waves className="w-12 h-12 text-primary/20" />
-                                </div>
-                                <div className="flex items-center gap-3 mb-8 text-primary">
-                                    <div className="w-2 h-2 rounded-full bg-current animate-pulse"></div>
-                                    <span className="text-[10px] uppercase tracking-[0.3em] font-bold">Avec Aurum</span>
-                                </div>
-                                <ul className="space-y-6">
-                                    {[
-                                        "Sommeil retrouvé et esprit apaisé",
-                                        "Insights clairs sur tes patterns",
-                                        "Maîtrise de son paysage intérieur",
-                                        "Clarté d'esprit au quotidien"
-                                    ].map((item, i) => (
-                                        <li key={i} className="flex gap-4 text-white font-light">
-                                            <ShieldCheck className="w-5 h-5 text-primary flex-shrink-0" />
-                                            {item}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </div>
+                        <ul className="space-y-5 text-stone-700 font-light leading-relaxed text-lg max-w-3xl mx-auto">
+                            <li className="rounded-2xl border border-stone-200 bg-white p-6">
+                                <span className="font-medium text-stone-900">Découverte n°1 :</span> Les participants qui prenaient le temps
+                                d'écrire sur leurs soucis ont vu leurs visites chez le médecin diminuer de moitié
+                                <sup><a href="#ref1" aria-label="Voir référence 1" className="no-underline"> *</a></sup>.
+                            </li>
+                            <li className="rounded-2xl border border-stone-200 bg-white p-6">
+                                <span className="font-medium text-stone-900">Découverte n°2 :</span> Dans une autre étude sur des personnes
+                                ayant perdu leur emploi, celles qui écrivaient sur leurs émotions avaient deux fois plus de chances de retrouver
+                                un travail que les autres
+                                <sup><a href="#ref2" aria-label="Voir référence 2" className="no-underline"> **</a></sup>.
+                            </li>
+                        </ul>
                     </div>
-                    {/* Decorative Background */}
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/20 blur-[160px] rounded-full pointer-events-none"></div>
                 </section>
 
                 {/* SECTION 5: Trust & Privacy (Enhanced) */}
@@ -494,33 +417,6 @@ export default function Home() {
                     </div>
                 </section>
 
-                {/* SECTION 6: Social Proof / Testimonials */}
-                <section className="py-24 md:py-32 bg-stone-100/50">
-                    <div className="container">
-                        <div className="text-center max-w-2xl mx-auto mb-16">
-                            <h2 className="text-4xl font-headline mb-4">Ils ont trouvé leur sanctuaire</h2>
-                            <p className="text-muted-foreground">L'expérience Aurum, racontée par ceux qui l'écrivent chaque jour.</p>
-                        </div>
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                            {testimonials.map((testimonial, index) => (
-                                <Card key={index} className="bg-white/40 backdrop-blur-sm border border-white/30 shadow-sm hover:bg-white/60 transition-colors duration-300">
-                                    <CardHeader className="flex-row gap-4 items-center pb-2">
-                                        <Avatar className="h-10 w-10 border border-white/50">
-                                            <AvatarFallback className="bg-amber-100 text-amber-800">{testimonial.initials}</AvatarFallback>
-                                        </Avatar>
-                                        <div>
-                                            <h4 className="font-semibold text-stone-800">{testimonial.name}</h4>
-                                        </div>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <p className="text-stone-600 italic leading-relaxed">"{testimonial.quote}"</p>
-                                    </CardContent>
-                                </Card>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
                 {/* SECTION 7: CTA Final & FAQ */}
                 <section className="container py-24 md:py-32 text-center border-t border-black/5">
                     <Button asChild size="lg" className="h-14 px-12 text-base">
@@ -545,6 +441,20 @@ export default function Home() {
                             </AccordionItem>
                         ))}
                     </Accordion>
+                </section>
+
+                <section className="container max-w-4xl pb-24 md:pb-28">
+                    <div className="rounded-2xl border border-stone-200 bg-stone-50/60 p-6 md:p-8">
+                        <h3 className="text-sm font-semibold tracking-wider uppercase text-stone-500 mb-4">Références</h3>
+                        <ul className="space-y-3 text-xs text-stone-500 leading-relaxed">
+                            <li id="ref1">
+                                <strong>*</strong> Pennebaker, J. W., & Beall, S. K. (1986). <em>Confronting a traumatic event: Toward an understanding of inhibition and disease.</em> Journal of Abnormal Psychology, 95, 274-281.
+                            </li>
+                            <li id="ref2">
+                                <strong>**</strong> Spera, S. P., Buhrfeind, E. D., & Pennebaker, J. W. (1994). <em>Expressive writing and coping with job loss.</em> Academy of Management Journal, 37, 722-733.
+                            </li>
+                        </ul>
+                    </div>
                 </section>
 
             </div>
