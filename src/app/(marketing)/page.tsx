@@ -323,12 +323,7 @@ export default function Home() {
                     </div>
                 </section>
 
-                {/* SECTION 3: Interactive personality quiz (kept) */}
-                <div id="evaluation">
-                    <QuizSection />
-                </div>
-
-                {/* SECTION 4: Scientific social proof */}
+                {/* SECTION 3: Scientific social proof */}
                 <section className="py-24 md:py-32 bg-stone-100/50">
                     <div className="container max-w-4xl mx-auto">
                         <div className="text-center max-w-3xl mx-auto mb-14">
@@ -417,7 +412,7 @@ export default function Home() {
                     </div>
                 </section>
 
-                {/* SECTION 7: CTA Final & FAQ */}
+                {/* SECTION 7: CTA Final */}
                 <section className="container py-24 md:py-32 text-center border-t border-black/5">
                     <Button asChild size="lg" className="h-14 px-12 text-base">
                         <Link href="/sanctuary/write">Découvrir mon premier reflet</Link>
@@ -426,6 +421,11 @@ export default function Home() {
                         <span className="text-xs text-stone-400 font-light">Accès immédiat • 100% Chiffré • Utilisation illimitée en version Beta</span>
                     </div>
                 </section>
+
+                {/* SECTION 8: Interactive personality quiz (moved above FAQ) */}
+                <div id="evaluation">
+                    <QuizSection />
+                </div>
 
                 <section className="container max-w-3xl pb-24 md:pb-32">
                     <h2 className="text-4xl font-headline text-center mb-12">
