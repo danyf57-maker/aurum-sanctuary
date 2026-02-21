@@ -129,6 +129,12 @@ function SignupPage() {
         name: "signup",
         params: { method: "email", source: "signup_page" },
       });
+      if (showQuizTeaser && quizData?.profile) {
+        void trackEvent({
+          name: "signup_with_quiz",
+          params: { method: "email", profile_result: quizData.profile },
+        });
+      }
       router.push("/login?check_email=1");
     } catch (error) {
       if ((error as Error)?.message === "EMAIL_NOT_VERIFIED") {
@@ -148,6 +154,12 @@ function SignupPage() {
         name: "signup",
         params: { method: "google", source: "signup_page" },
       });
+      if (showQuizTeaser && quizData?.profile) {
+        void trackEvent({
+          name: "signup_with_quiz",
+          params: { method: "google", profile_result: quizData.profile },
+        });
+      }
       // Redirect handled by auth state change
     } catch (error) {
       // Error toast shown by AuthProvider

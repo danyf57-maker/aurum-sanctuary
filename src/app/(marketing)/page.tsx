@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import HeroIntegrated from '@/components/landing/HeroIntegrated';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/providers/auth-provider';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { firestore as db } from '@/lib/firebase/web-client';
+import { trackEvent } from '@/lib/analytics/client';
 
 const ExitIntent = () => {
     const [show, setShow] = useState(false);
@@ -79,6 +80,10 @@ const QuizSection = () => {
     const { user } = useAuth();
     const [step, setStep] = useState(0);
     const [answers, setAnswers] = useState<string[]>([]);
+    const quizStartedAtRef = useRef<number | null>(null);
+    const stepStartedAtRef = useRef<number>(Date.now());
+    const hasTrackedStartRef = useRef(false);
+    const hasTrackedResultRef = useRef(false);
 
     const questions = [
         {
@@ -117,25 +122,61 @@ const QuizSection = () => {
                 { label: "C", text: "De la clarté et de la structure" },
             ],
         },
+        {
+            q: "Quand tu dois choisir, tu privilégies :",
+            options: [
+                { label: "D", text: "L'efficacité et la rapidité" },
+                { label: "I", text: "L'impact sur les autres" },
+                { label: "S", text: "La sécurité et la prévisibilité" },
+                { label: "C", text: "La logique et les faits" },
+            ],
+        },
+        {
+            q: "Ton style de communication naturel :",
+            options: [
+                { label: "D", text: "Direct et concis" },
+                { label: "I", text: "Chaleureux et expressif" },
+                { label: "S", text: "Posé et réfléchi" },
+                { label: "C", text: "Structuré et précis" },
+            ],
+        },
+        {
+            q: "Ton environnement idéal :",
+            options: [
+                { label: "D", text: "Dynamique, avec des défis constants" },
+                { label: "I", text: "Collaboratif, avec beaucoup d'échanges" },
+                { label: "S", text: "Stable, avec peu de changements" },
+                { label: "C", text: "Organisé, avec des processus clairs" },
+            ],
+        },
+        {
+            q: "Ce qui te motive le plus :",
+            options: [
+                { label: "D", text: "Les résultats et la victoire" },
+                { label: "I", text: "La reconnaissance et la connexion" },
+                { label: "S", text: "La sécurité et l'appartenance" },
+                { label: "C", text: "La maîtrise et l'excellence" },
+            ],
+        },
     ];
 
     type ProfileKey = "D" | "I" | "S" | "C" | "MIXTE";
 
     const profileMap: Record<ProfileKey, { title: string; description: string }> = {
         D: {
-            title: "Dominance (D) • Le Pionnier",
+            title: "Le Pionnier",
             description: "Tu aimes avancer vite et décider. Ton journal t'aide à canaliser cette énergie.",
         },
         I: {
-            title: "Influence (I) • Le Connecteur",
+            title: "Le Connecteur",
             description: "Tu es guidé par les relations et les émotions. Ton journal devient un espace d'expression.",
         },
         S: {
-            title: "Stabilité (S) • L'Ancre",
+            title: "L'Ancre",
             description: "Tu cherches la paix et la constance. Ton journal t'offre un refuge stable.",
         },
         C: {
-            title: "Conformité (C) • L'Architecte",
+            title: "L'Architecte",
             description: "Tu aimes comprendre avant d'agir. Ton journal devient ton laboratoire d'idées.",
         },
         MIXTE: {
@@ -173,7 +214,43 @@ const QuizSection = () => {
         }
     };
 
+    useEffect(() => {
+        if (step === questions.length && !hasTrackedResultRef.current) {
+            hasTrackedResultRef.current = true;
+            void trackEvent({
+                name: "quiz_result_viewed",
+                params: {
+                    profile_result: getProfile(answers),
+                    total_steps: questions.length,
+                },
+            });
+        }
+    }, [answers, questions.length, step]);
+
     const handleAnswer = (option: string) => {
+        const now = Date.now();
+        if (!hasTrackedStartRef.current) {
+            hasTrackedStartRef.current = true;
+            quizStartedAtRef.current = now;
+            stepStartedAtRef.current = now;
+            void trackEvent({
+                name: "quiz_started",
+                params: {
+                    source_page: "landing",
+                },
+            });
+        }
+
+        const timeSpentMs = Math.max(0, now - stepStartedAtRef.current);
+        void trackEvent({
+            name: "quiz_step_completed",
+            params: {
+                step_number: step + 1,
+                answer_letter: option,
+                time_spent_ms: timeSpentMs,
+            },
+        });
+
         const nextAnswers = [...answers, option];
         setAnswers(nextAnswers);
 
@@ -181,6 +258,18 @@ const QuizSection = () => {
         if (nextStep === questions.length) {
             const profile = getProfile(nextAnswers);
             const profileTitle = profileMap[profile].title;
+            const totalTimeMs =
+                quizStartedAtRef.current != null
+                    ? Math.max(0, now - quizStartedAtRef.current)
+                    : null;
+            void trackEvent({
+                name: "quiz_complete",
+                params: {
+                    profile_result: profile,
+                    total_time_ms: totalTimeMs,
+                    total_steps: questions.length,
+                },
+            });
             const quizData = {
                 answers: nextAnswers,
                 completedAt: new Date().toISOString(),
@@ -193,6 +282,7 @@ const QuizSection = () => {
             }
             void persistQuizResult(profile, profileTitle, nextAnswers);
         }
+        stepStartedAtRef.current = Date.now();
         setStep(nextStep);
     };
 
@@ -248,7 +338,19 @@ const QuizSection = () => {
                                     {profile.description}
                                 </p>
                                 <Button size="lg" className="h-16 px-16 text-lg rounded-2xl shadow-xl hover:shadow-2xl transition-all" asChild>
-                                    <Link href={user ? "/sanctuary/magazine" : `/signup?quiz=complete&profile=${finalProfile}`}>
+                                    <Link
+                                        href={user ? "/sanctuary/magazine" : `/signup?quiz=complete&profile=${finalProfile}`}
+                                        onClick={() =>
+                                            void trackEvent({
+                                                name: "quiz_cta_clicked",
+                                                params: {
+                                                    profile_result: finalProfile,
+                                                    cta_location: "quiz_result",
+                                                    destination: user ? "magazine" : "signup",
+                                                },
+                                            })
+                                        }
+                                    >
                                         {user ? "Voir mon résultat dans Magazine" : "Créer mon compte pour voir mon résultat"}
                                     </Link>
                                 </Button>
