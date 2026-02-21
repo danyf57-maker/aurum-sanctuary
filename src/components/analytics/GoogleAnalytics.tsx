@@ -16,6 +16,7 @@ export default function GoogleAnalytics() {
   const searchParams = useSearchParams()
   const { user } = useAuth();
   const { toast } = useToast();
+  const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
 
   useEffect(() => {
@@ -31,8 +32,6 @@ export default function GoogleAnalytics() {
     if (user) {
       return;
     }
-
-    const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
     if (!GOOGLE_CLIENT_ID) {
       console.warn(
@@ -83,31 +82,34 @@ export default function GoogleAnalytics() {
   }, [user, toast]);
 
 
-  if (!GA_TRACKING_ID) {
-    return null;
-  }
-
   return (
     <>
-      <Script src="https://accounts.google.com/gsi/client" async defer />
-      <Script
-        strategy="afterInteractive"
-        src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
-      />
-      <Script
-        id="gtag-init"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${GA_TRACKING_ID}', {
-              page_path: window.location.pathname,
-            });
-          `,
-        }}
-      />
+      {GOOGLE_CLIENT_ID && (
+        <Script src="https://accounts.google.com/gsi/client" async defer />
+      )}
+
+      {GA_TRACKING_ID && (
+        <>
+          <Script
+            strategy="afterInteractive"
+            src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+          />
+          <Script
+            id="gtag-init"
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${GA_TRACKING_ID}', {
+                  page_path: window.location.pathname,
+                });
+              `,
+            }}
+          />
+        </>
+      )}
     </>
   )
 }
