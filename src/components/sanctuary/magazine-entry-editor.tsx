@@ -459,16 +459,16 @@ export function MagazineEntryEditor({
                 >
                   <div
                     className={cn(
-                      "max-w-[85%] px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap",
+                      "max-w-[92%] md:max-w-[85%] px-4 py-3 text-[15px] leading-7 whitespace-pre-wrap",
                       turn.role === "user"
                         ? "rounded-2xl rounded-br-md bg-stone-900 text-stone-50"
-                        : "rounded-2xl rounded-bl-md bg-gradient-to-br from-amber-50 to-white border border-amber-200/50 text-stone-800 shadow-sm"
+                        : "rounded-2xl rounded-bl-md bg-gradient-to-br from-amber-100 to-amber-50 border border-amber-300/70 text-stone-900 shadow-sm"
                     )}
                   >
                     {turn.text}
                   </div>
                   {turn.createdAt && (
-                    <span className="mt-1 px-1 text-[10px] text-stone-300">
+                    <span className="mt-1 px-1 text-[10px] text-stone-500">
                       {formatTime(turn.createdAt)}
                     </span>
                   )}
@@ -484,7 +484,7 @@ export function MagazineEntryEditor({
                 transition={{ duration: 0.3 }}
                 className="flex flex-col items-start"
               >
-                <div className="max-w-[85%] px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap rounded-2xl rounded-bl-md bg-gradient-to-br from-amber-50 to-white border border-amber-200/50 text-stone-800 shadow-sm">
+                <div className="max-w-[92%] md:max-w-[85%] px-4 py-3 text-[15px] leading-7 whitespace-pre-wrap rounded-2xl rounded-bl-md bg-gradient-to-br from-amber-100 to-amber-50 border border-amber-300/70 text-stone-900 shadow-sm">
                   {streamingReply || (
                     <span className="inline-flex items-center gap-1.5 text-amber-600">
                       <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
