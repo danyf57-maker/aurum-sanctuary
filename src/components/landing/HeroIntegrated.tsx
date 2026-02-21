@@ -15,11 +15,47 @@ const HeroIntegrated = () => {
     ],
     []
   );
+  const rotatingQuotes = useMemo(
+    () => [
+      {
+        hint: "Étape 1: écris juste ce qu'il se passe maintenant.",
+        detail: "Exemple: 'J'ai la tête pleine avant ma réunion.'",
+        quote: "Écrire, c'est une façon de parler sans être interrompu.",
+        author: "Jules Renard",
+      },
+      {
+        hint: "Étape 2: nomme l'émotion que tu ressens.",
+        detail: "Exemple: 'Je me sens tendu et un peu perdu.'",
+        quote: "Écrire, c'est aussi ne pas parler. C'est se taire. C'est hurler sans bruit.",
+        author: "Marguerite Duras",
+      },
+      {
+        hint: "Étape 3: ajoute ce dont tu as besoin tout de suite.",
+        detail: "Exemple: 'J'ai besoin de 10 minutes de calme.'",
+        quote: "Je n'écris pas pour dire que je suis forte, j'écris pour le devenir.",
+        author: "Marie Cardinal",
+      },
+      {
+        hint: "Tu peux écrire en phrases très courtes.",
+        detail: "Même 3 lignes suffisent pour remettre de l'ordre.",
+        quote: "Le papier est plus patient que les hommes.",
+        author: "Anne Frank",
+      },
+      {
+        hint: "N'essaie pas d'être parfait, essaie d'être vrai.",
+        detail: "Plus c'est simple, plus ton esprit se calme vite.",
+        quote: "J'écris pour savoir ce que je pense.",
+        author: "Joan Didion",
+      },
+    ],
+    []
+  );
   const [thought, setThought] = useState("");
   const [placeholderText, setPlaceholderText] = useState("");
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [quoteIndex, setQuoteIndex] = useState(0);
 
   useEffect(() => {
     const current = placeholders[placeholderIndex];
@@ -41,6 +77,14 @@ const HeroIntegrated = () => {
 
     return () => clearTimeout(timeout);
   }, [charIndex, isDeleting, placeholderIndex, placeholders]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setQuoteIndex((value) => (value + 1) % rotatingQuotes.length);
+    }, 4200);
+
+    return () => clearInterval(interval);
+  }, [rotatingQuotes.length]);
 
   return (
     <section className="bg-stone-50 py-24 md:py-32">
@@ -64,18 +108,24 @@ const HeroIntegrated = () => {
                 value={thought}
                 onChange={(event) => setThought(event.target.value)}
                 placeholder={placeholderText}
-                className="h-52 w-full resize-none bg-transparent text-lg md:text-xl font-body text-stone-800 placeholder:text-stone-400 focus:outline-none"
+                className="h-44 w-full resize-none bg-transparent text-lg md:text-xl font-body text-stone-800 placeholder:text-stone-400 focus:outline-none"
               />
+              <div className="mt-3 border-t border-[#D4AF37]/20 pt-3 text-center">
+                <p
+                  key={quoteIndex}
+                  className="font-body text-sm text-stone-700 transition-opacity duration-500"
+                >
+                  {rotatingQuotes[quoteIndex].hint}
+                </p>
+                <p className="mt-1 font-body text-xs text-stone-500 transition-opacity duration-500">
+                  {rotatingQuotes[quoteIndex].detail}
+                </p>
+                <p className="mt-2 font-body text-xs italic text-stone-500 transition-opacity duration-500">
+                  &ldquo;{rotatingQuotes[quoteIndex].quote}&rdquo;{" "}
+                  <span className="not-italic">- {rotatingQuotes[quoteIndex].author}</span>
+                </p>
+              </div>
               <div className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-[#D4AF37]/15" />
-            </div>
-            <div className="mt-4 space-y-1 text-center">
-              <p className="font-body text-sm text-stone-600">
-                Commence petit: un fait, une émotion, un besoin.
-              </p>
-              <p className="font-body text-xs italic text-stone-500">
-                &ldquo;Écrire, c&apos;est une façon de parler sans être interrompu.&rdquo;{" "}
-                <span className="not-italic">- Jules Renard</span>
-              </p>
             </div>
 
             <div className="mt-6 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
