@@ -53,8 +53,15 @@ function LoginForm() {
   const [quizData, setQuizData] = useState<QuizData | null>(null);
   const [showQuizTeaser, setShowQuizTeaser] = useState(false);
 
-  // Get redirect URL from query params, default to /dashboard
-  const redirectUrl = searchParams.get("redirect") || "/dashboard";
+  // Get redirect URL from query params, default to /dashboard.
+  // Security: only allow internal relative paths.
+  const rawRedirectUrl = searchParams.get("redirect");
+  const redirectUrl =
+    rawRedirectUrl &&
+    rawRedirectUrl.startsWith("/") &&
+    !rawRedirectUrl.startsWith("//")
+      ? rawRedirectUrl
+      : "/dashboard";
   const verified = searchParams.get("verified");
   const checkEmail = searchParams.get("check_email");
 
