@@ -56,10 +56,6 @@ const HeroIntegrated = () => {
             <p className="font-body text-lg md:text-xl text-stone-600">
               Un sanctuaire secret pour transformer votre chaos intérieur en une clarté immédiate.
             </p>
-            <p className="font-body text-sm italic text-stone-500">
-              &ldquo;Nous écrivons pour goûter la vie deux fois.&rdquo;{" "}
-              <span className="not-italic">- Anaïs Nin</span>
-            </p>
           </div>
 
           <div className="w-full">
@@ -71,6 +67,15 @@ const HeroIntegrated = () => {
                 className="h-52 w-full resize-none bg-transparent text-lg md:text-xl font-body text-stone-800 placeholder:text-stone-400 focus:outline-none"
               />
               <div className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-[#D4AF37]/15" />
+            </div>
+            <div className="mt-4 space-y-1 text-center">
+              <p className="font-body text-sm text-stone-600">
+                Commence petit: un fait, une émotion, un besoin.
+              </p>
+              <p className="font-body text-xs italic text-stone-500">
+                &ldquo;Écrire, c&apos;est une façon de parler sans être interrompu.&rdquo;{" "}
+                <span className="not-italic">- Jules Renard</span>
+              </p>
             </div>
 
             <div className="mt-6 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
