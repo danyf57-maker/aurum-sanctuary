@@ -7,6 +7,9 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Compass, ArrowRight, ShieldCheck, Lock, Fingerprint, X } from 'lucide-react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuth } from '@/providers/auth-provider';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { firestore as db } from '@/lib/firebase/web-client';
 
 const ExitIntent = () => {
     const [show, setShow] = useState(false);
@@ -73,6 +76,7 @@ const ExitIntent = () => {
 };
 
 const QuizSection = () => {
+    const { user } = useAuth();
     const [step, setStep] = useState(0);
     const [answers, setAnswers] = useState<string[]>([]);
 
@@ -115,7 +119,9 @@ const QuizSection = () => {
         },
     ];
 
-    const profileMap: Record<string, { title: string; description: string }> = {
+    type ProfileKey = "D" | "I" | "S" | "C" | "MIXTE";
+
+    const profileMap: Record<ProfileKey, { title: string; description: string }> = {
         D: {
             title: "Dominance (D) • Le Pionnier",
             description: "Tu aimes avancer vite et décider. Ton journal t'aide à canaliser cette énergie.",
@@ -138,7 +144,7 @@ const QuizSection = () => {
         },
     };
 
-    const getProfile = (currentAnswers: string[]) => {
+    const getProfile = (currentAnswers: string[]): ProfileKey => {
         const counts = { D: 0, I: 0, S: 0, C: 0 };
         currentAnswers.forEach((a) => {
             if (a in counts) counts[a as keyof typeof counts] += 1;
@@ -150,6 +156,23 @@ const QuizSection = () => {
         return winners.length === 1 ? winners[0] : "MIXTE";
     };
 
+    const persistQuizResult = async (profile: string, profileTitle: string, currentAnswers: string[]) => {
+        if (!user) return;
+        try {
+            await addDoc(collection(db, "users", user.uid, "assessments"), {
+                source: "landing-quiz",
+                profile,
+                profileTitle,
+                answers: currentAnswers,
+                completedAt: new Date().toISOString(),
+                createdAt: serverTimestamp(),
+                updatedAt: serverTimestamp(),
+            });
+        } catch (error) {
+            console.error("Failed to save landing quiz result:", error);
+        }
+    };
+
     const handleAnswer = (option: string) => {
         const nextAnswers = [...answers, option];
         setAnswers(nextAnswers);
@@ -157,6 +180,7 @@ const QuizSection = () => {
         const nextStep = step + 1;
         if (nextStep === questions.length) {
             const profile = getProfile(nextAnswers);
+            const profileTitle = profileMap[profile].title;
             const quizData = {
                 answers: nextAnswers,
                 completedAt: new Date().toISOString(),
@@ -167,6 +191,7 @@ const QuizSection = () => {
             } catch {
                 // No-op if storage is unavailable
             }
+            void persistQuizResult(profile, profileTitle, nextAnswers);
         }
         setStep(nextStep);
     };
@@ -223,7 +248,9 @@ const QuizSection = () => {
                                     {profile.description}
                                 </p>
                                 <Button size="lg" className="h-16 px-16 text-lg rounded-2xl shadow-xl hover:shadow-2xl transition-all" asChild>
-                                    <Link href={`/signup?quiz=complete&profile=${finalProfile}`}>Créer mon compte pour voir mon résultat</Link>
+                                    <Link href={user ? "/sanctuary/magazine" : `/signup?quiz=complete&profile=${finalProfile}`}>
+                                        {user ? "Voir mon résultat dans Magazine" : "Créer mon compte pour voir mon résultat"}
+                                    </Link>
                                 </Button>
                             </motion.div>
                         )}
