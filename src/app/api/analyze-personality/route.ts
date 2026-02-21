@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { rateLimit, RateLimitPresets } from '@/lib/rate-limit';
 import { logger } from '@/lib/logger/safe';
-import { db } from '@/lib/firebase/admin';
-import { FieldValue } from 'firebase-admin/firestore';
+
+export const runtime = 'nodejs';
 
 type InputEntry = {
   id: string;
@@ -209,6 +209,11 @@ ${JSON.stringify(safeEntries)}`;
 
 async function writeScore(userId: string, scores: PersonalityApiScores, entryCount: number) {
   try {
+    const [{ db }, { FieldValue }] = await Promise.all([
+      import('@/lib/firebase/admin-db'),
+      import('firebase-admin/firestore'),
+    ]);
+
     await db
       .collection('users')
       .doc(userId)

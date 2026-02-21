@@ -1,6 +1,5 @@
 import "server-only";
 
-import { Timestamp } from "firebase-admin/firestore";
 import { db } from "@/lib/firebase/admin";
 
 const MEMORY_VERSION = "v1";
@@ -170,7 +169,7 @@ function asDate(value: unknown): Date | null {
   if (value instanceof Date) return value;
   if (typeof value === "object" && value && "toDate" in value) {
     try {
-      return (value as Timestamp).toDate();
+      return (value as { toDate: () => Date }).toDate();
     } catch {
       return null;
     }
@@ -249,7 +248,7 @@ export async function setLongMemoryEnabled(userId: string, enabled: boolean) {
   await settingsRef.set(
     {
       enabled,
-      updatedAt: Timestamp.now(),
+      updatedAt: new Date(),
     },
     { merge: true }
   );
@@ -343,7 +342,7 @@ export async function rebuildLongMemory(
     {
       ...profile,
       reason: options?.reason ?? "manual",
-      updatedAt: Timestamp.now(),
+      updatedAt: new Date(),
     },
     { merge: true }
   );
@@ -352,7 +351,7 @@ export async function rebuildLongMemory(
   await memoryRef.doc(`snapshot-${snapshotId}`).set(
     {
       ...profile,
-      snapshotAt: Timestamp.now(),
+      snapshotAt: new Date(),
       reason: options?.reason ?? "manual",
     },
     { merge: true }

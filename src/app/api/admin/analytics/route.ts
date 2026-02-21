@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { Timestamp } from "firebase-admin/firestore";
-import { auth, db, isAdminEmail } from "@/lib/firebase/admin";
 import {
   LEAD_SCORE_WEIGHTS,
   TRACKED_EVENTS,
@@ -24,7 +22,7 @@ function toDate(value: unknown): Date {
   if (value instanceof Date) return value;
   if (typeof value === "object" && value && "toDate" in value) {
     try {
-      return (value as Timestamp).toDate();
+      return (value as { toDate: () => Date }).toDate();
     } catch {
       return new Date(0);
     }
@@ -50,6 +48,7 @@ function leadSegment(score: number) {
 
 export async function GET() {
   try {
+    const { auth, db, isAdminEmail } = await import("@/lib/firebase/admin");
     const sessionCookie = (await cookies()).get("__session")?.value;
     if (!sessionCookie) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -69,7 +68,7 @@ export async function GET() {
       db.collection("users").get(),
       db
         .collection("analyticsEvents")
-        .where("occurredAt", ">=", Timestamp.fromDate(monthAgo))
+        .where("occurredAt", ">=", monthAgo)
         .get(),
       db
         .collection("analyticsEvents")
@@ -78,8 +77,8 @@ export async function GET() {
         .get(),
     ]);
 
-    const events: AnalyticsEventDoc[] = eventsSnapshot.docs
-      .map((doc) => {
+    const events = eventsSnapshot.docs
+      .map((doc: any): AnalyticsEventDoc | null => {
         const data = doc.data();
         const rawName = String(data.name || "");
         if (!TRACKED_EVENTS.includes(rawName as TrackedEventName)) return null;
@@ -94,7 +93,7 @@ export async function GET() {
           params: (data.params as Record<string, unknown>) || {},
         };
       })
-      .filter((event): event is AnalyticsEventDoc => Boolean(event));
+      .filter(Boolean) as AnalyticsEventDoc[];
 
     const eventsLast24h = events.filter((event) => event.occurredAt >= dayAgo);
     const eventsLast7d = events.filter((event) => event.occurredAt >= weekAgo);
@@ -173,7 +172,7 @@ export async function GET() {
         segment: leadSegment(lead.score),
       }));
 
-    const recentEvents = recentEventsSnapshot.docs.map((doc) => {
+    const recentEvents = recentEventsSnapshot.docs.map((doc: any) => {
       const data = doc.data();
       const eventName = String(data.name || "unknown");
       return {

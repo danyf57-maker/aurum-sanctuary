@@ -10,13 +10,13 @@ import { logger } from '@/lib/logger/safe';
 // Helper function to get all documents from a user's subcollection
 async function getUserCollection(userId: string, collectionName: string) {
     const snapshot = await db.collection('users').doc(userId).collection(collectionName).get();
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    return snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
 }
 
 async function deleteUserSubcollection(userId: string, collectionName: string) {
     const snapshot = await db.collection('users').doc(userId).collection(collectionName).get();
     const batch = db.batch();
-    snapshot.docs.forEach(doc => batch.delete(doc.ref));
+    snapshot.docs.forEach((doc: any) => batch.delete(doc.ref));
     await batch.commit();
 }
 
@@ -80,7 +80,7 @@ export async function deleteUserAccount(): Promise<{ success: boolean, error: st
 
         // 2. Delete public posts if any (for Alma user, though it's a good general practice)
         const postsSnapshot = await db.collection('publicPosts').where('userId', '==', userId).get();
-        postsSnapshot.forEach(doc => {
+        postsSnapshot.forEach((doc: any) => {
             batch.delete(doc.ref);
         });
         
