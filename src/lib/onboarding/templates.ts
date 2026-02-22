@@ -78,10 +78,10 @@ export function renderOnboardingEmail(input: TemplateInput): EmailTemplateResult
       ctaUrl: writeUrl,
     },
     email_2: {
-      subject: "Un petit rappel doux pour ton journal",
-      preheader: "Une phrase suffit pour commencer.",
-      body: `Salut ${name},<br/><br/>Tu n'as pas besoin d'écrire longtemps pour avancer. Une phrase claire peut déjà calmer une journée agitée.<br/><br/>Aurum est là pour t'écouter, sans pression.`,
-      ctaLabel: "Commencer maintenant",
+      subject: "La page blanche ?",
+      preheader: "Une question simple pour démarrer sans pression.",
+      body: `Salut ${name},<br/><br/>Hier, je te conseillais d&apos;écrire une seule phrase pour commencer.<br/><br/>Parfois, même trouver cette première phrase est difficile. C&apos;est tout à fait normal. L&apos;inspiration ne se commande pas.<br/><br/>Alors aujourd&apos;hui, je te propose un jeu. Pas besoin de réfléchir.<br/><br/>Réponds juste à cette simple question dans ta prochaine entrée :<br/><br/><strong>&quot;De quoi suis-je reconnaissant(e) aujourd&apos;hui, même si c&apos;est tout petit ?&quot;</strong><br/><br/>Ça peut être ton café du matin, un rayon de soleil, une musique... Il n&apos;y a pas de mauvaise réponse.<br/><br/>Le plus dur est de commencer. On le fait ensemble.<br/><br/>Daniel`,
+      ctaLabel: "Répondre à cette question",
       ctaUrl: writeUrl,
     },
     email_3: {
