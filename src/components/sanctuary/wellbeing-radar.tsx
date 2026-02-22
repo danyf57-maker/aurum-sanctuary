@@ -79,7 +79,9 @@ export function WellbeingRadar({
             </div>
             <h2 className="font-headline text-xl text-stone-900">Bien-être psychologique</h2>
           </div>
-          <p className="mt-1 text-xs text-stone-500">Modèle de Ryff &middot; 6 dimensions</p>
+          <p className="mt-1 text-xs text-stone-500">
+            Comprends vite ce qui te fatigue, ce qui te porte et où retrouver de l&apos;élan.
+          </p>
         </div>
         <div className="flex gap-2">
           <button
@@ -88,14 +90,14 @@ export function WellbeingRadar({
             disabled={isLoading || !canAnalyze}
             className="rounded-xl border border-stone-300 bg-stone-50 px-3 py-1.5 text-xs text-stone-700 transition-colors hover:border-[#C5A059] disabled:opacity-50"
           >
-            {isLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : 'Analyser'}
+            {isLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : 'Analyser mes pages'}
           </button>
           <button
             type="button"
             onClick={onOpenQuestionnaire}
             className="rounded-xl border border-[#C5A059]/50 bg-[#C5A059]/10 px-3 py-1.5 text-xs text-[#7A5D24] transition-colors hover:bg-[#C5A059]/20"
           >
-            Questionnaire
+            Commencer
           </button>
         </div>
       </div>
@@ -104,12 +106,18 @@ export function WellbeingRadar({
       {!hasAny && !isLoading && (
         <div className="mt-6 rounded-xl border border-dashed border-stone-300 bg-stone-50/70 p-6 text-center">
           <Activity className="mx-auto h-8 w-8 text-stone-400" />
+          <div className="mt-3 inline-flex rounded-full bg-amber-100 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-amber-800">
+            Recommandé pour commencer
+          </div>
           <p className="mt-3 text-sm text-stone-600">
-            Lance une analyse ou complète le questionnaire pour voir ton profil de bien-être.
+            Option rapide: réponds au parcours guidé en 2 minutes.
+          </p>
+          <p className="mt-1 text-xs text-stone-500">
+            Tu obtiens une lecture claire de ton niveau d&apos;énergie, de calme et d&apos;équilibre.
           </p>
           {!canAnalyze && (
             <p className="mt-1 text-xs text-stone-400">
-              Au moins 5 entrées non chiffrées sont nécessaires pour l&apos;analyse.
+              Pour l&apos;analyse automatique de tes pages, il faut au moins 5 entrées non chiffrées.
             </p>
           )}
         </div>

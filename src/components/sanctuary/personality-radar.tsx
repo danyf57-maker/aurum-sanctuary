@@ -78,7 +78,7 @@ export function PersonalityRadar({
             <h2 className="font-headline text-xl text-stone-900">Profil de personnalité</h2>
           </div>
           <p className="mt-1 text-xs text-stone-500">
-            4 dimensions &middot; Style de communication
+            Découvre comment tu décides, échanges et avances au quotidien.
             {archetype && (
               <span className="ml-2 rounded-full bg-stone-100 px-2 py-0.5 text-[10px] font-medium text-stone-700">
                 {archetype}
@@ -93,14 +93,14 @@ export function PersonalityRadar({
             disabled={isLoading || !canAnalyze}
             className="rounded-xl border border-stone-300 bg-stone-50 px-3 py-1.5 text-xs text-stone-700 transition-colors hover:border-stone-500 disabled:opacity-50"
           >
-            {isLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : 'Analyser'}
+            {isLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : 'Analyser mes pages'}
           </button>
           <button
             type="button"
             onClick={onOpenQuestionnaire}
             className="rounded-xl border border-stone-400/50 bg-stone-100 px-3 py-1.5 text-xs text-stone-700 transition-colors hover:bg-stone-200"
           >
-            Questionnaire
+            Commencer
           </button>
         </div>
       </div>
@@ -109,12 +109,18 @@ export function PersonalityRadar({
       {!hasAny && !isLoading && (
         <div className="mt-6 rounded-xl border border-dashed border-stone-300 bg-stone-50/70 p-6 text-center">
           <Users className="mx-auto h-8 w-8 text-stone-400" />
+          <div className="mt-3 inline-flex rounded-full bg-stone-200 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-stone-700">
+            Recommandé pour commencer
+          </div>
           <p className="mt-3 text-sm text-stone-600">
-            Lance une analyse ou complète le questionnaire pour découvrir ton profil.
+            Option rapide: fais le parcours guidé pour voir ton style de fonctionnement.
+          </p>
+          <p className="mt-1 text-xs text-stone-500">
+            Tu repars avec des repères concrets sur ta manière d&apos;agir et de communiquer.
           </p>
           {!canAnalyze && (
             <p className="mt-1 text-xs text-stone-400">
-              Au moins 5 entrées non chiffrées sont nécessaires pour l&apos;analyse.
+              Pour l&apos;analyse automatique de tes pages, il faut au moins 5 entrées non chiffrées.
             </p>
           )}
         </div>
