@@ -81,6 +81,33 @@ service cloud.firestore {
       }
 
       // -------------------------------------------------------
+      // Assessments (Parcours d'entree / quiz landing)
+      // -------------------------------------------------------
+      match /assessments/{assessmentId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId);
+        allow update, delete: if false;
+      }
+
+      // -------------------------------------------------------
+      // Wellbeing Scores
+      // -------------------------------------------------------
+      match /wellbeingScores/{scoreId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId);
+        allow update, delete: if false;
+      }
+
+      // -------------------------------------------------------
+      // Personality Scores
+      // -------------------------------------------------------
+      match /personalityScores/{scoreId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId);
+        allow update, delete: if false;
+      }
+
+      // -------------------------------------------------------
       // Collections (User-created groupings)
       // -------------------------------------------------------
       match /collections/{collectionId} {
