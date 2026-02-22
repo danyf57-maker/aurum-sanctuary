@@ -26,6 +26,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { app } from '@/lib/firebase/web-client';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useEncryption } from '@/hooks/useEncryption';
+import { useSearchParams } from 'next/navigation';
 
 type DraftImage = {
   id: string;
@@ -42,6 +43,7 @@ type ConversationTurn = {
 };
 
 export function PremiumJournalForm() {
+  const searchParams = useSearchParams();
   const { user } = useAuth();
   const { isReady: encryptionReady, encrypt } = useEncryption();
   const { toast } = useToast();
@@ -92,6 +94,20 @@ export function PremiumJournalForm() {
       });
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Pré-remplir depuis l'URL si "initial" est fourni et non vide.
+  useEffect(() => {
+    const initial = searchParams.get('initial');
+    if (!initial) return;
+    if (draftContent.trim().length > 0) return;
+    setDraftContent(initial);
+    requestAnimationFrame(() => {
+      const ta = textareaRef.current;
+      if (!ta) return;
+      ta.style.height = 'auto';
+      ta.style.height = `${ta.scrollHeight}px`;
+    });
+  }, [draftContent, searchParams]);
 
   const uploadImageToStorage = async (file: File): Promise<DraftImage> => {
     if (!user) throw new Error('Connexion requise pour ajouter une image.');
@@ -593,7 +609,7 @@ export function PremiumJournalForm() {
                   name="content"
                   placeholder="Écris ce qui demande à être posé..."
                   value={draftContent}
-                  className="bg-transparent border-none shadow-none resize-none overflow-hidden min-h-[48vh] p-0 [font-family:var(--font-cormorant)] text-3xl leading-relaxed text-stone-800 placeholder:text-stone-300 focus:ring-0 focus:outline-none focus-visible:ring-0 caret-amber-400"
+                  className="bg-transparent border-none shadow-none resize-none overflow-hidden min-h-[48vh] p-0 [font-family:var(--font-cormorant)] text-3xl leading-relaxed text-stone-800 placeholder:text-stone-400 focus:ring-0 focus:outline-none focus-visible:ring-0 caret-amber-400"
                   required
                   onInput={handleInput}
                 />

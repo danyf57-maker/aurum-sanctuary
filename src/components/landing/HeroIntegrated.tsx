@@ -56,6 +56,10 @@ const HeroIntegrated = () => {
   const [charIndex, setCharIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
   const [quoteIndex, setQuoteIndex] = useState(0);
+  const writeHref =
+    thought.trim().length > 0
+      ? `/sanctuary/write?initial=${encodeURIComponent(thought)}`
+      : "/sanctuary/write";
 
   useEffect(() => {
     const current = placeholders[placeholderIndex];
@@ -134,7 +138,7 @@ const HeroIntegrated = () => {
                 size="lg"
                 className="h-12 md:h-14 px-8 rounded-xl bg-[#D4AF37] text-stone-900 hover:bg-[#D4AF37]/90"
               >
-                <Link href={`/sanctuary/write?initial=${encodeURIComponent(thought)}`}>
+                <Link href={writeHref}>
                   Entrer dans le Sanctuaire
                 </Link>
               </Button>
