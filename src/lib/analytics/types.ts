@@ -15,6 +15,10 @@ export const TRACKED_EVENTS = [
   "checkout_start",
   "purchase",
   "aurum_message_sent",
+  "onboarding_email_sent",
+  "onboarding_email_opened",
+  "onboarding_email_link_clicked",
+  "onboarding_email_unsubscribed",
 ] as const;
 
 export type TrackedEventName = (typeof TRACKED_EVENTS)[number];
@@ -42,4 +46,8 @@ export const LEAD_SCORE_WEIGHTS: Record<TrackedEventName, number> = {
   checkout_start: 25,
   purchase: 30,
   aurum_message_sent: 3,
+  onboarding_email_sent: 0,
+  onboarding_email_opened: 0,
+  onboarding_email_link_clicked: 1,
+  onboarding_email_unsubscribed: -5,
 };

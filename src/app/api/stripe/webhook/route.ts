@@ -82,6 +82,14 @@ export async function POST(req: NextRequest) {
                     updatedAt: new Date(),
                 });
 
+                if (subscription.status === 'active' || subscription.status === 'trialing') {
+                    await db.doc(`users/${userId}/onboarding/state`).set({
+                        stoppedAt: new Date().toISOString(),
+                        stoppedReason: 'subscription_started',
+                        updatedAt: new Date().toISOString(),
+                    }, { merge: true });
+                }
+
                 console.log(`✅ Subscription ${subscription.status} for user ${userId}`);
                 break;
             }

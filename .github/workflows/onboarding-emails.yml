@@ -1,0 +1,25 @@
+name: Run Onboarding Emails
+
+on:
+  schedule:
+    - cron: "0 * * * *"
+  workflow_dispatch:
+
+jobs:
+  run-onboarding:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger onboarding runner endpoint
+        env:
+          ONBOARDING_RUN_URL: ${{ secrets.ONBOARDING_RUN_URL }}
+          ONBOARDING_RUN_SECRET: ${{ secrets.ONBOARDING_RUN_SECRET }}
+        run: |
+          if [ -z "$ONBOARDING_RUN_URL" ] || [ -z "$ONBOARDING_RUN_SECRET" ]; then
+            echo "Missing ONBOARDING_RUN_URL or ONBOARDING_RUN_SECRET secret"
+            exit 1
+          fi
+
+          curl -sS -X POST "$ONBOARDING_RUN_URL" \
+            -H "Authorization: Bearer $ONBOARDING_RUN_SECRET" \
+            -H "Content-Type: application/json"
+

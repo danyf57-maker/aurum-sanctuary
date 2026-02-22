@@ -123,6 +123,7 @@ export default function AdminDashboard() {
   const router = useRouter();
   const [data, setData] = useState<AdminAnalyticsResponse | null>(null);
   const [loadingData, setLoadingData] = useState(true);
+  const [isRunningOnboarding, setIsRunningOnboarding] = useState(false);
 
   useEffect(() => {
     if (!loading && (!user || !isAdminEmail(user.email))) {
@@ -164,6 +165,22 @@ export default function AdminDashboard() {
           <h1 className="text-3xl font-bold tracking-tight">Tableau de Bord Administrateur</h1>
           <p className="text-muted-foreground">Données réelles: acquisition, activation et conversion.</p>
           <div className="mt-4 flex flex-wrap gap-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              disabled={isRunningOnboarding}
+              onClick={async () => {
+                setIsRunningOnboarding(true);
+                try {
+                  await fetch("/api/onboarding/run", { method: "POST" });
+                } finally {
+                  setIsRunningOnboarding(false);
+                }
+              }}
+            >
+              <Download className="mr-2 h-4 w-4" />
+              {isRunningOnboarding ? "Onboarding en cours..." : "Lancer onboarding maintenant"}
+            </Button>
             <Button
               variant="default"
               size="sm"
