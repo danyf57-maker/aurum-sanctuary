@@ -8,10 +8,10 @@ import {
   BookOpenText,
   BarChart3,
   LogOut,
+  LogIn,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useAuth } from "@/providers/auth-provider";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
@@ -149,15 +149,25 @@ export function AppSidebar() {
 
       {/* Footer Area */}
       <div className="p-4 space-y-2 border-t border-border/40">
-        <button
-          onClick={() => logout()}
-          className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-stone-600 hover:bg-red-50 hover:text-red-600 transition-all duration-200"
-        >
-          <LogOut className="h-5 w-5 shrink-0" />
-          {!isCollapsed && (
-            <span className="font-semibold text-sm">Déconnexion</span>
-          )}
-        </button>
+        {user ? (
+          <button
+            onClick={() => logout()}
+            className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-stone-600 hover:bg-red-50 hover:text-red-600 transition-all duration-200"
+          >
+            <LogOut className="h-5 w-5 shrink-0" />
+            {!isCollapsed && (
+              <span className="font-semibold text-sm">Déconnexion</span>
+            )}
+          </button>
+        ) : (
+          <Link
+            href="/login"
+            className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-stone-600 hover:bg-stone-900/5 hover:text-stone-900 transition-all duration-200"
+          >
+            <LogIn className="h-5 w-5 shrink-0" />
+            {!isCollapsed && <span className="font-semibold text-sm">Connexion</span>}
+          </Link>
+        )}
 
         {/* User Info (Mini) */}
         {!isCollapsed && user && (
