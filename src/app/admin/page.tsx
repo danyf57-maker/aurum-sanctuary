@@ -109,6 +109,15 @@ function downloadCsv(filename: string, csv: string) {
   URL.revokeObjectURL(url);
 }
 
+async function downloadCsvFromApi(url: string, filename: string) {
+  const response = await fetch(url, { method: "GET" });
+  if (!response.ok) {
+    throw new Error(`Export failed (${response.status})`);
+  }
+  const csv = await response.text();
+  downloadCsv(filename, csv);
+}
+
 export default function AdminDashboard() {
   const { user, loading } = useAuth();
   const router = useRouter();
@@ -155,6 +164,36 @@ export default function AdminDashboard() {
           <h1 className="text-3xl font-bold tracking-tight">Tableau de Bord Administrateur</h1>
           <p className="text-muted-foreground">Données réelles: acquisition, activation et conversion.</p>
           <div className="mt-4 flex flex-wrap gap-2">
+            <Button
+              variant="default"
+              size="sm"
+              onClick={() => {
+                void downloadCsvFromApi("/api/admin/exports?type=users_enriched", "users_enriched.csv");
+              }}
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Export users_enriched
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                void downloadCsvFromApi("/api/admin/exports?type=users", "users.csv");
+              }}
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Export users
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                void downloadCsvFromApi("/api/admin/exports?type=events", "events.csv");
+              }}
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Export events
+            </Button>
             <Button
               variant="outline"
               size="sm"
