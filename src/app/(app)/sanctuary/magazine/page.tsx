@@ -778,6 +778,65 @@ export default function MagazinePage() {
         </div>
       )}
 
+      <div className="mb-6 space-y-6">
+        {/* Bien-être psychologique — Modèle de Ryff */}
+        <WellbeingRadar
+          aiScores={
+            wellbeingScore?.source !== "questionnaire"
+              ? wellbeingScore?.scores ?? null
+              : null
+          }
+          questionnaireScores={
+            wellbeingScore?.source === "questionnaire" ||
+            wellbeingScore?.source === "combined"
+              ? wellbeingScore.scores
+              : null
+          }
+          narrative={wellbeingScore?.narrative ?? null}
+          computedAt={wellbeingScore?.computedAt ?? null}
+          isLoading={isWellbeingLoading}
+          onRequestAnalysis={() => void handleAnalyzeWellbeing()}
+          onOpenQuestionnaire={() => setQuestionnaireOpen(true)}
+          canAnalyze={nonEncryptedCount >= 5}
+        />
+
+        <RyffQuestionnaire
+          open={questionnaireOpen}
+          onOpenChange={setQuestionnaireOpen}
+          onComplete={handleQuestionnaireComplete}
+          isSubmitting={isQuestionnaireSubmitting}
+        />
+
+        {/* Profil de personnalité — 4 dimensions */}
+        <PersonalityRadar
+          aiScores={
+            personalityResult?.source !== "questionnaire"
+              ? personalityResult?.scores ?? null
+              : null
+          }
+          questionnaireScores={
+            personalityResult?.source === "questionnaire" ||
+            personalityResult?.source === "combined"
+              ? personalityResult.scores
+              : null
+          }
+          archetype={personalityResult?.archetype ?? null}
+          narrative={personalityResult?.narrative ?? null}
+          computedAt={personalityResult?.computedAt ?? null}
+          isLoading={isPersonalityLoading}
+          onRequestAnalysis={() => void handleAnalyzePersonality()}
+          onOpenQuestionnaire={() => setPersonalityQuestionnaireOpen(true)}
+          canAnalyze={nonEncryptedCount >= 5}
+        />
+
+        <PersonalityQuestionnaire
+          open={personalityQuestionnaireOpen}
+          onOpenChange={setPersonalityQuestionnaireOpen}
+          onComplete={handlePersonalityQuestionnaireComplete}
+          isSubmitting={isPersonalitySubmitting}
+        />
+      </div>
+
       {issues.length === 0 ? (
         <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
           {/* Zone héro */}
@@ -850,63 +909,6 @@ export default function MagazinePage() {
         </div>
       ) : (
         <div className="space-y-6">
-          {/* Bien-être psychologique — Modèle de Ryff */}
-          <WellbeingRadar
-            aiScores={
-              wellbeingScore?.source !== "questionnaire"
-                ? wellbeingScore?.scores ?? null
-                : null
-            }
-            questionnaireScores={
-              wellbeingScore?.source === "questionnaire" ||
-              wellbeingScore?.source === "combined"
-                ? wellbeingScore.scores
-                : null
-            }
-            narrative={wellbeingScore?.narrative ?? null}
-            computedAt={wellbeingScore?.computedAt ?? null}
-            isLoading={isWellbeingLoading}
-            onRequestAnalysis={() => void handleAnalyzeWellbeing()}
-            onOpenQuestionnaire={() => setQuestionnaireOpen(true)}
-            canAnalyze={nonEncryptedCount >= 5}
-          />
-
-          <RyffQuestionnaire
-            open={questionnaireOpen}
-            onOpenChange={setQuestionnaireOpen}
-            onComplete={handleQuestionnaireComplete}
-            isSubmitting={isQuestionnaireSubmitting}
-          />
-
-          {/* Profil de personnalité — 4 dimensions */}
-          <PersonalityRadar
-            aiScores={
-              personalityResult?.source !== "questionnaire"
-                ? personalityResult?.scores ?? null
-                : null
-            }
-            questionnaireScores={
-              personalityResult?.source === "questionnaire" ||
-              personalityResult?.source === "combined"
-                ? personalityResult.scores
-                : null
-            }
-            archetype={personalityResult?.archetype ?? null}
-            narrative={personalityResult?.narrative ?? null}
-            computedAt={personalityResult?.computedAt ?? null}
-            isLoading={isPersonalityLoading}
-            onRequestAnalysis={() => void handleAnalyzePersonality()}
-            onOpenQuestionnaire={() => setPersonalityQuestionnaireOpen(true)}
-            canAnalyze={nonEncryptedCount >= 5}
-          />
-
-          <PersonalityQuestionnaire
-            open={personalityQuestionnaireOpen}
-            onOpenChange={setPersonalityQuestionnaireOpen}
-            onComplete={handlePersonalityQuestionnaireComplete}
-            isSubmitting={isPersonalitySubmitting}
-          />
-
           {/* Dashboard Statistiques */}
           <DashboardStats
             issues={issues}
