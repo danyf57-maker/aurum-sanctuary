@@ -6,6 +6,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/providers/auth-provider';
 import { Suspense } from 'react';
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
+import ProductEventTracker from '@/components/analytics/ProductEventTracker';
 import { CookieConsent } from '@/components/legal/CookieConsent';
 import { TermsModal } from '@/components/auth/TermsModal';
 
@@ -123,6 +124,7 @@ export default function RootLayout({
           <TermsModal />
           <Suspense fallback={null}>
             <GoogleAnalytics />
+            <ProductEventTracker />
           </Suspense>
           {children}
           <Toaster />

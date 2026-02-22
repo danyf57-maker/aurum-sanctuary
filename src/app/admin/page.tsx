@@ -42,6 +42,8 @@ type AdminAnalyticsResponse = {
     signupWithQuiz: number;
   };
   chart: Array<{ date: string; users: number }>;
+  topEvents: Array<{ name: string; count: number }>;
+  topPaths: Array<{ path: string; count: number }>;
   recentEvents: Array<{ id: string; name: string; user: string; date: string; details: string }>;
   topLeads: Array<{
     leadId: string;
@@ -242,6 +244,60 @@ export default function AdminDashboard() {
                   {data.quizFunnel.signupWithQuiz} ({pct(data.quizFunnel.signupWithQuiz, data.quizFunnel.ctaClicked)}%)
                 </span>
               </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Top événements (30 jours)</CardTitle>
+              <CardDescription>Actions les plus fréquentes dans l&apos;app</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Événement</TableHead>
+                    <TableHead>Volume</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {data.topEvents.map((event) => (
+                    <TableRow key={event.name}>
+                      <TableCell>
+                        <Badge variant="secondary">{event.name}</Badge>
+                      </TableCell>
+                      <TableCell className="font-semibold">{event.count}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Top pages (30 jours)</CardTitle>
+              <CardDescription>Écrans les plus consultés</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Page</TableHead>
+                    <TableHead>Vues</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {data.topPaths.map((row) => (
+                    <TableRow key={row.path}>
+                      <TableCell className="font-mono text-xs">{row.path}</TableCell>
+                      <TableCell className="font-semibold">{row.count}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
         </div>

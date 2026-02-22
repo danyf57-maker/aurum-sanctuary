@@ -146,6 +146,24 @@ export async function GET() {
       if (row) row.users += 1;
     }
 
+    const eventCountMap = new Map<string, number>();
+    const pathCountMap = new Map<string, number>();
+    for (const event of events) {
+      eventCountMap.set(event.name, (eventCountMap.get(event.name) || 0) + 1);
+      const path = event.path || "(inconnu)";
+      pathCountMap.set(path, (pathCountMap.get(path) || 0) + 1);
+    }
+
+    const topEvents = Array.from(eventCountMap.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 12)
+      .map(([name, count]) => ({ name, count }));
+
+    const topPaths = Array.from(pathCountMap.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 12)
+      .map(([path, count]) => ({ path, count }));
+
     const leadScores = new Map<
       string,
       {
@@ -224,6 +242,8 @@ export async function GET() {
         signupWithQuiz: signupWithQuizMonthly,
       },
       chart: Array.from(chartByDate.values()),
+      topEvents,
+      topPaths,
       recentEvents,
       topLeads,
     });

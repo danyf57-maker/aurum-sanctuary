@@ -1,4 +1,6 @@
 export const TRACKED_EVENTS = [
+  "page_view",
+  "ui_click",
   "cta_click",
   "quiz_started",
   "quiz_step_completed",
@@ -24,6 +26,8 @@ export type TrackEventPayload = {
 };
 
 export const LEAD_SCORE_WEIGHTS: Record<TrackedEventName, number> = {
+  page_view: 1,
+  ui_click: 1,
   cta_click: 5,
   quiz_started: 5,
   quiz_step_completed: 3,
