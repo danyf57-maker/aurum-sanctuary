@@ -85,11 +85,11 @@ export function renderOnboardingEmail(input: TemplateInput): EmailTemplateResult
       ctaUrl: writeUrl,
     },
     email_3: {
-      subject: "Ton calme se construit mot après mot",
-      preheader: "Écrire un peu, régulièrement, change la suite.",
-      body: `Salut ${name},<br/><br/>Écrire, c'est remettre de l'ordre dans ce qui tourne en boucle.<br/><br/>Tu peux reprendre là où tu t'es arrêté et voir ton chemin dans Magazine.`,
-      ctaLabel: "Voir mon Magazine",
-      ctaUrl: magazineUrl,
+      subject: "Ce n'est pas juste un journal...",
+      preheader: "Un dialogue silencieux, mais puissant.",
+      body: `Salut ${name},<br/><br/>Cela fait maintenant trois jours que tu as rejoint Aurum Diary. J&apos;espère que tu commences à y trouver un espace qui te ressemble.<br/><br/>En créant cet outil, j&apos;ai beaucoup lu sur l&apos;impact du journaling. Une chose m&apos;a marqué : ce n&apos;est pas seulement un endroit pour &quot;vider son sac&quot;. C&apos;est un espace pour se rencontrer soi-même. Un dialogue silencieux, mais puissant.<br/><br/>Beaucoup d&apos;utilisateurs me disent qu&apos;au début, ils ne savent pas quoi écrire, puis un jour, une prise de conscience émerge au fil des mots.<br/><br/>Cela m&apos;a amené à une question que je trouve particulièrement utile pour ce genre de découverte. Aujourd&apos;hui, je te la propose :<br/><br/><strong>&quot;Quelle est une chose que j&apos;ai apprise sur moi-même récemment ?&quot;</strong><br/><br/>Prends quelques minutes pour y réfléchir. Il n&apos;y a pas de bonne ou de mauvaise réponse, juste ta vérité du moment.<br/><br/>Continue ce dialogue avec toi-même. C&apos;est le plus important.<br/><br/>Daniel`,
+      ctaLabel: "Explorer cette question",
+      ctaUrl: writeUrl,
     },
     email_4: {
       subject: "Déjà 1 semaine avec Aurum",
