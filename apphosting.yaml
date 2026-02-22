@@ -54,3 +54,37 @@ env:
     availability:
       - BUILD
       - RUNTIME
+  - variable: NEXT_PUBLIC_APP_URL
+    value: https://aurumdiary.com
+    availability:
+      - BUILD
+      - RUNTIME
+  # Onboarding emails
+  - variable: RESEND_API_KEY
+    secret: RESEND_API_KEY
+    availability:
+      - RUNTIME
+  - variable: ONBOARDING_EMAILS_ENABLED
+    secret: ONBOARDING_EMAILS_ENABLED
+    availability:
+      - RUNTIME
+  - variable: ONBOARDING_FROM_EMAIL
+    secret: ONBOARDING_FROM_EMAIL
+    availability:
+      - RUNTIME
+  - variable: ONBOARDING_REPLY_TO
+    secret: ONBOARDING_REPLY_TO
+    availability:
+      - RUNTIME
+  - variable: ONBOARDING_EMAIL_SECRET
+    secret: ONBOARDING_EMAIL_SECRET
+    availability:
+      - RUNTIME
+  - variable: ONBOARDING_RUN_SECRET
+    secret: ONBOARDING_RUN_SECRET
+    availability:
+      - RUNTIME
+  - variable: ONBOARDING_BOUNCE_SECRET
+    secret: ONBOARDING_BOUNCE_SECRET
+    availability:
+      - RUNTIME
