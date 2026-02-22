@@ -31,12 +31,17 @@ function hoursSince(dateIso?: string | null) {
 
 function pickNextEmail(
   state: OnboardingState,
+  createdAt: Date | null,
   entryCount: number,
   subscriptionStatus: string
 ): OnboardingEmailId | null {
   const sent = state.sent || {};
+  const hoursSinceSignup = createdAt
+    ? (Date.now() - createdAt.getTime()) / (1000 * 60 * 60)
+    : Number.POSITIVE_INFINITY;
 
-  if (!sent.email_1) return "email_1";
+  // Email #1: ~15 minutes after signup
+  if (!sent.email_1 && hoursSinceSignup >= 0.25) return "email_1";
   if (!sent.email_2 && hoursSince(sent.email_1) >= 24 && entryCount === 0) return "email_2";
   if (!sent.email_3 && hoursSince(sent.email_2) >= 48 && !PAID_STATUSES.has(subscriptionStatus)) return "email_3";
   if (!sent.email_4 && hoursSince(sent.email_3) >= 96 && !PAID_STATUSES.has(subscriptionStatus)) return "email_4";
@@ -70,6 +75,7 @@ export async function runOnboardingSequence() {
     const subscriptionStatus = String(data.subscriptionStatus || "free");
     const entryCount = Number(data.entryCount || 0);
     const firstName = String(data.displayName || email.split("@")[0] || "toi");
+    const createdAt = asDate(data.createdAt);
 
     const prefsRef = db.collection("users").doc(userId).collection("settings").doc("preferences");
     const stateRef = db.collection("users").doc(userId).collection("onboarding").doc("state");
@@ -95,7 +101,12 @@ export async function runOnboardingSequence() {
       continue;
     }
 
-    const nextEmail = pickNextEmail(stateData, entryCount, subscriptionStatus);
+    const nextEmail = pickNextEmail(
+      stateData,
+      createdAt,
+      entryCount,
+      subscriptionStatus
+    );
     if (!nextEmail) {
       skipped += 1;
       continue;
@@ -168,4 +179,3 @@ export async function runOnboardingSequence() {
     skipped,
   };
 }
-

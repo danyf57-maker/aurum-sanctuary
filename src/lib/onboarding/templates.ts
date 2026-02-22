@@ -71,10 +71,10 @@ export function renderOnboardingEmail(input: TemplateInput): EmailTemplateResult
 
   const contentByEmail: Record<OnboardingEmailId, { subject: string; preheader: string; body: string; ctaLabel: string; ctaUrl: string }> = {
     email_1: {
-      subject: "Bienvenue sur Aurum, ton espace est prêt",
-      preheader: "Ton premier pas prend moins de 2 minutes.",
-      body: `Salut ${name},<br/><br/>Bienvenue dans Aurum. Quand ta tête est pleine, écris ici pour remettre tes idées dans l'ordre.<br/><br/>Commence par une mini page: un fait, une émotion, un besoin.`,
-      ctaLabel: "Écrire ma première page",
+      subject: `Bienvenue dans Aurum Diary, ${name} !`,
+      preheader: "Un premier pas simple pour commencer ton journaling.",
+      body: `Salut ${name},<br/><br/>Et bienvenue dans Aurum Diary ! Je suis Daniel, le créateur de l&apos;application.<br/><br/>Je suis ravi de te compter parmi nous. Si tu es là, c&apos;est probablement que tu cherches à mettre plus de clarté dans tes pensées, et tu as fait le premier pas dans la bonne direction.<br/><br/>La plupart des gens abandonnent le journaling parce qu&apos;ils ne savent pas par où commencer. Mon conseil : ne te mets pas la pression.<br/><br/>Pour ta toute première entrée, écris simplement une phrase. Une seule. Sur ce que tu ressens, là, maintenant.<br/><br/>À très vite,<br/>Daniel`,
+      ctaLabel: "Écrire ma première entrée",
       ctaUrl: writeUrl,
     },
     email_2: {
@@ -111,6 +111,8 @@ export function renderOnboardingEmail(input: TemplateInput): EmailTemplateResult
         <td align="center">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#ffffff;border:1px solid #ede9e1;border-radius:16px;padding:28px;">
             <tr><td style="font-size:28px;font-weight:700;font-family:Georgia,serif;color:#1c1917;">Aurum</td></tr>
+            <tr><td style="height:10px;"></td></tr>
+            <tr><td style="height:2px;background:#D4AF37;border-radius:999px;"></td></tr>
             <tr><td style="height:16px;"></td></tr>
             <tr><td style="font-size:16px;line-height:1.6;color:#292524;">${selected.body}</td></tr>
             <tr><td style="height:24px;"></td></tr>
@@ -148,4 +150,3 @@ export function renderOnboardingEmail(input: TemplateInput): EmailTemplateResult
     text,
   };
 }
-
