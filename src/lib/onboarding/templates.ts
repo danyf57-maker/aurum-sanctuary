@@ -92,10 +92,10 @@ export function renderOnboardingEmail(input: TemplateInput): EmailTemplateResult
       ctaUrl: writeUrl,
     },
     email_4: {
-      subject: "Déjà 1 semaine avec Aurum",
-      preheader: "On continue avec une routine simple et utile.",
-      body: `Salut ${name},<br/><br/>Bravo pour cette première semaine. Même de petites pages régulières créent de vrais repères.<br/><br/>Objectif simple: garder ton rythme, une page à la fois.`,
-      ctaLabel: "Reprendre mon rythme",
+      subject: `Déjà une semaine, ${name} !`,
+      preheader: "Célébrer ce premier jalon et continuer ton rythme.",
+      body: `Salut ${name},<br/><br/>Félicitations ! Cela fait maintenant 7 jours que tu as commencé ton journal avec Aurum Diary.<br/><br/>Que tu aies écrit tous les jours ou juste une seule fois, le plus important est fait : tu as ouvert la porte à un dialogue avec toi-même. C&apos;est le pas le plus difficile, et tu l&apos;as franchi.<br/><br/>La suite de l&apos;aventure est encore plus intéressante. En continuant, tu ne vas pas seulement accumuler des souvenirs. Tu vas commencer à voir des schémas se dessiner, à comprendre tes humeurs, à découvrir ce qui te donne de l&apos;énergie et ce qui t&apos;en prend.<br/><br/>Plus tard, tu découvriras comment Aurum Diary peut t&apos;aider avec des analyses plus poussées pour accélérer cette découverte. Mais pour l&apos;instant, l&apos;essentiel est de continuer à écrire, même juste une ligne.<br/><br/>Pour marquer cette première semaine, quelle est ta pensée du jour ?<br/><br/>Fier de ton parcours jusqu&apos;ici.<br/><br/>Daniel`,
+      ctaLabel: "Écrire ma pensée du jour",
       ctaUrl: writeUrl,
     },
   };
