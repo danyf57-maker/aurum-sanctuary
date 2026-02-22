@@ -6,10 +6,11 @@ import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Users, BookOpen, MessageCircle, TrendingUp, Filter } from 'lucide-react';
+import { Users, BookOpen, MessageCircle, TrendingUp, Filter, Download } from 'lucide-react';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { CartesianGrid, XAxis, YAxis, Line, ResponsiveContainer, LineChart } from 'recharts';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
 
 export const dynamic = 'force-dynamic';
 
@@ -79,6 +80,35 @@ function pct(numerator: number, denominator: number) {
   return Math.round((numerator / denominator) * 100);
 }
 
+function escapeCsvValue(value: unknown) {
+  const text = String(value ?? '');
+  const escaped = text.replace(/"/g, '""');
+  return `"${escaped}"`;
+}
+
+function toCsv<T extends Record<string, unknown>>(rows: T[]) {
+  if (!rows.length) return '';
+  const headers = Object.keys(rows[0]);
+  const headerLine = headers.map(escapeCsvValue).join(',');
+  const bodyLines = rows.map((row) =>
+    headers.map((header) => escapeCsvValue(row[header])).join(',')
+  );
+  return [headerLine, ...bodyLines].join('\n');
+}
+
+function downloadCsv(filename: string, csv: string) {
+  if (!csv) return;
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', filename);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
 export default function AdminDashboard() {
   const { user, loading } = useAuth();
   const router = useRouter();
@@ -124,6 +154,77 @@ export default function AdminDashboard() {
         <header className="mb-8">
           <h1 className="text-3xl font-bold tracking-tight">Tableau de Bord Administrateur</h1>
           <p className="text-muted-foreground">Données réelles: acquisition, activation et conversion.</p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                const csv = toCsv(
+                  data.recentEvents.map((event) => ({
+                    event: event.name,
+                    user: event.user,
+                    date: event.date,
+                    details: event.details,
+                  }))
+                );
+                downloadCsv('aurum_recent_events.csv', csv);
+              }}
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Export événements
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                const csv = toCsv(
+                  data.topEvents.map((event) => ({
+                    event: event.name,
+                    count: event.count,
+                  }))
+                );
+                downloadCsv('aurum_top_events.csv', csv);
+              }}
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Export top événements
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                const csv = toCsv(
+                  data.topPaths.map((row) => ({
+                    path: row.path,
+                    views: row.count,
+                  }))
+                );
+                downloadCsv('aurum_top_pages.csv', csv);
+              }}
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Export top pages
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                const csv = toCsv(
+                  data.topLeads.map((lead) => ({
+                    lead_id: lead.leadId,
+                    email: lead.userEmail || '',
+                    score: lead.score,
+                    segment: lead.segment,
+                    last_activity_at: lead.lastActivityAt,
+                  }))
+                );
+                downloadCsv('aurum_top_leads.csv', csv);
+              }}
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Export leads
+            </Button>
+          </div>
         </header>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
