@@ -422,6 +422,53 @@ export default function Home() {
     return (
         <main>
             <HeroIntegrated />
+            <section id="use-cases-seo" className="py-20 md:py-24 bg-white border-y border-stone-200/70">
+                <div className="container">
+                    <div className="max-w-3xl mx-auto text-center mb-12">
+                        <h2 className="text-3xl md:text-5xl font-headline text-stone-900 mb-4">
+                            Pourquoi utiliser un journal intime sécurisé ?
+                        </h2>
+                        <p className="text-stone-600 font-light text-lg">
+                            Un espace simple pour déposer ce que tu ressens et retrouver de l&apos;air mental.
+                        </p>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <article className="rounded-2xl border border-stone-200 bg-stone-50/60 p-6">
+                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Vider sa tête avant de dormir</h3>
+                            <p className="text-stone-600 font-light leading-relaxed mb-4">
+                                L&apos;agitation nocturne vient souvent des pensées qui tournent en boucle.
+                                Faire un brain-dump sur Aurum t&apos;aide à relâcher la pression avant de te coucher.
+                                Tes mots sont chiffrés et restent privés.
+                            </p>
+                            <Link href="/sanctuary/write" className="text-primary font-medium hover:underline">
+                                Apaiser mes nuits →
+                            </Link>
+                        </article>
+
+                        <article className="rounded-2xl border border-stone-200 bg-stone-50/60 p-6">
+                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Soulager l&apos;anxiété et la pression</h3>
+                            <p className="text-stone-600 font-light leading-relaxed mb-4">
+                                La charge mentale s&apos;accumule vite au quotidien.
+                                Écrire dans un espace anonyme agit comme une soupape efficace pour arrêter de trop penser.
+                            </p>
+                            <Link href="/sanctuary/write" className="text-primary font-medium hover:underline">
+                                Relâcher la pression →
+                            </Link>
+                        </article>
+
+                        <article className="rounded-2xl border border-stone-200 bg-stone-50/60 p-6">
+                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Un sanctuaire mental anti-distraction</h3>
+                            <p className="text-stone-600 font-light leading-relaxed mb-4">
+                                Loin des réseaux sociaux qui nourrissent le stress, Aurum reste minimaliste:
+                                pas de feed, pas de notifications, juste toi et tes pensées en sécurité.
+                            </p>
+                            <Link href="/sanctuary/write" className="text-primary font-medium hover:underline">
+                                Commencer à écrire →
+                            </Link>
+                        </article>
+                    </div>
+                </div>
+            </section>
 
             <div id="sanctuary-content" className="bg-background text-foreground">
                 {/* SECTION 1: Problem */}

@@ -7,43 +7,29 @@ import { Button } from "@/components/ui/button";
 const HeroIntegrated = () => {
   const placeholders = useMemo(
     () => [
-      "Une intuition...",
-      "Une petite victoire...",
-      "Un rêve au réveil...",
-      "Ce qui vous pèse...",
-      "Une gratitude...",
+      "Je n'arrive pas à dormir, mon cerveau tourne en boucle sur la réunion de demain...",
+      "Je me sens complètement submergé par ma liste de tâches aujourd'hui...",
+      "J'ai juste besoin de vider ma tête avant d'exploser...",
     ],
     []
   );
   const rotatingQuotes = useMemo(
     () => [
       {
-        hint: "Étape 1: écris juste ce qu'il se passe maintenant.",
-        detail: "Exemple: 'J'ai la tête pleine avant ma réunion.'",
+        hint: "Couche tes pensées. Apaise ton esprit avant de dormir.",
+        detail: "Écris simplement ce que tu as en tête, sans filtre.",
         quote: "Écrire, c'est une façon de parler sans être interrompu.",
         author: "Jules Renard",
       },
       {
-        hint: "Étape 2: nomme l'émotion que tu ressens.",
-        detail: "Exemple: 'Je me sens tendu et un peu perdu.'",
-        quote: "Écrire, c'est aussi ne pas parler. C'est se taire. C'est hurler sans bruit.",
-        author: "Marguerite Duras",
-      },
-      {
-        hint: "Étape 3: ajoute ce dont tu as besoin tout de suite.",
-        detail: "Exemple: 'J'ai besoin de 10 minutes de calme.'",
-        quote: "Je n'écris pas pour dire que je suis forte, j'écris pour le devenir.",
-        author: "Marie Cardinal",
-      },
-      {
-        hint: "Tu peux écrire en phrases très courtes.",
-        detail: "Même 3 lignes suffisent pour remettre de l'ordre.",
+        hint: "Un espace chiffré où tu peux tout déposer, sans filtre.",
+        detail: "Tu restes le seul à lire ce que tu écris.",
         quote: "Le papier est plus patient que les hommes.",
         author: "Anne Frank",
       },
       {
-        hint: "N'essaie pas d'être parfait, essaie d'être vrai.",
-        detail: "Plus c'est simple, plus ton esprit se calme vite.",
+        hint: "L'écriture, c'est le bouton pause de ton mental.",
+        detail: "Même quelques lignes peuvent déjà t'apaiser.",
         quote: "J'écris pour savoir ce que je pense.",
         author: "Joan Didion",
       },
