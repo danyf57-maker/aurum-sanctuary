@@ -128,6 +128,28 @@ export async function runOnboardingSequence() {
       continue;
     }
 
+    const outboxRef = db
+      .collection("users")
+      .doc(userId)
+      .collection("onboarding")
+      .doc(`outbox_${nextEmail}`);
+
+    // Verrou atomique anti-doublon: une seule creation possible par user+emailId
+    try {
+      await outboxRef.create({
+        emailId: nextEmail,
+        status: "sending",
+        createdAt: Timestamp.now(),
+      });
+    } catch (lockError: any) {
+      const code = String(lockError?.code || "");
+      if (code === "6" || code === "already-exists" || code === "ALREADY_EXISTS") {
+        skipped += 1;
+        continue;
+      }
+      throw lockError;
+    }
+
     const content = renderOnboardingEmail({
       emailId: nextEmail,
       firstName,
@@ -156,6 +178,14 @@ export async function runOnboardingSequence() {
         },
         { merge: true }
       );
+      await outboxRef.set(
+        {
+          status: "sent",
+          sentAt: Timestamp.now(),
+          updatedAt: Timestamp.now(),
+        },
+        { merge: true }
+      );
 
       await trackServerEvent("onboarding_email_sent", {
         userId,
@@ -177,6 +207,8 @@ export async function runOnboardingSequence() {
         },
         { merge: true }
       );
+      // En cas d'echec d'envoi, on libere le verrou pour permettre une relance ulterieure.
+      await outboxRef.delete().catch(() => null);
       skipped += 1;
     }
   }
