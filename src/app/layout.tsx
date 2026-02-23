@@ -33,8 +33,8 @@ const dawning = Dawning_of_a_New_Day({
 });
 
 export const metadata: Metadata = {
-  title: 'Aurum – Journal Intime en Ligne & Application de Journaling | Bien-être Mental',
-  description: 'Aurum est l\'application de journaling pour gérer votre charge mentale, comprendre vos émotions et réduire le stress. Journal intime en ligne 100% chiffré. Essayez gratuitement.',
+  title: 'Aurum Diary | Journal intime chiffré pour vider ta tête et apaiser ton esprit',
+  description: 'Quand ta tête tourne en boucle, écris ici. Aurum Diary est un journal intime en ligne 100% chiffré pour soulager ta charge mentale, calmer l\'overthinking et retrouver de la clarté.',
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
@@ -42,16 +42,16 @@ export const metadata: Metadata = {
     title: "Aurum",
   },
   openGraph: {
-    title: 'Aurum – Journal Intime en Ligne & Application de Journaling | Bien-être Mental',
-    description: 'Aurum est l\'application de journaling pour gérer votre charge mentale, comprendre vos émotions et réduire le stress. Journal intime en ligne 100% chiffré. Essayez gratuitement.',
+    title: 'Aurum Diary | Journal intime chiffré pour vider ta tête',
+    description: 'Quand ta tête tourne en boucle, écris ici. Un journal intime 100% chiffré pour relâcher la pression et retrouver de la clarté.',
     url: 'https://aurumdiary.com',
-    siteName: 'Aurum Sanctuary',
+    siteName: 'Aurum Diary',
     images: [
       {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Aurum Sanctuary Banner',
+        alt: 'Aurum Diary',
       },
     ],
     locale: 'fr_FR',
@@ -59,8 +59,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Aurum – Journal Intime en Ligne & Application de Journaling | Bien-être Mental',
-    description: 'Aurum est l\'application de journaling pour gérer votre charge mentale, comprendre vos émotions et réduire le stress. Journal intime en ligne 100% chiffré. Essayez gratuitement.',
+    title: 'Aurum Diary | Journal intime chiffré pour vider ta tête',
+    description: 'Écris pour relâcher ta charge mentale. Journal intime en ligne 100% chiffré.',
     images: ['/og-image.png'],
   },
   alternates: {
@@ -86,6 +86,8 @@ export default function RootLayout({
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
     name: 'Aurum',
+    description:
+      "Journal intime en ligne 100% chiffré pour relâcher la charge mentale, calmer l'overthinking et retrouver de la clarté.",
     applicationCategory: ['HealthApplication', 'LifestyleApplication'],
     operatingSystem: 'Web, iOS, Android',
     offers: {
