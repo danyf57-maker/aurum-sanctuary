@@ -32,6 +32,7 @@ function hoursSince(dateIso?: string | null) {
 function pickNextEmail(
   state: OnboardingState,
   createdAt: Date | null,
+  firstEntryAt: Date | null,
   entryCount: number,
   subscriptionStatus: string
 ): OnboardingEmailId | null {
@@ -42,9 +43,22 @@ function pickNextEmail(
 
   // Email #1: ~15 minutes after signup
   if (!sent.email_1 && hoursSinceSignup >= 0.25) return "email_1";
-  if (!sent.email_2 && hoursSince(sent.email_1) >= 24 && entryCount === 0) return "email_2";
-  if (!sent.email_3 && hoursSince(sent.email_2) >= 48 && !PAID_STATUSES.has(subscriptionStatus)) return "email_3";
-  if (!sent.email_4 && hoursSince(sent.email_3) >= 96 && !PAID_STATUSES.has(subscriptionStatus)) return "email_4";
+
+  // Branche A: utilisateur n'a pas commence a ecrire
+  if (entryCount === 0) {
+    if (!sent.email_2 && hoursSince(sent.email_1) >= 24) return "email_2";
+    if (!sent.email_3 && hoursSince(sent.email_2) >= 48 && !PAID_STATUSES.has(subscriptionStatus)) return "email_3";
+    if (!sent.email_4 && hoursSince(sent.email_3) >= 96 && !PAID_STATUSES.has(subscriptionStatus)) return "email_4";
+    return null;
+  }
+
+  // Branche B: utilisateur a deja commence a ecrire
+  const hoursSinceFirstEntry = firstEntryAt
+    ? (Date.now() - firstEntryAt.getTime()) / (1000 * 60 * 60)
+    : Number.POSITIVE_INFINITY;
+  if (!sent.habit_email_1 && hoursSince(sent.email_1) >= 24 && hoursSinceFirstEntry >= 24) return "habit_email_1";
+  if (!sent.habit_email_2 && hoursSince(sent.habit_email_1) >= 72 && !PAID_STATUSES.has(subscriptionStatus))
+    return "habit_email_2";
 
   return null;
 }
@@ -74,6 +88,7 @@ export async function runOnboardingSequence() {
 
     const subscriptionStatus = String(data.subscriptionStatus || "free");
     const entryCount = Number(data.entryCount || 0);
+    const firstEntryAt = asDate(data.firstEntryAt);
     const firstName = String(data.displayName || email.split("@")[0] || "toi");
     const createdAt = asDate(data.createdAt);
 
@@ -104,6 +119,7 @@ export async function runOnboardingSequence() {
     const nextEmail = pickNextEmail(
       stateData,
       createdAt,
+      firstEntryAt,
       entryCount,
       subscriptionStatus
     );

@@ -1,6 +1,12 @@
 import type { DocumentReference, Timestamp } from "firebase-admin/firestore";
 
-export type OnboardingEmailId = "email_1" | "email_2" | "email_3" | "email_4";
+export type OnboardingEmailId =
+  | "email_1"
+  | "email_2"
+  | "email_3"
+  | "email_4"
+  | "habit_email_1"
+  | "habit_email_2";
 
 export type OnboardingUser = {
   id: string;
@@ -29,4 +35,3 @@ export type EmailTemplateResult = {
   html: string;
   text: string;
 };
-

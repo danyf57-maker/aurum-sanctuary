@@ -307,6 +307,7 @@ export async function saveJournalEntry(
     await userDocRef.set({
       entryCount: entryCount + 1,
       email: userEmail || null,
+      firstEntryAt: isFirstEntry ? Timestamp.now() : (userData?.firstEntryAt || null),
       updatedAt: Timestamp.now(),
     }, { merge: true });
 

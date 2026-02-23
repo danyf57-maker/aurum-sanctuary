@@ -98,6 +98,20 @@ export function renderOnboardingEmail(input: TemplateInput): EmailTemplateResult
       ctaLabel: "Écrire ma pensée du jour",
       ctaUrl: writeUrl,
     },
+    habit_email_1: {
+      subject: "Tu as commencé: bravo pour ce premier pas",
+      preheader: "Le plus difficile est fait: garder un rythme simple et realiste.",
+      body: `Salut ${name},<br/><br/>Tu as deja commencé à écrire, et c&apos;est excellent.<br/><br/>La clé maintenant, ce n&apos;est pas d&apos;écrire longtemps. C&apos;est d&apos;écrire régulièrement, même quelques lignes.<br/><br/>Voici une mini-structure qui marche bien :<br/>1) Un fait de ta journée<br/>2) Une émotion que tu ressens<br/>3) Un besoin pour demain<br/><br/>En 3 minutes, tu peux clarifier beaucoup de choses.<br/><br/>Continue comme ça.<br/><br/>Daniel`,
+      ctaLabel: "Continuer mon écriture",
+      ctaUrl: writeUrl,
+    },
+    habit_email_2: {
+      subject: "Ton rythme se construit, une ligne apres l'autre",
+      preheader: "Transforme ton ecriture en routine simple et utile.",
+      body: `Salut ${name},<br/><br/>Quand on écrit un peu chaque semaine, on commence à voir des repères : ce qui te vide, ce qui te recharge, ce qui revient souvent.<br/><br/>Pas besoin de performance. Une phrase utile vaut mieux qu&apos;une page parfaite.<br/><br/>Si tu veux un prompt tout prêt aujourd&apos;hui :<br/><strong>&quot;Qu&apos;est-ce qui m&apos;a pris de l&apos;énergie, et qu&apos;est-ce qui m&apos;en a redonné ?&quot;</strong><br/><br/>Tu avances dans la bonne direction.<br/><br/>Daniel`,
+      ctaLabel: "Écrire 3 minutes",
+      ctaUrl: writeUrl,
+    },
   };
 
   const selected = contentByEmail[input.emailId];
