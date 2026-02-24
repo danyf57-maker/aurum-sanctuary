@@ -410,12 +410,24 @@ export default function Home() {
             answer: "Personne. Nous utilisons une architecture 'Admin-Blind' avec chiffrement AES-256 côté client. Tes entrées sont chiffrées avec ta clé privée avant d'être envoyées. Techniquement, même avec un accès total à nos serveurs, il est impossible de déchiffrer tes écrits sans ton mot de passe."
         },
         {
-            question: "Comment Aurum aide à la santé mentale ?",
-            answer: "Aurum est un outil d'introspection, pas un substitut à une thérapie. Il t'offre un espace sécurisé pour extérioriser tes pensées et t'aide à identifier des schémas émotionnels. Cet acte d'écriture et de réflexion peut être une composante bénéfique d'une bonne hygiène mentale."
+            question: "Comment vider ma tête avant de dormir ?",
+            answer: "Écris 3 lignes: ce qui te pèse, ce que tu ressens, puis ce dont tu as besoin demain. Le but n'est pas d'écrire longtemps, mais de sortir les pensées qui tournent en boucle pour apaiser ton esprit."
+        },
+        {
+            question: "Comment réduire la charge mentale en 5 minutes ?",
+            answer: "Pose un minuteur 5 minutes et écris sans corriger: faits, émotions, besoins. Cette routine courte t'aide à relâcher la pression et à retrouver de la clarté, même pendant une journée chargée."
+        },
+        {
+            question: "Comment arrêter de trop penser (overthinking) ?",
+            answer: "Quand tout tourne dans ta tête, écris une idée par ligne. Cela transforme un flot confus en liste concrète. Ensuite, choisis une seule petite action à faire aujourd'hui."
+        },
+        {
+            question: "Est-ce que l'écriture aide vraiment quand on est stressé ?",
+            answer: "Les études montrent que l'écriture régulière peut améliorer le bien-être psychologique et réduire certains symptômes liés au stress et à l'anxiété. Ce n'est pas magique, mais c'est un outil simple, accessible et utile."
         },
         {
             question: "Est-ce gratuit ?",
-            answer: "Oui, Aurum propose une offre gratuite généreuse pour te permettre de commencer ton voyage. Des plans payants sont disponibles pour celles et ceux qui souhaitent un usage plus intensif et des fonctionnalités avancées, ce qui nous permet de maintenir et d'améliorer le service en toute indépendance."
+            answer: "Oui, tu peux commencer gratuitement. Des plans payants existent si tu veux aller plus loin avec des fonctionnalités avancées."
         }
     ];
 
@@ -426,19 +438,18 @@ export default function Home() {
                 <div className="container">
                     <div className="max-w-3xl mx-auto text-center mb-12">
                         <h2 className="text-3xl md:text-5xl font-headline text-stone-900 mb-4">
-                            Pourquoi utiliser un journal intime sécurisé ?
+                            Douleurs fréquentes : comment l&apos;écriture peut vraiment aider
                         </h2>
                         <p className="text-stone-600 font-light text-lg">
-                            Un espace simple pour déposer ce que tu ressens et retrouver de l&apos;air mental.
+                            Des exemples concrets, simples, pour relâcher la pression quand ta tête est pleine.
                         </p>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                         <article className="rounded-2xl border border-stone-200 bg-stone-50/60 p-6">
-                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Vider sa tête avant de dormir</h3>
+                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Douleur: mon cerveau tourne la nuit</h3>
                             <p className="text-stone-600 font-light leading-relaxed mb-4">
-                                L&apos;agitation nocturne vient souvent des pensées qui tournent en boucle.
-                                Faire un brain-dump sur Aurum t&apos;aide à relâcher la pression avant de te coucher.
-                                Tes mots sont chiffrés et restent privés.
+                                Écrire ce qui tourne en boucle aide à le sortir de ta tête. En pratique:
+                                3 lignes avant de dormir (fait, émotion, besoin) peuvent déjà t&apos;apaiser.
                             </p>
                             <Link href="/sanctuary/write" className="text-primary font-medium hover:underline">
                                 Apaiser mes nuits →
@@ -446,10 +457,32 @@ export default function Home() {
                         </article>
 
                         <article className="rounded-2xl border border-stone-200 bg-stone-50/60 p-6">
-                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Soulager l&apos;anxiété et la pression</h3>
+                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Douleur: je me parle mal</h3>
                             <p className="text-stone-600 font-light leading-relaxed mb-4">
-                                La charge mentale s&apos;accumule vite au quotidien.
-                                Écrire dans un espace anonyme agit comme une soupape efficace pour arrêter de trop penser.
+                                Quand la petite voix dit &quot;je suis nul&quot;, écris une version plus juste:
+                                &quot;j&apos;avance petit à petit&quot;. Ce réflexe de self-talk positif aide à retrouver de l&apos;élan.
+                            </p>
+                            <Link href="/sanctuary/write" className="text-primary font-medium hover:underline">
+                                Reprendre confiance →
+                            </Link>
+                        </article>
+
+                        <article className="rounded-2xl border border-stone-200 bg-stone-50/60 p-6">
+                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Douleur: tout est confus</h3>
+                            <p className="text-stone-600 font-light leading-relaxed mb-4">
+                                Écris une idée par ligne. Tu transformes le chaos mental en points clairs.
+                                Puis choisis un seul petit pas à faire aujourd&apos;hui.
+                            </p>
+                            <Link href="/sanctuary/write" className="text-primary font-medium hover:underline">
+                                Retrouver de la clarté →
+                            </Link>
+                        </article>
+
+                        <article className="rounded-2xl border border-stone-200 bg-stone-50/60 p-6">
+                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Douleur: je garde tout, puis j&apos;explose</h3>
+                            <p className="text-stone-600 font-light leading-relaxed mb-4">
+                                Quelques lignes régulières valent mieux qu&apos;une longue session rare.
+                                Tu décompresses avant saturation et tu retrouves plus de calme au quotidien.
                             </p>
                             <Link href="/sanctuary/write" className="text-primary font-medium hover:underline">
                                 Relâcher la pression →
@@ -457,16 +490,26 @@ export default function Home() {
                         </article>
 
                         <article className="rounded-2xl border border-stone-200 bg-stone-50/60 p-6">
-                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Un sanctuaire mental anti-distraction</h3>
+                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Douleur: je ne sais pas par où commencer</h3>
                             <p className="text-stone-600 font-light leading-relaxed mb-4">
-                                Loin des réseaux sociaux qui nourrissent le stress, Aurum reste minimaliste:
-                                pas de feed, pas de notifications, juste toi et tes pensées en sécurité.
+                                Règle ultra simple: commence par un fait, une émotion, un besoin.
+                                C&apos;est assez pour démarrer sans pression, même quand tu n&apos;as que 2 minutes.
                             </p>
                             <Link href="/sanctuary/write" className="text-primary font-medium hover:underline">
-                                Commencer à écrire →
+                                Commencer maintenant →
                             </Link>
                         </article>
                     </div>
+                    <p className="mt-8 text-xs text-stone-500 text-center font-light">
+                        Basé sur des recherches récentes sur l&apos;écriture et le bien-être psychologique
+                        <sup>
+                            <a href="#ref3" aria-label="Voir référence 3" className="no-underline"> 3</a>
+                        </sup>
+                        <sup>
+                            <a href="#ref4" aria-label="Voir référence 4" className="no-underline"> 4</a>
+                        </sup>
+                        .
+                    </p>
                 </div>
             </section>
 
@@ -628,6 +671,12 @@ export default function Home() {
                             </li>
                             <li id="ref2">
                                 <strong>**</strong> Spera, S. P., Buhrfeind, E. D., & Pennebaker, J. W. (1994). <em>Expressive writing and coping with job loss.</em> Academy of Management Journal, 37, 722-733.
+                            </li>
+                            <li id="ref3">
+                                <strong>3</strong> Sohal, M., Singh, P., Dhillon, B. S., & Gill, H. S. (2022). <em>Efficacy of journaling in the management of mental illness: a systematic review and meta-analysis.</em> Family Medicine and Community Health.
+                            </li>
+                            <li id="ref4">
+                                <strong>4</strong> Yosep, I., et al. (2025). <em>Positive self talk journaling intervention to improve psychological well-being among child and adolescents in juvenile.</em> Child and Adolescent Psychiatry and Mental Health.
                             </li>
                         </ul>
                     </div>
