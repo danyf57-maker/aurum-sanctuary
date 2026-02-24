@@ -12,6 +12,10 @@ const PAID_STATUSES = new Set(["active", "trialing"]);
 function asDate(value: unknown): Date | null {
   if (!value) return null;
   if (value instanceof Date) return value;
+  if (typeof value === "string") {
+    const d = new Date(value);
+    return Number.isNaN(d.getTime()) ? null : d;
+  }
   if (typeof value === "object" && value && "toDate" in value) {
     try {
       return (value as { toDate: () => Date }).toDate();
@@ -22,10 +26,9 @@ function asDate(value: unknown): Date | null {
   return null;
 }
 
-function hoursSince(dateIso?: string | null) {
-  if (!dateIso) return Number.POSITIVE_INFINITY;
-  const date = new Date(dateIso);
-  if (Number.isNaN(date.getTime())) return Number.POSITIVE_INFINITY;
+function hoursSince(value?: unknown) {
+  const date = asDate(value ?? null);
+  if (!date) return Number.POSITIVE_INFINITY;
   return (Date.now() - date.getTime()) / (1000 * 60 * 60);
 }
 

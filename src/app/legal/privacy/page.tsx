@@ -30,7 +30,7 @@ export default function PrivacyPolicyPage() {
           <p>
             <strong>Aurum Demo Project</strong><br />
             Adresse fictive : 123 Rue du Sanctuaire, 75001 Paris, France<br />
-            Email de contact : <a href="mailto:privacy@aurum.dev">privacy@aurum.dev</a>
+            Email de contact : <a href="mailto:contact@aurumdiary.com">contact@aurumdiary.com</a>
           </p>
 
           <h2>2. Données collectées et finalités</h2>
@@ -90,7 +90,7 @@ export default function PrivacyPolicyPage() {
             <li><strong>Droit à la limitation du traitement et Droit d'opposition.</strong></li>
           </ul>
           <p>
-            Vous pouvez exercer les droits d'accès, de portabilité et de suppression directement depuis votre page <Link href="/account/data">"Mes Données"</Link>. Pour tout autre droit, veuillez nous contacter à <a href="mailto:privacy@aurum.dev">privacy@aurum.dev</a>.
+            Vous pouvez exercer les droits d'accès, de portabilité et de suppression directement depuis votre page <Link href="/account/data">"Mes Données"</Link>. Pour tout autre droit, veuillez nous contacter à <a href="mailto:contact@aurumdiary.com">contact@aurumdiary.com</a>.
           </p>
 
           <h2>6. Sécurité des données</h2>
@@ -105,7 +105,7 @@ export default function PrivacyPolicyPage() {
 
            <h2>8. Délégué à la Protection des Données (DPO)</h2>
            <p>
-             Pour toute question relative à la protection de vos données, vous pouvez contacter notre Délégué à la Protection des Données (DPO) fictif à l'adresse suivante : <a href="mailto:dpo@aurum.dev">dpo@aurum.dev</a>.
+             Pour toute question relative à la protection de vos données, vous pouvez contacter notre Délégué à la Protection des Données (DPO) fictif à l'adresse suivante : <a href="mailto:contact@aurumdiary.com">contact@aurumdiary.com</a>.
            </p>
         </div>
       </div>

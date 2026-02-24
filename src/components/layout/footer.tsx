@@ -41,6 +41,7 @@ export function Footer() {
               <ul className="mt-4 space-y-2">
                 <li><Link href="/terms" className="text-sm text-muted-foreground hover:text-foreground">Conditions d'Utilisation</Link></li>
                 <li><Link href="/privacy" className="text-sm text-muted-foreground hover:text-foreground">Politique de Confidentialité</Link></li>
+                <li><a href="mailto:contact@aurumdiary.com" className="text-sm text-muted-foreground hover:text-foreground">contact@aurumdiary.com</a></li>
               </ul>
             </div>
             <div>
