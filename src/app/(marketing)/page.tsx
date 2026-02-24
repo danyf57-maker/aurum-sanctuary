@@ -410,20 +410,24 @@ export default function Home() {
             answer: "Personne. Nous utilisons une architecture 'Admin-Blind' avec chiffrement AES-256 côté client. Tes entrées sont chiffrées avec ta clé privée avant d'être envoyées. Techniquement, même avec un accès total à nos serveurs, il est impossible de déchiffrer tes écrits sans ton mot de passe."
         },
         {
-            question: "Comment vider ma tête avant de dormir ?",
-            answer: "Écris 3 lignes: ce qui te pèse, ce que tu ressens, puis ce dont tu as besoin demain. Le but n'est pas d'écrire longtemps, mais de sortir les pensées qui tournent en boucle pour apaiser ton esprit."
+            question: "Comment calmer l'anxiété la nuit et mieux dormir ?",
+            answer: "Écris 3 lignes avant de te coucher: ce qui te pèse, ce que tu ressens, puis ce dont tu as besoin demain. Le but est de sortir la rumination de ta tête pour apaiser ton esprit."
         },
         {
             question: "Comment réduire la charge mentale en 5 minutes ?",
             answer: "Pose un minuteur 5 minutes et écris sans corriger: faits, émotions, besoins. Cette routine courte t'aide à relâcher la pression et à retrouver de la clarté, même pendant une journée chargée."
         },
         {
-            question: "Comment arrêter de trop penser (overthinking) ?",
+            question: "Comment arrêter de trop penser (overthinking) rapidement ?",
             answer: "Quand tout tourne dans ta tête, écris une idée par ligne. Cela transforme un flot confus en liste concrète. Ensuite, choisis une seule petite action à faire aujourd'hui."
         },
         {
-            question: "Est-ce que l'écriture aide vraiment quand on est stressé ?",
+            question: "Est-ce que l'écriture aide vraiment contre le stress et l'anxiété ?",
             answer: "Les études montrent que l'écriture régulière peut améliorer le bien-être psychologique et réduire certains symptômes liés au stress et à l'anxiété. Ce n'est pas magique, mais c'est un outil simple, accessible et utile."
+        },
+        {
+            question: "Quel journal intime en ligne est vraiment privé ?",
+            answer: "Choisis un journal intime chiffré de bout en bout, sans publicité, où tes notes ne sont pas exposées publiquement. Sur Aurum, tu écris dans un espace privé conçu pour la clarté mentale."
         },
         {
             question: "Est-ce gratuit ?",
@@ -441,12 +445,12 @@ export default function Home() {
                             Douleurs fréquentes : comment l&apos;écriture peut vraiment aider
                         </h2>
                         <p className="text-stone-600 font-light text-lg">
-                            Des exemples concrets, simples, pour relâcher la pression quand ta tête est pleine.
+                            Des exemples concrets pour relâcher la charge mentale, calmer l&apos;anxiété et sortir de la rumination.
                         </p>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                         <article className="rounded-2xl border border-stone-200 bg-stone-50/60 p-6">
-                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Douleur: mon cerveau tourne la nuit</h3>
+                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Douleur: insomnie et pensées nocturnes</h3>
                             <p className="text-stone-600 font-light leading-relaxed mb-4">
                                 Écrire ce qui tourne en boucle aide à le sortir de ta tête. En pratique:
                                 3 lignes avant de dormir (fait, émotion, besoin) peuvent déjà t&apos;apaiser.
@@ -468,7 +472,7 @@ export default function Home() {
                         </article>
 
                         <article className="rounded-2xl border border-stone-200 bg-stone-50/60 p-6">
-                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Douleur: tout est confus</h3>
+                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Douleur: overthinking et confusion mentale</h3>
                             <p className="text-stone-600 font-light leading-relaxed mb-4">
                                 Écris une idée par ligne. Tu transformes le chaos mental en points clairs.
                                 Puis choisis un seul petit pas à faire aujourd&apos;hui.
