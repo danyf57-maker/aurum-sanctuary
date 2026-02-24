@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import HeroIntegrated from '@/components/landing/HeroIntegrated';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Compass, ArrowRight, ShieldCheck, Lock, Fingerprint, X } from 'lucide-react';
+import { Compass, ArrowRight, ShieldCheck, Lock, Fingerprint, X, Brain, Moon, Flame, CircleHelp, Wind, ListChecks } from 'lucide-react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/providers/auth-provider';
@@ -448,59 +448,94 @@ export default function Home() {
                             Des exemples concrets pour relâcher la charge mentale, calmer l&apos;anxiété et sortir de la rumination.
                         </p>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                        <article className="rounded-2xl border border-stone-200 bg-stone-50/60 p-6">
-                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Douleur: insomnie et pensées nocturnes</h3>
-                            <p className="text-stone-600 font-light leading-relaxed mb-4">
-                                Écrire ce qui tourne en boucle aide à le sortir de ta tête. En pratique:
-                                3 lignes avant de dormir (fait, émotion, besoin) peuvent déjà t&apos;apaiser.
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <article className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm h-full flex flex-col">
+                            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-stone-100 px-3 py-1 text-[11px] uppercase tracking-[0.12em] text-stone-600 font-medium w-fit">
+                                <Moon className="h-3.5 w-3.5" />
+                                Insomnie
+                            </div>
+                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Ton cerveau tourne la nuit</h3>
+                            <p className="text-stone-600 font-light leading-relaxed mb-6">
+                                Écris ce qui tourne en boucle. En pratique: 3 lignes avant de dormir
+                                (fait, émotion, besoin) peuvent déjà apaiser ton esprit.
                             </p>
-                            <Link href="/sanctuary/write" className="text-primary font-medium hover:underline">
+                            <Link href="/sanctuary/write" className="mt-auto text-primary font-medium hover:underline">
                                 Apaiser mes nuits →
                             </Link>
                         </article>
 
-                        <article className="rounded-2xl border border-stone-200 bg-stone-50/60 p-6">
-                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Douleur: je me parle mal</h3>
-                            <p className="text-stone-600 font-light leading-relaxed mb-4">
+                        <article className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm h-full flex flex-col">
+                            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-stone-100 px-3 py-1 text-[11px] uppercase tracking-[0.12em] text-stone-600 font-medium w-fit">
+                                <Brain className="h-3.5 w-3.5" />
+                                Self-talk
+                            </div>
+                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Tu te parles trop durement</h3>
+                            <p className="text-stone-600 font-light leading-relaxed mb-6">
                                 Quand la petite voix dit &quot;je suis nul&quot;, écris une version plus juste:
-                                &quot;j&apos;avance petit à petit&quot;. Ce réflexe de self-talk positif aide à retrouver de l&apos;élan.
+                                &quot;j&apos;avance petit à petit&quot;. Ça aide à reprendre confiance.
                             </p>
-                            <Link href="/sanctuary/write" className="text-primary font-medium hover:underline">
+                            <Link href="/sanctuary/write" className="mt-auto text-primary font-medium hover:underline">
                                 Reprendre confiance →
                             </Link>
                         </article>
 
-                        <article className="rounded-2xl border border-stone-200 bg-stone-50/60 p-6">
-                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Douleur: overthinking et confusion mentale</h3>
-                            <p className="text-stone-600 font-light leading-relaxed mb-4">
-                                Écris une idée par ligne. Tu transformes le chaos mental en points clairs.
-                                Puis choisis un seul petit pas à faire aujourd&apos;hui.
+                        <article className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm h-full flex flex-col">
+                            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-stone-100 px-3 py-1 text-[11px] uppercase tracking-[0.12em] text-stone-600 font-medium w-fit">
+                                <Wind className="h-3.5 w-3.5" />
+                                Overthinking
+                            </div>
+                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Tout est confus dans ta tête</h3>
+                            <p className="text-stone-600 font-light leading-relaxed mb-6">
+                                Écris une idée par ligne. Tu transformes la confusion mentale en points
+                                clairs, puis tu choisis un seul petit pas pour aujourd&apos;hui.
                             </p>
-                            <Link href="/sanctuary/write" className="text-primary font-medium hover:underline">
+                            <Link href="/sanctuary/write" className="mt-auto text-primary font-medium hover:underline">
                                 Retrouver de la clarté →
                             </Link>
                         </article>
 
-                        <article className="rounded-2xl border border-stone-200 bg-stone-50/60 p-6">
-                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Douleur: je garde tout, puis j&apos;explose</h3>
-                            <p className="text-stone-600 font-light leading-relaxed mb-4">
+                        <article className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm h-full flex flex-col">
+                            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-stone-100 px-3 py-1 text-[11px] uppercase tracking-[0.12em] text-stone-600 font-medium w-fit">
+                                <Flame className="h-3.5 w-3.5" />
+                                Pression
+                            </div>
+                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Tu gardes tout, puis tu exploses</h3>
+                            <p className="text-stone-600 font-light leading-relaxed mb-6">
                                 Quelques lignes régulières valent mieux qu&apos;une longue session rare.
-                                Tu décompresses avant saturation et tu retrouves plus de calme au quotidien.
+                                Tu décompresses avant saturation et tu retrouves plus de calme.
                             </p>
-                            <Link href="/sanctuary/write" className="text-primary font-medium hover:underline">
+                            <Link href="/sanctuary/write" className="mt-auto text-primary font-medium hover:underline">
                                 Relâcher la pression →
                             </Link>
                         </article>
 
-                        <article className="rounded-2xl border border-stone-200 bg-stone-50/60 p-6">
-                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Douleur: je ne sais pas par où commencer</h3>
-                            <p className="text-stone-600 font-light leading-relaxed mb-4">
-                                Règle ultra simple: commence par un fait, une émotion, un besoin.
-                                C&apos;est assez pour démarrer sans pression, même quand tu n&apos;as que 2 minutes.
+                        <article className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm h-full flex flex-col">
+                            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-stone-100 px-3 py-1 text-[11px] uppercase tracking-[0.12em] text-stone-600 font-medium w-fit">
+                                <CircleHelp className="h-3.5 w-3.5" />
+                                Démarrage
+                            </div>
+                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Tu ne sais pas par où commencer</h3>
+                            <p className="text-stone-600 font-light leading-relaxed mb-6">
+                                Règle simple: commence par un fait, une émotion, un besoin.
+                                C&apos;est suffisant pour démarrer sans pression, même en 2 minutes.
                             </p>
-                            <Link href="/sanctuary/write" className="text-primary font-medium hover:underline">
+                            <Link href="/sanctuary/write" className="mt-auto text-primary font-medium hover:underline">
                                 Commencer maintenant →
+                            </Link>
+                        </article>
+
+                        <article className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm h-full flex flex-col">
+                            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-stone-100 px-3 py-1 text-[11px] uppercase tracking-[0.12em] text-stone-600 font-medium w-fit">
+                                <ListChecks className="h-3.5 w-3.5" />
+                                Charge mentale
+                            </div>
+                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Ta liste de tâches t&apos;étouffe</h3>
+                            <p className="text-stone-600 font-light leading-relaxed mb-6">
+                                Pose un minuteur 5 minutes et écris sans corriger:
+                                faits, émotions, besoins. Cette routine courte te redonne de l&apos;air mental.
+                            </p>
+                            <Link href="/sanctuary/write" className="mt-auto text-primary font-medium hover:underline">
+                                Alléger ma charge mentale →
                             </Link>
                         </article>
                     </div>
