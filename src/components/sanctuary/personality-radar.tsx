@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { Loader2, Users } from 'lucide-react';
 import {
   RadarChart,
@@ -103,6 +104,12 @@ export function PersonalityRadar({
     : [];
   const strongestDimension = sortedDimensions[0]?.[0] ?? null;
   const growthDimension = sortedDimensions[sortedDimensions.length - 1]?.[0] ?? null;
+  const journalHref =
+    growthDimension != null
+      ? `/sanctuary/write?initial=${encodeURIComponent(
+          `Plan express 3 jours\n${DIMENSION_3DAY_PLANS[growthDimension][0]}\n\nAction que je choisis aujourd'hui:`
+        )}`
+      : '/sanctuary/write';
 
   return (
     <section className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
@@ -250,6 +257,12 @@ export function PersonalityRadar({
                       <li key={step}>{step}</li>
                     ))}
                   </ul>
+                  <Link
+                    href={journalHref}
+                    className="mt-3 inline-flex rounded-lg bg-stone-900 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-stone-800"
+                  >
+                    Appliquer ce plan dans mon journal
+                  </Link>
                 </div>
               )}
             </div>

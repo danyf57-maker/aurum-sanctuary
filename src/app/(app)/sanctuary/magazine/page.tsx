@@ -1016,6 +1016,14 @@ export default function MagazinePage() {
                       </li>
                     ))}
                   </ul>
+                  <Link
+                    href={`/sanctuary/write?initial=${encodeURIComponent(
+                      `Plan d'action 7 jours\n${landingInsight.actionPlan[0]}\n\nIntention du jour:`
+                    )}`}
+                    className="mt-3 inline-flex rounded-lg bg-[#C5A059] px-3 py-1.5 text-xs font-medium text-stone-900 transition-colors hover:bg-[#b8924e]"
+                  >
+                    Appliquer ce plan dans mon journal
+                  </Link>
                 </div>
               )}
             </div>
