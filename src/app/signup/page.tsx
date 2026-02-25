@@ -6,7 +6,7 @@
 
 "use client";
 
-import { useState, useEffect, Suspense, useRef } from "react";
+import { useState, useEffect, Suspense, useRef, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/providers/auth-provider";
@@ -73,6 +73,13 @@ function SignupPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [quizData, setQuizData] = useState<QuizData | null>(null);
   const [showQuizTeaser, setShowQuizTeaser] = useState(false);
+  const isInAppBrowser = useMemo(() => {
+    if (typeof navigator === "undefined") return false;
+    const ua = navigator.userAgent || "";
+    return /FBAN|FBAV|Instagram|Line|LinkedInApp|Snapchat|Twitter|GSA|WebView|wv/i.test(
+      ua
+    );
+  }, []);
   const quizSyncInProgressRef = useRef(false);
   const quizComplete = searchParams.get("quiz") === "complete";
   const redirectAfterGoogle = quizComplete ? "/sanctuary/magazine" : "/dashboard";
@@ -268,13 +275,19 @@ function SignupPage() {
               {info}
             </div>
           )}
+          {isInAppBrowser && (
+            <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+              Connexion Google bloquée dans ce navigateur intégré. Ouvre cette page dans Safari ou
+              Chrome puis réessaie.
+            </div>
+          )}
           {/* Google OAuth Button */}
           <Button
             type="button"
             variant="outline"
             className="w-full"
             onClick={handleGoogleSignup}
-            disabled={loading}
+            disabled={loading || isInAppBrowser}
           >
             <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
               <path

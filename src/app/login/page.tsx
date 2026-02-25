@@ -6,7 +6,7 @@
 
 "use client";
 
-import { Suspense, useState, useEffect } from "react";
+import { Suspense, useState, useEffect, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/providers/auth-provider";
@@ -52,6 +52,13 @@ function LoginForm() {
   const [info, setInfo] = useState<string | null>(null);
   const [quizData, setQuizData] = useState<QuizData | null>(null);
   const [showQuizTeaser, setShowQuizTeaser] = useState(false);
+  const isInAppBrowser = useMemo(() => {
+    if (typeof navigator === "undefined") return false;
+    const ua = navigator.userAgent || "";
+    return /FBAN|FBAV|Instagram|Line|LinkedInApp|Snapchat|Twitter|GSA|WebView|wv/i.test(
+      ua
+    );
+  }, []);
 
   // Get redirect URL from query params, default to /dashboard.
   // Security: only allow internal relative paths.
@@ -198,13 +205,19 @@ function LoginForm() {
               {info}
             </div>
           )}
+          {isInAppBrowser && (
+            <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+              Connexion Google bloquée dans ce navigateur intégré. Ouvre cette page dans Safari ou
+              Chrome puis réessaie.
+            </div>
+          )}
           {/* Google OAuth Button */}
           <Button
             type="button"
             variant="outline"
             className="w-full"
             onClick={handleGoogleLogin}
-            disabled={loading}
+            disabled={loading || isInAppBrowser}
           >
             <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
               <path

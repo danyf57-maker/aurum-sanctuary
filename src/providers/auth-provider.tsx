@@ -7,6 +7,7 @@ import {
   sendPasswordResetEmail,
   sendEmailVerification,
   signInWithPopup,
+  signInWithRedirect,
   GoogleAuthProvider,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -259,13 +260,47 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error(message);
       }
       const provider = new GoogleAuthProvider();
-      await signInWithPopup(firebaseAuth, provider);
+      try {
+        await signInWithPopup(firebaseAuth, provider);
+      } catch (popupError: unknown) {
+        const code =
+          typeof popupError === "object" &&
+          popupError !== null &&
+          "code" in popupError
+            ? String((popupError as { code?: unknown }).code)
+            : "";
+        const message =
+          typeof popupError === "object" &&
+          popupError !== null &&
+          "message" in popupError
+            ? String((popupError as { message?: unknown }).message)
+            : "";
+
+        // Known cases where popup fails on mobile / strict browsers.
+        if (
+          code === "auth/popup-blocked" ||
+          code === "auth/operation-not-supported-in-this-environment" ||
+          code === "auth/cancelled-popup-request" ||
+          message.includes("disallowed_useragent")
+        ) {
+          await signInWithRedirect(firebaseAuth, provider);
+          return;
+        }
+        throw popupError;
+      }
       // Redirect logic handled by component or useEffect
     } catch (error) {
       logger.errorSafe('Google Sign In Failed', error);
+      const message =
+        typeof error === "object" && error !== null && "message" in error
+          ? String((error as { message?: unknown }).message)
+          : "";
+      const isDisallowedUserAgent = message.includes("disallowed_useragent");
       toast({
         title: "Erreur de connexion",
-        description: "Impossible de se connecter avec Google.",
+        description: isDisallowedUserAgent
+          ? "Google bloque ce navigateur intégré. Ouvre Aurum dans Safari ou Chrome, puis réessaie."
+          : "Impossible de se connecter avec Google.",
         variant: "destructive",
       });
       throw error;
