@@ -19,6 +19,7 @@ import {
 } from "firebase/firestore";
 import { useAuth } from "@/providers/auth-provider";
 import { firestore as db } from "@/lib/firebase/web-client";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -117,6 +118,7 @@ function generateIssueExcerpt(content: string, maxLength = 170) {
 
 export default function MagazinePage() {
   const { user, loading } = useAuth();
+  const { toast } = useToast();
   const [issues, setIssues] = useState<MagazineIssue[]>([]);
   const [isLoadingIssues, setIsLoadingIssues] = useState(true);
   const [collections, setCollections] = useState<MagazineCollection[]>([]);
@@ -549,6 +551,14 @@ export default function MagazinePage() {
   const handleQuestionnaireComplete = async (scores: RyffDimensionScores) => {
     if (!user) return;
     setIsQuestionnaireSubmitting(true);
+    const optimisticComputedAt = new Date();
+    setWellbeingScore({
+      source: "questionnaire",
+      computedAt: optimisticComputedAt,
+      scores,
+    });
+    setQuestionnaireOpen(false);
+
     try {
       const scoresRef = collection(db, "users", user.uid, "wellbeingScores");
       await addDoc(scoresRef, {
@@ -562,15 +572,14 @@ export default function MagazinePage() {
         autonomie: scores.autonomie,
         relationsPositives: scores.relationsPositives,
       });
-
-      setWellbeingScore({
-        source: "questionnaire",
-        computedAt: new Date(),
-        scores,
+    } catch (error) {
+      console.error("[Magazine] wellbeing questionnaire save error:", error);
+      toast({
+        title: "Résultat affiché, sauvegarde en attente",
+        description:
+          "Ton profil est bien visible. On n'a juste pas réussi à le sauvegarder en base pour le moment.",
+        variant: "destructive",
       });
-      setQuestionnaireOpen(false);
-    } catch {
-      // silent
     } finally {
       setIsQuestionnaireSubmitting(false);
     }
