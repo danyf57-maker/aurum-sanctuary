@@ -86,6 +86,7 @@ const DIMENSION_3DAY_PLANS: Record<keyof RyffDimensionScores, string[]> = {
     "Jour 3: écris ce que cette relation t'apporte vraiment.",
   ],
 };
+const ACTIVE_PLAN_STORAGE_KEY = "aurum-active-plan";
 
 function buildChartData(
   aiScores: RyffDimensionScores | null,
@@ -124,6 +125,22 @@ export function WellbeingRadar({
           `Plan express 3 jours\n${DIMENSION_3DAY_PLANS[growthDimension][0]}\n\nCe que je ressens maintenant:`
         )}`
       : '/sanctuary/write';
+
+  const handleApplyPlan = () => {
+    if (typeof window === "undefined" || !growthDimension) return;
+    const steps = DIMENSION_3DAY_PLANS[growthDimension];
+    localStorage.setItem(
+      ACTIVE_PLAN_STORAGE_KEY,
+      JSON.stringify({
+        version: 1,
+        source: "wellbeing",
+        title: "Plan express 3 jours",
+        steps,
+        currentStep: 0,
+        createdAt: new Date().toISOString(),
+      })
+    );
+  };
 
   return (
     <section className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
@@ -269,6 +286,7 @@ export function WellbeingRadar({
                   </ul>
                   <Link
                     href={journalHref}
+                    onClick={handleApplyPlan}
                     className="mt-3 inline-flex rounded-lg bg-[#C5A059] px-3 py-1.5 text-xs font-medium text-stone-900 transition-colors hover:bg-[#b8924e]"
                   >
                     Appliquer ce plan dans mon journal

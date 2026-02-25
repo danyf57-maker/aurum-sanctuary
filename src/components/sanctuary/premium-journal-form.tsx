@@ -42,6 +42,24 @@ type ConversationTurn = {
   text: string;
 };
 
+type ActivePlan = {
+  version: number;
+  source: "wellbeing" | "personality" | "landing";
+  title: string;
+  steps: string[];
+  currentStep: number;
+  createdAt: string;
+};
+
+const ACTIVE_PLAN_STORAGE_KEY = "aurum-active-plan";
+
+function buildPlanPrompt(plan: ActivePlan) {
+  const total = plan.steps.length;
+  const currentIndex = Math.max(0, Math.min(plan.currentStep, total - 1));
+  const stepText = plan.steps[currentIndex];
+  return `${plan.title}\nJour ${currentIndex + 1}/${total}\n${stepText}\n\nCe que j'écris aujourd'hui:`;
+}
+
 export function PremiumJournalForm() {
   const searchParams = useSearchParams();
   const { user } = useAuth();
@@ -64,6 +82,8 @@ export function PremiumJournalForm() {
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
   const [isGeneratingReflection, setIsGeneratingReflection] = useState(false);
   const [isContinuingConversation, setIsContinuingConversation] = useState(false);
+  const [activePlan, setActivePlan] = useState<ActivePlan | null>(null);
+  const [isPlanDrivenDraft, setIsPlanDrivenDraft] = useState(false);
   const [conversationTurns, setConversationTurns] = useState<ConversationTurn[]>([]);
   const [conversationInput, setConversationInput] = useState('');
   const [reflection, setReflection] = useState<{
@@ -101,12 +121,43 @@ export function PremiumJournalForm() {
     if (!initial) return;
     if (draftContent.trim().length > 0) return;
     setDraftContent(initial);
+    setIsPlanDrivenDraft(false);
     requestAnimationFrame(() => {
       const ta = textareaRef.current;
       if (!ta) return;
       ta.style.height = 'auto';
       ta.style.height = `${ta.scrollHeight}px`;
     });
+  }, [draftContent, searchParams]);
+
+  // Pré-remplir automatiquement avec l'étape active d'un plan (Jour 1/2/3...).
+  useEffect(() => {
+    const initial = searchParams.get('initial');
+    if (initial) return;
+    if (draftContent.trim().length > 0) return;
+    if (typeof window === 'undefined') return;
+
+    try {
+      const rawPlan = localStorage.getItem(ACTIVE_PLAN_STORAGE_KEY);
+      if (!rawPlan) return;
+      const parsedPlan = JSON.parse(rawPlan) as ActivePlan;
+      if (!Array.isArray(parsedPlan.steps) || parsedPlan.steps.length === 0) return;
+      if (parsedPlan.currentStep >= parsedPlan.steps.length) {
+        localStorage.removeItem(ACTIVE_PLAN_STORAGE_KEY);
+        return;
+      }
+      setActivePlan(parsedPlan);
+      setDraftContent(buildPlanPrompt(parsedPlan));
+      setIsPlanDrivenDraft(true);
+      requestAnimationFrame(() => {
+        const ta = textareaRef.current;
+        if (!ta) return;
+        ta.style.height = 'auto';
+        ta.style.height = `${ta.scrollHeight}px`;
+      });
+    } catch {
+      // ignore invalid localStorage
+    }
   }, [draftContent, searchParams]);
 
   const uploadImageToStorage = async (file: File): Promise<DraftImage> => {
@@ -310,6 +361,27 @@ export function PremiumJournalForm() {
         setIsSaved(true);
         setReflection(null); // Reset reflection
         setIsActivelyTyping(false);
+
+        if (isPlanDrivenDraft && activePlan) {
+          const nextStep = activePlan.currentStep + 1;
+          if (typeof window !== 'undefined') {
+            if (nextStep >= activePlan.steps.length) {
+              localStorage.removeItem(ACTIVE_PLAN_STORAGE_KEY);
+              setActivePlan(null);
+              toast({
+                title: "Plan terminé",
+                description: "Bravo. Tu as complété toutes les étapes de ce plan.",
+              });
+            } else {
+              const updatedPlan: ActivePlan = {
+                ...activePlan,
+                currentStep: nextStep,
+              };
+              localStorage.setItem(ACTIVE_PLAN_STORAGE_KEY, JSON.stringify(updatedPlan));
+              setActivePlan(updatedPlan);
+            }
+          }
+        }
 
         toast({
           title: 'Entrée préservée',
@@ -518,7 +590,14 @@ export function PremiumJournalForm() {
     setConversationTurns([]);
     setConversationInput('');
     setIsActivelyTyping(false);
+    setIsPlanDrivenDraft(false);
     if (formRef.current) formRef.current.reset();
+
+    if (activePlan && activePlan.currentStep < activePlan.steps.length) {
+      setDraftContent(buildPlanPrompt(activePlan));
+      setIsPlanDrivenDraft(true);
+    }
+
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
       textareaRef.current.focus();

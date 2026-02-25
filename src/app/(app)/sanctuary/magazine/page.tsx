@@ -69,6 +69,7 @@ const PROFILE_TITLES: Record<string, string> = {
   C: "L'Architecte",
   MIXTE: "Profil mixte • L'Équilibriste",
 };
+const ACTIVE_PLAN_STORAGE_KEY = "aurum-active-plan";
 
 const RYFF_DIMENSION_LABELS: Record<keyof RyffDimensionScores, string> = {
   acceptationDeSoi: "acceptation de soi",
@@ -1020,6 +1021,20 @@ export default function MagazinePage() {
                     href={`/sanctuary/write?initial=${encodeURIComponent(
                       `Plan d'action 7 jours\n${landingInsight.actionPlan[0]}\n\nIntention du jour:`
                     )}`}
+                    onClick={() => {
+                      if (typeof window === "undefined") return;
+                      localStorage.setItem(
+                        ACTIVE_PLAN_STORAGE_KEY,
+                        JSON.stringify({
+                          version: 1,
+                          source: "landing",
+                          title: "Plan d'action 7 jours",
+                          steps: landingInsight.actionPlan,
+                          currentStep: 0,
+                          createdAt: new Date().toISOString(),
+                        })
+                      );
+                    }}
                     className="mt-3 inline-flex rounded-lg bg-[#C5A059] px-3 py-1.5 text-xs font-medium text-stone-900 transition-colors hover:bg-[#b8924e]"
                   >
                     Appliquer ce plan dans mon journal

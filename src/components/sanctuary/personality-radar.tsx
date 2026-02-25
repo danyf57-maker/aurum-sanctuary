@@ -71,6 +71,7 @@ const DIMENSION_3DAY_PLANS: Record<keyof PersonalityScores, string[]> = {
     "Jour 3: décide ce que tu simplifies pour aller plus vite.",
   ],
 };
+const ACTIVE_PLAN_STORAGE_KEY = "aurum-active-plan";
 
 function buildChartData(
   aiScores: PersonalityScores | null,
@@ -110,6 +111,22 @@ export function PersonalityRadar({
           `Plan express 3 jours\n${DIMENSION_3DAY_PLANS[growthDimension][0]}\n\nAction que je choisis aujourd'hui:`
         )}`
       : '/sanctuary/write';
+
+  const handleApplyPlan = () => {
+    if (typeof window === "undefined" || !growthDimension) return;
+    const steps = DIMENSION_3DAY_PLANS[growthDimension];
+    localStorage.setItem(
+      ACTIVE_PLAN_STORAGE_KEY,
+      JSON.stringify({
+        version: 1,
+        source: "personality",
+        title: "Plan express 3 jours",
+        steps,
+        currentStep: 0,
+        createdAt: new Date().toISOString(),
+      })
+    );
+  };
 
   return (
     <section className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
@@ -259,6 +276,7 @@ export function PersonalityRadar({
                   </ul>
                   <Link
                     href={journalHref}
+                    onClick={handleApplyPlan}
                     className="mt-3 inline-flex rounded-lg bg-stone-900 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-stone-800"
                   >
                     Appliquer ce plan dans mon journal
