@@ -65,6 +65,38 @@ const PROFILE_TITLES: Record<string, string> = {
   MIXTE: "Profil mixte • L'Équilibriste",
 };
 
+const RYFF_DIMENSION_LABELS: Record<keyof RyffDimensionScores, string> = {
+  acceptationDeSoi: "acceptation de soi",
+  developpementPersonnel: "développement personnel",
+  sensDeLaVie: "sens de la vie",
+  maitriseEnvironnement: "maîtrise de ton quotidien",
+  autonomie: "autonomie",
+  relationsPositives: "relations positives",
+};
+
+function buildWellbeingNarrative(scores: RyffDimensionScores): string {
+  const entries = Object.entries(scores) as [keyof RyffDimensionScores, number][];
+  if (entries.length === 0) return "Ton profil est prêt. Prends quelques minutes pour l'observer avec douceur.";
+
+  const sorted = [...entries].sort((a, b) => b[1] - a[1]);
+  const [topKey, topValue] = sorted[0];
+  const [lowKey, lowValue] = sorted[sorted.length - 1];
+  const average = entries.reduce((sum, [, value]) => sum + value, 0) / entries.length;
+
+  const tone =
+    average >= 4.3
+      ? "Tu traverses une période plutôt solide."
+      : average >= 3.3
+      ? "Tu es dans une phase d'équilibre en construction."
+      : "Tu sembles traverser une période plus chargée.";
+
+  return `${tone} Ton point fort actuel: ${RYFF_DIMENSION_LABELS[topKey]} (${topValue.toFixed(
+    1
+  )}/6). Le point à soutenir en priorité: ${RYFF_DIMENSION_LABELS[lowKey]} (${lowValue.toFixed(
+    1
+  )}/6).`;
+}
+
 
 function parseCreatedAt(value: unknown): Date | null {
   if (!value) return null;
@@ -552,10 +584,12 @@ export default function MagazinePage() {
     if (!user) return;
     setIsQuestionnaireSubmitting(true);
     const optimisticComputedAt = new Date();
+    const narrative = buildWellbeingNarrative(scores);
     setWellbeingScore({
       source: "questionnaire",
       computedAt: optimisticComputedAt,
       scores,
+      narrative,
     });
     setQuestionnaireOpen(false);
 
@@ -571,14 +605,33 @@ export default function MagazinePage() {
         maitriseEnvironnement: scores.maitriseEnvironnement,
         autonomie: scores.autonomie,
         relationsPositives: scores.relationsPositives,
+        narrative,
       });
     } catch (error) {
       console.error("[Magazine] wellbeing questionnaire save error:", error);
+      // Retry once in background to absorb transient mobile/network issues.
+      setTimeout(async () => {
+        try {
+          await addDoc(collection(db, "users", user.uid, "wellbeingScores"), {
+            source: "questionnaire",
+            computedAt: serverTimestamp(),
+            entryCount: 0,
+            acceptationDeSoi: scores.acceptationDeSoi,
+            developpementPersonnel: scores.developpementPersonnel,
+            sensDeLaVie: scores.sensDeLaVie,
+            maitriseEnvironnement: scores.maitriseEnvironnement,
+            autonomie: scores.autonomie,
+            relationsPositives: scores.relationsPositives,
+            narrative,
+          });
+        } catch (retryError) {
+          console.error("[Magazine] wellbeing questionnaire retry save error:", retryError);
+        }
+      }, 1200);
       toast({
-        title: "Résultat affiché, sauvegarde en attente",
+        title: "Profil prêt",
         description:
-          "Ton profil est bien visible. On n'a juste pas réussi à le sauvegarder en base pour le moment.",
-        variant: "destructive",
+          "Ton résultat est affiché. On finalise sa sauvegarde en arrière-plan.",
       });
     } finally {
       setIsQuestionnaireSubmitting(false);

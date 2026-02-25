@@ -44,6 +44,15 @@ const DIMENSION_FULL_LABELS: Record<keyof RyffDimensionScores, string> = {
 
 const DIMENSION_KEYS = Object.keys(DIMENSION_LABELS) as (keyof RyffDimensionScores)[];
 
+const DIMENSION_HINTS: Record<keyof RyffDimensionScores, string> = {
+  acceptationDeSoi: "Parle-toi comme à un ami proche: juste, pas dur.",
+  developpementPersonnel: "Choisis un mini-apprentissage concret pour cette semaine.",
+  sensDeLaVie: "Note une action qui te rapproche de ce qui compte pour toi.",
+  maitriseEnvironnement: "Découpe ta journée en un seul objectif prioritaire.",
+  autonomie: "Prends une décision simple qui te ressemble vraiment.",
+  relationsPositives: "Envoie un message sincère à une personne ressource.",
+};
+
 function buildChartData(
   aiScores: RyffDimensionScores | null,
   questionnaireScores: RyffDimensionScores | null
@@ -67,6 +76,14 @@ export function WellbeingRadar({
 }: WellbeingRadarProps) {
   const hasAny = aiScores || questionnaireScores;
   const data = buildChartData(aiScores, questionnaireScores);
+  const activeScores = aiScores ?? questionnaireScores;
+  const sortedDimensions = activeScores
+    ? (Object.entries(activeScores) as [keyof RyffDimensionScores, number][]).sort(
+        (a, b) => b[1] - a[1]
+      )
+    : [];
+  const strongestDimension = sortedDimensions[0]?.[0] ?? null;
+  const growthDimension = sortedDimensions[sortedDimensions.length - 1]?.[0] ?? null;
 
   return (
     <section className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
@@ -180,10 +197,27 @@ export function WellbeingRadar({
           </ResponsiveContainer>
 
           {/* Narrative */}
-          {narrative && (
-            <p className="mt-2 rounded-xl bg-[#C5A059]/5 px-4 py-3 text-sm italic text-stone-600">
-              {narrative}
-            </p>
+          {(narrative || (strongestDimension && growthDimension)) && (
+            <div className="mt-2 rounded-2xl border border-[#C5A059]/20 bg-[#C5A059]/5 px-4 py-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#7A5D24]">
+                Lecture Aurum
+              </p>
+              {narrative && (
+                <p className="mt-2 text-sm leading-relaxed text-stone-700">{narrative}</p>
+              )}
+              {strongestDimension && (
+                <p className="mt-2 text-xs text-stone-600">
+                  <span className="font-medium text-stone-700">Point fort actuel:</span>{" "}
+                  {DIMENSION_FULL_LABELS[strongestDimension]}.
+                </p>
+              )}
+              {growthDimension && (
+                <p className="mt-1 text-xs text-stone-600">
+                  <span className="font-medium text-stone-700">Micro-action conseillée:</span>{" "}
+                  {DIMENSION_HINTS[growthDimension]}
+                </p>
+              )}
+            </div>
           )}
 
           {/* Micro-bars breakdown */}
