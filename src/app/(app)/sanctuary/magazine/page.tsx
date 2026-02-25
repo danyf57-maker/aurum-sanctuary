@@ -57,6 +57,11 @@ type LandingAssessment = {
   completedAt: Date | null;
 };
 
+type LandingInsight = {
+  narrative: string;
+  actionPlan: string[];
+};
+
 const PROFILE_TITLES: Record<string, string> = {
   D: "Le Pionnier",
   I: "Le Connecteur",
@@ -200,6 +205,8 @@ export default function MagazinePage() {
   const [isPersonalitySubmitting, setIsPersonalitySubmitting] = useState(false);
   const [landingAssessment, setLandingAssessment] =
     useState<LandingAssessment | null>(null);
+  const [landingInsight, setLandingInsight] = useState<LandingInsight | null>(null);
+  const [isLandingInsightLoading, setIsLandingInsightLoading] = useState(false);
 
   const fetchIssues = useCallback(async () => {
     if (!user) return;
@@ -527,6 +534,64 @@ export default function MagazinePage() {
       void fetchAurumStats();
     }
   }, [issues.length, fetchAurumStats]);
+
+  useEffect(() => {
+    if (!landingAssessment) {
+      setLandingInsight(null);
+      setIsLandingInsightLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+    setIsLandingInsightLoading(true);
+
+    const loadLandingInsight = async () => {
+      try {
+        const response = await fetch("/api/analyze-questionnaire", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            kind: "landing",
+            profile: landingAssessment.profile,
+            profileTitle: landingAssessment.profileTitle,
+            answers: landingAssessment.answers,
+          }),
+        });
+
+        if (!response.ok) return;
+        const data = (await response.json()) as {
+          narrative?: unknown;
+          actionPlan?: unknown;
+        };
+
+        const narrative =
+          typeof data.narrative === "string" && data.narrative.trim()
+            ? data.narrative.trim()
+            : "Ton profil d'entrée est prêt. Avance par étapes simples et régulières.";
+        const actionPlan = Array.isArray(data.actionPlan)
+          ? data.actionPlan
+              .map((entry) => (typeof entry === "string" ? entry.trim() : ""))
+              .filter(Boolean)
+              .slice(0, 7)
+          : [];
+
+        if (!cancelled) {
+          setLandingInsight({ narrative, actionPlan });
+        }
+      } catch {
+        // silent fallback
+      } finally {
+        if (!cancelled) {
+          setIsLandingInsightLoading(false);
+        }
+      }
+    };
+
+    void loadLandingInsight();
+    return () => {
+      cancelled = true;
+    };
+  }, [landingAssessment]);
 
   const nonEncryptedCount = useMemo(
     () =>
@@ -923,6 +988,38 @@ export default function MagazinePage() {
           <p className="mt-1 text-xs text-stone-500">
             Réponses captées: {landingAssessment.answers.length}
           </p>
+
+          {isLandingInsightLoading && (
+            <p className="mt-4 text-sm text-stone-600">
+              Aurum approfondit ton profil pour te proposer une lecture plus fine...
+            </p>
+          )}
+
+          {landingInsight && (
+            <div className="mt-4 rounded-2xl border border-amber-200/70 bg-white/80 p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-amber-700/80">
+                Lecture Aurum premium
+              </p>
+              <p className="mt-2 text-sm leading-relaxed text-stone-700">
+                {landingInsight.narrative}
+              </p>
+              {landingInsight.actionPlan.length > 0 && (
+                <div className="mt-4">
+                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-600">
+                    Plan d'action 7 jours
+                  </p>
+                  <ul className="mt-2 space-y-1.5 text-sm text-stone-700">
+                    {landingInsight.actionPlan.map((step) => (
+                      <li key={step} className="flex gap-2">
+                        <span className="mt-1 h-1.5 w-1.5 rounded-full bg-amber-500/70" />
+                        <span>{step}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 

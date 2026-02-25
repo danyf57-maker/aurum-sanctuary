@@ -19,9 +19,12 @@ type PersonalityScores = {
 };
 
 type Payload = {
-  kind: "wellbeing" | "personality";
-  scores: WellbeingScores | PersonalityScores;
+  kind: "wellbeing" | "personality" | "landing";
+  scores?: WellbeingScores | PersonalityScores;
   archetype?: string;
+  profile?: string;
+  profileTitle?: string;
+  answers?: string[];
 };
 
 function clampText(value: unknown, fallback: string) {
@@ -35,10 +38,55 @@ function fallbackNarrative(payload: Payload): string {
   if (payload.kind === "wellbeing") {
     return "Ton profil montre une base à consolider avec douceur. Garde un rythme simple: quelques lignes régulières, puis une micro-action concrète chaque jour.";
   }
+  if (payload.kind === "landing") {
+    return "Ton profil d'entrée confirme un vrai besoin de clarté. Tu n'as pas besoin d'en faire beaucoup: quelques lignes régulières suffisent pour reprendre la main sur ton rythme intérieur.";
+  }
   return "Ton style est clair et utile. Quand tu relies tes points forts à une action précise dans la journée, ton impact devient plus stable et plus lisible.";
 }
 
+function fallbackActionPlan(payload: Payload): string[] {
+  if (payload.kind !== "landing") return [];
+  return [
+    "Jour 1: écris 3 lignes sur ce qui te prend le plus d'énergie aujourd'hui.",
+    "Jour 2: note 1 situation qui t'a apaisé(e), même brièvement.",
+    "Jour 3: écris ce que tu veux protéger cette semaine.",
+    "Jour 4: clarifie une priorité unique pour demain.",
+    "Jour 5: décris un frein récurrent et une petite réponse concrète.",
+    "Jour 6: fais le bilan de 2 progrès, même discrets.",
+    "Jour 7: écris une intention simple pour la semaine suivante.",
+  ];
+}
+
 function buildPrompt(payload: Payload): string {
+  if (payload.kind === "landing") {
+    return `Tu es Aurum: présence calme, lucide, premium, profondément humaine.
+Tu analyses un profil d'entrée et ses réponses, puis tu proposes une interprétation et un plan 7 jours.
+Règles:
+- tutoiement
+- concret, non médical, non anxiogène
+- ton chaleureux et premium
+- pas de jargon
+
+Profil:
+${payload.profileTitle || payload.profile || "Profil personnel"}
+Réponses:
+${JSON.stringify(payload.answers || [])}
+
+Retourne UNIQUEMENT un JSON strict:
+{
+  "narrative": "<4 à 6 phrases, interprétation profonde et claire>",
+  "actionPlan": [
+    "Jour 1: ...",
+    "Jour 2: ...",
+    "Jour 3: ...",
+    "Jour 4: ...",
+    "Jour 5: ...",
+    "Jour 6: ...",
+    "Jour 7: ..."
+  ]
+}`;
+  }
+
   if (payload.kind === "wellbeing") {
     return `Tu es Aurum: présence calme, lucide et bienveillante.
 Analyse ces scores de bien-être (1 à 6) et produis une lecture premium, humaine, concrète.
@@ -72,13 +120,18 @@ Retourne UNIQUEMENT un JSON strict:
 export async function POST(request: NextRequest) {
   try {
     const payload = (await request.json()) as Payload;
-    if (!payload?.kind || !payload?.scores) {
+    const needsScores = payload?.kind === "wellbeing" || payload?.kind === "personality";
+    if (!payload?.kind || (needsScores && !payload?.scores)) {
       return NextResponse.json({ error: "Payload invalide" }, { status: 400 });
     }
 
     const apiKey = process.env.DEEPSEEK_API_KEY;
     if (!apiKey) {
-      return NextResponse.json({ narrative: fallbackNarrative(payload), source: "fallback" });
+      return NextResponse.json({
+        narrative: fallbackNarrative(payload),
+        actionPlan: fallbackActionPlan(payload),
+        source: "fallback",
+      });
     }
 
     const response = await fetch("https://api.deepseek.com/v1/chat/completions", {
@@ -103,25 +156,43 @@ export async function POST(request: NextRequest) {
     });
 
     if (!response.ok) {
-      return NextResponse.json({ narrative: fallbackNarrative(payload), source: "fallback" });
+      return NextResponse.json({
+        narrative: fallbackNarrative(payload),
+        actionPlan: fallbackActionPlan(payload),
+        source: "fallback",
+      });
     }
 
     const data = await response.json();
     const content = data?.choices?.[0]?.message?.content;
     if (!content) {
-      return NextResponse.json({ narrative: fallbackNarrative(payload), source: "fallback" });
+      return NextResponse.json({
+        narrative: fallbackNarrative(payload),
+        actionPlan: fallbackActionPlan(payload),
+        source: "fallback",
+      });
     }
 
-    const parsed = JSON.parse(content) as { narrative?: unknown };
+    const parsed = JSON.parse(content) as { narrative?: unknown; actionPlan?: unknown };
+    const safePlan = Array.isArray(parsed?.actionPlan)
+      ? parsed.actionPlan
+          .map((entry) => (typeof entry === "string" ? entry.trim() : ""))
+          .filter((entry) => entry.length > 0)
+          .slice(0, 7)
+      : fallbackActionPlan(payload);
     return NextResponse.json({
       narrative: clampText(parsed?.narrative, fallbackNarrative(payload)),
+      actionPlan: safePlan,
       source: "deepseek",
     });
   } catch {
     return NextResponse.json(
-      { narrative: "Ton profil est prêt. Avance pas à pas: une intention claire, une action simple, puis observe ce qui change." },
+      {
+        narrative:
+          "Ton profil est prêt. Avance pas à pas: une intention claire, une action simple, puis observe ce qui change.",
+        actionPlan: [],
+      },
       { status: 200 }
     );
   }
 }
-
