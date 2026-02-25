@@ -13,7 +13,7 @@
 
 import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { applyActionCode, verifyPasswordResetCode, confirmPasswordReset } from 'firebase/auth';
+import { applyActionCode, verifyPasswordResetCode, confirmPasswordReset, checkActionCode } from 'firebase/auth';
 import { auth } from '@/lib/firebase/web-client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -30,6 +30,7 @@ function AuthActionContent() {
   const [actionCode, setActionCode] = useState<string | null>(null);
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [message, setMessage] = useState('');
+  const [verifiedEmail, setVerifiedEmail] = useState<string>('');
 
   // For password reset
   const [newPassword, setNewPassword] = useState('');
@@ -60,13 +61,18 @@ function AuthActionContent() {
 
   const handleVerifyEmail = async (code: string) => {
     try {
+      const actionInfo = await checkActionCode(auth, code);
+      const email = actionInfo.data.email || '';
+      setVerifiedEmail(email);
       await applyActionCode(auth, code);
       setStatus('success');
       setMessage('Votre email a été vérifié avec succès !');
 
       // Redirect to login after 3 seconds
       setTimeout(() => {
-        router.push('/login?verified=true');
+        const params = new URLSearchParams({ verified: 'true' });
+        if (email) params.set('email', email);
+        router.push(`/login?${params.toString()}`);
       }, 3000);
     } catch (error: any) {
       console.error('Email verification error:', error);
@@ -210,7 +216,13 @@ function AuthActionContent() {
         {(status === 'success' || status === 'error') && mode !== 'resetPassword' && (
           <CardContent>
             <Button
-              onClick={() => router.push('/login')}
+              onClick={() => {
+                const params = new URLSearchParams();
+                if (mode === 'verifyEmail') params.set('verified', 'true');
+                if (verifiedEmail) params.set('email', verifiedEmail);
+                const suffix = params.toString();
+                router.push(suffix ? `/login?${suffix}` : '/login');
+              }}
               className="w-full"
             >
               Retour à la connexion

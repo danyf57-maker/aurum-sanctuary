@@ -64,6 +64,7 @@ function LoginForm() {
       : "/dashboard";
   const verified = searchParams.get("verified");
   const checkEmail = searchParams.get("check_email");
+  const prefilledEmail = searchParams.get("email") ?? "";
 
   // Check for quiz completion
   useEffect(() => {
@@ -246,6 +247,7 @@ function LoginForm() {
                 name="email"
                 type="email"
                 placeholder="vous@exemple.com"
+                defaultValue={prefilledEmail}
                 required
                 disabled={loading}
               />
