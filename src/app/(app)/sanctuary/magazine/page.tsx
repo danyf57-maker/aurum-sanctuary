@@ -97,6 +97,26 @@ function buildWellbeingNarrative(scores: RyffDimensionScores): string {
   )}/6).`;
 }
 
+const PERSONALITY_DIMENSION_LABELS: Record<keyof PersonalityScores, string> = {
+  determination: "détermination",
+  influence: "influence",
+  stabilite: "stabilité",
+  rigueur: "rigueur",
+};
+
+function buildPersonalityNarrative(scores: PersonalityScores, archetype: string): string {
+  const entries = Object.entries(scores) as [keyof PersonalityScores, number][];
+  if (entries.length === 0) return "Ton profil est prêt. Observe surtout ce qui t'aide à avancer avec plus de clarté.";
+  const sorted = [...entries].sort((a, b) => b[1] - a[1]);
+  const [topKey, topValue] = sorted[0];
+  const [lowKey, lowValue] = sorted[sorted.length - 1];
+  return `Tu as un style ${archetype} bien marqué. Ta force dominante aujourd'hui: ${PERSONALITY_DIMENSION_LABELS[topKey]} (${topValue.toFixed(
+    1
+  )}/6). Pour progresser avec plus de fluidité, travaille doucement ${PERSONALITY_DIMENSION_LABELS[
+    lowKey
+  ]} (${lowValue.toFixed(1)}/6) avec une action simple et répétée cette semaine.`;
+}
+
 
 function parseCreatedAt(value: unknown): Date | null {
   if (!value) return null;
@@ -584,7 +604,27 @@ export default function MagazinePage() {
     if (!user) return;
     setIsQuestionnaireSubmitting(true);
     const optimisticComputedAt = new Date();
-    const narrative = buildWellbeingNarrative(scores);
+    let narrative = buildWellbeingNarrative(scores);
+
+    try {
+      const explainResponse = await fetch("/api/analyze-questionnaire", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          kind: "wellbeing",
+          scores,
+        }),
+      });
+      if (explainResponse.ok) {
+        const explainData = (await explainResponse.json()) as { narrative?: unknown };
+        if (typeof explainData.narrative === "string" && explainData.narrative.trim()) {
+          narrative = explainData.narrative.trim();
+        }
+      }
+    } catch {
+      // fallback narrative already set
+    }
+
     setWellbeingScore({
       source: "questionnaire",
       computedAt: optimisticComputedAt,
@@ -693,6 +733,38 @@ export default function MagazinePage() {
   ) => {
     if (!user) return;
     setIsPersonalitySubmitting(true);
+    let narrative = buildPersonalityNarrative(scores, archetype);
+
+    try {
+      const explainResponse = await fetch("/api/analyze-questionnaire", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          kind: "personality",
+          scores,
+          archetype,
+        }),
+      });
+      if (explainResponse.ok) {
+        const explainData = (await explainResponse.json()) as { narrative?: unknown };
+        if (typeof explainData.narrative === "string" && explainData.narrative.trim()) {
+          narrative = explainData.narrative.trim();
+        }
+      }
+    } catch {
+      // fallback narrative already set
+    }
+
+    const optimisticComputedAt = new Date();
+    setPersonalityResult({
+      source: "questionnaire",
+      computedAt: optimisticComputedAt,
+      scores,
+      archetype,
+      narrative,
+    });
+    setPersonalityQuestionnaireOpen(false);
+
     try {
       const scoresRef = collection(
         db,
@@ -709,17 +781,31 @@ export default function MagazinePage() {
         stabilite: scores.stabilite,
         rigueur: scores.rigueur,
         archetype,
+        narrative,
       });
-
-      setPersonalityResult({
-        source: "questionnaire",
-        computedAt: new Date(),
-        scores,
-        archetype,
+    } catch (error) {
+      console.error("[Magazine] personality questionnaire save error:", error);
+      setTimeout(async () => {
+        try {
+          await addDoc(collection(db, "users", user.uid, "personalityScores"), {
+            source: "questionnaire",
+            computedAt: serverTimestamp(),
+            entryCount: 0,
+            determination: scores.determination,
+            influence: scores.influence,
+            stabilite: scores.stabilite,
+            rigueur: scores.rigueur,
+            archetype,
+            narrative,
+          });
+        } catch (retryError) {
+          console.error("[Magazine] personality questionnaire retry save error:", retryError);
+        }
+      }, 1200);
+      toast({
+        title: "Profil prêt",
+        description: "Ton résultat est affiché. On finalise sa sauvegarde en arrière-plan.",
       });
-      setPersonalityQuestionnaireOpen(false);
-    } catch {
-      // silent
     } finally {
       setIsPersonalitySubmitting(false);
     }

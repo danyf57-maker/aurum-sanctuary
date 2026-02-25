@@ -41,6 +41,13 @@ const DIMENSION_COLORS: Record<keyof PersonalityScores, string> = {
   rigueur: '#3B82F6',
 };
 
+const DIMENSION_HINTS: Record<keyof PersonalityScores, string> = {
+  determination: "Canalise ton énergie sur une priorité unique pour éviter la dispersion.",
+  influence: "Exprime ton idée en une phrase claire avant de convaincre le groupe.",
+  stabilite: "Protège ton rythme avec une routine courte mais régulière.",
+  rigueur: "Cherche le niveau de précision utile, pas la perfection.",
+};
+
 function buildChartData(
   aiScores: PersonalityScores | null,
   questionnaireScores: PersonalityScores | null
@@ -65,6 +72,14 @@ export function PersonalityRadar({
 }: PersonalityRadarProps) {
   const hasAny = aiScores || questionnaireScores;
   const data = buildChartData(aiScores, questionnaireScores);
+  const activeScores = aiScores ?? questionnaireScores;
+  const sortedDimensions = activeScores
+    ? (Object.entries(activeScores) as [keyof PersonalityScores, number][]).sort(
+        (a, b) => b[1] - a[1]
+      )
+    : [];
+  const strongestDimension = sortedDimensions[0]?.[0] ?? null;
+  const growthDimension = sortedDimensions[sortedDimensions.length - 1]?.[0] ?? null;
 
   return (
     <section className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
@@ -182,11 +197,27 @@ export function PersonalityRadar({
             </RadarChart>
           </ResponsiveContainer>
 
-          {/* Narrative */}
-          {narrative && (
-            <p className="mt-2 rounded-xl bg-stone-50 px-4 py-3 text-sm italic text-stone-600">
-              {narrative}
-            </p>
+          {(narrative || (strongestDimension && growthDimension)) && (
+            <div className="mt-2 rounded-2xl border border-stone-200 bg-stone-50 px-4 py-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-600">
+                Lecture Aurum
+              </p>
+              {narrative && (
+                <p className="mt-2 text-sm leading-relaxed text-stone-700">{narrative}</p>
+              )}
+              {strongestDimension && (
+                <p className="mt-2 text-xs text-stone-600">
+                  <span className="font-medium text-stone-700">Point fort actuel:</span>{" "}
+                  {DIMENSION_LABELS[strongestDimension]}.
+                </p>
+              )}
+              {growthDimension && (
+                <p className="mt-1 text-xs text-stone-600">
+                  <span className="font-medium text-stone-700">Micro-action conseillée:</span>{" "}
+                  {DIMENSION_HINTS[growthDimension]}
+                </p>
+              )}
+            </div>
           )}
 
           {/* Micro-bars breakdown */}
