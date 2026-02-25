@@ -49,9 +49,22 @@ function pickNextEmail(
 
   // Branche A: utilisateur n'a pas commence a ecrire
   if (entryCount === 0) {
-    if (!sent.email_2 && hoursSince(sent.email_1) >= 24) return "email_2";
-    if (!sent.email_3 && hoursSince(sent.email_2) >= 48 && !PAID_STATUSES.has(subscriptionStatus)) return "email_3";
-    if (!sent.email_4 && hoursSince(sent.email_3) >= 96 && !PAID_STATUSES.has(subscriptionStatus)) return "email_4";
+    // Enforce strict sequence: un email ne peut partir que si le precedent existe deja.
+    if (sent.email_1 && !sent.email_2 && hoursSince(sent.email_1) >= 24) return "email_2";
+    if (
+      sent.email_2 &&
+      !sent.email_3 &&
+      hoursSince(sent.email_2) >= 48 &&
+      !PAID_STATUSES.has(subscriptionStatus)
+    )
+      return "email_3";
+    if (
+      sent.email_3 &&
+      !sent.email_4 &&
+      hoursSince(sent.email_3) >= 96 &&
+      !PAID_STATUSES.has(subscriptionStatus)
+    )
+      return "email_4";
     return null;
   }
 
@@ -59,8 +72,19 @@ function pickNextEmail(
   const hoursSinceFirstEntry = firstEntryAt
     ? (Date.now() - firstEntryAt.getTime()) / (1000 * 60 * 60)
     : Number.POSITIVE_INFINITY;
-  if (!sent.habit_email_1 && hoursSince(sent.email_1) >= 24 && hoursSinceFirstEntry >= 24) return "habit_email_1";
-  if (!sent.habit_email_2 && hoursSince(sent.habit_email_1) >= 72 && !PAID_STATUSES.has(subscriptionStatus))
+  if (
+    sent.email_1 &&
+    !sent.habit_email_1 &&
+    hoursSince(sent.email_1) >= 24 &&
+    hoursSinceFirstEntry >= 24
+  )
+    return "habit_email_1";
+  if (
+    sent.habit_email_1 &&
+    !sent.habit_email_2 &&
+    hoursSince(sent.habit_email_1) >= 72 &&
+    !PAID_STATUSES.has(subscriptionStatus)
+  )
     return "habit_email_2";
 
   return null;
