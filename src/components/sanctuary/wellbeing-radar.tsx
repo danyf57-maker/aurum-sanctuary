@@ -53,6 +53,39 @@ const DIMENSION_HINTS: Record<keyof RyffDimensionScores, string> = {
   relationsPositives: "Envoie un message sincère à une personne ressource.",
 };
 
+const DIMENSION_3DAY_PLANS: Record<keyof RyffDimensionScores, string[]> = {
+  acceptationDeSoi: [
+    "Jour 1: note une qualité réelle que tu as utilisée aujourd'hui.",
+    "Jour 2: transforme une autocritique en phrase plus juste.",
+    "Jour 3: écris une preuve concrète de progression récente.",
+  ],
+  developpementPersonnel: [
+    "Jour 1: choisis un mini-apprentissage de 10 minutes.",
+    "Jour 2: applique-le dans une situation réelle.",
+    "Jour 3: note ce que cela change dans ta semaine.",
+  ],
+  sensDeLaVie: [
+    "Jour 1: écris ce qui compte le plus pour toi en ce moment.",
+    "Jour 2: choisis une action alignée avec cette priorité.",
+    "Jour 3: fais le bilan de ce que tu as ressenti.",
+  ],
+  maitriseEnvironnement: [
+    "Jour 1: définis une priorité unique pour demain.",
+    "Jour 2: protège un créneau sans distractions.",
+    "Jour 3: supprime une friction qui te freine chaque jour.",
+  ],
+  autonomie: [
+    "Jour 1: prends une décision courte selon ton propre critère.",
+    "Jour 2: refuse une demande non prioritaire avec clarté.",
+    "Jour 3: note ce que ce choix t'a apporté.",
+  ],
+  relationsPositives: [
+    "Jour 1: envoie un message de gratitude à une personne clé.",
+    "Jour 2: pose une question sincère à quelqu'un de proche.",
+    "Jour 3: écris ce que cette relation t'apporte vraiment.",
+  ],
+};
+
 function buildChartData(
   aiScores: RyffDimensionScores | null,
   questionnaireScores: RyffDimensionScores | null
@@ -200,7 +233,7 @@ export function WellbeingRadar({
           {(narrative || (strongestDimension && growthDimension)) && (
             <div className="mt-2 rounded-2xl border border-[#C5A059]/20 bg-[#C5A059]/5 px-4 py-4">
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#7A5D24]">
-                Lecture Aurum
+                Lecture Aurum premium
               </p>
               {narrative && (
                 <p className="mt-2 text-sm leading-relaxed text-stone-700">{narrative}</p>
@@ -216,6 +249,18 @@ export function WellbeingRadar({
                   <span className="font-medium text-stone-700">Micro-action conseillée:</span>{" "}
                   {DIMENSION_HINTS[growthDimension]}
                 </p>
+              )}
+              {growthDimension && (
+                <div className="mt-3 rounded-xl border border-[#C5A059]/20 bg-white/70 px-3 py-3">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#7A5D24]/90">
+                    Plan express 3 jours
+                  </p>
+                  <ul className="mt-2 space-y-1 text-xs text-stone-700">
+                    {DIMENSION_3DAY_PLANS[growthDimension].map((step) => (
+                      <li key={step}>{step}</li>
+                    ))}
+                  </ul>
+                </div>
               )}
             </div>
           )}

@@ -48,6 +48,29 @@ const DIMENSION_HINTS: Record<keyof PersonalityScores, string> = {
   rigueur: "Cherche le niveau de précision utile, pas la perfection.",
 };
 
+const DIMENSION_3DAY_PLANS: Record<keyof PersonalityScores, string[]> = {
+  determination: [
+    "Jour 1: définis une décision prioritaire à trancher.",
+    "Jour 2: passe à l'action en 20 minutes maximum.",
+    "Jour 3: mesure l'impact réel de ce choix.",
+  ],
+  influence: [
+    "Jour 1: formule ton idée en 1 phrase claire.",
+    "Jour 2: partage-la à une personne clé et écoute son retour.",
+    "Jour 3: ajuste ton message pour plus de clarté.",
+  ],
+  stabilite: [
+    "Jour 1: installe une routine fixe de 10 minutes.",
+    "Jour 2: protège cette routine malgré les imprévus.",
+    "Jour 3: note les effets sur ton calme et ta constance.",
+  ],
+  rigueur: [
+    "Jour 1: clarifie un standard simple de qualité.",
+    "Jour 2: applique-le sur une tâche précise.",
+    "Jour 3: décide ce que tu simplifies pour aller plus vite.",
+  ],
+};
+
 function buildChartData(
   aiScores: PersonalityScores | null,
   questionnaireScores: PersonalityScores | null
@@ -200,7 +223,7 @@ export function PersonalityRadar({
           {(narrative || (strongestDimension && growthDimension)) && (
             <div className="mt-2 rounded-2xl border border-stone-200 bg-stone-50 px-4 py-4">
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-600">
-                Lecture Aurum
+                Lecture Aurum premium
               </p>
               {narrative && (
                 <p className="mt-2 text-sm leading-relaxed text-stone-700">{narrative}</p>
@@ -216,6 +239,18 @@ export function PersonalityRadar({
                   <span className="font-medium text-stone-700">Micro-action conseillée:</span>{" "}
                   {DIMENSION_HINTS[growthDimension]}
                 </p>
+              )}
+              {growthDimension && (
+                <div className="mt-3 rounded-xl border border-stone-200 bg-white px-3 py-3">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-stone-600">
+                    Plan express 3 jours
+                  </p>
+                  <ul className="mt-2 space-y-1 text-xs text-stone-700">
+                    {DIMENSION_3DAY_PLANS[growthDimension].map((step) => (
+                      <li key={step}>{step}</li>
+                    ))}
+                  </ul>
+                </div>
               )}
             </div>
           )}
