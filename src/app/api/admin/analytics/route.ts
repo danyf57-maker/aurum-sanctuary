@@ -248,9 +248,9 @@ export async function GET() {
       topLeads,
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown error";
+    console.error("admin analytics error", error);
     return NextResponse.json(
-      { message: "Failed to load admin analytics", error: message },
+      { message: "Failed to load admin analytics" },
       { status: 500 }
     );
   }

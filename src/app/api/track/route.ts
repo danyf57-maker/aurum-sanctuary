@@ -75,8 +75,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true });
 
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    console.error('Error in /api/track:', message);
-    return NextResponse.json({ message: 'Error tracking event', error: message }, { status: 500 });
+    console.error('Error in /api/track:', error);
+    return NextResponse.json({ message: 'Error tracking event' }, { status: 500 });
   }
 }

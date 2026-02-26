@@ -44,7 +44,7 @@ export async function POST(request: Request) {
             httpOnly: true,
             secure: isProduction,
             path: '/',
-            sameSite: 'lax' as const
+            sameSite: 'strict' as const
         };
 
         // Set the cookie
