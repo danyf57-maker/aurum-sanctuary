@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { rateLimit, RateLimitPresets } from '@/lib/rate-limit';
 import { logger } from '@/lib/logger/safe';
+import { requireUserIdFromRequest, UserGuardError } from '@/lib/api/require-user-id';
 
 export const runtime = 'nodejs';
 
@@ -92,14 +93,13 @@ function fallbackAnalysis(entries: InputEntry[]): PersonalityApiScores {
 
 export async function POST(request: NextRequest) {
   try {
-    const { entries, userId } = (await request.json()) as {
+    const body = (await request.json()) as {
       entries?: InputEntry[];
       userId?: string;
+      idToken?: string;
     };
-
-    if (!userId) {
-      return NextResponse.json({ error: 'userId requis' }, { status: 400 });
-    }
+    const userId = await requireUserIdFromRequest(request, body);
+    const { entries } = body;
 
     const rate = await rateLimit(RateLimitPresets.analyzePersonality(userId));
     if (!rate.success) {
@@ -202,6 +202,9 @@ ${JSON.stringify(safeEntries)}`;
     await writeScore(userId, clamped, safeEntries.length);
     return NextResponse.json(formatResponse(clamped, safeEntries.length));
   } catch (error) {
+    if (error instanceof UserGuardError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     logger.errorSafe('analyze-personality failed', error);
     return NextResponse.json({ error: 'Erreur interne analyse personnalité' }, { status: 500 });
   }

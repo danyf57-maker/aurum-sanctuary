@@ -634,11 +634,15 @@ export default function MagazinePage() {
           mood: issue.mood,
           createdAt: issue.createdAt ? issue.createdAt.toISOString() : null,
         }));
+      const idToken = await user.getIdToken();
 
       const response = await fetch("/api/analyze-wellbeing", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ entries: payload, userId: user.uid }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${idToken}`,
+        },
+        body: JSON.stringify({ entries: payload }),
       });
 
       if (response.ok) {
@@ -759,11 +763,15 @@ export default function MagazinePage() {
           mood: issue.mood,
           createdAt: issue.createdAt ? issue.createdAt.toISOString() : null,
         }));
+      const idToken = await user.getIdToken();
 
       const response = await fetch("/api/analyze-personality", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ entries: payload, userId: user.uid }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${idToken}`,
+        },
+        body: JSON.stringify({ entries: payload }),
       });
 
       if (response.ok) {

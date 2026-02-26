@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { logger } from '@/lib/logger/safe';
+import { requireUserIdFromRequest, UserGuardError } from '@/lib/api/require-user-id';
 
 export async function POST(request: NextRequest) {
   try {
-    const { content } = await request.json();
+    const body = await request.json();
+    await requireUserIdFromRequest(request, body);
+    const { content } = body as { content?: string };
 
     if (!content) {
       return NextResponse.json(
@@ -85,6 +88,9 @@ export async function POST(request: NextRequest) {
       );
     }
   } catch (error) {
+    if (error instanceof UserGuardError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     logger.errorSafe('Error analyzing entry', error);
     return NextResponse.json(
       { error: 'Erreur interne lors de l\'analyse' },

@@ -1,4 +1,19 @@
 /** @type {import('next').NextConfig} */
+const cspReportOnly = [
+    "default-src 'self'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "frame-ancestors 'none'",
+    "object-src 'none'",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://js.stripe.com https://accounts.google.com https://apis.google.com",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "img-src 'self' data: blob: https:",
+    "font-src 'self' data: https://fonts.gstatic.com",
+    "connect-src 'self' https://api.deepseek.com https://www.google-analytics.com https://region1.google-analytics.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firebasestorage.googleapis.com https://*.googleapis.com https://*.gstatic.com https://api.stripe.com",
+    "frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://accounts.google.com",
+    "worker-src 'self' blob:",
+].join("; ");
+
 const nextConfig = {
     experimental: {
         serverActions: {
@@ -57,6 +72,10 @@ const nextConfig = {
                         key: 'Permissions-Policy',
                         value: 'camera=(), microphone=(), geolocation=()'
                     },
+                    {
+                        key: 'Content-Security-Policy-Report-Only',
+                        value: cspReportOnly,
+                    },
                 ],
             },
         ];
@@ -65,9 +84,16 @@ const nextConfig = {
 
 const withPWA = require("@ducanh2912/next-pwa").default({
     dest: "public",
-    disable: false, // process.env.NODE_ENV === "development",
+    disable: process.env.NODE_ENV === "development",
     register: true,
     skipWaiting: true,
+    runtimeCaching: [
+        {
+            urlPattern: /^https?:\/\/.*\/api\/.*/i,
+            handler: "NetworkOnly",
+            method: "GET",
+        },
+    ],
 });
 
 module.exports = withPWA(nextConfig);

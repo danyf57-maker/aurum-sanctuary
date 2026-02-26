@@ -40,7 +40,7 @@ function createMock(name: string): any {
             });
         }
         if (prop === "verifySessionCookie" || prop === "verifyIdToken" || prop === "createSessionCookie") {
-          return () => Promise.resolve({ uid: "mock-uid", email: PRIMARY_ADMIN_EMAIL });
+          return () => Promise.reject(new Error("Firebase Admin Auth unavailable"));
         }
         if (prop === "INTERNAL") return {};
         if (prop === "options") return {};

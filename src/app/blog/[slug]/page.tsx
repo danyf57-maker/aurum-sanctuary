@@ -21,6 +21,15 @@ function calculateReadingTime(text: string): number {
   return Math.ceil(wordCount / wordsPerMinute);
 }
 
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 export async function generateMetadata({
   params,
 }: BlogArticlePageProps): Promise<Metadata> {
@@ -140,7 +149,7 @@ export default async function BlogArticlePage({
         <div
           className="prose prose-lg prose-stone lg:prose-xl font-body leading-relaxed prose-headings:font-headline"
           dangerouslySetInnerHTML={{
-            __html: post.content.replace(/\n/g, "<br />"),
+            __html: escapeHtml(post.content).replace(/\n/g, "<br />"),
           }}
         />
 
