@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useAuth, isAdminEmail } from '@/providers/auth-provider';
+import { useAuth } from '@/providers/auth-provider';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -126,7 +126,7 @@ export default function AdminDashboard() {
   const [isRunningOnboarding, setIsRunningOnboarding] = useState(false);
 
   useEffect(() => {
-    if (!loading && (!user || !isAdminEmail(user.email))) {
+    if (!loading && !user) {
       router.push('/');
       return;
     }
@@ -138,6 +138,10 @@ export default function AdminDashboard() {
       try {
         const response = await fetch('/api/admin/analytics', { method: 'GET' });
         if (!response.ok) {
+          if (response.status === 401 || response.status === 403) {
+            router.push('/');
+            return;
+          }
           throw new Error('Failed to fetch admin analytics');
         }
         const json = (await response.json()) as AdminAnalyticsResponse;
@@ -154,7 +158,7 @@ export default function AdminDashboard() {
     };
   }, [user, loading, router]);
 
-  if (loading || !user || !isAdminEmail(user.email) || loadingData || !data) {
+  if (loading || !user || loadingData || !data) {
     return <DashboardSkeleton />;
   }
 

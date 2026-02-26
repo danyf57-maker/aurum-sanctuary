@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Loader2 } from 'lucide-react';
-import { useAuth, isAdminEmail } from '@/providers/auth-provider';
+import { useAuth } from '@/providers/auth-provider';
 import { saveJournalEntry, type FormState } from "@/app/actions";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -156,7 +156,7 @@ export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
       if (analysis?.insight) payload.set("insight", analysis.insight);
 
       // Only send raw content for Alma public posts
-      if (publishAsPost && isAdminEmail(user?.email)) {
+      if (publishAsPost && canPublishPublicPost) {
         payload.set("content", content);
       }
 
@@ -227,7 +227,9 @@ export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
     target.style.height = `${target.scrollHeight}px`;
   };
 
-  const isAlma = isAdminEmail(user?.email);
+  const canPublishPublicPost = (user?.email ?? "")
+    .toLowerCase()
+    .endsWith("@aurumdiary.com");
 
   return (
     <>
@@ -253,7 +255,7 @@ export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
               className="bg-transparent border-0 border-b rounded-none px-0 focus:ring-0 focus-visible:ring-0"
             />
           </div>
-          {isAlma && (
+          {canPublishPublicPost && (
             <div className="flex items-center space-x-2 pt-2">
               <Checkbox id="publishAsPost" name="publishAsPost" defaultChecked={true} />
               <Label htmlFor="publishAsPost" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">

@@ -34,16 +34,6 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
-// Client-side constants for UI gating only.
-// ⚠️ DO NOT import in server actions - use @/lib/firebase/admin instead.
-export const ADMIN_EMAILS = ['danyf57@gmail.com'] as const;
-export const ALMA_EMAIL = 'alma.lawson@aurum.inc';
-
-export function isAdminEmail(email?: string | null) {
-  if (!email) return false;
-  return ADMIN_EMAILS.includes(email.toLowerCase() as typeof ADMIN_EMAILS[number]);
-}
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -165,67 +155,60 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         };
         await syncCookie();
 
-        const isAlma = firebaseUser.email === ALMA_EMAIL;
-        const isAdmin = isAdminEmail(firebaseUser.email);
-
         // Use a type assertion or helper if needed, but for now just pass firebaseUser
         const finalUser = firebaseUser;
         setUser(finalUser);
         await syncLandingQuizAssessment(finalUser.uid);
 
-        if (!isAdmin) {
-          // Listen to user document (created by server-side trigger)
-          const userRef = doc(db, "users", finalUser.uid);
+        // Listen to user document (created by server-side trigger)
+        const userRef = doc(db, "users", finalUser.uid);
 
-          let userSnap = await getDoc(userRef);
+        let userSnap = await getDoc(userRef);
 
-          // FALLBACK: If trigger didn't run, create doc client-side
-          // This ensures users can still use the app even if Cloud Functions aren't deployed yet
-          if (!userSnap.exists()) {
-            logger.warnSafe("Creating user doc client-side because Cloud Trigger is missing.", { userId: finalUser.uid });
-            try {
-              await setDoc(userRef, {
-                uid: finalUser.uid,
-                email: finalUser.email,
-                displayName: finalUser.displayName,
-                photoURL: finalUser.photoURL,
-                createdAt: serverTimestamp(),
-                stripeCustomerId: null,
-                subscriptionStatus: 'free',
-                entryCount: 0,
-              }, { merge: true });
+        // FALLBACK: If trigger didn't run, create doc client-side
+        // This ensures users can still use the app even if Cloud Functions aren't deployed yet
+        if (!userSnap.exists()) {
+          logger.warnSafe("Creating user doc client-side because Cloud Trigger is missing.", { userId: finalUser.uid });
+          try {
+            await setDoc(userRef, {
+              uid: finalUser.uid,
+              email: finalUser.email,
+              displayName: finalUser.displayName,
+              photoURL: finalUser.photoURL,
+              createdAt: serverTimestamp(),
+              stripeCustomerId: null,
+              subscriptionStatus: 'free',
+              entryCount: 0,
+            }, { merge: true });
 
-              await setDoc(doc(db, "users", finalUser.uid, "settings", "legal"), {
-                termsAccepted: false,
-                termsAcceptedAt: null,
-                updatedAt: serverTimestamp(),
-              });
+            await setDoc(doc(db, "users", finalUser.uid, "settings", "legal"), {
+              termsAccepted: false,
+              termsAcceptedAt: null,
+              updatedAt: serverTimestamp(),
+            });
 
-              logger.infoSafe("User doc created client-side", { userId: finalUser.uid });
-              setTermsAccepted(false);
-              userSnap = await getDoc(userRef);
-            } catch (e) {
-              logger.errorSafe("Failed to create user doc client-side", e, { userId: finalUser.uid });
-            }
-          }
-
-          if (userSnap.exists()) {
-            // User exists, check terms in settings/legal
-            const legalRef = doc(db, "users", finalUser.uid, "settings", "legal");
-            const legalSnap = await getDoc(legalRef);
-
-            if (legalSnap.exists()) {
-              setTermsAccepted(legalSnap.data().termsAccepted);
-            } else {
-              setTermsAccepted(false);
-            }
-          } else {
-            // User doc doesn't exist yet (Cloud Function might be slow)
+            logger.infoSafe("User doc created client-side", { userId: finalUser.uid });
             setTermsAccepted(false);
-            logger.warnSafe('User document not found (waiting for trigger)', { userId: finalUser.uid });
+            userSnap = await getDoc(userRef);
+          } catch (e) {
+            logger.errorSafe("Failed to create user doc client-side", e, { userId: finalUser.uid });
+          }
+        }
+
+        if (userSnap.exists()) {
+          // User exists, check terms in settings/legal
+          const legalRef = doc(db, "users", finalUser.uid, "settings", "legal");
+          const legalSnap = await getDoc(legalRef);
+
+          if (legalSnap.exists()) {
+            setTermsAccepted(legalSnap.data().termsAccepted);
+          } else {
+            setTermsAccepted(false);
           }
         } else {
-          setTermsAccepted(true); // Admin user always accepted
+          // User doc doesn't exist yet (Cloud Function might be slow)
+          setTermsAccepted(false);
+          logger.warnSafe('User document not found (waiting for trigger)', { userId: finalUser.uid });
         }
       } else {
         setUser(null);
