@@ -100,7 +100,7 @@ function buildWellbeingNarrative(scores: RyffDimensionScores): string {
     1
   )}/6). Le point à soutenir en priorité: ${RYFF_DIMENSION_LABELS[lowKey]} (${lowValue.toFixed(
     1
-  )}/6).`;
+  )}/6). Écrire quelques lignes dans Aurum t'aidera à clarifier ce point faible et à suivre tes progrès de façon concrète.`;
 }
 
 const PERSONALITY_DIMENSION_LABELS: Record<keyof PersonalityScores, string> = {
@@ -120,7 +120,7 @@ function buildPersonalityNarrative(scores: PersonalityScores, archetype: string)
     1
   )}/6). Pour progresser avec plus de fluidité, travaille doucement ${PERSONALITY_DIMENSION_LABELS[
     lowKey
-  ]} (${lowValue.toFixed(1)}/6) avec une action simple et répétée cette semaine.`;
+  ]} (${lowValue.toFixed(1)}/6) avec une action simple et répétée cette semaine. L'écriture dans Aurum te permet de préparer cette action, de la garder visible, puis de mesurer son effet réel.`;
 }
 
 

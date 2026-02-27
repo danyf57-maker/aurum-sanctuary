@@ -4,9 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
+  LayoutDashboard,
   PenSquare,
   BookOpenText,
   BarChart3,
+  Sparkles,
+  Settings,
   LogOut,
   LogIn,
   ChevronLeft,
@@ -18,22 +21,40 @@ import { useState, useEffect } from "react";
 
 const navItems = [
   {
+    title: "Tableau de bord",
+    href: "/dashboard",
+    icon: LayoutDashboard,
+    description: "Vue d'ensemble",
+  },
+  {
     title: "Écrire",
     href: "/sanctuary/write",
     icon: PenSquare,
-    description: undefined,
+    description: "Nouvelle page",
   },
   {
     title: "Journal",
     href: "/sanctuary",
     icon: BookOpenText,
-    description: undefined,
+    description: "Tes entrées",
   },
   {
     title: "Magazine",
     href: "/sanctuary/magazine",
     icon: BarChart3,
-    description: undefined,
+    description: "Profils & progression",
+  },
+  {
+    title: "Insights",
+    href: "/insights",
+    icon: Sparkles,
+    description: "Clarté guidée",
+  },
+  {
+    title: "Paramètres",
+    href: "/settings",
+    icon: Settings,
+    description: "Compte & données",
   },
 ];
 
@@ -89,11 +110,19 @@ export function AppSidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 px-4 space-y-2">
+        {!isCollapsed && (
+          <p className="px-4 pb-2 text-[10px] font-semibold uppercase tracking-[0.15em] text-stone-500">
+            Navigation
+          </p>
+        )}
         {navItems.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive =
+            pathname === item.href ||
+            (item.href !== "/dashboard" && pathname.startsWith(item.href));
           return (
             <Link key={item.href} href={item.href}>
               <div
+                title={item.title}
                 className={cn(
                   "group flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200 relative",
                   isActive

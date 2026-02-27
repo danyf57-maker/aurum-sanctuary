@@ -54,6 +54,36 @@ const DIMENSION_HINTS: Record<keyof RyffDimensionScores, string> = {
   relationsPositives: "Envoie un message sincère à une personne ressource.",
 };
 
+const WRITING_BENEFITS: Record<keyof RyffDimensionScores, string> = {
+  acceptationDeSoi:
+    "Écrire régulièrement apaise l'autocritique et t'aide à retrouver une voix intérieure plus juste.",
+  developpementPersonnel:
+    "Écrire fixe tes apprentissages, ce qui accélère ta progression et évite l'impression de stagner.",
+  sensDeLaVie:
+    "Écrire relie tes actions à tes valeurs: tu avances avec plus de direction et moins de flou.",
+  maitriseEnvironnement:
+    "Écrire transforme le chaos mental en priorités concrètes: tu récupères du contrôle sur ta journée.",
+  autonomie:
+    "Écrire te recentre sur ce que tu choisis vraiment, au lieu de suivre la pression extérieure.",
+  relationsPositives:
+    "Écrire clarifie tes besoins relationnels et rend tes échanges plus calmes et plus vrais.",
+};
+
+const JOURNAL_STARTERS: Record<keyof RyffDimensionScores, string> = {
+  acceptationDeSoi:
+    "Aujourd'hui, une chose que j'ai bien faite (même petite), c'est...",
+  developpementPersonnel:
+    "Cette semaine, ce que j'ai appris sur moi et que je veux garder, c'est...",
+  sensDeLaVie:
+    "Ce qui compte vraiment pour moi maintenant, et l'action qui suit, c'est...",
+  maitriseEnvironnement:
+    "Pour reprendre la main aujourd'hui, ma priorité unique est...",
+  autonomie:
+    "La décision que je prends pour moi aujourd'hui, sans me trahir, c'est...",
+  relationsPositives:
+    "La relation que je veux nourrir cette semaine, et comment je m'y prends, c'est...",
+};
+
 const DIMENSION_3DAY_PLANS: Record<keyof RyffDimensionScores, string[]> = {
   acceptationDeSoi: [
     "Jour 1: note une qualité réelle que tu as utilisée aujourd'hui.",
@@ -171,7 +201,7 @@ export function WellbeingRadar({
             onClick={onOpenQuestionnaire}
             className="rounded-xl border border-[#C5A059]/50 bg-[#C5A059]/10 px-3 py-1.5 text-xs text-[#7A5D24] transition-colors hover:bg-[#C5A059]/20"
           >
-            Commencer
+            Parcours guidé
           </button>
         </div>
       </div>
@@ -273,6 +303,18 @@ export function WellbeingRadar({
                   <span className="font-medium text-stone-700">Micro-action conseillée:</span>{" "}
                   {DIMENSION_HINTS[growthDimension]}
                 </p>
+              )}
+              {growthDimension && (
+                <div className="mt-2 rounded-xl border border-stone-200 bg-white/70 px-3 py-2">
+                  <p className="text-xs text-stone-700">
+                    <span className="font-medium">Pourquoi écrire maintenant:</span>{" "}
+                    {WRITING_BENEFITS[growthDimension]}
+                  </p>
+                  <p className="mt-1 text-xs text-stone-600">
+                    <span className="font-medium">Première phrase utile:</span>{" "}
+                    {JOURNAL_STARTERS[growthDimension]}
+                  </p>
+                </div>
               )}
               {growthDimension && (
                 <div className="mt-3 rounded-xl border border-[#C5A059]/20 bg-white/70 px-3 py-3">

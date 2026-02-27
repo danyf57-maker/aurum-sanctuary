@@ -49,6 +49,28 @@ const DIMENSION_HINTS: Record<keyof PersonalityScores, string> = {
   rigueur: "Cherche le niveau de précision utile, pas la perfection.",
 };
 
+const WRITING_BENEFITS: Record<keyof PersonalityScores, string> = {
+  determination:
+    "Écrire canalise ton énergie: tu passes d'une impulsion forte à une action vraiment utile.",
+  influence:
+    "Écrire t'aide à clarifier ton message avant d'échanger, donc tu es mieux compris et plus impactant.",
+  stabilite:
+    "Écrire stabilise ton rythme: tu restes constant même quand la semaine devient chargée.",
+  rigueur:
+    "Écrire trie l'essentiel du détail: tu gardes la qualité sans te perdre dans la perfection.",
+};
+
+const JOURNAL_STARTERS: Record<keyof PersonalityScores, string> = {
+  determination:
+    "L'action décisive que je choisis aujourd'hui (et pourquoi), c'est...",
+  influence:
+    "Le message que je veux faire passer clairement aujourd'hui, c'est...",
+  stabilite:
+    "Le rituel court que je protège pour rester stable cette semaine, c'est...",
+  rigueur:
+    "Le niveau de qualité suffisant pour avancer aujourd'hui, c'est...",
+};
+
 const DIMENSION_3DAY_PLANS: Record<keyof PersonalityScores, string[]> = {
   determination: [
     "Jour 1: définis une décision prioritaire à trancher.",
@@ -162,7 +184,7 @@ export function PersonalityRadar({
             onClick={onOpenQuestionnaire}
             className="rounded-xl border border-stone-400/50 bg-stone-100 px-3 py-1.5 text-xs text-stone-700 transition-colors hover:bg-stone-200"
           >
-            Commencer
+            Parcours guidé
           </button>
         </div>
       </div>
@@ -263,6 +285,18 @@ export function PersonalityRadar({
                   <span className="font-medium text-stone-700">Micro-action conseillée:</span>{" "}
                   {DIMENSION_HINTS[growthDimension]}
                 </p>
+              )}
+              {growthDimension && (
+                <div className="mt-2 rounded-xl border border-stone-200 bg-white px-3 py-2">
+                  <p className="text-xs text-stone-700">
+                    <span className="font-medium">Pourquoi écrire après ce profil:</span>{" "}
+                    {WRITING_BENEFITS[growthDimension]}
+                  </p>
+                  <p className="mt-1 text-xs text-stone-600">
+                    <span className="font-medium">Première phrase utile:</span>{" "}
+                    {JOURNAL_STARTERS[growthDimension]}
+                  </p>
+                </div>
               )}
               {growthDimension && (
                 <div className="mt-3 rounded-xl border border-stone-200 bg-white px-3 py-3">

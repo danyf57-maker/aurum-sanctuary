@@ -36,12 +36,12 @@ function clampText(value: unknown, fallback: string) {
 
 function fallbackNarrative(payload: Payload): string {
   if (payload.kind === "wellbeing") {
-    return "Ton profil montre une base à consolider avec douceur. Garde un rythme simple: quelques lignes régulières, puis une micro-action concrète chaque jour.";
+    return "Ton profil montre une base solide, avec un axe prioritaire à renforcer. Écrire quelques lignes par jour t'aide à transformer le flou en actions simples, donc à retrouver plus vite calme et clarté. Dans Aurum, ce suivi régulier te permet aussi de voir ton évolution réelle au fil des jours.";
   }
   if (payload.kind === "landing") {
-    return "Ton profil d'entrée confirme un vrai besoin de clarté. Tu n'as pas besoin d'en faire beaucoup: quelques lignes régulières suffisent pour reprendre la main sur ton rythme intérieur.";
+    return "Ton profil d'entrée confirme un vrai besoin de clarté. Tu n'as pas besoin d'en faire beaucoup: quelques lignes régulières suffisent pour reprendre la main sur ton rythme intérieur. Le bénéfice concret d'Aurum: tes mots restent organisés, privés, et tu peux relire ce qui t'aide vraiment.";
   }
-  return "Ton style est clair et utile. Quand tu relies tes points forts à une action précise dans la journée, ton impact devient plus stable et plus lisible.";
+  return "Ton style est clair et utile. Quand tu écris ton intention du jour, tu relies tes points forts à une action précise, donc ton impact devient plus stable et lisible. Avec Aurum, ce fil d'écriture t'évite de repartir à zéro chaque semaine.";
 }
 
 function fallbackActionPlan(payload: Payload): string[] {
@@ -92,13 +92,14 @@ Retourne UNIQUEMENT un JSON strict:
 Analyse ces scores de bien-être (1 à 6) et produis une lecture premium, humaine, concrète.
 Ne jamais médicaliser, ne jamais dramatiser.
 Tutoiement.
+Objectif: donner envie d'écrire maintenant en expliquant le bénéfice direct du journaling dans Aurum.
 
 Scores:
 ${JSON.stringify(payload.scores)}
 
 Retourne UNIQUEMENT un JSON strict:
 {
-  "narrative": "<3 à 5 phrases en français, chaleureuses et actionnables>"
+  "narrative": "<4 à 6 phrases en français, chaleureuses, actionnables, incluant: ce que le profil dit + pourquoi écrire aide + premier pas concret>"
 }`;
   }
 
@@ -106,6 +107,7 @@ Retourne UNIQUEMENT un JSON strict:
 Analyse ce profil de personnalité (1 à 6) et cet archetype.
 Donne une lecture premium, profonde, très concrète.
 Ne jamais juger. Tutoiement.
+Objectif: relier le profil à un avantage concret du journaling dans Aurum et inciter à écrire.
 
 Scores:
 ${JSON.stringify(payload.scores)}
@@ -113,7 +115,7 @@ Archetype: ${payload.archetype || "Profil personnel"}
 
 Retourne UNIQUEMENT un JSON strict:
 {
-  "narrative": "<3 à 5 phrases en français, chaleureuses et actionnables>"
+  "narrative": "<4 à 6 phrases en français, chaleureuses, actionnables, incluant: force du profil + angle de progression + pourquoi écrire aide + premier pas concret>"
 }`;
 }
 

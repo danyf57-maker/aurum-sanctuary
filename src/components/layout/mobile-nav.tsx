@@ -40,14 +40,26 @@ export function MobileNav() {
           </MobileLink>
           <div className="my-4 h-[calc(100vh-8rem)] pb-10">
             <div className="flex flex-col space-y-3">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-stone-500">
+                Navigation rapide
+              </p>
               <MobileLink href="/dashboard" onOpenChange={setOpen} active={pathname === '/dashboard'}>
                 Tableau de Bord
               </MobileLink>
               <MobileLink href="/sanctuary/write" onOpenChange={setOpen} active={pathname === '/sanctuary/write'}>
                 Écrire
               </MobileLink>
-              <MobileLink href="/sanctuary/magazine" onOpenChange={setOpen} active={pathname === '/sanctuary/magazine'}>
+              <MobileLink href="/sanctuary" onOpenChange={setOpen} active={pathname === '/sanctuary'}>
                 Journal
+              </MobileLink>
+              <MobileLink href="/sanctuary/magazine" onOpenChange={setOpen} active={pathname === '/sanctuary/magazine'}>
+                Magazine
+              </MobileLink>
+              <MobileLink href="/insights" onOpenChange={setOpen} active={pathname === '/insights'}>
+                Insights
+              </MobileLink>
+              <MobileLink href="/settings" onOpenChange={setOpen} active={pathname === '/settings'}>
+                Paramètres
               </MobileLink>
             </div>
           </div>

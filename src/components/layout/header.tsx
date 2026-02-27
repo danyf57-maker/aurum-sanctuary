@@ -68,10 +68,16 @@ export function Header() {
                 Écrire
               </Link>
               <Link
-                href="/sanctuary/magazine"
+                href="/sanctuary"
                 className="transition-colors hover:text-foreground/80 text-foreground/60"
               >
                 Journal
+              </Link>
+              <Link
+                href="/sanctuary/magazine"
+                className="transition-colors hover:text-foreground/80 text-foreground/60"
+              >
+                Magazine
               </Link>
             </nav>
           </div>
