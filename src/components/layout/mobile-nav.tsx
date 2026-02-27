@@ -13,6 +13,15 @@ const Logo = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 )
 
+const mobileNavItems = [
+  { href: '/dashboard', label: 'Tableau de Bord', helper: 'Vue d’ensemble' },
+  { href: '/sanctuary/write', label: 'Écrire', helper: 'Nouvelle page' },
+  { href: '/sanctuary', label: 'Journal', helper: 'Tes entrées' },
+  { href: '/sanctuary/magazine', label: 'Magazine', helper: 'Profils & progression' },
+  { href: '/insights', label: 'Insights', helper: 'Clarté guidée' },
+  { href: '/settings', label: 'Paramètres', helper: 'Compte & données' },
+] as const;
+
 export function MobileNav() {
   const [open, setOpen] = React.useState(false);
   const pathname = usePathname();
@@ -39,28 +48,21 @@ export function MobileNav() {
             <span className="font-bold font-headline">Aurum</span>
           </MobileLink>
           <div className="my-4 h-[calc(100vh-8rem)] pb-10">
-            <div className="flex flex-col space-y-3">
+            <div className="flex flex-col space-y-2">
               <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-stone-500">
                 Navigation rapide
               </p>
-              <MobileLink href="/dashboard" onOpenChange={setOpen} active={pathname === '/dashboard'}>
-                Tableau de Bord
-              </MobileLink>
-              <MobileLink href="/sanctuary/write" onOpenChange={setOpen} active={pathname === '/sanctuary/write'}>
-                Écrire
-              </MobileLink>
-              <MobileLink href="/sanctuary" onOpenChange={setOpen} active={pathname === '/sanctuary'}>
-                Journal
-              </MobileLink>
-              <MobileLink href="/sanctuary/magazine" onOpenChange={setOpen} active={pathname === '/sanctuary/magazine'}>
-                Magazine
-              </MobileLink>
-              <MobileLink href="/insights" onOpenChange={setOpen} active={pathname === '/insights'}>
-                Insights
-              </MobileLink>
-              <MobileLink href="/settings" onOpenChange={setOpen} active={pathname === '/settings'}>
-                Paramètres
-              </MobileLink>
+              {mobileNavItems.map((item) => {
+                const isActive =
+                  pathname === item.href ||
+                  (item.href !== '/dashboard' && pathname.startsWith(item.href));
+                return (
+                  <MobileLink key={item.href} href={item.href} onOpenChange={setOpen} active={isActive}>
+                    <span className="font-semibold">{item.label}</span>
+                    <span className="mt-0.5 text-xs text-stone-500">{item.helper}</span>
+                  </MobileLink>
+                );
+              })}
             </div>
           </div>
         </SheetContent>
@@ -92,7 +94,11 @@ function MobileLink({
         router.push(href.toString());
         onOpenChange?.(false);
       }}
-      className={`text-lg font-medium transition-colors hover:text-primary ${active ? 'text-primary' : 'text-foreground/70'} ${className}`}
+      className={`flex flex-col rounded-xl px-3 py-2 text-base transition-colors ${
+        active
+          ? 'bg-stone-100 text-stone-900'
+          : 'text-foreground/70 hover:bg-stone-50 hover:text-stone-900'
+      } ${className}`}
       {...props}
     >
       {children}

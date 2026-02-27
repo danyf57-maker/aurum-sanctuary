@@ -111,7 +111,7 @@ export function AppSidebar() {
       {/* Navigation */}
       <nav className="flex-1 px-4 space-y-2">
         {!isCollapsed && (
-          <p className="px-4 pb-2 text-[10px] font-semibold uppercase tracking-[0.15em] text-stone-500">
+          <p className="px-4 pb-1 text-[10px] font-semibold uppercase tracking-[0.15em] text-stone-500">
             Navigation
           </p>
         )}
@@ -165,10 +165,17 @@ export function AppSidebar() {
                 </AnimatePresence>
 
                 {isActive && (
-                  <motion.div
-                    layoutId="active-pill"
-                    className="absolute left-0 w-1 h-6 bg-amber-500 rounded-full"
-                  />
+                  <>
+                    <motion.div
+                      layoutId="active-pill"
+                      className="absolute left-0 w-1 h-6 bg-amber-500 rounded-full"
+                    />
+                    {!isCollapsed && (
+                      <span className="ml-auto rounded-full bg-stone-50/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-stone-100">
+                        Ici
+                      </span>
+                    )}
+                  </>
                 )}
               </div>
             </Link>
@@ -222,6 +229,17 @@ export function AppSidebar() {
                 </span>
               </div>
             </div>
+          </div>
+        )}
+
+        {!isCollapsed && (
+          <div className="mt-2 px-4 py-2 rounded-xl border border-stone-200/70 bg-white/40">
+            <p className="text-[10px] uppercase tracking-[0.14em] text-stone-500 font-semibold">
+              Astuce
+            </p>
+            <p className="mt-1 text-[11px] leading-relaxed text-stone-600">
+              2 minutes d&apos;écriture valent mieux qu&apos;une longue session reportée.
+            </p>
           </div>
         )}
       </div>
