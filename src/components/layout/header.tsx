@@ -24,6 +24,19 @@ export function Header() {
 
   const isAdminPage = pathname.startsWith('/admin');
   const isAppPage = pathname.startsWith('/dashboard') || pathname.startsWith('/sanctuary') || pathname.startsWith('/insights') || pathname.startsWith('/settings');
+  const currentSection = pathname.startsWith('/sanctuary/write')
+    ? 'Écrire'
+    : pathname.startsWith('/sanctuary/magazine')
+    ? 'Magazine'
+    : pathname.startsWith('/sanctuary')
+    ? 'Journal'
+    : pathname.startsWith('/dashboard')
+    ? 'Tableau de bord'
+    : pathname.startsWith('/insights')
+    ? 'Insights'
+    : pathname.startsWith('/settings')
+    ? 'Paramètres'
+    : null;
 
   if (isAdminPage) {
     return (
@@ -88,7 +101,11 @@ export function Header() {
         <div className="flex flex-1 items-center justify-end space-x-2">
           {isAppPage && (
             <div className="hidden lg:flex items-center gap-4 mr-4">
-               {/* Any specific app header items can go here */}
+              {currentSection && (
+                <div className="rounded-full border border-stone-200 bg-stone-100/70 px-3 py-1 text-xs font-medium text-stone-700">
+                  Section active : {currentSection}
+                </div>
+              )}
             </div>
           )}
           <AuthButton />
