@@ -676,7 +676,30 @@ export default function Home() {
                         <Link href="/sanctuary/write">Découvrir mon premier reflet</Link>
                     </Button>
                     <div className="mt-6">
-                        <span className="text-xs text-stone-400 font-light">Accès immédiat • 100% Chiffré • Utilisation illimitée en version Beta</span>
+                        <span className="text-xs text-stone-400 font-light">Accès immédiat • 100% Chiffré • Aucune carte requise</span>
+                    </div>
+                    <div className="mt-10 max-w-5xl mx-auto">
+                        <p className="text-stone-600 font-light text-lg mb-6">
+                            Dans ton espace Aurum, tu trouves un cadre clair pour avancer chaque jour.
+                        </p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-left">
+                            <div className="rounded-2xl border border-stone-200 bg-white p-5">
+                                <p className="text-[11px] uppercase tracking-[0.16em] text-stone-500 mb-2 font-semibold">Espace personnel</p>
+                                <p className="text-sm text-stone-600 font-light">Ton journal privé, structuré et facile à reprendre.</p>
+                            </div>
+                            <div className="rounded-2xl border border-stone-200 bg-white p-5">
+                                <p className="text-[11px] uppercase tracking-[0.16em] text-stone-500 mb-2 font-semibold">Statistiques utiles</p>
+                                <p className="text-sm text-stone-600 font-light">Des repères simples pour suivre ton évolution émotionnelle.</p>
+                            </div>
+                            <div className="rounded-2xl border border-stone-200 bg-white p-5">
+                                <p className="text-[11px] uppercase tracking-[0.16em] text-stone-500 mb-2 font-semibold">Tests guidés</p>
+                                <p className="text-sm text-stone-600 font-light">Des parcours rapides pour mieux te comprendre sans te perdre.</p>
+                            </div>
+                            <div className="rounded-2xl border border-stone-200 bg-white p-5">
+                                <p className="text-[11px] uppercase tracking-[0.16em] text-stone-500 mb-2 font-semibold">Échange avec Aurum</p>
+                                <p className="text-sm text-stone-600 font-light">Un dialogue intime pour clarifier ce que tu traverses.</p>
+                            </div>
+                        </div>
                     </div>
                 </section>
 
