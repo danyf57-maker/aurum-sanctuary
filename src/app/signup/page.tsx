@@ -40,20 +40,20 @@ const QUIZ_SYNC_KEY = "aurum-quiz-synced-at";
 
 const signupSchema = z
   .object({
-    email: z.string().email("Email invalide"),
+    email: z.string().email("Invalid email"),
     password: z
       .string()
-      .min(8, "Le mot de passe doit contenir au moins 8 caractères")
-      .regex(/[A-Z]/, "Le mot de passe doit contenir au moins une majuscule")
-      .regex(/[a-z]/, "Le mot de passe doit contenir au moins une minuscule")
-      .regex(/[0-9]/, "Le mot de passe doit contenir au moins un chiffre"),
+      .min(8, "Password must contain at least 8 characters")
+      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+      .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+      .regex(/[0-9]/, "Password must contain at least one number"),
     confirmPassword: z.string(),
     acceptTerms: z.boolean().refine((val) => val === true, {
-      message: "Vous devez accepter les conditions d'utilisation",
+      message: "You must accept the terms of use",
     }),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Les mots de passe ne correspondent pas",
+    message: "Passwords do not match",
     path: ["confirmPassword"],
   });
 
@@ -191,7 +191,7 @@ function SignupPage() {
       router.push("/login?check_email=1");
     } catch (error) {
       if ((error as Error)?.message === "EMAIL_NOT_VERIFIED") {
-        setInfo("Vérifiez votre boîte de réception pour activer votre compte.");
+        setInfo("Check your inbox to activate your account.");
       }
       // Other error toasts shown by AuthProvider
     } finally {
@@ -226,7 +226,7 @@ function SignupPage() {
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">Chargement...</p>
+          <p className="mt-4 text-muted-foreground">Loading...</p>
         </div>
       </div>
     );
@@ -236,9 +236,9 @@ function SignupPage() {
     <div className="flex min-h-screen items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Créer un compte</CardTitle>
+          <CardTitle>Create account</CardTitle>
           <CardDescription>
-            Rejoignez Aurum Sanctuary et commencez votre voyage
+            Join Aurum Sanctuary and start your journey
           </CardDescription>
 
           {/* Quiz Teaser */}
@@ -251,13 +251,11 @@ function SignupPage() {
               <div className="flex items-center gap-2 mb-2">
                 <Sparkles className="h-4 w-4 text-amber-600 dark:text-amber-400" />
                 <span className="text-xs font-semibold uppercase tracking-wider text-amber-700 dark:text-amber-300">
-                  Votre profil vous attend
+                  Your profile is waiting
                 </span>
               </div>
               <p className="text-sm text-amber-800 dark:text-amber-200">
-                Votre profil de réflexion est prêt ! Créez votre compte pour
-                découvrir votre résultat personnalisé et commencer votre
-                expérience.
+                Your reflection profile is ready. Create your account to see your personalized result and begin your experience.
               </p>
             </motion.div>
           )}
@@ -265,7 +263,7 @@ function SignupPage() {
           <div className="flex items-center gap-2 mt-3 px-3 py-2 bg-emerald-50 dark:bg-emerald-950/30 rounded-lg border border-emerald-200 dark:border-emerald-800">
             <Shield className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
             <p className="text-sm text-emerald-700 dark:text-emerald-300 font-medium">
-              Vos données sont chiffrées de bout en bout
+              Your data is end-to-end encrypted
             </p>
           </div>
         </CardHeader>
@@ -277,8 +275,8 @@ function SignupPage() {
           )}
           {isInAppBrowser && (
             <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
-              Connexion Google bloquée dans ce navigateur intégré. Ouvre cette page dans Safari ou
-              Chrome puis réessaie.
+              Google sign-in is blocked in this in-app browser. Open this page in Safari or
+              Chrome and try again.
             </div>
           )}
           {/* Google OAuth Button */}
@@ -307,7 +305,7 @@ function SignupPage() {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
               />
             </svg>
-            Continuer avec Google
+            Continue with Google
           </Button>
 
           <div className="relative">
@@ -316,7 +314,7 @@ function SignupPage() {
             </div>
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-background px-2 text-muted-foreground">
-                Ou continuer avec
+                Or continue with
               </span>
             </div>
           </div>
@@ -329,7 +327,7 @@ function SignupPage() {
                 id="email"
                 name="email"
                 type="email"
-                placeholder="vous@exemple.com"
+                placeholder="you@example.com"
                 required
                 disabled={loading}
               />
@@ -339,7 +337,7 @@ function SignupPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Mot de passe</Label>
+              <Label htmlFor="password">Password</Label>
               <div className="relative">
                 <Input
                   id="password"
@@ -367,12 +365,12 @@ function SignupPage() {
                 <p className="text-sm text-destructive">{errors.password}</p>
               )}
               <p className="text-xs text-muted-foreground">
-                Au moins 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre
+                At least 8 characters, 1 uppercase, 1 lowercase, 1 number
               </p>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirmer le mot de passe</Label>
+              <Label htmlFor="confirmPassword">Confirm password</Label>
               <div className="relative">
                 <Input
                   id="confirmPassword"
@@ -413,21 +411,21 @@ function SignupPage() {
                 htmlFor="acceptTerms"
                 className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
-                J'accepte les{" "}
+                I accept the{" "}
                 <Link
                   href="/terms"
                   className="text-primary hover:underline"
                   target="_blank"
                 >
-                  conditions d'utilisation
+                  terms of use
                 </Link>{" "}
-                et la{" "}
+                and the{" "}
                 <Link
                   href="/privacy"
                   className="text-primary hover:underline"
                   target="_blank"
                 >
-                  politique de confidentialité
+                  privacy policy
                 </Link>
               </label>
             </div>
@@ -436,19 +434,18 @@ function SignupPage() {
             )}
 
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Création..." : "Créer un compte"}
+              {loading ? "Creating..." : "Create account"}
             </Button>
             <p className="text-xs text-muted-foreground text-center">
-              Un email de vérification vous sera envoyé pour activer votre
-              compte.
+              A verification email will be sent to activate your account.
             </p>
           </form>
         </CardContent>
         <CardFooter className="flex justify-center">
           <p className="text-sm text-muted-foreground">
-            Vous avez déjà un compte ?{" "}
+            Already have an account?{" "}
             <Link href="/login" className="text-primary hover:underline">
-              Se connecter
+              Sign in
             </Link>
           </p>
         </CardFooter>
@@ -465,7 +462,7 @@ export default function SignupPageWrapper() {
         <div className="flex min-h-screen items-center justify-center">
           <div className="text-center">
             <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto"></div>
-            <p className="mt-4 text-muted-foreground">Chargement...</p>
+            <p className="mt-4 text-muted-foreground">Loading...</p>
           </div>
         </div>
       }

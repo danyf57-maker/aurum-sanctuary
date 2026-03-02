@@ -14,12 +14,12 @@ const Logo = (props: React.SVGProps<SVGSVGElement>) => (
 )
 
 const mobileNavItems = [
-  { href: '/dashboard', label: 'Tableau de Bord', helper: 'Vue d’ensemble' },
-  { href: '/sanctuary/write', label: 'Écrire', helper: 'Nouvelle page' },
-  { href: '/sanctuary', label: 'Journal', helper: 'Tes entrées' },
-  { href: '/sanctuary/magazine', label: 'Magazine', helper: 'Profils & progression' },
-  { href: '/insights', label: 'Insights', helper: 'Clarté guidée' },
-  { href: '/settings', label: 'Paramètres', helper: 'Compte & données' },
+  { href: '/dashboard', label: 'Dashboard', helper: 'Overview' },
+  { href: '/sanctuary/write', label: 'Write', helper: 'New page' },
+  { href: '/sanctuary', label: 'Journal', helper: 'Your entries' },
+  { href: '/sanctuary/magazine', label: 'Magazine', helper: 'Profiles & progress' },
+  { href: '/insights', label: 'Insights', helper: 'Guided clarity' },
+  { href: '/settings', label: 'Settings', helper: 'Account & data' },
 ] as const;
 
 function isNavItemActive(pathname: string, href: string) {
@@ -40,11 +40,11 @@ export function MobileNav() {
             className="px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
           >
             <Menu className="h-6 w-6" />
-            <span className="sr-only">Ouvrir le menu</span>
+            <span className="sr-only">Open menu</span>
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="pr-0 pt-[calc(env(safe-area-inset-top)+2rem)]">
-          <SheetTitle className="sr-only">Menu de navigation principal</SheetTitle>
+          <SheetTitle className="sr-only">Main navigation menu</SheetTitle>
           <MobileLink
             href="/"
             className="flex items-center"
@@ -55,9 +55,7 @@ export function MobileNav() {
           </MobileLink>
           <div className="my-4 h-[calc(100vh-8rem)] pb-10">
             <div className="flex flex-col space-y-2">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-stone-500">
-                Navigation rapide
-              </p>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-stone-500">Quick navigation</p>
               {mobileNavItems.map((item) => {
                 const isActive = isNavItemActive(pathname, item.href);
                 return (

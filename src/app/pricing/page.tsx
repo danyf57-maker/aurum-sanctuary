@@ -21,35 +21,35 @@ const PRICE_ID_YEARLY = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_YEARLY || proces
 
 const plans = [
     {
-        name: "Mensuel",
+        name: "Monthly",
         price: "13€",
-        period: "/mois",
-        description: "L'accès complet à Aurum, facturé au mois.",
+        period: "/month",
+        description: "Full Aurum access, billed monthly.",
         features: [
-            { text: "Entrées de journal illimitées", included: true },
-            { text: "Conversations avec Aurum illimitées", included: true },
-            { text: "Historique complet", included: true },
-            { text: "Export des données", included: true },
-            { text: "Reflets approfondis", included: true },
+            { text: "Unlimited journal entries", included: true },
+            { text: "Unlimited conversations with Aurum", included: true },
+            { text: "Full history", included: true },
+            { text: "Data export", included: true },
+            { text: "In-depth reflections", included: true },
         ],
-        cta: "Choisir mensuel",
+        cta: "Choose monthly",
         isRecommended: false,
         href: "/pricing",
         priceId: PRICE_ID_MONTHLY,
     },
     {
-        name: "Annuel",
+        name: "Yearly",
         price: "129€",
-        period: "/an",
-        description: "Le même accès complet, avec 2 mois offerts.",
+        period: "/year",
+        description: "Same full access, with 2 months free.",
         features: [
-            { text: "Entrées de journal illimitées", included: true },
-            { text: "Conversations avec Aurum illimitées", included: true },
-            { text: "Historique complet", included: true },
-            { text: "Export des données", included: true },
-            { text: "Reflets approfondis", included: true },
+            { text: "Unlimited journal entries", included: true },
+            { text: "Unlimited conversations with Aurum", included: true },
+            { text: "Full history", included: true },
+            { text: "Data export", included: true },
+            { text: "In-depth reflections", included: true },
         ],
-        cta: "Choisir annuel",
+        cta: "Choose yearly",
         isRecommended: true,
         href: "/pricing",
         priceId: PRICE_ID_YEARLY,
@@ -65,7 +65,7 @@ const Feature = ({ text, included }: { text: string, included: boolean }) => (
 
 function SubscribeButton({ priceId, cta, isRecommended }: { priceId: string | null | undefined, cta: string, isRecommended: boolean }) {
     const { pending } = useFormStatus();
-    const isCurrentPlan = false; // TODO: lire le plan actuel user
+    const isCurrentPlan = false; // TODO: read current user plan
     const isStripeDisabled = !priceId || priceId.includes('xxx');
 
     return (
@@ -75,7 +75,7 @@ function SubscribeButton({ priceId, cta, isRecommended }: { priceId: string | nu
             size="lg"
             disabled={pending || isCurrentPlan || isStripeDisabled}
         >
-            {pending ? <Loader2 className="animate-spin" /> : isCurrentPlan ? 'Plan Actuel' : isStripeDisabled ? 'Bientôt disponible' : cta}
+            {pending ? <Loader2 className="animate-spin" /> : isCurrentPlan ? 'Current plan' : isStripeDisabled ? 'Coming soon' : cta}
         </Button>
     );
 }
@@ -93,7 +93,7 @@ export default function PricingPage() {
         });
 
         if (!user) {
-            router.push('/sanctuary/write'); // ou afficher un modal de connexion
+            router.push('/sanctuary/write'); // or open a sign-in modal
             return;
         }
 
@@ -110,12 +110,12 @@ export default function PricingPage() {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.error || 'Impossible de créer la session de paiement.');
+                throw new Error(errorData.error || 'Unable to create checkout session.');
             }
 
             const { url } = await response.json();
             if (!url) {
-                throw new Error('Aucune URL de paiement reçue.');
+                throw new Error('No checkout URL received.');
             }
 
             window.location.href = url;
@@ -128,9 +128,9 @@ export default function PricingPage() {
         <div className="bg-stone-50/50 min-h-screen">
             <section className="py-24 md:py-32">
                 <div className="container max-w-5xl mx-auto text-center animate-fade-in">
-                    <h1 className="text-4xl md:text-5xl font-headline font-bold tracking-tight">Choisissez votre formule</h1>
+                    <h1 className="text-4xl md:text-5xl font-headline font-bold tracking-tight">Choose your plan</h1>
                     <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-                        Accès complet à Aurum à partir de 13€/mois, ou 129€/an.
+                        Full Aurum access from €13/month or €129/year.
                     </p>
                 </div>
             </section>
@@ -146,7 +146,7 @@ export default function PricingPage() {
                                 {plan.isRecommended && (
                                     <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-semibold flex items-center gap-2">
                                         <Compass className="h-4 w-4" />
-                                        Recommandé
+                                        Recommended
                                     </div>
                                 )}
                                 <CardHeader>
@@ -181,7 +181,7 @@ export default function PricingPage() {
                     </div>
                 </div>
                 <div className="text-center mt-16 text-sm text-muted-foreground">
-                    <p>Les abonnements sont gérés via Stripe. Résiliation possible à tout moment.</p>
+                    <p>Subscriptions are handled by Stripe. Cancel anytime.</p>
                 </div>
             </section>
         </div>

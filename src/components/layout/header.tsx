@@ -25,17 +25,17 @@ export function Header() {
   const isAdminPage = pathname.startsWith('/admin');
   const isAppPage = pathname.startsWith('/dashboard') || pathname.startsWith('/sanctuary') || pathname.startsWith('/insights') || pathname.startsWith('/settings');
   const currentSection = pathname.startsWith('/sanctuary/write')
-    ? 'Écrire'
+    ? 'Write'
     : pathname.startsWith('/sanctuary/magazine')
     ? 'Magazine'
     : pathname.startsWith('/sanctuary')
     ? 'Journal'
     : pathname.startsWith('/dashboard')
-    ? 'Tableau de bord'
+    ? 'Dashboard'
     : pathname.startsWith('/insights')
     ? 'Insights'
     : pathname.startsWith('/settings')
-    ? 'Paramètres'
+    ? 'Settings'
     : null;
 
   if (isAdminPage) {
@@ -78,7 +78,7 @@ export function Header() {
                 href="/sanctuary/write"
                 className="transition-colors hover:text-foreground/80 text-foreground/60"
               >
-                Écrire
+                Write
               </Link>
               <Link
                 href="/sanctuary"
@@ -103,7 +103,7 @@ export function Header() {
             <div className="hidden lg:flex items-center gap-4 mr-4">
               {currentSection && (
                 <div className="rounded-full border border-stone-200 bg-stone-100/70 px-3 py-1 text-xs font-medium text-stone-700">
-                  Section active : {currentSection}
+                  Active section: {currentSection}
                 </div>
               )}
             </div>

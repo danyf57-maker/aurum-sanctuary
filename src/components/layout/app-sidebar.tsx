@@ -21,40 +21,40 @@ import { useState, useEffect } from "react";
 
 const navItems = [
   {
-    title: "Tableau de bord",
+    title: "Dashboard",
     href: "/dashboard",
     icon: LayoutDashboard,
-    description: "Vue d'ensemble",
+    description: "Overview",
   },
   {
-    title: "Écrire",
+    title: "Write",
     href: "/sanctuary/write",
     icon: PenSquare,
-    description: "Nouvelle page",
+    description: "New page",
   },
   {
     title: "Journal",
     href: "/sanctuary",
     icon: BookOpenText,
-    description: "Tes entrées",
+    description: "Your entries",
   },
   {
     title: "Magazine",
     href: "/sanctuary/magazine",
     icon: BarChart3,
-    description: "Profils & progression",
+    description: "Profiles & progress",
   },
   {
     title: "Insights",
     href: "/insights",
     icon: Sparkles,
-    description: "Clarté guidée",
+    description: "Guided clarity",
   },
   {
-    title: "Paramètres",
+    title: "Settings",
     href: "/settings",
     icon: Settings,
-    description: "Compte & données",
+    description: "Account & data",
   },
 ];
 
@@ -196,7 +196,7 @@ export function AppSidebar() {
           >
             <LogOut className="h-5 w-5 shrink-0" />
             {!isCollapsed && (
-              <span className="font-semibold text-sm">Déconnexion</span>
+              <span className="font-semibold text-sm">Sign out</span>
             )}
           </button>
         ) : (
@@ -205,7 +205,7 @@ export function AppSidebar() {
             className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-stone-600 hover:bg-stone-900/5 hover:text-stone-900 transition-all duration-200"
           >
             <LogIn className="h-5 w-5 shrink-0" />
-            {!isCollapsed && <span className="font-semibold text-sm">Connexion</span>}
+            {!isCollapsed && <span className="font-semibold text-sm">Sign in</span>}
           </Link>
         )}
 
@@ -229,7 +229,7 @@ export function AppSidebar() {
                   {(user.displayName ?? "") || "Utilisateur"}
                 </span>
                 <span className="text-[10px] text-stone-500 truncate">
-                  Membre Aurum
+                  Aurum member
                 </span>
               </div>
             </div>
@@ -239,10 +239,10 @@ export function AppSidebar() {
         {!isCollapsed && (
           <div className="mt-2 px-4 py-2 rounded-xl border border-stone-200/70 bg-white/40">
             <p className="text-[10px] uppercase tracking-[0.14em] text-stone-500 font-semibold">
-              Astuce
+              Tip
             </p>
             <p className="mt-1 text-[11px] leading-relaxed text-stone-600">
-              2 minutes d&apos;écriture valent mieux qu&apos;une longue session reportée.
+              Two minutes of writing beats a postponed long session.
             </p>
           </div>
         )}
