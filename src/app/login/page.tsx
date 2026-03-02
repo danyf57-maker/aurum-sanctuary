@@ -136,7 +136,7 @@ function LoginForm() {
       // Error toast shown by AuthProvider
       if ((error as Error)?.message === "EMAIL_NOT_VERIFIED") {
         setInfo(
-          "Votre email n'est pas encore vérifié. Nous venons de renvoyer un message."
+          "Votre email n'est pas encore vérifié. Nous venons de renvoyer un message. Vérifiez vos mails et vos spams."
         );
       }
     } finally {
@@ -212,7 +212,7 @@ function LoginForm() {
           {checkEmail && (
             <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
               Un email de vérification vient d'être envoyé. Merci de vérifier
-              votre boîte de réception.
+              votre boîte de réception et vos spams.
             </div>
           )}
           {info && (
