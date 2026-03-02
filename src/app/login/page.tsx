@@ -42,7 +42,7 @@ const loginSchema = z.object({
 });
 
 function LoginForm() {
-  const { signInWithEmail, signInWithGoogle, loading: authLoading } = useAuth();
+  const { user, signInWithEmail, signInWithGoogle, loading: authLoading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
@@ -59,19 +59,31 @@ function LoginForm() {
       ua
     );
   }, []);
+  const authRoutePrefixes = ["/login", "/signup", "/forgot-password"];
 
   // Get redirect URL from query params, default to /dashboard.
+  // Support legacy `callbackUrl` to keep middleware/email flows compatible.
   // Security: only allow internal relative paths.
-  const rawRedirectUrl = searchParams.get("redirect");
-  const redirectUrl =
+  const rawRedirectUrl =
+    searchParams.get("redirect") ?? searchParams.get("callbackUrl");
+  const unsafeRedirectUrl =
     rawRedirectUrl &&
     rawRedirectUrl.startsWith("/") &&
     !rawRedirectUrl.startsWith("//")
       ? rawRedirectUrl
       : "/dashboard";
+  const redirectUrl = authRoutePrefixes.some((route) => unsafeRedirectUrl.startsWith(route))
+    ? "/dashboard"
+    : unsafeRedirectUrl;
   const verified = searchParams.get("verified");
   const checkEmail = searchParams.get("check_email");
   const prefilledEmail = searchParams.get("email") ?? "";
+
+  useEffect(() => {
+    if (!authLoading && user) {
+      router.replace(redirectUrl);
+    }
+  }, [authLoading, redirectUrl, router, user]);
 
   // Check for quiz completion
   useEffect(() => {
@@ -140,8 +152,10 @@ function LoginForm() {
         name: "login",
         params: { method: "google", source: "login_page" },
       });
-      // Popup-based OAuth, no page reload - redirect directly
-      router.push(redirectUrl);
+      // Fallback redirect in case auth state event is delayed.
+      setTimeout(() => {
+        router.replace(redirectUrl);
+      }, 1500);
     } catch (error) {
       // Error toast shown by AuthProvider
       setLoading(false);
