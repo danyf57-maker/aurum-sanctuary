@@ -22,6 +22,12 @@ const mobileNavItems = [
   { href: '/settings', label: 'Paramètres', helper: 'Compte & données' },
 ] as const;
 
+function isNavItemActive(pathname: string, href: string) {
+  if (pathname === href) return true;
+  if (href === '/dashboard' || href === '/sanctuary') return false;
+  return pathname.startsWith(`${href}/`);
+}
+
 export function MobileNav() {
   const [open, setOpen] = React.useState(false);
   const pathname = usePathname();
@@ -53,9 +59,7 @@ export function MobileNav() {
                 Navigation rapide
               </p>
               {mobileNavItems.map((item) => {
-                const isActive =
-                  pathname === item.href ||
-                  (item.href !== '/dashboard' && pathname.startsWith(item.href));
+                const isActive = isNavItemActive(pathname, item.href);
                 return (
                   <MobileLink key={item.href} href={item.href} onOpenChange={setOpen} active={isActive}>
                     <span className="font-semibold">{item.label}</span>

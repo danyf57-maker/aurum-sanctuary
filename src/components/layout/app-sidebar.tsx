@@ -58,6 +58,12 @@ const navItems = [
   },
 ];
 
+function isNavItemActive(pathname: string, href: string) {
+  if (pathname === href) return true;
+  if (href === "/dashboard" || href === "/sanctuary") return false;
+  return pathname.startsWith(`${href}/`);
+}
+
 export function AppSidebar() {
   const pathname = usePathname();
   const { user, logout } = useAuth();
@@ -116,9 +122,7 @@ export function AppSidebar() {
           </p>
         )}
         {navItems.map((item) => {
-          const isActive =
-            pathname === item.href ||
-            (item.href !== "/dashboard" && pathname.startsWith(item.href));
+          const isActive = isNavItemActive(pathname, item.href);
           return (
             <Link key={item.href} href={item.href}>
               <div
