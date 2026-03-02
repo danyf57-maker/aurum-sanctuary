@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
   title: "Sources des citations | Aurum",
@@ -60,6 +61,11 @@ export default function SourcesCitationsPage() {
             Cette page documente les citations d&apos;inspiration affichées sur Aurum. Les
             citations issues de l&apos;anglais sont affichées en traduction française.
           </p>
+          <div className="mb-8">
+            <Button asChild variant="outline">
+              <Link href="https://aurumdiary.com">Retour à aurumdiary.com</Link>
+            </Button>
+          </div>
 
           <div className="space-y-4">
             {citations.map((item) => (

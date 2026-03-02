@@ -1,6 +1,7 @@
 
 import { Metadata } from 'next';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 export const metadata: Metadata = {
   title: 'Politique de Confidentialité | Aurum',
@@ -16,6 +17,11 @@ export default function PrivacyPolicyPage() {
             Politique de Confidentialité
           </h1>
           <p className="text-muted-foreground">Dernière mise à jour : 25 juillet 2024</p>
+          <div className="mt-6">
+            <Button asChild variant="outline">
+              <Link href="https://aurumdiary.com">Retour à aurumdiary.com</Link>
+            </Button>
+          </div>
         </header>
 
         <div className="prose prose-lg prose-stone font-body mx-auto">

@@ -24,9 +24,7 @@ export function Footer() {
             <div>
               <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Ressources</h3>
               <ul className="mt-4 space-y-2">
-                <li><Link href="/blog" className="text-sm text-muted-foreground hover:text-foreground">Le Journal d'Alma</Link></li>
                 <li><Link href="/sanctuary/chat" className="text-sm text-muted-foreground hover:text-foreground">Discuter avec Aurum</Link></li>
-                <li><Link href="/#manifesto" className="text-sm text-muted-foreground hover:text-foreground">Notre Manifeste</Link></li>
                 <li><Link href="/sources-citations" className="text-sm text-muted-foreground hover:text-foreground">Sources des citations</Link></li>
               </ul>
             </div>
@@ -55,7 +53,6 @@ export function Footer() {
         </div>
         <div className="mt-12 border-t border-stone-200 dark:border-stone-800 pt-8 flex flex-col sm:flex-row justify-between items-center">
           <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} Aurum. Un espace pour vous.</p>
-          <p className="text-xs text-muted-foreground/50 mt-4 sm:mt-0">Application fictive à but de démonstration.</p>
         </div>
       </div>
     </footer>

@@ -5,7 +5,9 @@
  */
 
 import React from 'react';
+import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 export default function TermsPage() {
     const lastUpdated = "29 Janvier 2026";
@@ -16,6 +18,11 @@ export default function TermsPage() {
                 <CardHeader className="text-center">
                     <CardTitle className="text-4xl font-serif">Conditions d'Utilisation</CardTitle>
                     <p className="text-muted-foreground mt-2">Dernière mise à jour : {lastUpdated}</p>
+                    <div className="mt-6">
+                        <Button asChild variant="outline">
+                            <Link href="https://aurumdiary.com">Retour à aurumdiary.com</Link>
+                        </Button>
+                    </div>
                 </CardHeader>
                 <CardContent className="prose prose-slate dark:prose-invert max-w-none mt-8">
                     <section>
