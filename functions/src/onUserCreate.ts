@@ -14,6 +14,13 @@
 import * as functions from 'firebase-functions';
 import { admin, firestore } from './admin';
 
+function readTrialDays(): number {
+    const raw = process.env.APP_TRIAL_DAYS || process.env.STRIPE_TRIAL_DAYS || '7';
+    const parsed = Number.parseInt(raw, 10);
+    if (!Number.isFinite(parsed) || parsed < 0) return 7;
+    return parsed;
+}
+
 /**
  * onCreate auth trigger
  */
@@ -26,6 +33,9 @@ export const onUserCreate = functions.auth.user().onCreate(async (user) => {
     try {
         const batch = firestore.batch();
         const timestamp = admin.firestore.FieldValue.serverTimestamp();
+        const now = new Date();
+        const trialDays = readTrialDays();
+        const trialEndsAt = new Date(now.getTime() + trialDays * 24 * 60 * 60 * 1000);
 
         // 1. Create Root User Document (Read-Only for Client)
         const userRef = firestore.doc(`users/${uid}`);
@@ -36,7 +46,12 @@ export const onUserCreate = functions.auth.user().onCreate(async (user) => {
             photoURL,
             createdAt: timestamp,
             stripeCustomerId: null,
-            subscriptionStatus: 'free',
+            subscriptionStatus: 'trialing',
+            trialStartedAt: admin.firestore.Timestamp.fromDate(now),
+            subscriptionTrialEndsAt: admin.firestore.Timestamp.fromDate(trialEndsAt),
+            trialConsumedAt: timestamp,
+            billingPhase: 'trial_started',
+            trialOrigin: 'app_no_card',
             entryCount: 0,
         });
 

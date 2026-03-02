@@ -14,7 +14,7 @@ import {
   updateProfile,
   signOut
 } from 'firebase/auth';
-import { addDoc, collection, doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { addDoc, collection, doc, getDoc, setDoc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { auth as firebaseAuth, firestore as db } from '@/lib/firebase/web-client';
 import { logger } from '@/lib/logger/safe';
 import { useToast } from '@/hooks/use-toast';
@@ -170,6 +170,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (!userSnap.exists()) {
           logger.warnSafe("Creating user doc client-side because Cloud Trigger is missing.", { userId: finalUser.uid });
           try {
+            const now = new Date();
+            const trialDays = 7;
+            const trialEndsAt = new Date(now.getTime() + trialDays * 24 * 60 * 60 * 1000);
             await setDoc(userRef, {
               uid: finalUser.uid,
               email: finalUser.email,
@@ -177,7 +180,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               photoURL: finalUser.photoURL,
               createdAt: serverTimestamp(),
               stripeCustomerId: null,
-              subscriptionStatus: 'free',
+              subscriptionStatus: 'trialing',
+              trialStartedAt: Timestamp.fromDate(now),
+              subscriptionTrialEndsAt: Timestamp.fromDate(trialEndsAt),
+              trialConsumedAt: serverTimestamp(),
+              billingPhase: 'trial_started',
+              trialOrigin: 'app_no_card',
               entryCount: 0,
             }, { merge: true });
 

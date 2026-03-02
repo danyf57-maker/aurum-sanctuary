@@ -5,6 +5,8 @@ const ACTIVE_SUBSCRIPTION_STATUSES = new Set(['active', 'trialing']);
 
 type UserBillingSnapshot = {
   subscriptionStatus?: string;
+  subscriptionId?: string;
+  subscriptionTrialEndsAt?: Date | { toDate?: () => Date };
   aurumAccessExpiresAt?: Date | { toDate?: () => Date };
 };
 
@@ -37,7 +39,11 @@ export async function getAurumAccessState(userId: string): Promise<{
   const userSnap = await userRef.get();
   const userData = (userSnap.data() || {}) as UserBillingSnapshot;
 
-  const hasSubscription = ACTIVE_SUBSCRIPTION_STATUSES.has(userData.subscriptionStatus || '');
+  const status = userData.subscriptionStatus || '';
+  const trialEndsAt = toDate(userData.subscriptionTrialEndsAt);
+  const hasStripeSubscription = typeof userData.subscriptionId === 'string' && userData.subscriptionId.length > 0;
+  const hasActiveTrial = status === 'trialing' && !!trialEndsAt && trialEndsAt.getTime() > Date.now();
+  const hasSubscription = status === 'active' || hasActiveTrial || (status === 'trialing' && hasStripeSubscription);
   const oneShotExpiresAt = toDate(userData.aurumAccessExpiresAt);
   const hasOneShotWindow = !!oneShotExpiresAt && oneShotExpiresAt.getTime() > Date.now();
 

@@ -11,55 +11,20 @@ import { useAuth } from '@/providers/auth-provider';
 import { useRouter } from 'next/navigation';
 import { useFormStatus } from 'react-dom';
 import { Loader2 } from 'lucide-react';
-import { useState } from 'react';
 import { trackEvent } from '@/lib/analytics/client';
 
 export const dynamic = 'force-dynamic';
 
-// Les ID de prix sont maintenant chargés depuis les variables d'environnement
-const PRICE_ID_PRO = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO;
-const PRICE_ID_PREMIUM = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PREMIUM;
+// Preferred naming; fallback keeps backward compatibility with existing env vars.
+const PRICE_ID_MONTHLY = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY || process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO;
+const PRICE_ID_YEARLY = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_YEARLY || process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PREMIUM;
 
 const plans = [
     {
-        name: "Essentiel",
-        price: "0€",
+        name: "Mensuel",
+        price: "13€",
         period: "/mois",
-        description: "Pour commencer votre voyage d'introspection.",
-        features: [
-            { text: "10 entrées de journal par mois", included: true },
-            { text: "5 conversations avec Aurum", included: true },
-            { text: "Historique de 1 mois", included: true },
-            { text: "Export des données", included: false },
-            { text: "Reflets approfondis", included: false },
-        ],
-        cta: "Commencer gratuitement",
-        isRecommended: false,
-        href: "/sanctuary/write",
-        priceId: null,
-    },
-    {
-        name: "Pro",
-        price: "19€",
-        period: "/mois",
-        description: "Pour un engagement profond avec votre monde intérieur.",
-        features: [
-            { text: "Entrées de journal illimitées", included: true },
-            { text: "50 conversations avec Aurum", included: true },
-            { text: "Historique complet", included: true },
-            { text: "Export des données", included: true },
-            { text: "Reflets approfondis", included: false },
-        ],
-        cta: "Choisir Pro",
-        isRecommended: true,
-        href: "/sanctuary/write",
-        priceId: PRICE_ID_PRO,
-    },
-    {
-        name: "Premium",
-        price: "39€",
-        period: "/mois",
-        description: "L'expérience Aurum ultime, sans aucune limite.",
+        description: "L'accès complet à Aurum, facturé au mois.",
         features: [
             { text: "Entrées de journal illimitées", included: true },
             { text: "Conversations avec Aurum illimitées", included: true },
@@ -67,10 +32,27 @@ const plans = [
             { text: "Export des données", included: true },
             { text: "Reflets approfondis", included: true },
         ],
-        cta: "Passer Premium",
+        cta: "Choisir mensuel",
         isRecommended: false,
-        href: "/sanctuary/write",
-        priceId: PRICE_ID_PREMIUM,
+        href: "/pricing",
+        priceId: PRICE_ID_MONTHLY,
+    },
+    {
+        name: "Annuel",
+        price: "129€",
+        period: "/an",
+        description: "Le même accès complet, avec 2 mois offerts.",
+        features: [
+            { text: "Entrées de journal illimitées", included: true },
+            { text: "Conversations avec Aurum illimitées", included: true },
+            { text: "Historique complet", included: true },
+            { text: "Export des données", included: true },
+            { text: "Reflets approfondis", included: true },
+        ],
+        cta: "Choisir annuel",
+        isRecommended: true,
+        href: "/pricing",
+        priceId: PRICE_ID_YEARLY,
     }
 ];
 
@@ -83,7 +65,7 @@ const Feature = ({ text, included }: { text: string, included: boolean }) => (
 
 function SubscribeButton({ priceId, cta, isRecommended }: { priceId: string | null | undefined, cta: string, isRecommended: boolean }) {
     const { pending } = useFormStatus();
-    const [isCurrentPlan, setIsCurrentPlan] = useState(false); // Logique à implémenter
+    const isCurrentPlan = false; // TODO: lire le plan actuel user
     const isStripeDisabled = !priceId || priceId.includes('xxx');
 
     return (
@@ -114,24 +96,48 @@ export default function PricingPage() {
             router.push('/sanctuary/write'); // ou afficher un modal de connexion
             return;
         }
-        // await createCheckoutSession(formData);
-        console.warn("Stripe Checkout disabled during build/deploy debugging.");
+
+        try {
+            const token = await user.getIdToken();
+            const response = await fetch('/api/stripe/create-checkout-session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({ priceId }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Impossible de créer la session de paiement.');
+            }
+
+            const { url } = await response.json();
+            if (!url) {
+                throw new Error('Aucune URL de paiement reçue.');
+            }
+
+            window.location.href = url;
+        } catch (error) {
+            console.error('Failed to start checkout from pricing', error);
+        }
     };
 
     return (
         <div className="bg-stone-50/50 min-h-screen">
             <section className="py-24 md:py-32">
                 <div className="container max-w-5xl mx-auto text-center animate-fade-in">
-                    <h1 className="text-4xl md:text-5xl font-headline font-bold tracking-tight">Trouvez le plan qui vous ressemble</h1>
+                    <h1 className="text-4xl md:text-5xl font-headline font-bold tracking-tight">Choisissez votre formule</h1>
                     <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-                        Que vous commenciez juste à explorer votre monde intérieur ou que vous soyez prêt pour une transformation profonde, Aurum a un plan pour vous.
+                        Accès complet à Aurum à partir de 13€/mois, ou 129€/an.
                     </p>
                 </div>
             </section>
 
             <section className="pb-24 md:pb-32">
                 <div className="container max-w-7xl mx-auto">
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start max-w-4xl mx-auto">
                         {plans.map((plan) => (
                             <Card key={plan.name} className={cn(
                                 "flex flex-col h-full",
@@ -175,7 +181,7 @@ export default function PricingPage() {
                     </div>
                 </div>
                 <div className="text-center mt-16 text-sm text-muted-foreground">
-                    <p>Les abonnements sont gérés via Stripe. Vous pouvez annuler à tout moment.</p>
+                    <p>Les abonnements sont gérés via Stripe. Résiliation possible à tout moment.</p>
                 </div>
             </section>
         </div>
