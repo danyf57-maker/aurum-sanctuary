@@ -12,6 +12,34 @@ service cloud.firestore {
       return isAuthenticated() && request.auth.uid == userId;
     }
 
+    function sensitiveUserFields() {
+      return [
+        'stripeCustomerId',
+        'subscriptionStatus',
+        'subscriptionId',
+        'subscriptionPriceId',
+        'subscriptionCurrentPeriodEnd',
+        'subscriptionTrialEndsAt',
+        'trialStartedAt',
+        'trialConsumedAt',
+        'trialConfiguredDays',
+        'trialOrigin',
+        'billingPhase'
+      ];
+    }
+
+    function userCreateAllowedFields() {
+      return [
+        'uid',
+        'email',
+        'displayName',
+        'photoURL',
+        'createdAt',
+        'updatedAt',
+        'entryCount'
+      ];
+    }
+
     // ---------------------------------------------------------
     // Public Content (Blog)
     // ---------------------------------------------------------
@@ -27,11 +55,18 @@ service cloud.firestore {
     
     match /users/{userId} {
       // READ: Owner only
-      // WRITE: Allow owner to CREATE their own doc (fallback for dev)
+      // WRITE: Allow owner to CREATE minimal profile doc only
       allow read: if isOwner(userId);
-      allow create: if isOwner(userId);
-      // ALLOW UPDATE for encryption metadata
-      allow update: if isOwner(userId);
+      allow create: if isOwner(userId)
+        && request.resource.data.uid == userId
+        && request.resource.data.keys().hasOnly(userCreateAllowedFields())
+        && !request.resource.data.keys().hasAny(sensitiveUserFields());
+      // Owner updates allowed except sensitive billing/subscription fields.
+      allow update: if isOwner(userId)
+        && !request.resource.data
+          .diff(resource.data)
+          .affectedKeys()
+          .hasAny(sensitiveUserFields());
 
       // -------------------------------------------------------
       // Settings Subcollection

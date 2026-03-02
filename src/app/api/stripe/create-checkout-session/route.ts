@@ -11,6 +11,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe/server';
 import { auth, firestore as db } from '@/lib/firebase/admin';
 import { logger } from '@/lib/logger/safe';
+import { rateLimit, RateLimitPresets } from '@/lib/rate-limit';
 
 export async function POST(req: NextRequest) {
     try {
@@ -44,6 +45,15 @@ export async function POST(req: NextRequest) {
             return NextResponse.json(
                 { error: 'User email not found' },
                 { status: 400 }
+            );
+        }
+
+        // 1b. Rate limit checkout-session creation to reduce abuse/fraud attempts
+        const checkoutRateLimit = await rateLimit(RateLimitPresets.auth(`checkout:${userId}`));
+        if (!checkoutRateLimit.success) {
+            return NextResponse.json(
+                { error: 'Too many checkout attempts. Please try again in a minute.' },
+                { status: 429 }
             );
         }
 

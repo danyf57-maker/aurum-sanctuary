@@ -11,6 +11,18 @@ import { logger } from '@/lib/logger/safe';
  */
 export async function POST(request: Request) {
     try {
+        // Basic CSRF hardening: reject cross-site origins.
+        const requestOrigin = request.headers.get('origin');
+        const runtimeOrigin = new URL(request.url).origin;
+        const configuredAppOrigin = process.env.NEXT_PUBLIC_APP_URL
+            ? new URL(process.env.NEXT_PUBLIC_APP_URL).origin
+            : runtimeOrigin;
+        const allowedOrigins = new Set([runtimeOrigin, configuredAppOrigin]);
+
+        if (requestOrigin && !allowedOrigins.has(requestOrigin)) {
+            return NextResponse.json({ error: 'Forbidden origin' }, { status: 403 });
+        }
+
         const { idToken } = await request.json();
 
         if (!idToken) {
@@ -25,6 +37,14 @@ export async function POST(request: Request) {
         if (!auth || isMockAuth || typeof (auth as any).createSessionCookie !== 'function') {
             console.warn("Firebase Admin Auth not initialized or mocked. Skipping session cookie creation.");
             return NextResponse.json({ status: 'skipped', message: 'Admin Auth missing' }, { status: 200 });
+        }
+
+        // Verify token first and require recent sign-in before exchanging to long-lived session cookie.
+        const decoded = await auth.verifyIdToken(idToken, true);
+        const authTimeSec = typeof decoded.auth_time === 'number' ? decoded.auth_time : 0;
+        const maxSessionExchangeAgeMs = 10 * 60 * 1000;
+        if (!authTimeSec || Date.now() - authTimeSec * 1000 > maxSessionExchangeAgeMs) {
+            return NextResponse.json({ error: 'Recent authentication required' }, { status: 401 });
         }
 
         // Create the session cookie using Firebase Admin

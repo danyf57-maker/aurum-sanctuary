@@ -56,6 +56,21 @@ export async function POST(req: NextRequest) {
 
     console.log(`📨 Received webhook event: ${event.type}`);
 
+    // Idempotency guard: Stripe can resend events, process each ID once.
+    try {
+        await db.collection('stripeWebhookEvents').doc(event.id).create({
+            type: event.type,
+            createdAt: new Date(),
+        });
+    } catch (error: any) {
+        const code = error?.code ?? error?.status;
+        if (code === 6 || code === 'already-exists' || /already exists/i.test(String(error?.message || ''))) {
+            console.log(`ℹ️  Duplicate webhook event ignored: ${event.id}`);
+            return NextResponse.json({ received: true, duplicate: true });
+        }
+        throw error;
+    }
+
     // Handle events
     try {
         switch (event.type) {
