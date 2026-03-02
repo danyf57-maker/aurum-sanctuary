@@ -128,6 +128,20 @@ function getSkillIdForIntent(intent: AurumIntent): string | null {
   return null;
 }
 
+function detectUserLanguage(content: string): string {
+  const text = (content || '').toLowerCase();
+  if (/[¿¡]/.test(text) || /\b(que|para|porque|estoy|tengo|siento|quiero|puedo|gracias|hola)\b/.test(text)) {
+    return 'es';
+  }
+  if (/\b(the|and|with|feel|because|about|today|this|that|i am|i feel)\b/.test(text)) {
+    return 'en';
+  }
+  if (/\b(je|tu|vous|avec|pour|parce|bonjour|merci|suis|ressens)\b/.test(text)) {
+    return 'fr';
+  }
+  return 'same-as-user';
+}
+
 /**
  * POST /api/reflect
  * Body: { content: string, idToken: string }
@@ -194,6 +208,7 @@ export async function POST(request: NextRequest) {
     // 1. Detect intent (instant, no API call)
     const intent = detectAurumIntent(content);
     const skillId = getSkillIdForIntent(intent);
+    const userLanguage = detectUserLanguage(content);
 
     // 2. Detect patterns + get existing patterns IN PARALLEL
     logger.infoSafe('Detecting patterns (parallel)', { userId });
@@ -218,6 +233,10 @@ export async function POST(request: NextRequest) {
       {
         role: 'system',
         content: getSystemPromptForIntent(intent),
+      },
+      {
+        role: 'system',
+        content: `Language rule (strict): Reply in the user's language only. Detected user language: ${userLanguage}. Never switch language unless the user explicitly asks.`,
       },
     ];
 
