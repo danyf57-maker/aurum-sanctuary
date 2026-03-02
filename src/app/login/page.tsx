@@ -155,6 +155,7 @@ function LoginForm() {
       // Fallback redirect in case auth state event is delayed.
       setTimeout(() => {
         router.replace(redirectUrl);
+        setLoading(false);
       }, 1500);
     } catch (error) {
       // Error toast shown by AuthProvider
