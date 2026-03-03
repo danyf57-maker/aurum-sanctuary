@@ -1,99 +1,111 @@
 /**
  * Terms of Service Page
- * 
+ *
  * Legally required document explaining user rights and responsibilities.
  */
 
-import React from 'react';
-import Link from 'next/link';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import React from "react";
+import Link from "next/link";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 export default function TermsPage() {
-    const lastUpdated = "29 Janvier 2026";
+  const lastUpdated = "January 29, 2026";
 
-    return (
-        <div className="container mx-auto py-12 px-4 max-w-4xl">
-            <Card className="border-none shadow-none bg-transparent">
-                <CardHeader className="text-center">
-                    <CardTitle className="text-4xl font-serif">Conditions d'Utilisation</CardTitle>
-                    <p className="text-muted-foreground mt-2">Dernière mise à jour : {lastUpdated}</p>
-                    <div className="mt-6">
-                        <Button asChild variant="outline">
-                            <Link href="https://aurumdiary.com">Retour à aurumdiary.com</Link>
-                        </Button>
-                    </div>
-                </CardHeader>
-                <CardContent className="prose prose-slate dark:prose-invert max-w-none mt-8">
-                    <section>
-                        <h2 className="text-2xl font-serif mt-6">1. Acceptation des Conditions</h2>
-                        <p>
-                            En accédant à Aurum Sanctuary ("l'Application"), vous acceptez d'être lié par les présentes Conditions d'Utilisation. Si vous n'acceptez pas ces conditions, veuillez ne pas utiliser l'Application.
-                        </p>
-                    </section>
+  return (
+    <div className="container mx-auto max-w-4xl px-4 py-12">
+      <Card className="border-none bg-transparent shadow-none">
+        <CardHeader className="text-center">
+          <CardTitle className="text-4xl font-serif">Terms of Service</CardTitle>
+          <p className="mt-2 text-muted-foreground">Last updated: {lastUpdated}</p>
+          <div className="mt-6">
+            <Button asChild variant="outline">
+              <Link href="https://aurumdiary.com">Back to aurumdiary.com</Link>
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="prose prose-slate mt-8 max-w-none dark:prose-invert">
+          <section>
+            <h2 className="mt-6 text-2xl font-serif">1. Acceptance of Terms</h2>
+            <p>
+              By accessing Aurum Sanctuary (the "Application"), you agree to be bound by these Terms of
+              Service. If you do not agree with these terms, do not use the Application.
+            </p>
+          </section>
 
-                    <section>
-                        <h2 className="text-2xl font-serif mt-6">2. Description du Service</h2>
-                        <p>
-                            Aurum Sanctuary est un service de journalisation de santé mentale. Nous fournissons des outils pour capturer vos pensées, analyser vos émotions et générer des reflets basés sur vos entrées.
-                        </p>
-                    </section>
+          <section>
+            <h2 className="mt-6 text-2xl font-serif">2. Service Description</h2>
+            <p>
+              Aurum Sanctuary is a mental wellness journaling service. We provide tools to capture your
+              thoughts, analyze emotional patterns, and generate reflections based on your entries.
+            </p>
+          </section>
 
-                    <section>
-                        <h2 className="text-2xl font-serif mt-6">3. Confidentialité et Chiffrement</h2>
-                        <p>
-                            Votre vie privée est notre priorité absolue.
-                        </p>
-                        <ul>
-                            <li><strong>Chiffrement Client :</strong> Vos entrées de journal sont chiffrées sur votre appareil avant d'être envoyées à nos serveurs.</li>
-                            <li><strong>Architecture Admin-Blind :</strong> Nous utilisons des mécanismes qui empêchent nos administrateurs d'accéder à la clé de déchiffrement de vos données.</li>
-                            <li><strong>Traitement :</strong> L'analyse par le moteur Aurum est effectuée dans un environnement sécurisé où vos données sont temporairement déchiffrées uniquement pour le traitement, sans stockage persistant du contenu en clair.</li>
-                        </ul>
-                    </section>
+          <section>
+            <h2 className="mt-6 text-2xl font-serif">3. Privacy and Encryption</h2>
+            <p>Your privacy is a core priority.</p>
+            <ul>
+              <li>
+                <strong>Client-side encryption:</strong> Your journal entries are encrypted on your device
+                before they are sent to our servers.
+              </li>
+              <li>
+                <strong>Admin-blind architecture:</strong> We use safeguards that prevent administrators from
+                accessing your decryption keys.
+              </li>
+              <li>
+                <strong>Processing:</strong> Aurum analysis runs in a secure environment where data is
+                temporarily decrypted only for processing, without persistent plaintext storage.
+              </li>
+            </ul>
+          </section>
 
-                    <section>
-                        <h2 className="text-2xl font-serif mt-6">4. Responsabilité de l'Utilisateur</h2>
-                        <p>
-                            Vous êtes responsable de :
-                        </p>
-                        <ul>
-                            <li>Maintenir la confidentialité de vos identifiants de compte.</li>
-                            <li>Toute activité se déroulant sous votre compte.</li>
-                            <li>Ne pas utiliser le service pour des activités illégales ou nuisibles.</li>
-                        </ul>
-                    </section>
+          <section>
+            <h2 className="mt-6 text-2xl font-serif">4. User Responsibilities</h2>
+            <p>You are responsible for:</p>
+            <ul>
+              <li>Keeping your account credentials confidential.</li>
+              <li>All activity under your account.</li>
+              <li>Not using the service for illegal or harmful activities.</li>
+            </ul>
+          </section>
 
-                    <section>
-                        <h2 className="text-2xl font-serif mt-6">5. Clause de Non-Responsabilité Médicale</h2>
-                        <p className="font-semibold text-amber-700 dark:text-amber-500">
-                            IMPORTANT : Aurum Sanctuary n'est pas un service médical ou de santé mentale professionnel.
-                        </p>
-                        <p>
-                            Le contenu généré par le moteur Aurum et les outils de l'Application sont destinés à des fins de réflexion personnelle et de bien-être général. Ils ne remplacent pas les conseils, le diagnostic ou le traitement d'un professionnel de santé. Si vous êtes en situation de crise ou avez besoin d'aide médicale, contactez immédiatement un professionnel qualifié ou les services d'urgence.
-                        </p>
-                    </section>
+          <section>
+            <h2 className="mt-6 text-2xl font-serif">5. Medical Disclaimer</h2>
+            <p className="font-semibold text-amber-700 dark:text-amber-500">
+              IMPORTANT: Aurum Sanctuary is not a medical or licensed mental health service.
+            </p>
+            <p>
+              Content generated by the Aurum engine and Application tools is intended for personal reflection
+              and general wellbeing. It is not a substitute for professional advice, diagnosis, or treatment.
+              If you are in crisis or need medical support, contact a qualified professional or emergency
+              services immediately.
+            </p>
+          </section>
 
-                    <section>
-                        <h2 className="text-2xl font-serif mt-6">6. Abonnements et Paiements</h2>
-                        <p>
-                            Certains services peuvent être soumis à un abonnement payant. Les conditions de paiement et d'annulation sont régies par notre partenaire de paiement Stripe.
-                        </p>
-                    </section>
+          <section>
+            <h2 className="mt-6 text-2xl font-serif">6. Subscriptions and Payments</h2>
+            <p>
+              Some features may require a paid subscription. Payment and cancellation terms are managed by
+              our payment provider, Stripe.
+            </p>
+          </section>
 
-                    <section>
-                        <h2 className="text-2xl font-serif mt-6">7. Modifications des Conditions</h2>
-                        <p>
-                            Nous nous réservons le droit de modifier ces conditions à tout moment. Nous vous informerons de tout changement important via l'Application ou par email.
-                        </p>
-                    </section>
+          <section>
+            <h2 className="mt-6 text-2xl font-serif">7. Changes to Terms</h2>
+            <p>
+              We may update these terms at any time. We will notify you of material changes in the
+              Application or by email.
+            </p>
+          </section>
 
-                    <section className="mt-12 p-6 bg-slate-100 dark:bg-slate-900 rounded-lg">
-                        <p className="text-sm italic">
-                            Pour toute question concernant ces conditions, veuillez nous contacter via les paramètres de votre compte.
-                        </p>
-                    </section>
-                </CardContent>
-            </Card>
-        </div>
-    );
+          <section className="mt-12 rounded-lg bg-slate-100 p-6 dark:bg-slate-900">
+            <p className="text-sm italic">
+              If you have questions about these terms, contact us from your account settings.
+            </p>
+          </section>
+        </CardContent>
+      </Card>
+    </div>
+  );
 }

@@ -63,26 +63,26 @@ type LandingInsight = {
 };
 
 const PROFILE_TITLES: Record<string, string> = {
-  D: "Le Pionnier",
-  I: "Le Connecteur",
-  S: "L'Ancre",
-  C: "L'Architecte",
-  MIXTE: "Profil mixte • L'Équilibriste",
+  D: "The Pioneer",
+  I: "The Connector",
+  S: "The Anchor",
+  C: "The Architect",
+  MIXTE: "Balanced profile • The Equilibrist",
 };
 const ACTIVE_PLAN_STORAGE_KEY = "aurum-active-plan";
 
 const RYFF_DIMENSION_LABELS: Record<keyof RyffDimensionScores, string> = {
-  acceptationDeSoi: "acceptation de soi",
-  developpementPersonnel: "développement personnel",
-  sensDeLaVie: "sens de la vie",
-  maitriseEnvironnement: "maîtrise de ton quotidien",
-  autonomie: "autonomie",
-  relationsPositives: "relations positives",
+  acceptationDeSoi: "self-acceptance",
+  developpementPersonnel: "personal growth",
+  sensDeLaVie: "purpose in life",
+  maitriseEnvironnement: "daily mastery",
+  autonomie: "autonomy",
+  relationsPositives: "positive relationships",
 };
 
 function buildWellbeingNarrative(scores: RyffDimensionScores): string {
   const entries = Object.entries(scores) as [keyof RyffDimensionScores, number][];
-  if (entries.length === 0) return "Ton profil est prêt. Prends quelques minutes pour l'observer avec douceur.";
+  if (entries.length === 0) return "Your profile is ready. Take a moment to observe it gently.";
 
   const sorted = [...entries].sort((a, b) => b[1] - a[1]);
   const [topKey, topValue] = sorted[0];
@@ -91,36 +91,36 @@ function buildWellbeingNarrative(scores: RyffDimensionScores): string {
 
   const tone =
     average >= 4.3
-      ? "Tu traverses une période plutôt solide."
+      ? "You are going through a fairly steady period."
       : average >= 3.3
-      ? "Tu es dans une phase d'équilibre en construction."
-      : "Tu sembles traverser une période plus chargée.";
+      ? "You are in a phase of building balance."
+      : "You seem to be in a more demanding period.";
 
-  return `${tone} Ton point fort actuel: ${RYFF_DIMENSION_LABELS[topKey]} (${topValue.toFixed(
+  return `${tone} Your strongest area right now: ${RYFF_DIMENSION_LABELS[topKey]} (${topValue.toFixed(
     1
-  )}/6). Le point à soutenir en priorité: ${RYFF_DIMENSION_LABELS[lowKey]} (${lowValue.toFixed(
+  )}/6). The top area to support first: ${RYFF_DIMENSION_LABELS[lowKey]} (${lowValue.toFixed(
     1
-  )}/6). Écrire quelques lignes dans Aurum t'aidera à clarifier ce point faible et à suivre tes progrès de façon concrète.`;
+  )}/6). Writing a few lines in Aurum will help you clarify this weaker area and track concrete progress.`;
 }
 
 const PERSONALITY_DIMENSION_LABELS: Record<keyof PersonalityScores, string> = {
-  determination: "détermination",
+  determination: "determination",
   influence: "influence",
-  stabilite: "stabilité",
-  rigueur: "rigueur",
+  stabilite: "stability",
+  rigueur: "discipline",
 };
 
 function buildPersonalityNarrative(scores: PersonalityScores, archetype: string): string {
   const entries = Object.entries(scores) as [keyof PersonalityScores, number][];
-  if (entries.length === 0) return "Ton profil est prêt. Observe surtout ce qui t'aide à avancer avec plus de clarté.";
+  if (entries.length === 0) return "Your profile is ready. Focus on what helps you move forward with more clarity.";
   const sorted = [...entries].sort((a, b) => b[1] - a[1]);
   const [topKey, topValue] = sorted[0];
   const [lowKey, lowValue] = sorted[sorted.length - 1];
-  return `Tu as un style ${archetype} bien marqué. Ta force dominante aujourd'hui: ${PERSONALITY_DIMENSION_LABELS[topKey]} (${topValue.toFixed(
+  return `You show a clear ${archetype} style. Your dominant strength today: ${PERSONALITY_DIMENSION_LABELS[topKey]} (${topValue.toFixed(
     1
-  )}/6). Pour progresser avec plus de fluidité, travaille doucement ${PERSONALITY_DIMENSION_LABELS[
+  )}/6). To progress with more fluidity, gently work on ${PERSONALITY_DIMENSION_LABELS[
     lowKey
-  ]} (${lowValue.toFixed(1)}/6) avec une action simple et répétée cette semaine. L'écriture dans Aurum te permet de préparer cette action, de la garder visible, puis de mesurer son effet réel.`;
+  ]} (${lowValue.toFixed(1)}/6) through one simple repeated action this week. Writing in Aurum helps you prepare that action, keep it visible, and measure its real effect.`;
 }
 
 
@@ -145,7 +145,7 @@ function toIssue(docSnap: QueryDocumentSnapshot<DocumentData>): MagazineIssue {
   const data = docSnap.data() as Record<string, unknown>;
   return {
     id: docSnap.id,
-    title: String(data.title || "Entrée"),
+    title: String(data.title || "Entry"),
     excerpt: String(data.excerpt || ""),
     coverImageUrl: data.coverImageUrl ? String(data.coverImageUrl) : null,
     tags: Array.isArray(data.tags) ? data.tags.map((tag) => String(tag)) : [],
@@ -163,7 +163,7 @@ function stripImageMarkdown(content: string) {
 
 function generateIssueTitle(content: string) {
   const words = (content ?? "").split(/\s+/).filter(Boolean);
-  if (words.length === 0) return "Entrée";
+  if (words.length === 0) return "Entry";
   return words.slice(0, 8).join(" ") + (words.length > 8 ? "..." : "");
 }
 
@@ -343,7 +343,9 @@ export default function MagazinePage() {
         setLandingAssessment({
           id: latest.item.id,
           profile: String(latest.d.profile || "MIXTE"),
-          profileTitle: String(latest.d.profileTitle || "Profil personnel"),
+          profileTitle:
+            PROFILE_TITLES[String(latest.d.profile || "MIXTE")] ||
+            String(latest.d.profileTitle || "Personal profile"),
           answers: Array.isArray(latest.d.answers)
             ? latest.d.answers.map((entry) => String(entry))
             : [],
@@ -352,7 +354,7 @@ export default function MagazinePage() {
         return;
       }
 
-      // Fallback: synchroniser le quiz stocké localement si aucun résultat n'existe encore en base.
+      // Fallback: sync quiz data from local storage when no result exists yet in Firestore.
       if (typeof window !== "undefined") {
         try {
           const raw = localStorage.getItem("aurum-quiz-data");
@@ -374,7 +376,7 @@ export default function MagazinePage() {
             const parsed = parseCreatedAt(localQuiz.completedAt);
             return parsed ?? new Date();
           })();
-          const profileTitle = PROFILE_TITLES[profile] || "Profil personnel";
+          const profileTitle = PROFILE_TITLES[profile] || "Personal profile";
 
           const created = await addDoc(assessmentsRef, {
             source: "landing-quiz",
@@ -553,6 +555,7 @@ export default function MagazinePage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             kind: "landing",
+            locale: "en",
             profile: landingAssessment.profile,
             profileTitle: landingAssessment.profileTitle,
             answers: landingAssessment.answers,
@@ -568,7 +571,7 @@ export default function MagazinePage() {
         const narrative =
           typeof data.narrative === "string" && data.narrative.trim()
             ? data.narrative.trim()
-            : "Ton profil d'entrée est prêt. Avance par étapes simples et régulières.";
+            : "Your entry profile is ready. Move forward with simple, steady steps.";
         const actionPlan = Array.isArray(data.actionPlan)
           ? data.actionPlan
               .map((entry) => (typeof entry === "string" ? entry.trim() : ""))
@@ -596,7 +599,11 @@ export default function MagazinePage() {
 
   const nonEncryptedCount = useMemo(
     () =>
-      issues.filter((i) => !i.excerpt?.includes("Contenu chiffré")).length,
+      issues.filter(
+        (i) =>
+          !i.excerpt?.includes("Contenu chiffré") &&
+          !i.excerpt?.includes("Encrypted content")
+      ).length,
     [issues]
   );
 
@@ -624,7 +631,11 @@ export default function MagazinePage() {
     setIsWellbeingLoading(true);
     try {
       const payload = issues
-        .filter((i) => !i.excerpt?.includes("Contenu chiffré"))
+        .filter(
+          (i) =>
+            !i.excerpt?.includes("Contenu chiffré") &&
+            !i.excerpt?.includes("Encrypted content")
+        )
         .slice(0, 30)
         .map((issue) => ({
           id: issue.id,
@@ -682,6 +693,7 @@ export default function MagazinePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           kind: "wellbeing",
+          locale: "en",
           scores,
         }),
       });
@@ -739,9 +751,9 @@ export default function MagazinePage() {
         }
       }, 1200);
       toast({
-        title: "Profil prêt",
+        title: "Profile ready",
         description:
-          "Ton résultat est affiché. On finalise sa sauvegarde en arrière-plan.",
+          "Your result is visible. We are finalizing the save in the background.",
       });
     } finally {
       setIsQuestionnaireSubmitting(false);
@@ -753,7 +765,11 @@ export default function MagazinePage() {
     setIsPersonalityLoading(true);
     try {
       const payload = issues
-        .filter((i) => !i.excerpt?.includes("Contenu chiffré"))
+        .filter(
+          (i) =>
+            !i.excerpt?.includes("Contenu chiffré") &&
+            !i.excerpt?.includes("Encrypted content")
+        )
         .slice(0, 30)
         .map((issue) => ({
           id: issue.id,
@@ -815,6 +831,7 @@ export default function MagazinePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           kind: "personality",
+          locale: "en",
           scores,
           archetype,
         }),
@@ -877,8 +894,8 @@ export default function MagazinePage() {
         }
       }, 1200);
       toast({
-        title: "Profil prêt",
-        description: "Ton résultat est affiché. On finalise sa sauvegarde en arrière-plan.",
+        title: "Profile ready",
+        description: "Your result is visible. We are finalizing the save in the background.",
       });
     } finally {
       setIsPersonalitySubmitting(false);
@@ -911,7 +928,7 @@ export default function MagazinePage() {
                 ? data.createdAt
                 : (data.createdAt as { toDate?: () => Date }).toDate?.() ||
                   new Date();
-            dateTitle = `Réflexion du ${entryDate.toLocaleDateString("fr-FR", {
+            dateTitle = `Reflection from ${entryDate.toLocaleDateString("en-US", {
               day: "numeric",
               month: "long",
             })}`;
@@ -919,7 +936,7 @@ export default function MagazinePage() {
 
           const title = isEncrypted ? dateTitle : generateIssueTitle(content);
           const excerpt = isEncrypted
-            ? "Contenu chiffré"
+            ? "Encrypted content"
             : generateIssueExcerpt(content);
           const images = Array.isArray(data.images) ? data.images : [];
           const firstImage = images[0] as { url?: string } | undefined;
@@ -977,37 +994,37 @@ export default function MagazinePage() {
           Magazine
         </h1>
         <p className="mt-2 max-w-xl text-stone-500">
-          La lecture éditoriale et analytique de ton parcours. Aurum y assemble tes pages pour faire émerger les thèmes, les extraits marquants et ton évolution.
+          Your editorial and analytical reading space. Aurum assembles your pages to surface key themes, standout excerpts, and your evolution.
         </p>
       </header>
 
       {landingAssessment && (
         <div className="mb-6 rounded-2xl border border-amber-200/70 bg-amber-50/40 p-5 md:p-6">
           <p className="text-[11px] uppercase tracking-[0.2em] text-amber-700/80">
-            Parcours d'entrée
+            Entry profile
           </p>
           <h2 className="mt-2 text-xl font-semibold text-stone-900">
             {landingAssessment.profileTitle}
           </h2>
           <p className="mt-2 text-sm text-stone-600">
-            Résultat enregistré dans Magazine{landingAssessment.completedAt
-              ? ` le ${landingAssessment.completedAt.toLocaleDateString("fr-FR")}`
+            Result saved in Magazine{landingAssessment.completedAt
+              ? ` on ${landingAssessment.completedAt.toLocaleDateString("en-US")}`
               : ""}.
           </p>
           <p className="mt-1 text-xs text-stone-500">
-            Réponses captées: {landingAssessment.answers.length}
+            Answers captured: {landingAssessment.answers.length}
           </p>
 
           {isLandingInsightLoading && (
             <p className="mt-4 text-sm text-stone-600">
-              Aurum approfondit ton profil pour te proposer une lecture plus fine...
+              Aurum is deepening your profile for a more precise reading...
             </p>
           )}
 
           {landingInsight && (
             <div className="mt-4 rounded-2xl border border-amber-200/70 bg-white/80 p-4">
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-amber-700/80">
-                Lecture Aurum premium
+                Premium Aurum reading
               </p>
               <p className="mt-2 text-sm leading-relaxed text-stone-700">
                 {landingInsight.narrative}
@@ -1015,7 +1032,7 @@ export default function MagazinePage() {
               {landingInsight.actionPlan.length > 0 && (
                 <div className="mt-4">
                   <p className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-600">
-                    Plan d'action 7 jours
+                    7-day action plan
                   </p>
                   <ul className="mt-2 space-y-1.5 text-sm text-stone-700">
                     {landingInsight.actionPlan.map((step) => (
@@ -1027,7 +1044,7 @@ export default function MagazinePage() {
                   </ul>
                   <Link
                     href={`/sanctuary/write?initial=${encodeURIComponent(
-                      `Plan d'action 7 jours\n${landingInsight.actionPlan[0]}\n\nIntention du jour:`
+                      `7-day action plan\n${landingInsight.actionPlan[0]}\n\nToday's intention:`
                     )}`}
                     onClick={() => {
                       if (typeof window === "undefined") return;
@@ -1036,7 +1053,7 @@ export default function MagazinePage() {
                         JSON.stringify({
                           version: 1,
                           source: "landing",
-                          title: "Plan d'action 7 jours",
+                          title: "7-day action plan",
                           steps: landingInsight.actionPlan,
                           currentStep: 0,
                           createdAt: new Date().toISOString(),
@@ -1045,7 +1062,7 @@ export default function MagazinePage() {
                     }}
                     className="mt-3 inline-flex rounded-lg bg-[#C5A059] px-3 py-1.5 text-xs font-medium text-stone-900 transition-colors hover:bg-[#b8924e]"
                   >
-                    Appliquer ce plan dans mon journal
+                    Apply this plan in my journal
                   </Link>
                 </div>
               )}
@@ -1055,7 +1072,7 @@ export default function MagazinePage() {
       )}
 
       <div className="mb-6 space-y-6">
-        {/* Bien-être psychologique — Modèle de Ryff */}
+        {/* Psychological wellbeing — Ryff model */}
         <WellbeingRadar
           aiScores={
             wellbeingScore?.source !== "questionnaire"
@@ -1083,7 +1100,7 @@ export default function MagazinePage() {
           isSubmitting={isQuestionnaireSubmitting}
         />
 
-        {/* Profil de personnalité — 4 dimensions */}
+        {/* Personality profile — 4 dimensions */}
         <PersonalityRadar
           aiScores={
             personalityResult?.source !== "questionnaire"
@@ -1115,47 +1132,47 @@ export default function MagazinePage() {
 
       {issues.length === 0 ? (
         <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
-          {/* Zone héro */}
+          {/* Hero section */}
           <div className="border-b border-stone-100 bg-gradient-to-b from-stone-50 to-white px-10 py-12 text-center">
             <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-50 ring-1 ring-amber-200/70">
               <BookImage className="h-7 w-7 text-amber-700" />
             </div>
             <h2 className="text-lg font-semibold text-stone-900">
-              Ton parcours, révélé par Aurum
+              Your path, revealed by Aurum
             </h2>
             <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-stone-500">
-              Aurum assemble tes pages enregistrées et tes parcours guidés pour faire émerger
-              les thèmes récurrents, les extraits marquants et ton évolution dans le temps.
+              Aurum combines your saved pages and guided paths to highlight recurring themes,
+              standout excerpts, and your growth over time.
             </p>
           </div>
 
-          {/* Piliers — ce que fait le Magazine */}
+          {/* Pillars — what Magazine does */}
           <div className="grid divide-x divide-stone-100 sm:grid-cols-3">
             <div className="flex flex-col items-center p-7 text-center">
               <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">
                 <ImageIcon className="h-4 w-4 text-stone-600" />
               </div>
-              <p className="text-sm font-medium text-stone-900">Thèmes & extraits</p>
+              <p className="text-sm font-medium text-stone-900">Themes & excerpts</p>
               <p className="mt-1.5 text-xs leading-relaxed text-stone-500">
-                Les fils conducteurs de tes écrits, mis en lumière automatiquement par Aurum.
+                The common threads in your writing, surfaced automatically by Aurum.
               </p>
             </div>
             <div className="flex flex-col items-center p-7 text-center">
               <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">
                 <AlignLeft className="h-4 w-4 text-stone-600" />
               </div>
-              <p className="text-sm font-medium text-stone-900">Évolution</p>
+              <p className="text-sm font-medium text-stone-900">Growth over time</p>
               <p className="mt-1.5 text-xs leading-relaxed text-stone-500">
-                Ton profil de bien-être et de personnalité tracé dans le temps, page après page.
+                Your wellbeing and personality profile tracked across time, page by page.
               </p>
             </div>
             <div className="flex flex-col items-center p-7 text-center">
               <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">
                 <Archive className="h-4 w-4 text-stone-600" />
               </div>
-              <p className="text-sm font-medium text-stone-900">Vue éditoriale</p>
+              <p className="text-sm font-medium text-stone-900">Editorial view</p>
               <p className="mt-1.5 text-xs leading-relaxed text-stone-500">
-                Chaque page devient une édition avec image, extrait et date. Ton journal, magnifié.
+                Each page becomes an edition with image, excerpt, and date. Your journal, elevated.
               </p>
             </div>
           </div>
@@ -1168,7 +1185,7 @@ export default function MagazinePage() {
             >
               <Link href="/sanctuary/write">
                 <PenSquare className="mr-2 h-4 w-4" />
-                Écrire une entrée
+                Write an entry
               </Link>
             </Button>
             <Button
@@ -1179,13 +1196,13 @@ export default function MagazinePage() {
               className="border-stone-200 text-stone-600 hover:bg-stone-100"
             >
               <RefreshCw className={`mr-2 h-4 w-4 ${isBackfilling ? "animate-spin" : ""}`} />
-              {isBackfilling ? "Reconstruction..." : "Reconstruire depuis le journal"}
+              {isBackfilling ? "Rebuilding..." : "Rebuild from journal"}
             </Button>
           </div>
         </div>
       ) : (
         <div className="space-y-6">
-          {/* Dashboard Statistiques */}
+          {/* Dashboard stats */}
           <DashboardStats
             issues={issues}
             aurumStats={aurumStats}

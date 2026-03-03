@@ -18,6 +18,8 @@ type PersonalityScores = {
   rigueur: number;
 };
 
+type Locale = "en" | "fr" | "es";
+
 type Payload = {
   kind: "wellbeing" | "personality" | "landing";
   scores?: WellbeingScores | PersonalityScores;
@@ -25,7 +27,13 @@ type Payload = {
   profile?: string;
   profileTitle?: string;
   answers?: string[];
+  locale?: Locale;
 };
+
+function normalizeLocale(value: unknown): Locale {
+  if (value === "fr" || value === "es" || value === "en") return value;
+  return "en";
+}
 
 function clampText(value: unknown, fallback: string) {
   if (typeof value !== "string") return fallback;
@@ -34,104 +42,171 @@ function clampText(value: unknown, fallback: string) {
   return text.slice(0, 520);
 }
 
-function fallbackNarrative(payload: Payload): string {
+function fallbackNarrative(payload: Payload, locale: Locale): string {
+  if (locale === "fr") {
+    if (payload.kind === "wellbeing") {
+      return "Ton profil montre une base solide, avec un axe prioritaire à renforcer. Ecrire quelques lignes par jour t'aide a transformer le flou en actions simples, donc a retrouver plus vite calme et clarte. Dans Aurum, ce suivi regulier te permet aussi de voir ton evolution reelle au fil des jours.";
+    }
+    if (payload.kind === "landing") {
+      return "Ton profil d'entree confirme un vrai besoin de clarte. Tu n'as pas besoin d'en faire beaucoup: quelques lignes regulieres suffisent pour reprendre la main sur ton rythme interieur. Le benefice concret d'Aurum: tes mots restent organises, prives, et tu peux relire ce qui t'aide vraiment.";
+    }
+    return "Ton style est clair et utile. Quand tu ecris ton intention du jour, tu relies tes points forts a une action precise, donc ton impact devient plus stable et lisible. Avec Aurum, ce fil d'ecriture t'evite de repartir a zero chaque semaine.";
+  }
+
+  if (locale === "es") {
+    if (payload.kind === "wellbeing") {
+      return "Tu perfil muestra una base solida, con un eje prioritario por reforzar. Escribir unas lineas al dia te ayuda a transformar la confusion en acciones simples y recuperar calma y claridad. En Aurum, este seguimiento regular tambien te permite ver tu progreso real con el tiempo.";
+    }
+    if (payload.kind === "landing") {
+      return "Tu perfil inicial confirma una necesidad real de claridad. No necesitas hacer mucho: unas lineas constantes bastan para recuperar tu ritmo interior. El beneficio concreto de Aurum: tus palabras quedan organizadas y privadas, y puedes revisar lo que realmente te ayuda.";
+    }
+    return "Tu estilo es claro y util. Cuando escribes tu intencion del dia, conectas tus fortalezas con una accion concreta, por lo que tu impacto se vuelve mas estable y visible. Con Aurum, este hilo de escritura evita empezar de cero cada semana.";
+  }
+
   if (payload.kind === "wellbeing") {
-    return "Ton profil montre une base solide, avec un axe prioritaire à renforcer. Écrire quelques lignes par jour t'aide à transformer le flou en actions simples, donc à retrouver plus vite calme et clarté. Dans Aurum, ce suivi régulier te permet aussi de voir ton évolution réelle au fil des jours.";
+    return "Your profile shows a solid base with one priority area to strengthen. Writing a few lines each day helps turn blur into simple actions, so you recover calm and clarity faster. In Aurum, this regular rhythm also lets you see your real progress over time.";
   }
   if (payload.kind === "landing") {
-    return "Ton profil d'entrée confirme un vrai besoin de clarté. Tu n'as pas besoin d'en faire beaucoup: quelques lignes régulières suffisent pour reprendre la main sur ton rythme intérieur. Le bénéfice concret d'Aurum: tes mots restent organisés, privés, et tu peux relire ce qui t'aide vraiment.";
+    return "Your entry profile confirms a real need for clarity. You do not need to do a lot: a few consistent lines are enough to regain control of your inner rhythm. Aurum's practical benefit is simple: your words stay organized and private, and you can revisit what actually helps.";
   }
-  return "Ton style est clair et utile. Quand tu écris ton intention du jour, tu relies tes points forts à une action précise, donc ton impact devient plus stable et lisible. Avec Aurum, ce fil d'écriture t'évite de repartir à zéro chaque semaine.";
+  return "Your style is clear and useful. When you write your daily intention, you connect your strengths to one concrete action, making your impact steadier and more visible. With Aurum, that writing thread keeps you from restarting from zero every week.";
 }
 
-function fallbackActionPlan(payload: Payload): string[] {
+function fallbackActionPlan(payload: Payload, locale: Locale): string[] {
   if (payload.kind !== "landing") return [];
+
+  if (locale === "fr") {
+    return [
+      "Jour 1: ecris 3 lignes sur ce qui te prend le plus d'energie aujourd'hui.",
+      "Jour 2: note 1 situation qui t'a apaise(e), meme brievement.",
+      "Jour 3: ecris ce que tu veux proteger cette semaine.",
+      "Jour 4: clarifie une priorite unique pour demain.",
+      "Jour 5: decris un frein recurrent et une petite reponse concrete.",
+      "Jour 6: fais le bilan de 2 progres, meme discrets.",
+      "Jour 7: ecris une intention simple pour la semaine suivante.",
+    ];
+  }
+
+  if (locale === "es") {
+    return [
+      "Dia 1: escribe 3 lineas sobre lo que mas te consume energia hoy.",
+      "Dia 2: anota 1 situacion que te calmo, aunque fuera breve.",
+      "Dia 3: escribe lo que quieres proteger esta semana.",
+      "Dia 4: aclara una unica prioridad para manana.",
+      "Dia 5: describe un freno recurrente y una pequena respuesta concreta.",
+      "Dia 6: haz balance de 2 avances, incluso discretos.",
+      "Dia 7: escribe una intencion simple para la semana siguiente.",
+    ];
+  }
+
   return [
-    "Jour 1: écris 3 lignes sur ce qui te prend le plus d'énergie aujourd'hui.",
-    "Jour 2: note 1 situation qui t'a apaisé(e), même brièvement.",
-    "Jour 3: écris ce que tu veux protéger cette semaine.",
-    "Jour 4: clarifie une priorité unique pour demain.",
-    "Jour 5: décris un frein récurrent et une petite réponse concrète.",
-    "Jour 6: fais le bilan de 2 progrès, même discrets.",
-    "Jour 7: écris une intention simple pour la semaine suivante.",
+    "Day 1: write 3 lines about what drains most of your energy today.",
+    "Day 2: note 1 situation that helped you feel calmer, even briefly.",
+    "Day 3: write what you want to protect this week.",
+    "Day 4: clarify one single priority for tomorrow.",
+    "Day 5: describe one recurring blocker and one small concrete response.",
+    "Day 6: review 2 signs of progress, even subtle ones.",
+    "Day 7: write one simple intention for next week.",
   ];
 }
 
-function buildPrompt(payload: Payload): string {
-  if (payload.kind === "landing") {
-    return `Tu es Aurum: présence calme, lucide, premium, profondément humaine.
-Tu analyses un profil d'entrée et ses réponses, puis tu proposes une interprétation et un plan 7 jours.
-Règles:
-- tutoiement
-- concret, non médical, non anxiogène
-- ton chaleureux et premium
-- pas de jargon
+function userPromptLanguageLine(locale: Locale): string {
+  if (locale === "fr") return "Language rule: write all text in French.";
+  if (locale === "es") return "Language rule: write all text in Spanish.";
+  return "Language rule: write all text in English.";
+}
 
-Profil:
-${payload.profileTitle || payload.profile || "Profil personnel"}
-Réponses:
+function systemPrompt(locale: Locale): string {
+  if (locale === "fr") {
+    return "Tu es Aurum, une voix d'introspection premium: claire, douce, concrete, non medicale. Tu reponds UNIQUEMENT en JSON strict et en francais.";
+  }
+  if (locale === "es") {
+    return "Eres Aurum, una voz de introspeccion premium: clara, suave, concreta y no medica. Respondes SOLO en JSON estricto y en espanol.";
+  }
+  return "You are Aurum, a premium introspection voice: clear, calm, concrete, and non-medical. Reply ONLY in strict JSON and in English.";
+}
+
+function buildPrompt(payload: Payload, locale: Locale): string {
+  const languageLine = userPromptLanguageLine(locale);
+
+  if (payload.kind === "landing") {
+    return `You are Aurum: calm, lucid, premium, deeply human.
+You analyze a user's entry profile and answers, then provide an interpretation and a 7-day plan.
+Rules:
+- second-person voice
+- concrete, non-medical, non-alarming
+- warm premium tone
+- no jargon
+- ${languageLine}
+
+Profile:
+${payload.profileTitle || payload.profile || "Personal profile"}
+Answers:
 ${JSON.stringify(payload.answers || [])}
 
-Retourne UNIQUEMENT un JSON strict:
+Return ONLY strict JSON:
 {
-  "narrative": "<4 à 6 phrases, interprétation profonde et claire>",
+  "narrative": "<4 to 6 sentences, deep and clear interpretation>",
   "actionPlan": [
-    "Jour 1: ...",
-    "Jour 2: ...",
-    "Jour 3: ...",
-    "Jour 4: ...",
-    "Jour 5: ...",
-    "Jour 6: ...",
-    "Jour 7: ..."
+    "Day 1: ...",
+    "Day 2: ...",
+    "Day 3: ...",
+    "Day 4: ...",
+    "Day 5: ...",
+    "Day 6: ...",
+    "Day 7: ..."
   ]
 }`;
   }
 
   if (payload.kind === "wellbeing") {
-    return `Tu es Aurum: présence calme, lucide et bienveillante.
-Analyse ces scores de bien-être (1 à 6) et produis une lecture premium, humaine, concrète.
-Ne jamais médicaliser, ne jamais dramatiser.
-Tutoiement.
-Objectif: donner envie d'écrire maintenant en expliquant le bénéfice direct du journaling dans Aurum.
+    return `You are Aurum: calm, lucid, and kind.
+Analyze these wellbeing scores (1 to 6) and produce a premium, human, concrete reading.
+Never medicalize. Never dramatize.
+Goal: motivate writing now by explaining the direct journaling benefit inside Aurum.
+${languageLine}
 
 Scores:
 ${JSON.stringify(payload.scores)}
 
-Retourne UNIQUEMENT un JSON strict:
+Return ONLY strict JSON:
 {
-  "narrative": "<4 à 6 phrases en français, chaleureuses, actionnables, incluant: ce que le profil dit + pourquoi écrire aide + premier pas concret>"
+  "narrative": "<4 to 6 warm, actionable sentences including: what this profile suggests + why writing helps + one concrete first step>"
 }`;
   }
 
-  return `Tu es Aurum: présence calme, lucide et bienveillante.
-Analyse ce profil de personnalité (1 à 6) et cet archetype.
-Donne une lecture premium, profonde, très concrète.
-Ne jamais juger. Tutoiement.
-Objectif: relier le profil à un avantage concret du journaling dans Aurum et inciter à écrire.
+  return `You are Aurum: calm, lucid, and kind.
+Analyze this personality profile (1 to 6) and archetype.
+Provide a premium, deep, concrete reading.
+Never judge.
+Goal: connect this profile to a practical journaling advantage in Aurum and prompt writing.
+${languageLine}
 
 Scores:
 ${JSON.stringify(payload.scores)}
-Archetype: ${payload.archetype || "Profil personnel"}
+Archetype: ${payload.archetype || "Personal profile"}
 
-Retourne UNIQUEMENT un JSON strict:
+Return ONLY strict JSON:
 {
-  "narrative": "<4 à 6 phrases en français, chaleureuses, actionnables, incluant: force du profil + angle de progression + pourquoi écrire aide + premier pas concret>"
+  "narrative": "<4 to 6 warm, actionable sentences including: current strength + growth angle + why writing helps + one concrete first step>"
 }`;
 }
 
 export async function POST(request: NextRequest) {
   try {
     const payload = (await request.json()) as Payload;
+    const locale = normalizeLocale(payload?.locale);
     const needsScores = payload?.kind === "wellbeing" || payload?.kind === "personality";
+
     if (!payload?.kind || (needsScores && !payload?.scores)) {
-      return NextResponse.json({ error: "Payload invalide" }, { status: 400 });
+      return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
     }
 
     const apiKey = process.env.DEEPSEEK_API_KEY;
     if (!apiKey) {
       return NextResponse.json({
-        narrative: fallbackNarrative(payload),
-        actionPlan: fallbackActionPlan(payload),
+        narrative: fallbackNarrative(payload, locale),
+        actionPlan: fallbackActionPlan(payload, locale),
         source: "fallback",
       });
     }
@@ -149,18 +224,17 @@ export async function POST(request: NextRequest) {
         messages: [
           {
             role: "system",
-            content:
-              "Tu es Aurum, une voix d'introspection premium: claire, douce, concrète, non médicale. Tu réponds UNIQUEMENT en JSON strict.",
+            content: systemPrompt(locale),
           },
-          { role: "user", content: buildPrompt(payload) },
+          { role: "user", content: buildPrompt(payload, locale) },
         ],
       }),
     });
 
     if (!response.ok) {
       return NextResponse.json({
-        narrative: fallbackNarrative(payload),
-        actionPlan: fallbackActionPlan(payload),
+        narrative: fallbackNarrative(payload, locale),
+        actionPlan: fallbackActionPlan(payload, locale),
         source: "fallback",
       });
     }
@@ -169,8 +243,8 @@ export async function POST(request: NextRequest) {
     const content = data?.choices?.[0]?.message?.content;
     if (!content) {
       return NextResponse.json({
-        narrative: fallbackNarrative(payload),
-        actionPlan: fallbackActionPlan(payload),
+        narrative: fallbackNarrative(payload, locale),
+        actionPlan: fallbackActionPlan(payload, locale),
         source: "fallback",
       });
     }
@@ -181,9 +255,10 @@ export async function POST(request: NextRequest) {
           .map((entry) => (typeof entry === "string" ? entry.trim() : ""))
           .filter((entry) => entry.length > 0)
           .slice(0, 7)
-      : fallbackActionPlan(payload);
+      : fallbackActionPlan(payload, locale);
+
     return NextResponse.json({
-      narrative: clampText(parsed?.narrative, fallbackNarrative(payload)),
+      narrative: clampText(parsed?.narrative, fallbackNarrative(payload, locale)),
       actionPlan: safePlan,
       source: "deepseek",
     });
@@ -191,7 +266,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         narrative:
-          "Ton profil est prêt. Avance pas à pas: une intention claire, une action simple, puis observe ce qui change.",
+          "Your profile is ready. Move step by step: set one clear intention, take one simple action, then observe what changes.",
         actionPlan: [],
       },
       { status: 200 }

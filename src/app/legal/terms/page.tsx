@@ -1,73 +1,82 @@
-
-import { Metadata } from 'next';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
+import { Metadata } from "next";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
-  title: 'Conditions Générales d\'Utilisation | Aurum',
-  description: 'Consultez les conditions générales d\'utilisation du service Aurum.',
+  title: "Terms of Service | Aurum",
+  description: "Read Aurum terms of service.",
 };
 
 export default function TermsOfServicePage() {
   return (
-    <div className="bg-stone-50/50 min-h-screen">
-      <div className="container max-w-4xl mx-auto py-20 md:py-28 animate-fade-in">
+    <div className="min-h-screen bg-stone-50/50">
+      <div className="container mx-auto max-w-4xl animate-fade-in py-20 md:py-28">
         <header className="mb-12 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold font-headline leading-tight tracking-tight mb-4">
-            Conditions Générales d'Utilisation
+          <h1 className="mb-4 font-headline text-4xl font-bold leading-tight tracking-tight md:text-5xl">
+            Terms of Service
           </h1>
-          <p className="text-muted-foreground">Dernière mise à jour : 25 juillet 2024</p>
+          <p className="text-muted-foreground">Last updated: January 29, 2026</p>
           <div className="mt-6">
             <Button asChild variant="outline">
-              <Link href="https://aurumdiary.com">Retour à aurumdiary.com</Link>
+              <Link href="https://aurumdiary.com">Back to aurumdiary.com</Link>
             </Button>
           </div>
         </header>
 
-        <div className="prose prose-lg prose-stone font-body mx-auto">
-          <h2>1. Objet du service</h2>
+        <div className="prose prose-lg prose-stone mx-auto font-body">
+          <h2>1. Service purpose</h2>
           <p>
-            Aurum est une application de journal intime conçue comme un outil d'introspection personnelle. Le service est fourni à titre de démonstration et "en l'état", sans garantie de disponibilité ou de performance.
+            Aurum is a journaling application designed for personal introspection. The service is provided as
+            is, without guarantees of uninterrupted availability or performance.
           </p>
 
-          <h2>2. Accès et Compte Utilisateur</h2>
+          <h2>2. Access and user account</h2>
           <p>
-            L'accès aux fonctionnalités de base est possible sans compte. La création d'un compte utilisateur est nécessaire pour sauvegarder les entrées et accéder aux fonctionnalités personnalisées. Vous êtes responsable de la sécurité de votre compte et de vos identifiants de connexion. Vous vous engagez à ne pas utiliser le service à des fins illégales ou non autorisées.
-          </p>
-            
-          <h2>3. Contenu de l'utilisateur</h2>
-          <p>
-            Vous conservez l'entière propriété intellectuelle du contenu que vous créez sur Aurum. En utilisant le service, vous nous accordez une licence limitée, non-exclusive et mondiale, uniquement dans le but de vous fournir le service (stockage, affichage, analyse par le moteur Aurum pour vos propres insights). Nous ne revendiquons aucun droit sur votre contenu.
+            Core features may require an account. You are responsible for your account security and login
+            credentials. You agree not to use the service for illegal or unauthorized purposes.
           </p>
 
-          <h2>4. Analyse et Reflets</h2>
+          <h2>3. User content</h2>
           <p>
-            Aurum utilise un moteur d'analyse pour vous fournir des insights. Ces reflets sont générés automatiquement et ne doivent pas être considérés comme des conseils médicaux, psychologiques ou professionnels. Ils sont un outil de réflexion et non un diagnostic. Vous reconnaissez que ces réponses peuvent parfois être imprécises ou non pertinentes.
-          </p>
-            
-          <h2>5. Propriété Intellectuelle d'Aurum</h2>
-          <p>
-            L'application, son design, ses logos, textes (hors contenu utilisateur) et son code source sont la propriété exclusive du projet Aurum. Toute reproduction ou distribution non autorisée est strictement interdite.
+            You retain full ownership of the content you create in Aurum. By using the service, you grant a
+            limited, non-exclusive, worldwide license only to provide the service to you (storage, display,
+            and analysis by the Aurum engine for your own insights).
           </p>
 
-          <h2>6. Responsabilité</h2>
+          <h2>4. Analysis and reflections</h2>
           <p>
-            Aurum est un outil d'accompagnement et ne remplace en aucun cas un professionnel de la santé mentale. Nous ne pouvons être tenus responsables des décisions ou actions que vous prenez sur la base des informations ou insights fournis par l'application. Le service est fourni "tel quel" sans aucune garantie d'aucune sorte.
-          </p>
-            
-          <h2>7. Résiliation</h2>
-          <p>
-            Vous pouvez cesser d'utiliser le service et supprimer votre compte à tout moment depuis la page "Mes Données". Nous nous réservons le droit de suspendre ou de résilier votre accès au service en cas de violation de ces conditions.
+            Aurum uses an automated analysis engine to generate insights. These reflections are not medical,
+            psychological, or professional advice. They are reflection tools, not diagnoses.
           </p>
 
-          <h2>8. Modification des conditions</h2>
+          <h2>5. Aurum intellectual property</h2>
           <p>
-            Nous nous réservons le droit de modifier ces conditions à tout moment. Nous vous informerons de tout changement substantiel. La poursuite de l'utilisation du service après modification vaut acceptation des nouvelles conditions.
+            The application, branding, design, and source code (excluding user content) are owned by the
+            Aurum project. Unauthorized reproduction or distribution is prohibited.
           </p>
-            
-          <h2>9. Droit applicable</h2>
+
+          <h2>6. Liability</h2>
           <p>
-            Ces conditions sont régies par le droit français. Tout litige relatif à leur interprétation ou exécution relèvera de la compétence des tribunaux de Paris.
+            Aurum is a support tool and does not replace licensed mental health professionals. We are not
+            liable for decisions made based on generated insights.
+          </p>
+
+          <h2>7. Termination</h2>
+          <p>
+            You may stop using the service and delete your account at any time from the "My Data" page. We
+            may suspend or terminate access in case of terms violations.
+          </p>
+
+          <h2>8. Changes to terms</h2>
+          <p>
+            We may update these terms at any time. Continued use after updates means acceptance of revised
+            terms.
+          </p>
+
+          <h2>9. Governing law</h2>
+          <p>
+            These terms are governed by French law. Any dispute related to interpretation or enforcement falls
+            under the jurisdiction of Paris courts.
           </p>
         </div>
       </div>

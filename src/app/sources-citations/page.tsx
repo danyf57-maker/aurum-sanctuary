@@ -3,9 +3,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
-  title: "Sources des citations | Aurum",
-  description:
-    "Sources des citations affichées sur Aurum, avec mention des traductions en français.",
+  title: "Quote Sources | Aurum",
+  description: "Sources for inspirational quotes displayed in Aurum.",
   alternates: {
     canonical: "https://aurumdiary.com/sources-citations",
   },
@@ -13,39 +12,34 @@ export const metadata: Metadata = {
 
 const citations = [
   {
-    quote: "Nous écrivons pour goûter la vie deux fois.",
-    author: "Anaïs Nin",
-    source:
-      "Citation couramment attribuée à Anaïs Nin (traduction française de l'anglais).",
+    quote: "We write to taste life twice.",
+    author: "Anais Nin",
+    source: "Commonly attributed quote in English anthologies and quote collections.",
   },
   {
-    quote: "J'écris pour découvrir ce que je pense.",
+    quote: "I write entirely to find out what I'm thinking.",
     author: "Joan Didion",
-    source:
-      "Citation couramment attribuée à Joan Didion (traduction française de l'anglais).",
+    source: "Commonly attributed statement from Joan Didion interviews and essays.",
   },
   {
-    quote: "Un mot après l'autre, c'est le pouvoir.",
+    quote: "A word after a word after a word is power.",
     author: "Margaret Atwood",
-    source:
-      "Citation couramment attribuée à Margaret Atwood (traduction française de l'anglais).",
+    source: "Widely cited quote from Margaret Atwood's writing and speeches.",
   },
   {
-    quote: "Écrire est une forme de thérapie.",
+    quote: "Writing is a form of therapy.",
     author: "Graham Greene",
-    source: "Attribution courante, formulation pouvant varier selon les sources.",
+    source: "Common attribution; exact wording can vary by source.",
   },
   {
-    quote: "Écrire, c'est une façon de parler sans être interrompu.",
+    quote: "Writing is a way of talking without being interrupted.",
     author: "Jules Renard",
-    source: "Formulation attribuée à Jules Renard, présente dans des recueils de citations.",
+    source: "Frequently attributed in literary quote collections.",
   },
   {
-    quote:
-      "Il n'y a pas de plus grande agonie que de porter une histoire non racontée en soi.",
+    quote: "There is no greater agony than bearing an untold story inside you.",
     author: "Maya Angelou",
-    source:
-      "Maya Angelou, citation de référence (traduction française de l'anglais).",
+    source: "Maya Angelou, commonly cited from interviews and speeches.",
   },
 ];
 
@@ -54,16 +48,13 @@ export default function SourcesCitationsPage() {
     <div className="min-h-screen bg-stone-50/50">
       <section className="py-20 md:py-24">
         <div className="container mx-auto max-w-3xl">
-          <h1 className="mb-4 text-3xl font-headline md:text-4xl">
-            Sources des citations
-          </h1>
+          <h1 className="mb-4 text-3xl font-headline md:text-4xl">Quote sources</h1>
           <p className="mb-8 text-stone-600">
-            Cette page documente les citations d&apos;inspiration affichées sur Aurum. Les
-            citations issues de l&apos;anglais sont affichées en traduction française.
+            This page documents inspirational quotes displayed in Aurum and their common attributions.
           </p>
           <div className="mb-8">
             <Button asChild variant="outline">
-              <Link href="https://aurumdiary.com">Retour à aurumdiary.com</Link>
+              <Link href="https://aurumdiary.com">Back to aurumdiary.com</Link>
             </Button>
           </div>
 
@@ -81,9 +72,9 @@ export default function SourcesCitationsPage() {
           </div>
 
           <p className="mt-8 text-xs text-stone-500">
-            Pour les contenus orientés études, consulte aussi{" "}
+            For educational mental wellness content, also see{" "}
             <Link href="/guides" className="underline underline-offset-2">
-              les guides Aurum
+              Aurum guides
             </Link>
             .
           </p>
