@@ -26,7 +26,7 @@ export function PricingOfferBlock({
               Try everything for 7 days, then decide.
             </h3>
             <p className="max-w-sm text-base text-stone-600">
-              No commitment to start. Continue only if it helps.
+              No card required to open your account. Continue only if it helps.
             </p>
           </div>
 
