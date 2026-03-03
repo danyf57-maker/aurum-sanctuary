@@ -12,8 +12,7 @@ type EntryHeatmapProps = {
 
 const CELL_SIZE = 12;
 const CELL_GAP = 3;
-const MONTHS = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
-const DAYS = ['Lun', 'Mer', 'Ven'];
+const DAYS = ['Mon', 'Wed', 'Fri'];
 
 export function EntryHeatmap({ entries }: EntryHeatmapProps) {
     const heatmapData = useMemo(() => generateHeatmapData(entries), [entries]);
@@ -60,11 +59,11 @@ export function EntryHeatmap({ entries }: EntryHeatmapProps) {
         return (
             <Card>
                 <CardHeader>
-                    <CardTitle className="font-headline">Fréquence d'Écriture</CardTitle>
-                    <CardDescription>Écrivez régulièrement pour voir votre activité.</CardDescription>
+                    <CardTitle className="font-headline">Writing Frequency</CardTitle>
+                    <CardDescription>Write regularly to visualize your activity.</CardDescription>
                 </CardHeader>
                 <CardContent className="h-[200px] w-full flex items-center justify-center">
-                    <p className="text-muted-foreground text-sm">Pas de données disponibles.</p>
+                    <p className="text-muted-foreground text-sm">No data available yet.</p>
                 </CardContent>
             </Card>
         );
@@ -73,9 +72,9 @@ export function EntryHeatmap({ entries }: EntryHeatmapProps) {
     return (
         <Card>
             <CardHeader>
-                <CardTitle className="font-headline">Fréquence d'Écriture</CardTitle>
+                <CardTitle className="font-headline">Writing Frequency</CardTitle>
                 <CardDescription>
-                    Votre activité d'écriture au cours de l'année passée.
+                    Your writing activity over the past year.
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -140,7 +139,7 @@ export function EntryHeatmap({ entries }: EntryHeatmapProps) {
                                             }
 
                                             const date = new Date(dayData.date);
-                                            const formattedDate = date.toLocaleDateString('fr-FR', {
+                                            const formattedDate = date.toLocaleDateString('en-US', {
                                                 day: 'numeric',
                                                 month: 'long',
                                                 year: 'numeric',
@@ -154,7 +153,7 @@ export function EntryHeatmap({ entries }: EntryHeatmapProps) {
                                                         height: `${CELL_SIZE}px`,
                                                     }}
                                                     className={`rounded-sm ${getColor(dayData.level)} cursor-pointer hover:ring-2 hover:ring-primary transition-all`}
-                                                    title={`${formattedDate}: ${dayData.count} entrée${dayData.count > 1 ? 's' : ''}`}
+                                                    title={`${formattedDate}: ${dayData.count} entr${dayData.count > 1 ? 'ies' : 'y'}`}
                                                 />
                                             );
                                         })}
@@ -165,7 +164,7 @@ export function EntryHeatmap({ entries }: EntryHeatmapProps) {
 
                         {/* Legend */}
                         <div className="flex items-center gap-2 mt-4 text-xs text-muted-foreground">
-                            <span>Moins</span>
+                            <span>Less</span>
                             <div className="flex gap-1">
                                 {[0, 1, 2, 3, 4].map((level) => (
                                     <div
@@ -178,7 +177,7 @@ export function EntryHeatmap({ entries }: EntryHeatmapProps) {
                                     />
                                 ))}
                             </div>
-                            <span>Plus</span>
+                            <span>More</span>
                         </div>
                     </div>
                 </div>

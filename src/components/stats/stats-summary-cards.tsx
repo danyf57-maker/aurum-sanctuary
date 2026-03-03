@@ -17,31 +17,31 @@ export function StatsSummaryCards({ entries, layout = "grid" }: StatsSummaryCard
 
     const cards = [
         {
-            title: "Cette Semaine",
+            title: "This Week",
             value: stats.entriesThisWeek,
-            subtitle: `${stats.entriesThisMonth} ce mois`,
+            subtitle: `${stats.entriesThisMonth} this month`,
             icon: Calendar,
             color: "text-blue-500",
             bgColor: "bg-blue-500/10",
         },
         {
-            title: "Série Actuelle",
+            title: "Current Streak",
             value: streaks.currentStreak,
-            subtitle: `Record: ${streaks.longestStreak} jours`,
+            subtitle: `Record: ${streaks.longestStreak} days`,
             icon: Flame,
             color: "text-orange-500",
             bgColor: "bg-orange-500/10",
         },
         {
-            title: "Moyenne Quotidienne",
+            title: "Daily Average",
             value: stats.averagePerDay.toFixed(1),
-            subtitle: "Sur 30 jours",
+            subtitle: "Over 30 days",
             icon: BarChart3,
             color: "text-purple-500",
             bgColor: "bg-purple-500/10",
         },
         {
-            title: "Humeur Dominante",
+            title: "Dominant Mood",
             value: stats.mostCommonMood,
             subtitle: getTrendText(stats.sentimentTrend),
             icon: Smile,
@@ -92,11 +92,11 @@ export function StatsSummaryCards({ entries, layout = "grid" }: StatsSummaryCard
 function getTrendText(trend: 'up' | 'down' | 'stable'): string {
     switch (trend) {
         case 'up':
-            return 'Tendance positive';
+            return 'Positive trend';
         case 'down':
-            return 'Tendance négative';
+            return 'Negative trend';
         case 'stable':
-            return 'Tendance stable';
+            return 'Stable trend';
     }
 }
 

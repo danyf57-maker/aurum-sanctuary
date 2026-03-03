@@ -37,9 +37,9 @@ export function ClarityScoreCard({ entries }: ClarityScoreCardProps) {
   }, [entries]);
 
   const getStatus = (s: number) => {
-    if (s > 80) return { label: "Optimale", color: "text-emerald-500", bg: "bg-emerald-500/10" };
+    if (s > 80) return { label: "Optimal", color: "text-emerald-500", bg: "bg-emerald-500/10" };
     if (s > 50) return { label: "Stable", color: "text-amber-500", bg: "bg-amber-500/10" };
-    return { label: "En progression", color: "text-stone-500", bg: "bg-stone-500/10" };
+    return { label: "Improving", color: "text-stone-500", bg: "bg-stone-500/10" };
   };
 
   const status = getStatus(score);
@@ -55,12 +55,12 @@ export function ClarityScoreCard({ entries }: ClarityScoreCardProps) {
           <div className="space-y-4">
             <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 w-fit">
               <ShieldCheck className="h-3.5 w-3.5 text-amber-400" />
-              <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-amber-100">Performance Mentale</span>
+              <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-amber-100">Mental Performance</span>
             </div>
             
-            <h2 className="text-3xl font-bold font-headline">Indice de Clarté</h2>
+            <h2 className="text-3xl font-bold font-headline">Clarity Index</h2>
             <p className="text-stone-400 max-w-sm text-sm leading-relaxed">
-              Votre score est basé sur la régularité de vos sessions et la profondeur de vos introspections.
+              Your score is based on session consistency and depth of introspection.
             </p>
           </div>
           
@@ -97,7 +97,7 @@ export function ClarityScoreCard({ entries }: ClarityScoreCardProps) {
             </div>
             
             <div className="flex flex-col gap-1">
-                <span className="text-[10px] uppercase tracking-wider font-bold text-stone-500">Statut actuel</span>
+                <span className="text-[10px] uppercase tracking-wider font-bold text-stone-500">Current status</span>
                 <div className={`px-3 py-1 rounded-lg font-bold text-xs ${status.bg} ${status.color}`}>
                     {status.label}
                 </div>
