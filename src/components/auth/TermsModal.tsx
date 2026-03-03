@@ -52,13 +52,13 @@ export function TermsModal() {
         <AlertDialog open={termsAccepted === false}>
             <AlertDialogContent className="max-w-md">
                 <AlertDialogHeader>
-                    <AlertDialogTitle className="text-2xl font-serif">Mise à jour des Conditions</AlertDialogTitle>
+                    <AlertDialogTitle className="text-2xl font-serif">Terms Update</AlertDialogTitle>
                     <AlertDialogDescription className="space-y-4 pt-2 text-base">
                         <p>
-                            Pour continuer à utiliser Aurum Sanctuary, vous devez accepter nos nouvelles conditions d'utilisation et notre politique de confidentialité.
+                            To continue using Aurum Sanctuary, you must accept our updated terms of use and privacy policy.
                         </p>
                         <p className="text-sm">
-                            Nous avons mis à jour nos protocoles de chiffrement et nos mentions légales pour mieux protéger vos données de santé mentale.
+                            We updated our encryption protocols and legal notices to better protect your mental health data.
                         </p>
 
                         <div className="flex flex-col space-y-2 pt-2">
@@ -67,14 +67,14 @@ export function TermsModal() {
                                 target="_blank"
                                 className="text-primary hover:underline text-sm font-medium"
                             >
-                                Lire les Conditions d'Utilisation
+                                Read Terms of Use
                             </Link>
                             <Link
                                 href="/privacy"
                                 target="_blank"
                                 className="text-primary hover:underline text-sm font-medium"
                             >
-                                Lire la Politique de Confidentialité
+                                Read Privacy Policy
                             </Link>
                         </div>
 
@@ -88,7 +88,7 @@ export function TermsModal() {
                                 htmlFor="modal-terms"
                                 className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                             >
-                                J'ai lu et j'accepte les conditions d'utilisation et la politique de confidentialité.
+                                I have read and accept the terms of use and privacy policy.
                             </label>
                         </div>
                     </AlertDialogDescription>
@@ -99,7 +99,7 @@ export function TermsModal() {
                         disabled={!accepted || submitting}
                         onClick={handleAccept}
                     >
-                        {submitting ? "Acceptation en cours..." : "Accepter et Continuer"}
+                        {submitting ? "Accepting..." : "Accept and continue"}
                     </Button>
                 </AlertDialogFooter>
             </AlertDialogContent>
