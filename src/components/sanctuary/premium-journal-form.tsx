@@ -686,7 +686,7 @@ export function PremiumJournalForm() {
                   ref={textareaRef}
                   id="content"
                   name="content"
-                  placeholder="Écris ce qui demande à être posé..."
+                  placeholder="Write what needs to be set down..."
                   value={draftContent}
                   className="bg-transparent border-none shadow-none resize-none overflow-hidden min-h-[48vh] p-0 [font-family:var(--font-cormorant)] text-3xl leading-relaxed text-stone-800 placeholder:text-stone-400 focus:ring-0 focus:outline-none focus-visible:ring-0 caret-amber-400"
                   required
@@ -696,7 +696,7 @@ export function PremiumJournalForm() {
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none bg-amber-50/70 rounded-2xl">
                     <div className="flex items-center gap-2 text-stone-700">
                       <UploadCloud className="h-5 w-5 text-amber-500" />
-                      <span className="[font-family:var(--font-cormorant)] text-2xl">Depose ton image ici</span>
+                      <span className="[font-family:var(--font-cormorant)] text-2xl">Drop your image here</span>
                     </div>
                   </div>
                 )}
@@ -704,7 +704,7 @@ export function PremiumJournalForm() {
               <div className={`space-y-4 transition-opacity duration-400 ${isFocusMode ? 'opacity-10 hover:opacity-100' : 'opacity-80'}`}>
                 <p className="text-xs uppercase tracking-[0.18em] text-stone-500 flex items-center gap-2">
                   <ImagePlus className="h-4 w-4 text-amber-500" />
-                  Glisse-depose des images dans la page pour enrichir ton ecriture
+                  Drag and drop images into the page to enrich your writing
                 </p>
                 <div>
                   <input
@@ -726,7 +726,7 @@ export function PremiumJournalForm() {
                     className="h-8 rounded-full px-3 text-stone-600 hover:text-stone-900 hover:bg-stone-100"
                   >
                     <ImagePlus className="mr-2 h-4 w-4" />
-                    Ajouter une image
+                    Add an image
                   </Button>
                 </div>
                 {draftImages.length > 0 && (
@@ -748,7 +748,7 @@ export function PremiumJournalForm() {
                                   prev.map((item) => (item.id === image.id ? { ...item, caption } : item))
                                 );
                               }}
-                              placeholder="Ajoute une legende..."
+                              placeholder="Add a caption..."
                               className="h-8 p-0 bg-transparent border-0 shadow-none text-sm text-stone-600 placeholder:text-stone-400 focus-visible:ring-0"
                             />
                             <Button
@@ -759,7 +759,7 @@ export function PremiumJournalForm() {
                                 setDraftImages((prev) => prev.filter((item) => item.id !== image.id));
                               }}
                               className="h-8 w-8 rounded-full text-stone-500 hover:bg-stone-100 hover:text-stone-900"
-                              aria-label="Supprimer l'image"
+                              aria-label="Remove image"
                             >
                               <X className="h-4 w-4" />
                             </Button>
@@ -771,12 +771,12 @@ export function PremiumJournalForm() {
                 )}
                 <div>
                   <Label htmlFor="tags" className="sr-only">
-                    Étiquettes
+                    Tags
                   </Label>
                   <Input
                     id="tags"
                     name="tags"
-                    placeholder="Étiquettes (optionnel)"
+                    placeholder="Tags (optional)"
                     className="bg-transparent border-0 rounded-none px-0 [font-family:var(--font-cormorant)] text-2xl text-stone-500 placeholder:text-stone-300 shadow-none focus:ring-0 focus-visible:ring-0"
                   />
                 </div>
@@ -791,10 +791,10 @@ export function PremiumJournalForm() {
                   {isSubmitting || isUploadingImage ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      {isUploadingImage ? 'Upload image...' : 'Préservation en cours...'}
+                      {isUploadingImage ? 'Uploading image...' : 'Saving...'}
                     </>
                   ) : (
-                    'Préserver cette pensée'
+                    'Save this thought'
                   )}
                 </Button>
               </div>
@@ -964,7 +964,7 @@ export function PremiumJournalForm() {
                     <Textarea
                       value={conversationInput}
                       onChange={(event) => setConversationInput(event.currentTarget.value)}
-                      placeholder="Écris ta réponse à Aurum..."
+                      placeholder="Write your reply to Aurum..."
                       className="min-h-[88px] resize-y rounded-2xl border-stone-200 bg-white/60 [font-family:var(--font-cormorant)] text-lg text-stone-800 placeholder:text-stone-400 focus:border-[#C5A059]/30 focus:ring-[#C5A059]/10"
                     />
                     <div className="flex justify-end">

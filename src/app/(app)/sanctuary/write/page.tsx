@@ -247,10 +247,10 @@ export default function WritePage() {
                 <Feather className="h-5 w-5 text-[#C5A059]" />
               </div>
               <h1 className="font-headline text-3xl md:text-4xl text-stone-900 tracking-tight mb-2">
-                Ton espace d'écriture
+                Your writing space
               </h1>
               <p className="text-stone-500 text-lg">
-                Pose ici ce qui traverse ton esprit.
+                Place here what is moving through your mind.
               </p>
             </motion.header>
 

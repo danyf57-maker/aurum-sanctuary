@@ -46,7 +46,7 @@ export function WelcomePresence({ userName }: WelcomePresenceProps) {
     return null;
   }
 
-  const firstName = (userName ?? "").split(" ")[0] || "cher explorateur";
+  const firstName = (userName ?? "").split(" ")[0] || "friend";
 
   return (
     <AnimatePresence>
@@ -84,7 +84,7 @@ export function WelcomePresence({ userName }: WelcomePresenceProps) {
               <button
                 onClick={handleDismiss}
                 className="absolute top-4 right-4 text-stone-400 hover:text-stone-600 transition-colors"
-                aria-label="Fermer"
+                aria-label="Close"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -94,27 +94,26 @@ export function WelcomePresence({ userName }: WelcomePresenceProps) {
                 {/* Greeting */}
                 <div className="space-y-2">
                   <h2 className="font-headline text-3xl text-stone-900">
-                    Bienvenue, {firstName}
+                    Welcome, {firstName}
                   </h2>
                   <div className="h-px w-16 mx-auto bg-gradient-to-r from-transparent via-amber-300 to-transparent" />
                 </div>
 
                 {/* Message */}
                 <div className="space-y-4 text-stone-700 leading-relaxed">
-                  <p className="text-lg">Cet espace est le tien.</p>
+                  <p className="text-lg">This space is yours.</p>
                   <p className="text-base">
-                    Ici, rien ne presse. Rien ne mesure. Aurum t'accompagne,
-                    sans te diriger.
+                    Here, there is no rush and nothing to prove. Aurum supports you without steering you.
                   </p>
                   <p className="text-sm text-stone-500 italic">
-                    Écris ce qui demande à être posé. Le reste viendra.
+                    Write what needs to be set down. The rest will come.
                   </p>
                 </div>
 
                 {/* Subtle decoration */}
                 <div className="pt-4">
                   <div className="inline-block px-4 py-2 rounded-full bg-amber-100/50 text-amber-800 text-xs font-medium tracking-wide">
-                    Présence Premium
+                    Premium Presence
                   </div>
                 </div>
               </div>
