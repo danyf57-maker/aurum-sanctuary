@@ -13,9 +13,9 @@ const protectedRoutes = ['/settings', '/profile', '/journal', '/dashboard', '/sa
 // Define routes that should redirect to dashboard if already authenticated
 const authRoutes = ['/login', '/signup', '/forgot-password'];
 const LOCALE_COOKIE_NAME = 'aurum-locale';
-const SUPPORTED_LOCALES = new Set(['en', 'fr', 'es']);
+const SUPPORTED_LOCALES = new Set(['en', 'fr']);
 
-type SupportedLocale = 'en' | 'fr' | 'es';
+type SupportedLocale = 'en' | 'fr';
 
 export function middleware(request: NextRequest) {
     const { nextUrl, cookies } = request;
@@ -30,7 +30,7 @@ export function middleware(request: NextRequest) {
     const isAuthRoute = authRoutes.some(route => nextUrl.pathname.startsWith(route));
     let response: NextResponse;
 
-    // 0. Explicit locale override for testing: ?lang=en|fr|es
+    // 0. Explicit locale override for testing: ?lang=en|fr
     if (forcedLocale) {
         const cleanUrl = new URL(request.url);
         cleanUrl.searchParams.delete('lang');
@@ -53,7 +53,7 @@ export function middleware(request: NextRequest) {
     }
 
     const currentLocaleCookie = normalizeLocale(cookies.get(LOCALE_COOKIE_NAME)?.value);
-    if (forcedLocale || !currentLocaleCookie) {
+    if (forcedLocale || currentLocaleCookie !== resolvedLocale) {
         response.cookies.set({
             name: LOCALE_COOKIE_NAME,
             value: resolvedLocale,
@@ -75,17 +75,18 @@ function isLikelyFirebaseSessionCookie(cookieValue?: string): boolean {
 }
 
 function resolveLocale(request: NextRequest): SupportedLocale {
-    const cookieLocale = normalizeLocale(request.cookies.get(LOCALE_COOKIE_NAME)?.value);
-    if (cookieLocale) return cookieLocale;
+    // Product rule: French countries => FR. Others => EN.
+    const country = (request.headers.get('x-vercel-ip-country') || request.headers.get('cf-ipcountry') || '').toUpperCase();
+    if (country) return getLocaleFromCountry(country);
 
+    // Fallback when country header is unavailable (some devices/proxies).
     const acceptLanguage = request.headers.get('accept-language');
     const headerLocale = getLocaleFromAcceptLanguage(acceptLanguage);
     if (headerLocale) return headerLocale;
 
-    const country = (request.headers.get('x-vercel-ip-country') || request.headers.get('cf-ipcountry') || '').toUpperCase();
-    const countryLocale = getLocaleFromCountry(country);
-    if (countryLocale) return countryLocale;
-
+    // Last fallback: previous cookie value.
+    const cookieLocale = normalizeLocale(request.cookies.get(LOCALE_COOKIE_NAME)?.value);
+    if (cookieLocale) return cookieLocale;
     return 'en';
 }
 
@@ -105,23 +106,17 @@ function getLocaleFromAcceptLanguage(header: string | null): SupportedLocale | n
 
     for (const token of tokens) {
         if (token.startsWith('fr')) return 'fr';
-        if (token.startsWith('es')) return 'es';
         if (token.startsWith('en')) return 'en';
     }
     return null;
 }
 
-function getLocaleFromCountry(country: string): SupportedLocale | null {
-    if (!country) return null;
+function getLocaleFromCountry(country: string): SupportedLocale {
+    if (!country) return 'en';
 
     const frenchCountries = new Set(['FR', 'BE', 'CH', 'LU', 'MC']);
-    const spanishCountries = new Set([
-        'ES', 'MX', 'AR', 'CO', 'CL', 'PE', 'UY', 'PY', 'BO', 'EC', 'VE',
-        'CR', 'GT', 'HN', 'NI', 'SV', 'PA', 'DO', 'PR', 'CU',
-    ]);
 
     if (frenchCountries.has(country)) return 'fr';
-    if (spanishCountries.has(country)) return 'es';
     return 'en';
 }
 
