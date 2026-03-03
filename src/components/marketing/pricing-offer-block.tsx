@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { trackEvent } from "@/lib/analytics/client";
-import { useEffect, useMemo, useState } from "react";
 
 type PricingOfferBlockProps = {
   ctaHref?: string;
@@ -15,49 +14,22 @@ export function PricingOfferBlock({
   ctaHref = "/pricing",
   ctaLabel,
   className = "",
-  locale: forcedLocale,
+  locale = "en",
 }: PricingOfferBlockProps) {
-  const [locale, setLocale] = useState<"fr" | "en">("en");
-
-  useEffect(() => {
-    if (forcedLocale) {
-      setLocale(forcedLocale);
-      return;
-    }
-    if (typeof document === "undefined") return;
-    const cookieLocale = document.cookie
-      .split(";")
-      .map((part) => part.trim())
-      .find((part) => part.startsWith("aurum-locale="))
-      ?.split("=")[1]
-      ?.toLowerCase();
-
-    if (cookieLocale === "fr") {
-      setLocale("fr");
-      return;
-    }
-
-    const navLang = (navigator.language || "").toLowerCase();
-    setLocale(navLang.startsWith("fr") ? "fr" : "en");
-  }, [forcedLocale]);
-
-  const copy = useMemo(() => {
-    if (locale === "fr") {
-      return {
-        badge: "ACCES COMPLET 7 JOURS",
-        title: "Teste tout pendant 7 jours, puis decide.",
-        body: "Aucune carte requise pour ouvrir ton compte. Continue uniquement si ca t'aide.",
-        cta: ctaLabel || "Voir les tarifs",
-      };
-    }
-
-    return {
-      badge: "7-DAY FULL ACCESS",
-      title: "Try everything for 7 days, then decide.",
-      body: "No card required to open your account. Continue only if it helps.",
-      cta: ctaLabel || "See pricing",
-    };
-  }, [ctaLabel, locale]);
+  const copy =
+    locale === "fr"
+      ? {
+          badge: "ACCES COMPLET 7 JOURS",
+          title: "Teste tout pendant 7 jours, puis decide.",
+          body: "Aucune carte requise pour ouvrir ton compte. Continue uniquement si ca t'aide.",
+          cta: ctaLabel || "Voir les tarifs",
+        }
+      : {
+          badge: "7-DAY FULL ACCESS",
+          title: "Try everything for 7 days, then decide.",
+          body: "No card required to open your account. Continue only if it helps.",
+          cta: ctaLabel || "See pricing",
+        };
 
   return (
     <section className={className}>
