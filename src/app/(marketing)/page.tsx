@@ -673,12 +673,7 @@ export default function Home() {
 
                 {/* SECTION 7: CTA Final */}
                 <section className="container py-24 md:py-32 text-center border-t border-black/5">
-                    <PricingOfferBlock className="mb-10 text-left" ctaHref="/pricing" ctaLabel="Explore plans" />
-                    <div className="mb-6">
-                        <Link href="/pricing" className="inline-flex items-center text-sm font-medium text-stone-600 hover:text-stone-900">
-                            See pricing
-                        </Link>
-                    </div>
+                    <PricingOfferBlock className="mb-10" ctaHref="/pricing" ctaLabel="See pricing" />
                     <Button asChild size="lg" className="h-14 px-12 text-base">
                         <Link href="/sanctuary/write">Discover my first reflection</Link>
                     </Button>
