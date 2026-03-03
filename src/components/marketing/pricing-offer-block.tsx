@@ -8,16 +8,22 @@ type PricingOfferBlockProps = {
   ctaHref?: string;
   ctaLabel?: string;
   className?: string;
+  locale?: "fr" | "en";
 };
 
 export function PricingOfferBlock({
   ctaHref = "/pricing",
   ctaLabel,
   className = "",
+  locale: forcedLocale,
 }: PricingOfferBlockProps) {
   const [locale, setLocale] = useState<"fr" | "en">("en");
 
   useEffect(() => {
+    if (forcedLocale) {
+      setLocale(forcedLocale);
+      return;
+    }
     if (typeof document === "undefined") return;
     const cookieLocale = document.cookie
       .split(";")
@@ -33,7 +39,7 @@ export function PricingOfferBlock({
 
     const navLang = (navigator.language || "").toLowerCase();
     setLocale(navLang.startsWith("fr") ? "fr" : "en");
-  }, []);
+  }, [forcedLocale]);
 
   const copy = useMemo(() => {
     if (locale === "fr") {
