@@ -31,10 +31,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <Header />
         </div>
         
-        <main className="flex-1 overflow-y-auto overflow-x-hidden pt-4 lg:pt-0 pb-16 lg:pb-0">
-          <div className="h-full">
-            {children}
-          </div>
+        <main className="flex-1 overflow-y-auto overflow-x-hidden pt-4 pb-16 lg:pt-0 lg:pb-0">
+          {children}
         </main>
       </div>
 

@@ -688,7 +688,7 @@ export function PremiumJournalForm() {
                   name="content"
                   placeholder="Write what needs to be set down..."
                   value={draftContent}
-                  className="bg-transparent border-none shadow-none resize-none overflow-hidden min-h-[48vh] p-0 [font-family:var(--font-cormorant)] text-3xl leading-relaxed text-stone-800 placeholder:text-stone-400 focus:ring-0 focus:outline-none focus-visible:ring-0 caret-amber-400"
+                  className="bg-transparent border-none shadow-none resize-none overflow-hidden min-h-[34vh] md:min-h-[42vh] p-0 [font-family:var(--font-cormorant)] text-3xl leading-relaxed text-stone-800 placeholder:text-stone-400 focus:ring-0 focus:outline-none focus-visible:ring-0 caret-amber-400"
                   required
                   onInput={handleInput}
                 />

@@ -225,7 +225,7 @@ export default function WritePage() {
 
   // Authenticated User View - Writing Interface
   return (
-    <div className="min-h-screen bg-gradient-to-b from-stone-50 via-[#F9F7F2] to-stone-100">
+    <div className="min-h-full bg-gradient-to-b from-stone-50 via-[#F9F7F2] to-stone-100">
       <WelcomePresence userName={user?.displayName || undefined} />
 
       <AnimatePresence>
