@@ -39,13 +39,10 @@ export async function POST(request: Request) {
             return NextResponse.json({ status: 'skipped', message: 'Admin Auth missing' }, { status: 200 });
         }
 
-        // Verify token first and require recent sign-in before exchanging to long-lived session cookie.
-        const decoded = await auth.verifyIdToken(idToken, true);
-        const authTimeSec = typeof decoded.auth_time === 'number' ? decoded.auth_time : 0;
-        const maxSessionExchangeAgeMs = 10 * 60 * 1000;
-        if (!authTimeSec || Date.now() - authTimeSec * 1000 > maxSessionExchangeAgeMs) {
-            return NextResponse.json({ error: 'Recent authentication required' }, { status: 401 });
-        }
+        // Verify ID token before exchanging to session cookie.
+        // Do not require "recent sign-in" here: this endpoint is also used to silently
+        // refresh the cookie on normal navigation/page reload.
+        await auth.verifyIdToken(idToken, true);
 
         // Create the session cookie using Firebase Admin
         const sessionCookie = await auth.createSessionCookie(idToken, { expiresIn });
