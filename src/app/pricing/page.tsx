@@ -12,7 +12,6 @@ import { useAuth } from '@/providers/auth-provider';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { trackEvent } from '@/lib/analytics/client';
-import { PricingOfferBlock } from '@/components/marketing/pricing-offer-block';
 
 export const dynamic = 'force-dynamic';
 
@@ -154,9 +153,6 @@ export default function PricingPage() {
                     <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
                         Full Aurum access from €13/month or €129/year.
                     </p>
-                </div>
-                <div className="container max-w-5xl mx-auto mt-10">
-                    <PricingOfferBlock ctaHref="#plans" ctaLabel="See plan options" />
                 </div>
             </section>
 
