@@ -63,10 +63,10 @@ export default function DashboardPage() {
         </div>
         <h1 className="text-2xl font-bold mb-2">Accès restreint</h1>
         <p className="text-stone-500 mb-8 max-w-sm">
-          Vous devez être connecté pour accéder à votre centre de commande.
+          You must be signed in to access your command center.
         </p>
         <Button asChild size="lg">
-          <Link href="/login">Se connecter</Link>
+          <Link href="/login">Sign in</Link>
         </Button>
       </div>
     );
@@ -86,7 +86,7 @@ export default function DashboardPage() {
             Command Center
           </h1>
           <p className="text-stone-500 font-medium">
-            Heureux de vous revoir,{" "}
+            Glad to see you again,{" "}
             {(user?.displayName ?? "").split(" ")[0] || "Daniel"}.
           </p>
         </motion.div>
@@ -98,7 +98,7 @@ export default function DashboardPage() {
         >
           <Link href="/sanctuary/write">
             <PenSquare className="h-4 w-4 mr-2" />
-            Ouvrir la Forge
+            Open the Forge
             <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
           </Link>
         </Button>
@@ -127,9 +127,9 @@ export default function DashboardPage() {
             ) : (
               <div className="h-full rounded-2xl border-2 border-dashed border-stone-200 flex flex-col items-center justify-center p-8 text-center bg-stone-50">
                 <Eye className="h-8 w-8 text-stone-300 mb-4" />
-                <h3 className="font-bold text-stone-400">Aucun Écho</h3>
+                <h3 className="font-bold text-stone-400">No Echo Yet</h3>
                 <p className="text-sm text-stone-400 mt-1 max-w-[200px]">
-                  Écrivez pour recevoir un reflet d'Aurum.
+                  Write to receive your first Aurum reflection.
                 </p>
               </div>
             )}
@@ -155,13 +155,13 @@ export default function DashboardPage() {
         >
           <div className="flex items-center justify-between mb-6">
             <h3 className="font-bold text-sm uppercase tracking-widest text-stone-500">
-              Fréquence d'introspection
+              Introspection frequency
             </h3>
             <Link
               href="/insights"
               className="text-xs font-bold text-amber-600 hover:underline"
             >
-              Voir les analyses complètes
+              View full insights
             </Link>
           </div>
           <EntryHeatmap entries={entries} />

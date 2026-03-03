@@ -57,7 +57,7 @@ function AurumExchangePreview({ exchanges }: { exchanges: AurumExchange[] }) {
       <div className="mb-1.5 flex items-center gap-1.5">
         <Flame className="h-3 w-3 text-amber-500" />
         <span className="text-[10px] font-medium uppercase tracking-wider text-amber-600">
-          Réflexion d&apos;Aurum
+          Aurum reflection
         </span>
       </div>
       <p className="line-clamp-2 text-xs leading-relaxed text-stone-600">{latestAurum.text}</p>
@@ -161,8 +161,8 @@ function SanctuaryPageContent() {
       } catch (error) {
         console.error('Failed to fetch sanctuary data:', error);
         toast({
-          title: 'Erreur',
-          description: 'Impossible de charger votre journal.',
+          title: 'Error',
+          description: 'Unable to load your journal.',
           variant: 'destructive',
         });
         setEntries([]);
@@ -202,10 +202,10 @@ function SanctuaryPageContent() {
         <Alert variant="destructive">
           <ShieldAlert className="h-4 w-4" />
           <AlertTitle>Accès restreint</AlertTitle>
-          <AlertDescription>Vous devez être connecté pour voir votre historique.</AlertDescription>
+          <AlertDescription>You must be signed in to view your history.</AlertDescription>
         </Alert>
         <Button asChild className="mt-6">
-          <Link href="/sanctuary/write">Commencer à écrire</Link>
+          <Link href="/sanctuary/write">Start writing</Link>
         </Button>
       </div>
     );
@@ -222,22 +222,22 @@ function SanctuaryPageContent() {
             <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-stone-500">
               <span className="inline-flex items-center gap-1.5">
                 <BookOpen className="h-4 w-4" />
-                {totalEntries} entrée{totalEntries > 1 ? 's' : ''}
+                {totalEntries} entr{totalEntries > 1 ? 'ies' : 'y'}
               </span>
               <span className="inline-flex items-center gap-1.5">
                 <CalendarDays className="h-4 w-4" />
-                {thisMonthCount} ce mois
+                {thisMonthCount} this month
               </span>
               {streak > 1 && (
                 <span className="inline-flex items-center gap-1.5">
                   <Flame className="h-4 w-4 text-orange-400" />
-                  {streak} jours de suite
+                  {streak} day streak
                 </span>
               )}
             </div>
           ) : (
             <p className="mt-2 max-w-xl text-stone-500">
-              L&apos;archive de toutes tes pages enregistrées, dans la durée.
+              Your long-term archive of everything you wrote.
             </p>
           )}
           {tags.length > 0 && (
@@ -263,50 +263,50 @@ function SanctuaryPageContent() {
           </motion.div>
         ) : (
           <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
-            {/* Zone héro */}
+            {/* Hero area */}
             <div className="border-b border-stone-100 bg-gradient-to-b from-stone-50 to-white px-10 py-12 text-center">
               <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-50 ring-1 ring-amber-200/70">
                 <BookOpen className="h-7 w-7 text-amber-700" />
               </div>
               <h2 className="text-lg font-semibold text-stone-900">
-                L&apos;archive de toutes tes pages
+                The archive of all your pages
               </h2>
               <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-stone-500">
-                Chaque page enregistrée depuis <span className="font-medium text-stone-700">Écrire</span> apparaît ici,
-                classée dans la durée. Ton journal, c&apos;est ta mémoire complète.
+                Every page saved from <span className="font-medium text-stone-700">Write</span> appears here over time.
+                Your journal is your complete memory.
               </p>
               <p className="mx-auto mt-3 max-w-md text-xs italic text-stone-400">
-                &ldquo;Écrire, c&apos;est commencer à y voir plus clair.&rdquo; - Joan Didion (adapté)
+                &ldquo;Writing is the beginning of seeing more clearly.&rdquo; - Joan Didion (adapted)
               </p>
             </div>
 
-            {/* Piliers */}
+            {/* Pillars */}
             <div className="grid divide-x divide-stone-100 sm:grid-cols-3">
               <div className="flex flex-col items-center p-7 text-center">
                 <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">
                   <CalendarDays className="h-4 w-4 text-stone-600" />
                 </div>
-                <p className="text-sm font-medium text-stone-900">Chronologie</p>
+                <p className="text-sm font-medium text-stone-900">Timeline</p>
                 <p className="mt-1.5 text-xs leading-relaxed text-stone-500">
-                  Toutes tes pages dans l&apos;ordre où tu les as écrites, sans rien perdre.
+                  All your pages in writing order, nothing lost.
                 </p>
               </div>
               <div className="flex flex-col items-center p-7 text-center">
                 <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">
                   <Heart className="h-4 w-4 text-stone-600" />
                 </div>
-                <p className="text-sm font-medium text-stone-900">Filtres & humeurs</p>
+                <p className="text-sm font-medium text-stone-900">Filters & moods</p>
                 <p className="mt-1.5 text-xs leading-relaxed text-stone-500">
-                  Retrouve une page par humeur, étiquette ou période. Ton passé, navigable.
+                  Find any page by mood, tag, or period. Your past, navigable.
                 </p>
               </div>
               <div className="flex flex-col items-center p-7 text-center">
                 <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">
                   <BookOpen className="h-4 w-4 text-stone-600" />
                 </div>
-                <p className="text-sm font-medium text-stone-900">Consultation</p>
+                <p className="text-sm font-medium text-stone-900">Review</p>
                 <p className="mt-1.5 text-xs leading-relaxed text-stone-500">
-                  Relis, modifie ou approfondit n&apos;importe quelle entrée avec Aurum.
+                  Re-read, edit, or deepen any entry with Aurum.
                 </p>
               </div>
             </div>
@@ -319,7 +319,7 @@ function SanctuaryPageContent() {
               >
                 <Link href="/sanctuary/write">
                   <PenSquare className="mr-2 h-4 w-4" />
-                  Écrire ma première page
+                  Write my first page
                 </Link>
               </Button>
             </div>
@@ -330,7 +330,7 @@ function SanctuaryPageContent() {
         asChild
         className="fixed bottom-20 right-6 h-14 w-14 rounded-full bg-[#C5A059] text-white shadow-lg hover:bg-[#b08d4a] lg:bottom-8 lg:right-8 lg:h-16 lg:w-16"
       >
-        <Link href="/sanctuary/write" aria-label="Rédiger une nouvelle entrée">
+        <Link href="/sanctuary/write" aria-label="Write a new entry">
           <PenSquare className="h-6 w-6" />
         </Link>
       </Button>
