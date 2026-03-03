@@ -145,17 +145,22 @@ export default function PricingPage() {
         <div className="bg-stone-50/50 min-h-screen">
             <section className="py-24 md:py-32">
                 <div className="container max-w-5xl mx-auto text-center animate-fade-in">
+                    <div className="mb-6">
+                        <Link href="/" className="inline-flex items-center text-sm font-medium text-stone-600 hover:text-stone-900">
+                            ← Back to homepage
+                        </Link>
+                    </div>
                     <h1 className="text-4xl md:text-5xl font-headline font-bold tracking-tight">Choose your plan</h1>
                     <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
                         Full Aurum access from €13/month or €129/year.
                     </p>
                 </div>
                 <div className="container max-w-5xl mx-auto mt-10">
-                    <PricingOfferBlock ctaHref="/pricing" ctaLabel="See pricing details" />
+                    <PricingOfferBlock ctaHref="#plans" ctaLabel="See plan options" />
                 </div>
             </section>
 
-            <section className="pb-24 md:pb-32">
+            <section id="plans" className="pb-24 md:pb-32">
                 <div className="container max-w-7xl mx-auto">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start max-w-4xl mx-auto">
                         {plans.map((plan) => (
