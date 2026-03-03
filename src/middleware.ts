@@ -21,7 +21,8 @@ export function middleware(request: NextRequest) {
     const { nextUrl, cookies } = request;
     const sessionToken = cookies.get('__session')?.value;
     const hasLikelySession = isLikelyFirebaseSessionCookie(sessionToken);
-    const resolvedLocale = resolveLocale(request);
+    const forcedLocale = normalizeLocale(nextUrl.searchParams.get('lang') || undefined);
+    const resolvedLocale = forcedLocale || resolveLocale(request);
     const requestHeaders = new Headers(request.headers);
     requestHeaders.set('x-aurum-locale', resolvedLocale);
 
@@ -29,8 +30,13 @@ export function middleware(request: NextRequest) {
     const isAuthRoute = authRoutes.some(route => nextUrl.pathname.startsWith(route));
     let response: NextResponse;
 
-    // 1. Redirect unauthenticated users from protected routes to login
-    if (isProtectedRoute && !hasLikelySession) {
+    // 0. Explicit locale override for testing: ?lang=en|fr|es
+    if (forcedLocale) {
+        const cleanUrl = new URL(request.url);
+        cleanUrl.searchParams.delete('lang');
+        response = NextResponse.redirect(cleanUrl);
+    } else if (isProtectedRoute && !hasLikelySession) {
+        // 1. Redirect unauthenticated users from protected routes to login
         const loginUrl = new URL('/login', request.url);
         // Remember the intended destination for after login
         loginUrl.searchParams.set('callbackUrl', nextUrl.pathname);
@@ -47,7 +53,7 @@ export function middleware(request: NextRequest) {
     }
 
     const currentLocaleCookie = normalizeLocale(cookies.get(LOCALE_COOKIE_NAME)?.value);
-    if (!currentLocaleCookie) {
+    if (forcedLocale || !currentLocaleCookie) {
         response.cookies.set({
             name: LOCALE_COOKIE_NAME,
             value: resolvedLocale,
