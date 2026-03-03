@@ -11,6 +11,7 @@ import { useAuth } from '@/providers/auth-provider';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { firestore as db } from '@/lib/firebase/web-client';
 import { trackEvent } from '@/lib/analytics/client';
+import { PricingOfferBlock } from '@/components/marketing/pricing-offer-block';
 
 const ExitIntent = () => {
     const [show, setShow] = useState(false);
@@ -672,6 +673,7 @@ export default function Home() {
 
                 {/* SECTION 7: CTA Final */}
                 <section className="container py-24 md:py-32 text-center border-t border-black/5">
+                    <PricingOfferBlock className="mb-10 text-left" ctaHref="/pricing" ctaLabel="Explore plans" />
                     <Button asChild size="lg" className="h-14 px-12 text-base">
                         <Link href="/sanctuary/write">Discover my first reflection</Link>
                     </Button>
