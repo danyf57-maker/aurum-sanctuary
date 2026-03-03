@@ -1,6 +1,7 @@
 
 'use client';
 
+import { useState } from 'react';
 import { Check, X, Compass } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,7 +10,6 @@ import Link from 'next/link';
 // import { createCheckoutSession } from '@/app/actions/stripe';
 import { useAuth } from '@/providers/auth-provider';
 import { useRouter } from 'next/navigation';
-import { useFormStatus } from 'react-dom';
 import { Loader2 } from 'lucide-react';
 import { trackEvent } from '@/lib/analytics/client';
 
@@ -63,14 +63,26 @@ const Feature = ({ text, included }: { text: string, included: boolean }) => (
     </li>
 );
 
-function SubscribeButton({ priceId, cta, isRecommended }: { priceId: string | null | undefined, cta: string, isRecommended: boolean }) {
-    const { pending } = useFormStatus();
+function SubscribeButton({
+    priceId,
+    cta,
+    isRecommended,
+    pending,
+    onClick,
+}: {
+    priceId: string | null | undefined,
+    cta: string,
+    isRecommended: boolean,
+    pending: boolean,
+    onClick: () => void,
+}) {
     const isCurrentPlan = false; // TODO: read current user plan
     const isStripeDisabled = !priceId || priceId.includes('xxx');
 
     return (
         <Button
-            type="submit"
+            type="button"
+            onClick={onClick}
             className={cn("w-full", { "bg-stone-600 text-white hover:bg-stone-700": !isRecommended })}
             size="lg"
             disabled={pending || isCurrentPlan || isStripeDisabled}
@@ -84,9 +96,10 @@ export default function PricingPage() {
     const auth = useAuth();
     const user = auth ? auth.user : null;
     const router = useRouter();
+    const [pendingPriceId, setPendingPriceId] = useState<string | null>(null);
 
-    const handleFormAction = async (formData: FormData) => {
-        const priceId = String(formData.get('priceId') || '');
+    const handleCheckout = async (priceId: string) => {
+        setPendingPriceId(priceId);
         void trackEvent({
             name: "checkout_start",
             params: { priceId, source: "pricing_page" },
@@ -94,6 +107,7 @@ export default function PricingPage() {
 
         if (!user) {
             router.push('/sanctuary/write'); // or open a sign-in modal
+            setPendingPriceId(null);
             return;
         }
 
@@ -121,6 +135,8 @@ export default function PricingPage() {
             window.location.href = url;
         } catch (error) {
             console.error('Failed to start checkout from pricing', error);
+        } finally {
+            setPendingPriceId(null);
         }
     };
 
@@ -166,10 +182,13 @@ export default function PricingPage() {
                                 </CardContent>
                                 <CardFooter>
                                     {plan.priceId ? (
-                                        <form action={handleFormAction} className="w-full">
-                                            <input type="hidden" name="priceId" value={plan.priceId} />
-                                            <SubscribeButton priceId={plan.priceId} cta={plan.cta} isRecommended={plan.isRecommended} />
-                                        </form>
+                                        <SubscribeButton
+                                            priceId={plan.priceId}
+                                            cta={plan.cta}
+                                            isRecommended={plan.isRecommended}
+                                            pending={pendingPriceId === plan.priceId}
+                                            onClick={() => void handleCheckout(plan.priceId as string)}
+                                        />
                                     ) : (
                                         <Button asChild className="w-full bg-stone-600 text-white hover:bg-stone-700" size="lg">
                                             <Link href={plan.href!}>{plan.cta}</Link>
