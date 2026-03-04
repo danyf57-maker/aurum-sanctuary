@@ -1,16 +1,14 @@
 'use client';
 
+import { useState } from 'react';
 import { Check, X, Compass, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 import { useAuth } from '@/providers/auth-provider';
 import { useRouter } from 'next/navigation';
 import { trackEvent } from '@/lib/analytics/client';
-import { useLocale } from '@/hooks/use-locale';
-import { localizeHref } from '@/lib/i18n/path';
-import { useTranslations } from 'next-intl';
-import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
 export const dynamic = 'force-dynamic';
@@ -19,36 +17,36 @@ export const dynamic = 'force-dynamic';
 const PRICE_ID_MONTHLY = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY || process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO;
 const PRICE_ID_YEARLY = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_YEARLY || process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PREMIUM;
 
-const buildPlans = (t: ReturnType<typeof useTranslations>) => [
+const plans = [
   {
-    name: t('monthly.name'),
+    name: 'Monthly',
     price: '13€',
-    period: t('monthly.period'),
-    description: t('monthly.description'),
+    period: '/month',
+    description: 'Full Aurum access, billed monthly.',
     features: [
-      { text: t('features.entries'), included: true },
-      { text: t('features.conversations'), included: true },
-      { text: t('features.history'), included: true },
-      { text: t('features.export'), included: true },
-      { text: t('features.reflections'), included: true },
+      { text: 'Unlimited journal entries', included: true },
+      { text: 'Unlimited conversations with Aurum', included: true },
+      { text: 'Full history', included: true },
+      { text: 'Data export', included: true },
+      { text: 'In-depth reflections', included: true },
     ],
-    cta: t('monthly.cta'),
+    cta: 'Choose monthly',
     isRecommended: false,
     priceId: PRICE_ID_MONTHLY,
   },
   {
-    name: t('yearly.name'),
+    name: 'Yearly',
     price: '129€',
-    period: t('yearly.period'),
-    description: t('yearly.description'),
+    period: '/year',
+    description: 'Same full access, with 2 months free.',
     features: [
-      { text: t('features.entries'), included: true },
-      { text: t('features.conversations'), included: true },
-      { text: t('features.history'), included: true },
-      { text: t('features.export'), included: true },
-      { text: t('features.reflections'), included: true },
+      { text: 'Unlimited journal entries', included: true },
+      { text: 'Unlimited conversations with Aurum', included: true },
+      { text: 'Full history', included: true },
+      { text: 'Data export', included: true },
+      { text: 'In-depth reflections', included: true },
     ],
-    cta: t('yearly.cta'),
+    cta: 'Choose yearly',
     isRecommended: true,
     priceId: PRICE_ID_YEARLY,
   },
@@ -74,7 +72,6 @@ function SubscribeButton({
   loading: boolean;
   onClick: () => void;
 }) {
-  const t = useTranslations('pricing');
   const isStripeDisabled = !priceId || priceId.includes('xxx');
 
   return (
@@ -85,7 +82,7 @@ function SubscribeButton({
       disabled={loading || isStripeDisabled}
       onClick={onClick}
     >
-      {loading ? <Loader2 className="animate-spin" /> : isStripeDisabled ? t('comingSoon') : cta}
+      {loading ? <Loader2 className="animate-spin" /> : isStripeDisabled ? 'Coming soon' : cta}
     </Button>
   );
 }
@@ -96,16 +93,12 @@ export default function PricingPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [loadingPriceId, setLoadingPriceId] = useState<string | null>(null);
-  const locale = useLocale();
-  const t = useTranslations('pricing');
-  const to = (href: string) => localizeHref(href, locale);
-  const plans = buildPlans(t);
 
   const startCheckout = async (priceId: string | null | undefined) => {
     if (!priceId || priceId.includes('xxx')) {
       toast({
-        title: t('comingSoon'),
-        description: "Le paiement n'est pas encore configuré pour cette offre.",
+        title: 'Coming soon',
+        description: "This pricing option isn't configured yet.",
         variant: 'destructive',
       });
       return;
@@ -118,7 +111,7 @@ export default function PricingPage() {
     });
 
     if (!user) {
-      router.push(to('/login'));
+      router.push('/login');
       setLoadingPriceId(null);
       return;
     }
@@ -136,20 +129,20 @@ export default function PricingPage() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Impossible de créer la session de paiement.');
+        throw new Error(errorData.error || 'Unable to create checkout session.');
       }
 
       const { url } = await response.json();
       if (!url) {
-        throw new Error('Aucune URL de paiement reçue.');
+        throw new Error('No checkout URL received.');
       }
 
       window.location.href = url;
     } catch (error) {
       console.error('Failed to start checkout from pricing', error);
       toast({
-        title: 'Paiement indisponible',
-        description: "Impossible d'ouvrir Stripe pour le moment. Réessaie dans quelques secondes.",
+        title: 'Payment unavailable',
+        description: 'Unable to open Stripe right now. Please retry in a moment.',
         variant: 'destructive',
       });
     } finally {
@@ -161,12 +154,17 @@ export default function PricingPage() {
     <div className="bg-stone-50/50 min-h-screen">
       <section className="py-24 md:py-32">
         <div className="container max-w-5xl mx-auto text-center animate-fade-in">
-          <h1 className="text-4xl md:text-5xl font-headline font-bold tracking-tight">{t('title')}</h1>
-          <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">{t('subtitle')}</p>
+          <div className="mb-6">
+            <Link href="/" className="inline-flex items-center text-sm font-medium text-stone-600 hover:text-stone-900">
+              ← Back to homepage
+            </Link>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-headline font-bold tracking-tight">Choose your plan</h1>
+          <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">Full Aurum access from €13/month or €129/year.</p>
         </div>
       </section>
 
-      <section className="pb-24 md:pb-32">
+      <section id="plans" className="pb-24 md:pb-32">
         <div className="container max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start max-w-4xl mx-auto">
             {plans.map((plan) => (
@@ -179,7 +177,7 @@ export default function PricingPage() {
                 {plan.isRecommended && (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-semibold flex items-center gap-2">
                     <Compass className="h-4 w-4" />
-                    {t('recommended')}
+                    Recommended
                   </div>
                 )}
                 <CardHeader>
@@ -208,7 +206,7 @@ export default function PricingPage() {
                     />
                     {!plan.priceId && (
                       <p className="mt-2 text-center text-xs text-stone-500">
-                        Offre en préparation. Contacte-nous sur aurumdiary.com pour être prévenu.
+                        Offer in preparation. Contact us on aurumdiary.com to get notified.
                       </p>
                     )}
                   </div>
@@ -218,7 +216,7 @@ export default function PricingPage() {
           </div>
         </div>
         <div className="text-center mt-16 text-sm text-muted-foreground">
-          <p>{t('stripeNote')}</p>
+          <p>Subscriptions are handled by Stripe. Cancel anytime.</p>
         </div>
       </section>
     </div>
