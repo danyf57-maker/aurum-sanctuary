@@ -13,46 +13,46 @@ export function Footer() {
     <footer className="bg-stone-100 dark:bg-stone-900 border-t border-stone-200 dark:border-stone-800 pb-[env(safe-area-inset-bottom)]">
       <div className="container max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div className="space-y-4">
+            <div className="space-y-4">
             <div className="flex items-center gap-2">
               <Logo className="h-8 w-8 text-amber-600" />
               <span className="font-bold text-xl font-headline">Aurum</span>
             </div>
-            <p className="text-muted-foreground text-sm">Silence that listens to you.</p>
+            <p className="text-muted-foreground text-sm">Le silence qui t'ecoute.</p>
           </div>
           <div className="md:col-span-3 grid grid-cols-2 sm:grid-cols-4 gap-8">
             <div>
-              <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Resources</h3>
+              <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Ressources</h3>
               <ul className="mt-4 space-y-2">
-                <li><Link href="/sanctuary/chat" className="text-sm text-muted-foreground hover:text-foreground">Talk with Aurum</Link></li>
-                <li><Link href="/sources-citations" className="text-sm text-muted-foreground hover:text-foreground">Quote sources</Link></li>
+                <li><Link href="/sanctuary/chat" className="text-sm text-muted-foreground hover:text-foreground">Parler avec Aurum</Link></li>
+                <li><Link href="/sources-citations" className="text-sm text-muted-foreground hover:text-foreground">Sources des citations</Link></li>
               </ul>
             </div>
             <div>
-              <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Offers</h3>
+              <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Offres</h3>
               <ul className="mt-4 space-y-2">
-                <li><Link href="/pricing" className="text-sm text-muted-foreground hover:text-foreground">Subscriptions</Link></li>
+                <li><Link href="/fr/pricing" className="text-sm text-muted-foreground hover:text-foreground">Abonnements</Link></li>
               </ul>
             </div>
             <div>
               <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Legal</h3>
               <ul className="mt-4 space-y-2">
-                <li><Link href="/terms" className="text-sm text-muted-foreground hover:text-foreground">Terms of Use</Link></li>
-                <li><Link href="/privacy" className="text-sm text-muted-foreground hover:text-foreground">Privacy Policy</Link></li>
+                <li><Link href="/terms" className="text-sm text-muted-foreground hover:text-foreground">Conditions d'utilisation</Link></li>
+                <li><Link href="/privacy" className="text-sm text-muted-foreground hover:text-foreground">Politique de confidentialite</Link></li>
                 <li><a href="mailto:contact@aurumdiary.com" className="text-sm text-muted-foreground hover:text-foreground">contact@aurumdiary.com</a></li>
               </ul>
             </div>
             <div>
-              <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Account</h3>
+              <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Compte</h3>
               <ul className="mt-4 space-y-2">
-                <li><Link href="/dashboard" className="text-sm text-muted-foreground hover:text-foreground">Dashboard</Link></li>
-                <li><Link href="/settings" className="text-sm text-muted-foreground hover:text-foreground">Settings & Data</Link></li>
+                <li><Link href="/dashboard" className="text-sm text-muted-foreground hover:text-foreground">Tableau de bord</Link></li>
+                <li><Link href="/settings" className="text-sm text-muted-foreground hover:text-foreground">Parametres & donnees</Link></li>
               </ul>
             </div>
           </div>
         </div>
         <div className="mt-12 border-t border-stone-200 dark:border-stone-800 pt-8 flex flex-col sm:flex-row justify-between items-center">
-          <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} Aurum. A space for you.</p>
+          <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} Aurum. Un espace pour toi.</p>
         </div>
       </div>
     </footer>

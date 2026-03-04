@@ -48,9 +48,9 @@ const ExitIntent = () => {
                     <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-8 text-primary">
                         <Compass className="w-8 h-8" />
                     </div>
-                    <h3 className="text-3xl md:text-4xl font-headline mb-6 text-stone-900">One last thing before you go...</h3>
+                    <h3 className="text-3xl md:text-4xl font-headline mb-6 text-stone-900">Une dernière chose avant de partir...</h3>
                     <p className="text-stone-500 text-lg mb-10 leading-relaxed font-light">
-                        Not sure where to start? Take our 30-second wellbeing assessment to get your personalized profile.
+                        Tu ne sais pas par où commencer ? Fais notre évaluation de bien-être en 30 secondes pour obtenir ton profil personnalisé.
                     </p>
                     <div className="flex flex-col gap-4 items-center">
                         <Button
@@ -62,13 +62,13 @@ const ExitIntent = () => {
                             size="lg"
                             className="h-16 px-12 text-lg rounded-2xl w-full sm:w-auto"
                         >
-                            Take the assessment (30s)
+                            Faire le parcours (30s)
                         </Button>
                         <button
                             onClick={() => { setShow(false); setDismissed(true); }}
                             className="text-stone-400 text-sm hover:underline font-light"
                         >
-                            No thanks, I want to keep browsing
+                            Non merci, je souhaite continuer à naviguer
                         </button>
                     </div>
                 </div>
@@ -88,75 +88,75 @@ const QuizSection = () => {
 
     const questions = [
         {
-            q: "When you think about your day, what stands out most?",
+            q: "Quand tu penses à ta journée, qu'est-ce qui ressort le plus ?",
             options: [
-                { label: "D", text: "I have a lot to do and I want to move fast" },
-                { label: "I", text: "I need to connect with others and share" },
-                { label: "S", text: "I seek calm and harmony" },
-                { label: "C", text: "I analyze situations before acting" },
+                { label: "D", text: "J'ai beaucoup de choses à faire et je veux avancer vite" },
+                { label: "I", text: "J'ai besoin de connecter avec les autres et partager" },
+                { label: "S", text: "Je cherche la tranquillité et l'harmonie" },
+                { label: "C", text: "J'analyse les situations avant d'agir" },
             ],
         },
         {
-            q: "When facing a difficult situation, your first reaction is:",
+            q: "Face à une situation difficile, ta première réaction est de :",
             options: [
-                { label: "D", text: "Take control and find a solution" },
-                { label: "I", text: "Talk about it to see different perspectives" },
-                { label: "S", text: "Regain calm before reacting" },
-                { label: "C", text: "Understand all details before deciding" },
+                { label: "D", text: "Prendre le problème en main et trouver une solution" },
+                { label: "I", text: "En parler pour voir différentes perspectives" },
+                { label: "S", text: "Retrouver mon calme avant de réagir" },
+                { label: "C", text: "Comprendre tous les détails avant de décider" },
             ],
         },
         {
-            q: "If you opened your journal now, you would write about:",
+            q: "Si tu ouvrais ton journal maintenant, tu écrirais sur :",
             options: [
-                { label: "D", text: "Your goals and what you want to accomplish" },
-                { label: "I", text: "Your interactions and what touched you emotionally" },
-                { label: "S", text: "Your need for peace and stability" },
-                { label: "C", text: "Your deep reflections and analyses" },
+                { label: "D", text: "Tes objectifs et ce que tu veux accomplir" },
+                { label: "I", text: "Tes interactions et ce qui t'a touché émotionnellement" },
+                { label: "S", text: "Ton besoin de paix et de stabilité" },
+                { label: "C", text: "Tes réflexions profondes et analyses" },
             ],
         },
         {
-            q: "What you are mainly looking for right now:",
+            q: "Ce que tu cherches avant tout en ce moment :",
             options: [
-                { label: "D", text: "Momentum and action" },
-                { label: "I", text: "Connection and inspiration" },
-                { label: "S", text: "Safety and comfort" },
-                { label: "C", text: "Clarity and structure" },
+                { label: "D", text: "Du momentum et de l'action" },
+                { label: "I", text: "De la connexion et de l'inspiration" },
+                { label: "S", text: "De la sécurité et du réconfort" },
+                { label: "C", text: "De la clarté et de la structure" },
             ],
         },
         {
-            q: "When you have to choose, you prioritize:",
+            q: "Quand tu dois choisir, tu privilégies :",
             options: [
-                { label: "D", text: "Efficiency and speed" },
-                { label: "I", text: "Impact on others" },
-                { label: "S", text: "Safety and predictability" },
-                { label: "C", text: "Logic and facts" },
+                { label: "D", text: "L'efficacité et la rapidité" },
+                { label: "I", text: "L'impact sur les autres" },
+                { label: "S", text: "La sécurité et la prévisibilité" },
+                { label: "C", text: "La logique et les faits" },
             ],
         },
         {
-            q: "Your natural communication style:",
+            q: "Ton style de communication naturel :",
             options: [
-                { label: "D", text: "Direct and concise" },
-                { label: "I", text: "Warm and expressive" },
-                { label: "S", text: "Calm and thoughtful" },
-                { label: "C", text: "Structured and precise" },
+                { label: "D", text: "Direct et concis" },
+                { label: "I", text: "Chaleureux et expressif" },
+                { label: "S", text: "Posé et réfléchi" },
+                { label: "C", text: "Structuré et précis" },
             ],
         },
         {
-            q: "Your ideal environment:",
+            q: "Ton environnement idéal :",
             options: [
-                { label: "D", text: "Dynamic, with constant challenges" },
-                { label: "I", text: "Collaborative, with lots of interactions" },
-                { label: "S", text: "Stable, with few changes" },
-                { label: "C", text: "Organized, with clear processes" },
+                { label: "D", text: "Dynamique, avec des défis constants" },
+                { label: "I", text: "Collaboratif, avec beaucoup d'échanges" },
+                { label: "S", text: "Stable, avec peu de changements" },
+                { label: "C", text: "Organisé, avec des processus clairs" },
             ],
         },
         {
-            q: "What motivates you the most:",
+            q: "Ce qui te motive le plus :",
             options: [
-                { label: "D", text: "Results and winning" },
-                { label: "I", text: "Recognition and connection" },
-                { label: "S", text: "Safety and belonging" },
-                { label: "C", text: "Mastery and excellence" },
+                { label: "D", text: "Les résultats et la victoire" },
+                { label: "I", text: "La reconnaissance et la connexion" },
+                { label: "S", text: "La sécurité et l'appartenance" },
+                { label: "C", text: "La maîtrise et l'excellence" },
             ],
         },
     ];
@@ -165,24 +165,24 @@ const QuizSection = () => {
 
     const profileMap: Record<ProfileKey, { title: string; description: string }> = {
         D: {
-            title: "The Pioneer",
-            description: "You like to move fast and decide. Your journal helps channel that energy.",
+            title: "Le Pionnier",
+            description: "Tu aimes avancer vite et décider. Ton journal t'aide à canaliser cette énergie.",
         },
         I: {
-            title: "The Connector",
-            description: "You are driven by relationships and emotions. Your journal becomes a space for expression.",
+            title: "Le Connecteur",
+            description: "Tu es guidé par les relations et les émotions. Ton journal devient un espace d'expression.",
         },
         S: {
-            title: "The Anchor",
-            description: "You seek peace and consistency. Your journal gives you a stable refuge.",
+            title: "L'Ancre",
+            description: "Tu cherches la paix et la constance. Ton journal t'offre un refuge stable.",
         },
         C: {
-            title: "The Architect",
-            description: "You like to understand before acting. Your journal becomes your ideas lab.",
+            title: "L'Architecte",
+            description: "Tu aimes comprendre avant d'agir. Ton journal devient ton laboratoire d'idées.",
         },
         MIXTE: {
-            title: "Mixed profile - The Balancer",
-            description: "You combine multiple strengths. Your journal adapts to your complexity.",
+            title: "Profil mixte • L'Équilibriste",
+            description: "Tu combines plusieurs forces. Ton journal s'adapte à ta complexité.",
         },
     };
 
@@ -304,7 +304,7 @@ const QuizSection = () => {
                                 transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                                 className="text-center"
                             >
-                                <span className="text-primary/60 text-[10px] uppercase tracking-widest mb-6 block font-bold">Reflection path • {step + 1}/{questions.length}</span>
+                                <span className="text-primary/60 text-[10px] uppercase tracking-widest mb-6 block font-bold">Parcours de réflexion • {step + 1}/{questions.length}</span>
                                 <h3 className="text-3xl md:text-5xl font-headline mb-12 text-stone-900">{questions[step].q}</h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     {questions[step].options.map((option) => (
@@ -332,7 +332,7 @@ const QuizSection = () => {
                                 <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-8 text-primary">
                                     <ShieldCheck className="w-10 h-10" />
                                 </div>
-                                <h3 className="text-3xl md:text-5xl font-headline mb-6 text-stone-900">Your profile is ready.</h3>
+                                <h3 className="text-3xl md:text-5xl font-headline mb-6 text-stone-900">Ton profil est prêt.</h3>
                                 <p className="text-stone-500 text-lg mb-12 max-w-xl mx-auto leading-relaxed">
                                     <span className="font-medium text-stone-700">{profile.title}</span>
                                     <br />
@@ -352,7 +352,7 @@ const QuizSection = () => {
                                             })
                                         }
                                     >
-                                        {user ? "See my result in Magazine" : "Create my account to see my result"}
+                                        {user ? "Voir mon résultat dans Magazine" : "Créer mon compte pour voir mon résultat"}
                                     </Link>
                                 </Button>
                             </motion.div>
@@ -378,12 +378,12 @@ const FloatingCTA = ({ visible }: { visible: boolean }) => (
             >
                 <Button asChild size="lg" className="rounded-full shadow-2xl bg-primary hover:bg-primary/90 px-8 h-14 group border-4 border-white/20 backdrop-blur-sm">
                     <Link href="/sanctuary/write" className="flex items-center gap-3">
-                        <span className="font-headline font-semibold">Start my Sanctuary</span>
+                        <span className="font-headline font-semibold">Commencer mon Sanctuaire</span>
                         <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                     </Link>
                 </Button>
                 <div className="mt-2 text-center pointer-events-none">
-                    <span className="text-[9px] text-white bg-black/40 backdrop-blur-sm px-3 py-1 rounded-full uppercase tracking-tighter font-bold">No commitment • Private</span>
+                    <span className="text-[9px] text-white bg-black/40 backdrop-blur-sm px-3 py-1 rounded-full uppercase tracking-tighter font-bold">Sans engagement • Privé</span>
                 </div>
             </motion.div>
         )}
@@ -407,32 +407,32 @@ export default function Home() {
 
     const faqs = [
         {
-            question: "Who can read my data?",
-            answer: "No one. We use an admin-blind architecture with client-side AES-256 encryption. Your entries are encrypted with your private key before being sent. Even with full server access, your writing cannot be decrypted without your password."
+            question: "Qui peut lire mes données ?",
+            answer: "Personne. Nous utilisons une architecture 'Admin-Blind' avec chiffrement AES-256 côté client. Tes entrées sont chiffrées avec ta clé privée avant d'être envoyées. Techniquement, même avec un accès total à nos serveurs, il est impossible de déchiffrer tes écrits sans ton mot de passe."
         },
         {
-            question: "How can I calm anxiety at night and sleep better?",
-            answer: "Write 3 lines before bed: what weighs on you, what you feel, and what you need tomorrow. The goal is to move rumination out of your head and calm your mind."
+            question: "Comment calmer l'anxiété la nuit et mieux dormir ?",
+            answer: "Écris 3 lignes avant de te coucher: ce qui te pèse, ce que tu ressens, puis ce dont tu as besoin demain. Le but est de sortir la rumination de ta tête pour apaiser ton esprit."
         },
         {
-            question: "How can I reduce mental load in 5 minutes?",
-            answer: "Set a 5-minute timer and write without editing: facts, emotions, needs. This short routine helps release pressure and regain clarity, even on busy days."
+            question: "Comment réduire la charge mentale en 5 minutes ?",
+            answer: "Pose un minuteur 5 minutes et écris sans corriger: faits, émotions, besoins. Cette routine courte t'aide à relâcher la pression et à retrouver de la clarté, même pendant une journée chargée."
         },
         {
-            question: "How do I stop overthinking quickly?",
-            answer: "When your mind is spinning, write one idea per line. This turns a messy flow into a concrete list. Then choose one small action for today."
+            question: "Comment arrêter de trop penser (overthinking) rapidement ?",
+            answer: "Quand tout tourne dans ta tête, écris une idée par ligne. Cela transforme un flot confus en liste concrète. Ensuite, choisis une seule petite action à faire aujourd'hui."
         },
         {
-            question: "Does journaling really help with stress and anxiety?",
-            answer: "Studies suggest that regular writing can improve psychological wellbeing and reduce some stress and anxiety symptoms. It is not magic, but it is simple, accessible, and useful."
+            question: "Est-ce que l'écriture aide vraiment contre le stress et l'anxiété ?",
+            answer: "Les études montrent que l'écriture régulière peut améliorer le bien-être psychologique et réduire certains symptômes liés au stress et à l'anxiété. Ce n'est pas magique, mais c'est un outil simple, accessible et utile."
         },
         {
-            question: "Which online journal is truly private?",
-            answer: "Choose an end-to-end encrypted journal, ad-free, where your notes are never publicly exposed. On Aurum, you write in a private space built for mental clarity."
+            question: "Quel journal intime en ligne est vraiment privé ?",
+            answer: "Choisis un journal intime chiffré de bout en bout, sans publicité, où tes notes ne sont pas exposées publiquement. Sur Aurum, tu écris dans un espace privé conçu pour la clarté mentale."
         },
         {
-            question: "Is it free?",
-            answer: "Yes, you can start for free. Paid plans are available if you want advanced features."
+            question: "Est-ce gratuit ?",
+            answer: "Oui, tu peux commencer gratuitement. Des plans payants existent si tu veux aller plus loin avec des fonctionnalités avancées."
         }
     ];
 
@@ -443,25 +443,25 @@ export default function Home() {
                 <div className="container">
                     <div className="max-w-3xl mx-auto text-center mb-12">
                         <h2 className="text-3xl md:text-5xl font-headline text-stone-900 mb-4">
-                            Common pain points: how writing can truly help
+                            Douleurs fréquentes : comment l&apos;écriture peut vraiment aider
                         </h2>
                         <p className="text-stone-600 font-light text-lg">
-                            Practical examples to reduce mental load, calm anxiety, and break rumination loops.
+                            Des exemples concrets pour relâcher la charge mentale, calmer l&apos;anxiété et sortir de la rumination.
                         </p>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <article className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm h-full flex flex-col">
                             <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-stone-100 px-3 py-1 text-[11px] uppercase tracking-[0.12em] text-stone-600 font-medium w-fit">
                                 <Moon className="h-3.5 w-3.5" />
-                                Insomnia
+                                Insomnie
                             </div>
-                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Your brain keeps racing at night</h3>
+                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Ton cerveau tourne la nuit</h3>
                             <p className="text-stone-600 font-light leading-relaxed mb-6">
-                                Write what keeps looping. In practice: 3 lines before sleep
-                                (fact, emotion, need) can already calm your mind.
+                                Écris ce qui tourne en boucle. En pratique: 3 lignes avant de dormir
+                                (fait, émotion, besoin) peuvent déjà apaiser ton esprit.
                             </p>
                             <Link href="/sanctuary/write" className="mt-auto text-primary font-medium hover:underline">
-                                Calm my nights →
+                                Apaiser mes nuits →
                             </Link>
                         </article>
 
@@ -470,13 +470,13 @@ export default function Home() {
                                 <Brain className="h-3.5 w-3.5" />
                                 Self-talk
                             </div>
-                            <h3 className="text-2xl font-headline text-stone-900 mb-3">You talk to yourself too harshly</h3>
+                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Tu te parles trop durement</h3>
                             <p className="text-stone-600 font-light leading-relaxed mb-6">
-                                When the inner voice says "I'm not good enough", write a fairer version:
-                                "I'm moving forward step by step." It helps rebuild confidence.
+                                Quand la petite voix dit &quot;je suis nul&quot;, écris une version plus juste:
+                                &quot;j&apos;avance petit à petit&quot;. Ça aide à reprendre confiance.
                             </p>
                             <Link href="/sanctuary/write" className="mt-auto text-primary font-medium hover:underline">
-                                Rebuild confidence →
+                                Reprendre confiance →
                             </Link>
                         </article>
 
@@ -485,68 +485,68 @@ export default function Home() {
                                 <Wind className="h-3.5 w-3.5" />
                                 Overthinking
                             </div>
-                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Everything feels messy in your head</h3>
+                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Tout est confus dans ta tête</h3>
                             <p className="text-stone-600 font-light leading-relaxed mb-6">
-                                Write one idea per line. You turn mental confusion into clear points,
-                                then choose one small step for today.
+                                Écris une idée par ligne. Tu transformes la confusion mentale en points
+                                clairs, puis tu choisis un seul petit pas pour aujourd&apos;hui.
                             </p>
                             <Link href="/sanctuary/write" className="mt-auto text-primary font-medium hover:underline">
-                                Find clarity →
+                                Retrouver de la clarté →
                             </Link>
                         </article>
 
                         <article className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm h-full flex flex-col">
                             <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-stone-100 px-3 py-1 text-[11px] uppercase tracking-[0.12em] text-stone-600 font-medium w-fit">
                                 <Flame className="h-3.5 w-3.5" />
-                                Pressure
+                                Pression
                             </div>
-                            <h3 className="text-2xl font-headline text-stone-900 mb-3">You hold everything in, then explode</h3>
+                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Tu gardes tout, puis tu exploses</h3>
                             <p className="text-stone-600 font-light leading-relaxed mb-6">
-                                A few consistent lines beat one rare long session.
-                                You decompress before overload and regain calm.
+                                Quelques lignes régulières valent mieux qu&apos;une longue session rare.
+                                Tu décompresses avant saturation et tu retrouves plus de calme.
                             </p>
                             <Link href="/sanctuary/write" className="mt-auto text-primary font-medium hover:underline">
-                                Release pressure →
+                                Relâcher la pression →
                             </Link>
                         </article>
 
                         <article className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm h-full flex flex-col">
                             <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-stone-100 px-3 py-1 text-[11px] uppercase tracking-[0.12em] text-stone-600 font-medium w-fit">
                                 <CircleHelp className="h-3.5 w-3.5" />
-                                Getting started
+                                Démarrage
                             </div>
-                            <h3 className="text-2xl font-headline text-stone-900 mb-3">You don't know where to start</h3>
+                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Tu ne sais pas par où commencer</h3>
                             <p className="text-stone-600 font-light leading-relaxed mb-6">
-                                Simple rule: start with one fact, one emotion, one need.
-                                That's enough to begin without pressure, even in 2 minutes.
+                                Règle simple: commence par un fait, une émotion, un besoin.
+                                C&apos;est suffisant pour démarrer sans pression, même en 2 minutes.
                             </p>
                             <Link href="/sanctuary/write" className="mt-auto text-primary font-medium hover:underline">
-                                Start now →
+                                Commencer maintenant →
                             </Link>
                         </article>
 
                         <article className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm h-full flex flex-col">
                             <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-stone-100 px-3 py-1 text-[11px] uppercase tracking-[0.12em] text-stone-600 font-medium w-fit">
                                 <ListChecks className="h-3.5 w-3.5" />
-                                Mental load
+                                Charge mentale
                             </div>
-                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Your task list is suffocating you</h3>
+                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Ta liste de tâches t&apos;étouffe</h3>
                             <p className="text-stone-600 font-light leading-relaxed mb-6">
-                                Set a 5-minute timer and write without editing:
-                                facts, emotions, needs. This short routine gives you mental breathing room.
+                                Pose un minuteur 5 minutes et écris sans corriger:
+                                faits, émotions, besoins. Cette routine courte te redonne de l&apos;air mental.
                             </p>
                             <Link href="/sanctuary/write" className="mt-auto text-primary font-medium hover:underline">
-                                Lighten my mental load →
+                                Alléger ma charge mentale →
                             </Link>
                         </article>
                     </div>
                     <p className="mt-8 text-xs text-stone-500 text-center font-light">
-                        Based on recent research on writing and psychological wellbeing
+                        Basé sur des recherches récentes sur l&apos;écriture et le bien-être psychologique
                         <sup>
-                            <a href="#ref3" aria-label="See reference 3" className="no-underline"> 3</a>
+                            <a href="#ref3" aria-label="Voir référence 3" className="no-underline"> 3</a>
                         </sup>
                         <sup>
-                            <a href="#ref4" aria-label="See reference 4" className="no-underline"> 4</a>
+                            <a href="#ref4" aria-label="Voir référence 4" className="no-underline"> 4</a>
                         </sup>
                         .
                     </p>
@@ -558,12 +558,12 @@ export default function Home() {
                 <section className="py-24 md:py-32 bg-stone-100/50">
                     <div className="container max-w-3xl mx-auto text-center">
                         <h2 className="text-4xl md:text-5xl font-headline mb-6">
-                            What does a cluttered mind feel like?
+                            C'est comment, une tête en bazar ?
                         </h2>
                         <div className="prose prose-lg lg:prose-xl mx-auto text-foreground/80 font-light">
                             <p>
-                                It is when thoughts loop endlessly. It can block sleep and make you feel low
-                                or irritable. Sometimes you just feel stuck.
+                                C'est quand les pensées tournent en rond sans s'arrêter. Ça peut empêcher de dormir, rendre triste
+                                ou énervé. On a parfois l'impression d'être coincé.
                             </p>
                         </div>
                     </div>
@@ -573,11 +573,11 @@ export default function Home() {
                 <section className="py-24 md:py-32 bg-white">
                     <div className="container max-w-3xl mx-auto text-center">
                         <h2 className="text-4xl md:text-5xl font-headline mb-6">
-                            The superpower of writing.
+                            Le super-pouvoir de l'écriture.
                         </h2>
                         <p className="text-stone-600 font-light text-lg leading-relaxed">
-                            Writing your thoughts, even the most private ones, is like telling them "Stop." It calms them down.
-                            Aurum is your tool to do it safely.
+                            Écrire tes pensées, même les plus secrètes, c'est comme leur dire "Stop !". Ça les calme.
+                            Aurum est ton outil pour faire ça, en toute sécurité.
                         </p>
                     </div>
                 </section>
@@ -586,22 +586,22 @@ export default function Home() {
                 <section className="py-24 md:py-32 bg-stone-100/50">
                     <div className="container max-w-4xl mx-auto">
                         <div className="text-center max-w-3xl mx-auto mb-14">
-                            <h2 className="text-4xl md:text-5xl font-headline mb-6">This is not magic. It is an observed effect.</h2>
+                            <h2 className="text-4xl md:text-5xl font-headline mb-6">Ce n'est pas de la magie, c'est un phénomène observé.</h2>
                             <p className="text-stone-600 font-light text-lg leading-relaxed">
-                                Researchers have studied the power of writing. In their studies, they found surprising results:
+                                Des chercheurs se sont penchés sur le pouvoir de l'écriture. Dans leurs études, ils ont fait des découvertes surprenantes :
                             </p>
                         </div>
                         <ul className="space-y-5 text-stone-700 font-light leading-relaxed text-lg max-w-3xl mx-auto">
                             <li className="rounded-2xl border border-stone-200 bg-white p-6">
-                                <span className="font-medium text-stone-900">Finding #1:</span> Participants who took time
-                                to write about their worries saw medical visits cut by half
-                                <sup><a href="#ref1" aria-label="See reference 1" className="no-underline"> *</a></sup>.
+                                <span className="font-medium text-stone-900">Découverte n°1 :</span> Les participants qui prenaient le temps
+                                d'écrire sur leurs soucis ont vu leurs visites chez le médecin diminuer de moitié
+                                <sup><a href="#ref1" aria-label="Voir référence 1" className="no-underline"> *</a></sup>.
                             </li>
                             <li className="rounded-2xl border border-stone-200 bg-white p-6">
-                                <span className="font-medium text-stone-900">Finding #2:</span> In another study of people
-                                who had lost their jobs, those who wrote about their emotions were twice as likely to find
-                                a new job
-                                <sup><a href="#ref2" aria-label="See reference 2" className="no-underline"> **</a></sup>.
+                                <span className="font-medium text-stone-900">Découverte n°2 :</span> Dans une autre étude sur des personnes
+                                ayant perdu leur emploi, celles qui écrivaient sur leurs émotions avaient deux fois plus de chances de retrouver
+                                un travail que les autres
+                                <sup><a href="#ref2" aria-label="Voir référence 2" className="no-underline"> **</a></sup>.
                             </li>
                         </ul>
                     </div>
@@ -611,9 +611,9 @@ export default function Home() {
                 <section className="py-24 md:py-40 bg-white">
                     <div className="container">
                         <div className="text-center max-w-3xl mx-auto mb-20">
-                            <span className="text-primary/60 text-[10px] uppercase tracking-[0.3em] font-bold mb-4 block">Your Integrity, Our Priority</span>
-                            <h2 className="text-4xl md:text-6xl font-headline mb-6">A sanctuary where you stay in full control.</h2>
-                            <p className="text-stone-500 font-light text-lg">Aurum is built around one simple idea: your inner world belongs to you, and only you.</p>
+                            <span className="text-primary/60 text-[10px] uppercase tracking-[0.3em] font-bold mb-4 block">Ton Intégrité, Notre Priorité</span>
+                            <h2 className="text-4xl md:text-6xl font-headline mb-6">Un sanctuaire où tu es le seul maître.</h2>
+                            <p className="text-stone-500 font-light text-lg">Nous avons conçu Aurum autour d'une idée simple : ton monde intérieur ne regarde que toi. Pas même nous.</p>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-20">
@@ -621,9 +621,9 @@ export default function Home() {
                                 <div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center mb-6 text-primary">
                                     <Lock className="w-6 h-6" />
                                 </div>
-                                <h3 className="text-xl font-headline mb-3 text-primary">Absolute Privacy</h3>
+                                <h3 className="text-xl font-headline mb-3 text-primary">Confidentialité Absolue</h3>
                                 <p className="text-sm text-stone-500 font-light leading-relaxed mb-4">
-                                    Your thoughts are encrypted (AES-256) directly on your device. Even we cannot read your private notes.
+                                    Tes pensées sont chiffrées (AES-256) directement sur ton appareil. Même nous ne pouvons pas lire tes secrets.
                                 </p>
                                 {/* Security page removed - TABULA RASA */}
                             </div>
@@ -632,9 +632,9 @@ export default function Home() {
                                 <div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center mb-6 text-primary">
                                     <Fingerprint className="w-6 h-6" />
                                 </div>
-                                <h3 className="text-xl font-headline mb-3 text-primary">Guaranteed Anonymity</h3>
+                                <h3 className="text-xl font-headline mb-3 text-primary">Anonymat Garanti</h3>
                                 <p className="text-sm text-stone-500 font-light leading-relaxed">
-                                    No personal data is tied to your writing. The Aurum analysis engine runs locally on your device.
+                                    Aucune donnée personnelle n'est liée à tes écrits. Le moteur d'analyse Aurum opère en local sur ton appareil.
                                 </p>
                             </div>
 
@@ -642,9 +642,9 @@ export default function Home() {
                                 <div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center mb-6 text-primary">
                                     <ShieldCheck className="w-6 h-6" />
                                 </div>
-                                <h3 className="text-xl font-headline mb-3 text-primary">Right to Be Forgotten</h3>
+                                <h3 className="text-xl font-headline mb-3 text-primary">Droit à l'Oubli</h3>
                                 <p className="text-sm text-stone-500 font-light leading-relaxed">
-                                    You keep 100% ownership of your data. Export your journals or delete your account in one click.
+                                    Tu restes propriétaire de tes données à 100%. Exporte tes journaux ou supprime ton compte en un clic, sans délai.
                                 </p>
                             </div>
                         </div>
@@ -652,15 +652,15 @@ export default function Home() {
                         <div className="bg-stone-900 rounded-[2rem] p-8 md:p-16 text-white relative overflow-hidden">
                             <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
                                 <div className="max-w-xl text-center md:text-left">
-                                    <h4 className="text-3xl font-headline mb-4">Our Trust Manifesto</h4>
+                                    <h4 className="text-3xl font-headline mb-4">Notre Manifeste de Confiance</h4>
                                     <p className="text-stone-400 font-light leading-relaxed">
-                                        "We do not sell ads. We do not sell your data. We deliver clarity and peace of mind. Your journal is not a product, it is your private sanctuary."
+                                        "Nous ne vendons pas de publicité. Nous ne vendons pas tes données. Nous vendons de la clarté et de la tranquillité d'esprit. Ton journal n'est pas un produit, c'est ton jardin sacré."
                                     </p>
                                 </div>
                                 <div className="flex flex-col items-center gap-4">
                                     <div className="text-7xl font-headline text-primary/20 select-none">Aurum</div>
                                     <div className="w-20 h-px bg-white/20"></div>
-                                    <span className="text-[10px] uppercase tracking-[0.4em] font-medium opacity-50">Protection Seal</span>
+                                    <span className="text-[10px] uppercase tracking-[0.4em] font-medium opacity-50">Sceau de Protection</span>
                                 </div>
                             </div>
                             <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 blur-[100px] -translate-y-1/2 translate-x-1/2 rounded-full"></div>
@@ -673,33 +673,33 @@ export default function Home() {
 
                 {/* SECTION 7: CTA Final */}
                 <section className="container py-24 md:py-32 text-center border-t border-black/5">
-                    <PricingOfferBlock className="mb-10" ctaHref="/pricing" locale="en" />
+                    <PricingOfferBlock className="mb-10" ctaHref="/fr/pricing" locale="fr" />
                     <Button asChild size="lg" className="h-14 px-12 text-base">
-                        <Link href="/sanctuary/write">Discover my first reflection</Link>
+                        <Link href="/sanctuary/write">Découvrir mon premier reflet</Link>
                     </Button>
                     <div className="mt-6">
-                        <span className="text-xs text-stone-400 font-light">Instant access • 100% Encrypted • No card required</span>
+                        <span className="text-xs text-stone-400 font-light">Accès immédiat • 100% Chiffré • Aucune carte requise</span>
                     </div>
                     <div className="mt-10 max-w-5xl mx-auto">
                         <p className="text-stone-600 font-light text-lg mb-6">
-                            In your Aurum space, you get a clear framework to move forward every day.
+                            Dans ton espace Aurum, tu trouves un cadre clair pour avancer chaque jour.
                         </p>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-left">
                             <div className="rounded-2xl border border-stone-200 bg-white p-5">
-                                <p className="text-[11px] uppercase tracking-[0.16em] text-stone-500 mb-2 font-semibold">Personal Space</p>
-                                <p className="text-sm text-stone-600 font-light">Your private journal, structured and easy to resume.</p>
+                                <p className="text-[11px] uppercase tracking-[0.16em] text-stone-500 mb-2 font-semibold">Espace personnel</p>
+                                <p className="text-sm text-stone-600 font-light">Ton journal privé, structuré et facile à reprendre.</p>
                             </div>
                             <div className="rounded-2xl border border-stone-200 bg-white p-5">
-                                <p className="text-[11px] uppercase tracking-[0.16em] text-stone-500 mb-2 font-semibold">Useful Stats</p>
-                                <p className="text-sm text-stone-600 font-light">Simple markers to track your emotional progress.</p>
+                                <p className="text-[11px] uppercase tracking-[0.16em] text-stone-500 mb-2 font-semibold">Statistiques utiles</p>
+                                <p className="text-sm text-stone-600 font-light">Des repères simples pour suivre ton évolution émotionnelle.</p>
                             </div>
                             <div className="rounded-2xl border border-stone-200 bg-white p-5">
-                                <p className="text-[11px] uppercase tracking-[0.16em] text-stone-500 mb-2 font-semibold">Guided Assessments</p>
-                                <p className="text-sm text-stone-600 font-light">Fast paths to understand yourself without overwhelm.</p>
+                                <p className="text-[11px] uppercase tracking-[0.16em] text-stone-500 mb-2 font-semibold">Tests guidés</p>
+                                <p className="text-sm text-stone-600 font-light">Des parcours rapides pour mieux te comprendre sans te perdre.</p>
                             </div>
                             <div className="rounded-2xl border border-stone-200 bg-white p-5">
-                                <p className="text-[11px] uppercase tracking-[0.16em] text-stone-500 mb-2 font-semibold">Talk with Aurum</p>
-                                <p className="text-sm text-stone-600 font-light">A private dialogue to clarify what you are going through.</p>
+                                <p className="text-[11px] uppercase tracking-[0.16em] text-stone-500 mb-2 font-semibold">Échange avec Aurum</p>
+                                <p className="text-sm text-stone-600 font-light">Un dialogue intime pour clarifier ce que tu traverses.</p>
                             </div>
                         </div>
                     </div>
@@ -712,7 +712,7 @@ export default function Home() {
 
                 <section className="container max-w-3xl pb-24 md:pb-32">
                     <h2 className="text-4xl font-headline text-center mb-12">
-                        Frequently Asked Questions
+                        Questions Fréquentes
                     </h2>
                     <Accordion type="single" collapsible className="w-full">
                         {faqs.map((faq, index) => (
@@ -728,7 +728,7 @@ export default function Home() {
 
                 <section className="container max-w-4xl pb-24 md:pb-28">
                     <div className="rounded-2xl border border-stone-200 bg-stone-50/60 p-6 md:p-8">
-                        <h3 className="text-sm font-semibold tracking-wider uppercase text-stone-500 mb-4">References</h3>
+                        <h3 className="text-sm font-semibold tracking-wider uppercase text-stone-500 mb-4">Références</h3>
                         <ul className="space-y-3 text-xs text-stone-500 leading-relaxed">
                             <li id="ref1">
                                 <strong>*</strong> Pennebaker, J. W., & Beall, S. K. (1986). <em>Confronting a traumatic event: Toward an understanding of inhibition and disease.</em> Journal of Abnormal Psychology, 95, 274-281.
