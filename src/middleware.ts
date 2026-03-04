@@ -19,15 +19,18 @@ type SupportedLocale = 'en' | 'fr';
 
 export function middleware(request: NextRequest) {
     const { nextUrl, cookies } = request;
+    const pathname = nextUrl.pathname;
+    const pathLocale = detectPathLocale(pathname);
+    const normalizedPath = stripLocalePrefix(pathname);
     const sessionToken = cookies.get('__session')?.value;
     const hasLikelySession = isLikelyFirebaseSessionCookie(sessionToken);
     const forcedLocale = normalizeLocale(nextUrl.searchParams.get('lang') || undefined);
-    const resolvedLocale = forcedLocale || resolveLocale(request);
+    const resolvedLocale = forcedLocale || pathLocale || resolveLocale(request);
     const requestHeaders = new Headers(request.headers);
     requestHeaders.set('x-aurum-locale', resolvedLocale);
 
-    const isProtectedRoute = protectedRoutes.some(route => nextUrl.pathname.startsWith(route));
-    const isAuthRoute = authRoutes.some(route => nextUrl.pathname.startsWith(route));
+    const isProtectedRoute = protectedRoutes.some(route => normalizedPath.startsWith(route));
+    const isAuthRoute = authRoutes.some(route => normalizedPath.startsWith(route));
     let response: NextResponse;
 
     // 0. Explicit locale override for testing: ?lang=en|fr
@@ -37,13 +40,21 @@ export function middleware(request: NextRequest) {
         response = NextResponse.redirect(cleanUrl);
     } else if (isProtectedRoute && !hasLikelySession) {
         // 1. Redirect unauthenticated users from protected routes to login
-        const loginUrl = new URL('/login', request.url);
+        const loginUrl = new URL(localizedPath('/login', resolvedLocale), request.url);
         // Remember the intended destination for after login
-        loginUrl.searchParams.set('callbackUrl', nextUrl.pathname);
+        loginUrl.searchParams.set('callbackUrl', pathname);
         response = NextResponse.redirect(loginUrl);
     } else if (isAuthRoute && hasLikelySession) {
         // 2. Redirect authenticated users from auth routes (login/signup) to dashboard
-        response = NextResponse.redirect(new URL('/dashboard', request.url));
+        response = NextResponse.redirect(new URL(localizedPath('/dashboard', resolvedLocale), request.url));
+    } else if (pathLocale === 'fr') {
+        const rewriteUrl = nextUrl.clone();
+        rewriteUrl.pathname = normalizedPath;
+        response = NextResponse.rewrite(rewriteUrl, {
+            request: {
+                headers: requestHeaders,
+            },
+        });
     } else {
         response = NextResponse.next({
             request: {
@@ -65,6 +76,26 @@ export function middleware(request: NextRequest) {
     }
     response.headers.set('x-aurum-locale', resolvedLocale);
     return response;
+}
+
+function detectPathLocale(pathname: string): SupportedLocale | null {
+    if (pathname === '/fr' || pathname.startsWith('/fr/')) return 'fr';
+    if (pathname === '/en' || pathname.startsWith('/en/')) return 'en';
+    return null;
+}
+
+function stripLocalePrefix(pathname: string): string {
+    if (pathname === '/fr' || pathname === '/en') return '/';
+    if (pathname.startsWith('/fr/')) return pathname.slice(3);
+    if (pathname.startsWith('/en/')) return pathname.slice(3);
+    return pathname;
+}
+
+function localizedPath(path: string, locale: SupportedLocale): string {
+    if (locale === 'fr') {
+        return path === '/' ? '/fr' : `/fr${path}`;
+    }
+    return path;
 }
 
 function isLikelyFirebaseSessionCookie(cookieValue?: string): boolean {
