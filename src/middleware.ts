@@ -118,7 +118,7 @@ function resolveLocale(request: NextRequest): SupportedLocale {
     // Last fallback: previous cookie value.
     const cookieLocale = normalizeLocale(request.cookies.get(LOCALE_COOKIE_NAME)?.value);
     if (cookieLocale) return cookieLocale;
-    return 'en';
+    return 'fr';
 }
 
 function normalizeLocale(value?: string): SupportedLocale | null {
@@ -143,7 +143,7 @@ function getLocaleFromAcceptLanguage(header: string | null): SupportedLocale | n
 }
 
 function getLocaleFromCountry(country: string): SupportedLocale {
-    if (!country) return 'en';
+    if (!country) return 'fr';
 
     const frenchCountries = new Set(['FR', 'BE', 'CH', 'LU', 'MC']);
 

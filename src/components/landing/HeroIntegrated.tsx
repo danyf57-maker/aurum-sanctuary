@@ -7,30 +7,30 @@ import { Button } from "@/components/ui/button";
 const HeroIntegrated = () => {
   const placeholders = useMemo(
     () => [
-      "I cannot sleep, my mind keeps looping on tomorrow's meeting...",
-      "I feel completely overwhelmed by my task list today...",
-      "I just need to clear my head before I explode...",
+      "Je n'arrive pas à dormir, mon cerveau tourne en boucle sur la réunion de demain...",
+      "Je me sens complètement submergé par ma liste de tâches aujourd'hui...",
+      "J'ai juste besoin de vider ma tête avant d'exploser...",
     ],
     []
   );
   const rotatingQuotes = useMemo(
     () => [
       {
-        hint: "Lay down your thoughts. Calm your mind before sleep.",
-        detail: "Simply write what is on your mind, unfiltered.",
-        quote: "Writing is a way of talking without being interrupted.",
+        hint: "Couche tes pensées. Apaise ton esprit avant de dormir.",
+        detail: "Écris simplement ce que tu as en tête, sans filtre.",
+        quote: "Écrire, c'est une façon de parler sans être interrompu.",
         author: "Jules Renard",
       },
       {
-        hint: "An encrypted space where you can unload everything, without filters.",
-        detail: "You remain the only one who can read what you write.",
-        quote: "Paper is more patient than people.",
+        hint: "Un espace chiffré où tu peux tout déposer, sans filtre.",
+        detail: "Tu restes le seul à lire ce que tu écris.",
+        quote: "Le papier est plus patient que les hommes.",
         author: "Anne Frank",
       },
       {
-        hint: "Writing is your mind's pause button.",
-        detail: "Even a few lines can already calm you down.",
-        quote: "I write to find out what I think.",
+        hint: "L'écriture, c'est le bouton pause de ton mental.",
+        detail: "Même quelques lignes peuvent déjà t'apaiser.",
+        quote: "J'écris pour savoir ce que je pense.",
         author: "Joan Didion",
       },
     ],
@@ -82,13 +82,13 @@ const HeroIntegrated = () => {
         <div className="mx-auto flex max-w-4xl flex-col items-center gap-10 text-center">
           <div className="space-y-4">
             <p className="font-body text-xs uppercase tracking-[0.35em] text-[#D4AF37] font-semibold">
-              A MOMENT OF CALM
+              INSTANT DE SÉRÉNITÉ
             </p>
             <h1 className="font-headline text-4xl md:text-6xl text-stone-900">
-              Your mind is full. Lighten it here.
+              Votre esprit est plein. Allégez-le ici.
             </h1>
             <p className="font-body text-lg md:text-xl text-stone-600">
-              A private sanctuary to turn inner chaos into immediate clarity.
+              Un sanctuaire secret pour transformer votre chaos intérieur en une clarté immédiate.
             </p>
           </div>
 
@@ -125,11 +125,11 @@ const HeroIntegrated = () => {
                 className="h-12 md:h-14 px-8 rounded-xl bg-[#D4AF37] text-stone-900 hover:bg-[#D4AF37]/90"
               >
                 <Link href={writeHref}>
-                  Enter the Sanctuary
+                  Entrer dans le Sanctuaire
                 </Link>
               </Button>
               <span className="font-body text-xs uppercase tracking-[0.2em] text-stone-500">
-                100% Encrypted • Anonymous • Your private garden.
+                100% Chiffré • Anonyme • Votre jardin privé.
               </span>
             </div>
           </div>
