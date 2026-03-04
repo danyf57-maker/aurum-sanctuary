@@ -8,12 +8,13 @@ import { Compass, ArrowRight, ShieldCheck, Lock, Fingerprint, X, Brain, Moon, Fl
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/providers/auth-provider';
+import { usePathname } from 'next/navigation';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { firestore as db } from '@/lib/firebase/web-client';
 import { trackEvent } from '@/lib/analytics/client';
 import { PricingOfferBlock } from '@/components/marketing/pricing-offer-block';
 
-const ExitIntent = () => {
+const ExitIntent = ({ isFr }: { isFr: boolean }) => {
     const [show, setShow] = useState(false);
     const [dismissed, setDismissed] = useState(false);
 
@@ -48,9 +49,13 @@ const ExitIntent = () => {
                     <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-8 text-primary">
                         <Compass className="w-8 h-8" />
                     </div>
-                    <h3 className="text-3xl md:text-4xl font-headline mb-6 text-stone-900">One last thing before you go...</h3>
+                    <h3 className="text-3xl md:text-4xl font-headline mb-6 text-stone-900">
+                      {isFr ? "Un dernier point avant de partir..." : "One last thing before you go..."}
+                    </h3>
                     <p className="text-stone-500 text-lg mb-10 leading-relaxed font-light">
-                        Not sure where to start? Take our 30-second wellbeing assessment to get your personalized profile.
+                      {isFr
+                        ? "Pas sûr de savoir par où commencer ? Fais une évaluation de 30 secondes pour obtenir ton profil personnalisé."
+                        : "Not sure where to start? Take our 30-second wellbeing assessment to get your personalized profile."}
                     </p>
                     <div className="flex flex-col gap-4 items-center">
                         <Button
@@ -62,13 +67,13 @@ const ExitIntent = () => {
                             size="lg"
                             className="h-16 px-12 text-lg rounded-2xl w-full sm:w-auto"
                         >
-                            Take the assessment (30s)
+                            {isFr ? "Faire l'évaluation (30s)" : "Take the assessment (30s)"}
                         </Button>
                         <button
                             onClick={() => { setShow(false); setDismissed(true); }}
                             className="text-stone-400 text-sm hover:underline font-light"
                         >
-                            No thanks, I want to keep browsing
+                            {isFr ? "Non merci, je continue ma visite" : "No thanks, I want to keep browsing"}
                         </button>
                     </div>
                 </div>
@@ -77,7 +82,7 @@ const ExitIntent = () => {
     );
 };
 
-const QuizSection = () => {
+const QuizSection = ({ isFr }: { isFr: boolean }) => {
     const { user } = useAuth();
     const [step, setStep] = useState(0);
     const [answers, setAnswers] = useState<string[]>([]);
@@ -86,7 +91,80 @@ const QuizSection = () => {
     const hasTrackedStartRef = useRef(false);
     const hasTrackedResultRef = useRef(false);
 
-    const questions = [
+    const questions = isFr ? [
+        {
+            q: "Quand tu penses à ta journée, qu'est-ce qui ressort le plus ?",
+            options: [
+                { label: "D", text: "J'ai beaucoup à faire et je veux avancer vite" },
+                { label: "I", text: "J'ai besoin de me connecter et de partager" },
+                { label: "S", text: "Je cherche du calme et de l'harmonie" },
+                { label: "C", text: "J'analyse la situation avant d'agir" },
+            ],
+        },
+        {
+            q: "Face à une situation difficile, ta première réaction est :",
+            options: [
+                { label: "D", text: "Prendre le contrôle et trouver une solution" },
+                { label: "I", text: "En parler pour voir d'autres perspectives" },
+                { label: "S", text: "Retrouver du calme avant de répondre" },
+                { label: "C", text: "Comprendre les détails avant de décider" },
+            ],
+        },
+        {
+            q: "Si tu ouvrais ton journal maintenant, tu écrirais sur :",
+            options: [
+                { label: "D", text: "Tes objectifs et ce que tu veux accomplir" },
+                { label: "I", text: "Tes interactions et ce qui t'a touché émotionnellement" },
+                { label: "S", text: "Ton besoin de paix et de stabilité" },
+                { label: "C", text: "Tes réflexions profondes et analyses" },
+            ],
+        },
+        {
+            q: "Ce que tu recherches principalement en ce moment :",
+            options: [
+                { label: "D", text: "De l'élan et de l'action" },
+                { label: "I", text: "Du lien et de l'inspiration" },
+                { label: "S", text: "De la sécurité et du confort" },
+                { label: "C", text: "De la clarté et de la structure" },
+            ],
+        },
+        {
+            q: "Quand tu dois choisir, tu privilégies :",
+            options: [
+                { label: "D", text: "L'efficacité et la vitesse" },
+                { label: "I", text: "L'impact sur les autres" },
+                { label: "S", text: "La sécurité et la prévisibilité" },
+                { label: "C", text: "La logique et les faits" },
+            ],
+        },
+        {
+            q: "Ton style naturel de communication :",
+            options: [
+                { label: "D", text: "Direct et concis" },
+                { label: "I", text: "Chaleureux et expressif" },
+                { label: "S", text: "Calme et attentif" },
+                { label: "C", text: "Structuré et précis" },
+            ],
+        },
+        {
+            q: "Ton environnement idéal :",
+            options: [
+                { label: "D", text: "Dynamique, avec des défis constants" },
+                { label: "I", text: "Collaboratif, avec beaucoup d'interactions" },
+                { label: "S", text: "Stable, avec peu de changements" },
+                { label: "C", text: "Organisé, avec des processus clairs" },
+            ],
+        },
+        {
+            q: "Ce qui te motive le plus :",
+            options: [
+                { label: "D", text: "Les résultats et la victoire" },
+                { label: "I", text: "La reconnaissance et le lien" },
+                { label: "S", text: "La sécurité et l'appartenance" },
+                { label: "C", text: "La maîtrise et l'excellence" },
+            ],
+        },
+    ] : [
         {
             q: "When you think about your day, what stands out most?",
             options: [
@@ -163,7 +241,28 @@ const QuizSection = () => {
 
     type ProfileKey = "D" | "I" | "S" | "C" | "MIXTE";
 
-    const profileMap: Record<ProfileKey, { title: string; description: string }> = {
+    const profileMap: Record<ProfileKey, { title: string; description: string }> = isFr ? {
+        D: {
+            title: "Le Pionnier",
+            description: "Tu aimes avancer vite et décider. Ton journal t'aide à canaliser cette énergie.",
+        },
+        I: {
+            title: "Le Connecteur",
+            description: "Tu es porté par les relations et les émotions. Ton journal devient un espace d'expression.",
+        },
+        S: {
+            title: "L'Ancre",
+            description: "Tu recherches la paix et la constance. Ton journal t'offre un refuge stable.",
+        },
+        C: {
+            title: "L'Architecte",
+            description: "Tu aimes comprendre avant d'agir. Ton journal devient ton laboratoire d'idées.",
+        },
+        MIXTE: {
+            title: "Profil mixte - L'Équilibré",
+            description: "Tu combines plusieurs forces. Ton journal s'adapte à ta complexité.",
+        },
+    } : {
         D: {
             title: "The Pioneer",
             description: "You like to move fast and decide. Your journal helps channel that energy.",
@@ -304,7 +403,9 @@ const QuizSection = () => {
                                 transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                                 className="text-center"
                             >
-                                <span className="text-primary/60 text-[10px] uppercase tracking-widest mb-6 block font-bold">Reflection path • {step + 1}/{questions.length}</span>
+                                <span className="text-primary/60 text-[10px] uppercase tracking-widest mb-6 block font-bold">
+                                  {isFr ? "Parcours de réflexion" : "Reflection path"} • {step + 1}/{questions.length}
+                                </span>
                                 <h3 className="text-3xl md:text-5xl font-headline mb-12 text-stone-900">{questions[step].q}</h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     {questions[step].options.map((option) => (
@@ -332,7 +433,9 @@ const QuizSection = () => {
                                 <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-8 text-primary">
                                     <ShieldCheck className="w-10 h-10" />
                                 </div>
-                                <h3 className="text-3xl md:text-5xl font-headline mb-6 text-stone-900">Your profile is ready.</h3>
+                                <h3 className="text-3xl md:text-5xl font-headline mb-6 text-stone-900">
+                                  {isFr ? "Ton profil est prêt." : "Your profile is ready."}
+                                </h3>
                                 <p className="text-stone-500 text-lg mb-12 max-w-xl mx-auto leading-relaxed">
                                     <span className="font-medium text-stone-700">{profile.title}</span>
                                     <br />
@@ -352,7 +455,9 @@ const QuizSection = () => {
                                             })
                                         }
                                     >
-                                        {user ? "See my result in Magazine" : "Create my account to see my result"}
+                                        {user
+                                          ? (isFr ? "Voir mon résultat dans Magazine" : "See my result in Magazine")
+                                          : (isFr ? "Créer mon compte pour voir mon résultat" : "Create my account to see my result")}
                                     </Link>
                                 </Button>
                             </motion.div>
@@ -367,7 +472,7 @@ const QuizSection = () => {
     );
 };
 
-const FloatingCTA = ({ visible }: { visible: boolean }) => (
+const FloatingCTA = ({ visible, isFr }: { visible: boolean; isFr: boolean }) => (
     <AnimatePresence>
         {visible && (
             <motion.div
@@ -378,19 +483,32 @@ const FloatingCTA = ({ visible }: { visible: boolean }) => (
             >
                 <Button asChild size="lg" className="rounded-full shadow-2xl bg-primary hover:bg-primary/90 px-8 h-14 group border-4 border-white/20 backdrop-blur-sm">
                     <Link href="/sanctuary/write" className="flex items-center gap-3">
-                        <span className="font-headline font-semibold">Start my Sanctuary</span>
+                        <span className="font-headline font-semibold">{isFr ? "Commencer mon Sanctuaire" : "Start my Sanctuary"}</span>
                         <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                     </Link>
                 </Button>
                 <div className="mt-2 text-center pointer-events-none">
-                    <span className="text-[9px] text-white bg-black/40 backdrop-blur-sm px-3 py-1 rounded-full uppercase tracking-tighter font-bold">No commitment • Private</span>
+                    <span className="text-[9px] text-white bg-black/40 backdrop-blur-sm px-3 py-1 rounded-full uppercase tracking-tighter font-bold">
+                      {isFr ? "Sans engagement • Privé" : "No commitment • Private"}
+                    </span>
                 </div>
             </motion.div>
         )}
     </AnimatePresence>
 );
 export default function Home() {
+    const pathname = usePathname();
+    const [isFr, setIsFr] = useState(pathname.startsWith('/fr'));
     const [showCTA, setShowCTA] = useState(false);
+
+    useEffect(() => {
+        const cookieLocale = document.cookie
+            .split('; ')
+            .find((value) => value.startsWith('aurum-locale='))
+            ?.split('=')[1];
+        if (cookieLocale === 'fr') setIsFr(true);
+        if (cookieLocale === 'en') setIsFr(false);
+    }, [pathname]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -405,7 +523,36 @@ export default function Home() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const faqs = [
+    const faqs = isFr ? [
+        {
+            question: "Qui peut lire mes données ?",
+            answer: "Personne. Nous utilisons une architecture admin-blind avec chiffrement AES-256 côté client. Tes entrées sont chiffrées avec ta clé privée avant envoi. Même avec un accès serveur complet, tes écrits restent illisibles sans ton mot de passe."
+        },
+        {
+            question: "Comment calmer l'anxiété le soir et mieux dormir ?",
+            answer: "Écris 3 lignes avant de dormir : ce qui pèse, ce que tu ressens, ce dont tu as besoin demain. Le but est de sortir la rumination de ta tête et d'apaiser ton esprit."
+        },
+        {
+            question: "Comment réduire la charge mentale en 5 minutes ?",
+            answer: "Lance un minuteur de 5 minutes et écris sans corriger : faits, émotions, besoins. Cette routine courte aide à relâcher la pression et retrouver de la clarté."
+        },
+        {
+            question: "Comment arrêter l'overthinking rapidement ?",
+            answer: "Quand le mental tourne en boucle, écris une idée par ligne. Tu transformes le flou en liste concrète. Puis choisis une seule petite action pour aujourd'hui."
+        },
+        {
+            question: "Est-ce que tenir un journal aide vraiment contre le stress ?",
+            answer: "Des études suggèrent que l'écriture régulière peut améliorer le bien-être psychologique et réduire certains symptômes de stress et d'anxiété. Ce n'est pas magique, mais c'est simple et utile."
+        },
+        {
+            question: "Quel journal en ligne est vraiment privé ?",
+            answer: "Choisis un journal chiffré de bout en bout, sans publicité, où tes notes ne sont jamais exposées publiquement. Sur Aurum, tu écris dans un espace privé pensé pour la clarté mentale."
+        },
+        {
+            question: "Est-ce gratuit ?",
+            answer: "Oui, tu peux commencer gratuitement. Des offres payantes existent si tu veux des fonctionnalités avancées."
+        }
+    ] : [
         {
             question: "Who can read my data?",
             answer: "No one. We use an admin-blind architecture with client-side AES-256 encryption. Your entries are encrypted with your private key before being sent. Even with full server access, your writing cannot be decrypted without your password."
@@ -443,105 +590,115 @@ export default function Home() {
                 <div className="container">
                     <div className="max-w-3xl mx-auto text-center mb-12">
                         <h2 className="text-3xl md:text-5xl font-headline text-stone-900 mb-4">
-                            Common pain points: how writing can truly help
+                            {isFr ? "Douleurs courantes : comment l'écriture aide vraiment" : "Common pain points: how writing can truly help"}
                         </h2>
                         <p className="text-stone-600 font-light text-lg">
-                            Practical examples to reduce mental load, calm anxiety, and break rumination loops.
+                            {isFr
+                                ? "Des exemples concrets pour alléger la charge mentale, calmer l'anxiété et casser les boucles de rumination."
+                                : "Practical examples to reduce mental load, calm anxiety, and break rumination loops."}
                         </p>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <article className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm h-full flex flex-col">
                             <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-stone-100 px-3 py-1 text-[11px] uppercase tracking-[0.12em] text-stone-600 font-medium w-fit">
                                 <Moon className="h-3.5 w-3.5" />
-                                Insomnia
+                                {isFr ? "Insomnie" : "Insomnia"}
                             </div>
-                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Your brain keeps racing at night</h3>
+                            <h3 className="text-2xl font-headline text-stone-900 mb-3">{isFr ? "Ton cerveau tourne en boucle la nuit" : "Your brain keeps racing at night"}</h3>
                             <p className="text-stone-600 font-light leading-relaxed mb-6">
-                                Write what keeps looping. In practice: 3 lines before sleep
-                                (fact, emotion, need) can already calm your mind.
+                                {isFr
+                                    ? "Écris ce qui tourne en boucle. En pratique : 3 lignes avant de dormir (fait, émotion, besoin) peuvent déjà t'apaiser."
+                                    : "Write what keeps looping. In practice: 3 lines before sleep (fact, emotion, need) can already calm your mind."}
                             </p>
                             <Link href="/sanctuary/write" className="mt-auto text-primary font-medium hover:underline">
-                                Calm my nights →
+                                {isFr ? "Apaiser mes nuits →" : "Calm my nights →"}
                             </Link>
                         </article>
 
                         <article className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm h-full flex flex-col">
                             <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-stone-100 px-3 py-1 text-[11px] uppercase tracking-[0.12em] text-stone-600 font-medium w-fit">
                                 <Brain className="h-3.5 w-3.5" />
-                                Self-talk
+                                {isFr ? "Dialogue intérieur" : "Self-talk"}
                             </div>
-                            <h3 className="text-2xl font-headline text-stone-900 mb-3">You talk to yourself too harshly</h3>
+                            <h3 className="text-2xl font-headline text-stone-900 mb-3">{isFr ? "Tu te parles trop durement" : "You talk to yourself too harshly"}</h3>
                             <p className="text-stone-600 font-light leading-relaxed mb-6">
-                                When the inner voice says "I'm not good enough", write a fairer version:
-                                "I'm moving forward step by step." It helps rebuild confidence.
+                                {isFr
+                                    ? "Quand la petite voix dit « je ne suis pas à la hauteur », écris une version plus juste : « j'avance pas à pas ». Ça aide à retrouver confiance."
+                                    : "When the inner voice says \"I'm not good enough\", write a fairer version: \"I'm moving forward step by step.\" It helps rebuild confidence."}
                             </p>
                             <Link href="/sanctuary/write" className="mt-auto text-primary font-medium hover:underline">
-                                Rebuild confidence →
+                                {isFr ? "Reprendre confiance →" : "Rebuild confidence →"}
                             </Link>
                         </article>
 
                         <article className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm h-full flex flex-col">
                             <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-stone-100 px-3 py-1 text-[11px] uppercase tracking-[0.12em] text-stone-600 font-medium w-fit">
                                 <Wind className="h-3.5 w-3.5" />
-                                Overthinking
+                                {isFr ? "Overthinking" : "Overthinking"}
                             </div>
-                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Everything feels messy in your head</h3>
+                            <h3 className="text-2xl font-headline text-stone-900 mb-3">{isFr ? "Tout est confus dans ta tête" : "Everything feels messy in your head"}</h3>
                             <p className="text-stone-600 font-light leading-relaxed mb-6">
-                                Write one idea per line. You turn mental confusion into clear points,
-                                then choose one small step for today.
+                                {isFr
+                                    ? "Écris une idée par ligne. Tu transformes la confusion en points clairs, puis tu choisis un petit pas pour aujourd'hui."
+                                    : "Write one idea per line. You turn mental confusion into clear points, then choose one small step for today."}
                             </p>
                             <Link href="/sanctuary/write" className="mt-auto text-primary font-medium hover:underline">
-                                Find clarity →
+                                {isFr ? "Retrouver de la clarté →" : "Find clarity →"}
                             </Link>
                         </article>
 
                         <article className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm h-full flex flex-col">
                             <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-stone-100 px-3 py-1 text-[11px] uppercase tracking-[0.12em] text-stone-600 font-medium w-fit">
                                 <Flame className="h-3.5 w-3.5" />
-                                Pressure
+                                {isFr ? "Pression" : "Pressure"}
                             </div>
-                            <h3 className="text-2xl font-headline text-stone-900 mb-3">You hold everything in, then explode</h3>
+                            <h3 className="text-2xl font-headline text-stone-900 mb-3">{isFr ? "Tu gardes tout, puis tu exploses" : "You hold everything in, then explode"}</h3>
                             <p className="text-stone-600 font-light leading-relaxed mb-6">
-                                A few consistent lines beat one rare long session.
-                                You decompress before overload and regain calm.
+                                {isFr
+                                    ? "Quelques lignes régulières valent mieux qu'une longue session rare. Tu décompresses avant saturation et retrouves du calme."
+                                    : "A few consistent lines beat one rare long session. You decompress before overload and regain calm."}
                             </p>
                             <Link href="/sanctuary/write" className="mt-auto text-primary font-medium hover:underline">
-                                Release pressure →
+                                {isFr ? "Relâcher la pression →" : "Release pressure →"}
                             </Link>
                         </article>
 
                         <article className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm h-full flex flex-col">
                             <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-stone-100 px-3 py-1 text-[11px] uppercase tracking-[0.12em] text-stone-600 font-medium w-fit">
                                 <CircleHelp className="h-3.5 w-3.5" />
-                                Getting started
+                                {isFr ? "Démarrage" : "Getting started"}
                             </div>
-                            <h3 className="text-2xl font-headline text-stone-900 mb-3">You don't know where to start</h3>
+                            <h3 className="text-2xl font-headline text-stone-900 mb-3">{isFr ? "Tu ne sais pas par où commencer" : "You don't know where to start"}</h3>
                             <p className="text-stone-600 font-light leading-relaxed mb-6">
-                                Simple rule: start with one fact, one emotion, one need.
-                                That's enough to begin without pressure, even in 2 minutes.
+                                {isFr
+                                    ? "Règle simple : commence par un fait, une émotion, un besoin. C'est suffisant pour démarrer sans pression, même en 2 minutes."
+                                    : "Simple rule: start with one fact, one emotion, one need. That's enough to begin without pressure, even in 2 minutes."}
                             </p>
                             <Link href="/sanctuary/write" className="mt-auto text-primary font-medium hover:underline">
-                                Start now →
+                                {isFr ? "Commencer maintenant →" : "Start now →"}
                             </Link>
                         </article>
 
                         <article className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm h-full flex flex-col">
                             <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-stone-100 px-3 py-1 text-[11px] uppercase tracking-[0.12em] text-stone-600 font-medium w-fit">
                                 <ListChecks className="h-3.5 w-3.5" />
-                                Mental load
+                                {isFr ? "Charge mentale" : "Mental load"}
                             </div>
-                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Your task list is suffocating you</h3>
+                            <h3 className="text-2xl font-headline text-stone-900 mb-3">{isFr ? "Ta liste de tâches t'étouffe" : "Your task list is suffocating you"}</h3>
                             <p className="text-stone-600 font-light leading-relaxed mb-6">
-                                Set a 5-minute timer and write without editing:
-                                facts, emotions, needs. This short routine gives you mental breathing room.
+                                {isFr
+                                    ? "Lance un minuteur de 5 minutes et écris sans corriger : faits, émotions, besoins. Cette routine courte redonne de l'air à ton mental."
+                                    : "Set a 5-minute timer and write without editing: facts, emotions, needs. This short routine gives you mental breathing room."}
                             </p>
                             <Link href="/sanctuary/write" className="mt-auto text-primary font-medium hover:underline">
-                                Lighten my mental load →
+                                {isFr ? "Alléger ma charge mentale →" : "Lighten my mental load →"}
                             </Link>
                         </article>
                     </div>
                     <p className="mt-8 text-xs text-stone-500 text-center font-light">
-                        Based on recent research on writing and psychological wellbeing
+                        {isFr
+                            ? "Basé sur des études récentes sur l'écriture et le bien-être psychologique"
+                            : "Based on recent research on writing and psychological wellbeing"}
                         <sup>
                             <a href="#ref3" aria-label="See reference 3" className="no-underline"> 3</a>
                         </sup>
@@ -558,12 +715,13 @@ export default function Home() {
                 <section className="py-24 md:py-32 bg-stone-100/50">
                     <div className="container max-w-3xl mx-auto text-center">
                         <h2 className="text-4xl md:text-5xl font-headline mb-6">
-                            What does a cluttered mind feel like?
+                            {isFr ? "C'est comment, une tête en bazar ?" : "What does a cluttered mind feel like?"}
                         </h2>
                         <div className="prose prose-lg lg:prose-xl mx-auto text-foreground/80 font-light">
                             <p>
-                                It is when thoughts loop endlessly. It can block sleep and make you feel low
-                                or irritable. Sometimes you just feel stuck.
+                                {isFr
+                                    ? "C'est quand les pensées tournent en boucle. Ça peut bloquer le sommeil, rendre triste ou irritable. Parfois, on se sent juste coincé."
+                                    : "It is when thoughts loop endlessly. It can block sleep and make you feel low or irritable. Sometimes you just feel stuck."}
                             </p>
                         </div>
                     </div>
@@ -573,11 +731,12 @@ export default function Home() {
                 <section className="py-24 md:py-32 bg-white">
                     <div className="container max-w-3xl mx-auto text-center">
                         <h2 className="text-4xl md:text-5xl font-headline mb-6">
-                            The superpower of writing.
+                            {isFr ? "Le super-pouvoir de l'écriture." : "The superpower of writing."}
                         </h2>
                         <p className="text-stone-600 font-light text-lg leading-relaxed">
-                            Writing your thoughts, even the most private ones, is like telling them "Stop." It calms them down.
-                            Aurum is your tool to do it safely.
+                            {isFr
+                                ? "Écrire tes pensées, même les plus privées, c'est comme leur dire « Stop ». Ça les calme. Aurum est ton outil pour faire ça en sécurité."
+                                : "Writing your thoughts, even the most private ones, is like telling them \"Stop.\" It calms them down. Aurum is your tool to do it safely."}
                         </p>
                     </div>
                 </section>
@@ -586,21 +745,20 @@ export default function Home() {
                 <section className="py-24 md:py-32 bg-stone-100/50">
                     <div className="container max-w-4xl mx-auto">
                         <div className="text-center max-w-3xl mx-auto mb-14">
-                            <h2 className="text-4xl md:text-5xl font-headline mb-6">This is not magic. It is an observed effect.</h2>
+                            <h2 className="text-4xl md:text-5xl font-headline mb-6">{isFr ? "Ce n'est pas de la magie. C'est un effet observé." : "This is not magic. It is an observed effect."}</h2>
                             <p className="text-stone-600 font-light text-lg leading-relaxed">
-                                Researchers have studied the power of writing. In their studies, they found surprising results:
+                                {isFr
+                                    ? "Des chercheurs ont étudié le pouvoir de l'écriture. Dans leurs études, ils ont trouvé des résultats surprenants :"
+                                    : "Researchers have studied the power of writing. In their studies, they found surprising results:"}
                             </p>
                         </div>
                         <ul className="space-y-5 text-stone-700 font-light leading-relaxed text-lg max-w-3xl mx-auto">
                             <li className="rounded-2xl border border-stone-200 bg-white p-6">
-                                <span className="font-medium text-stone-900">Finding #1:</span> Participants who took time
-                                to write about their worries saw medical visits cut by half
+                                <span className="font-medium text-stone-900">{isFr ? "Découverte n°1 :" : "Finding #1:"}</span> {isFr ? "Les participants qui prenaient le temps d'écrire sur leurs soucis ont vu leurs visites médicales diminuer de moitié" : "Participants who took time to write about their worries saw medical visits cut by half"}
                                 <sup><a href="#ref1" aria-label="See reference 1" className="no-underline"> *</a></sup>.
                             </li>
                             <li className="rounded-2xl border border-stone-200 bg-white p-6">
-                                <span className="font-medium text-stone-900">Finding #2:</span> In another study of people
-                                who had lost their jobs, those who wrote about their emotions were twice as likely to find
-                                a new job
+                                <span className="font-medium text-stone-900">{isFr ? "Découverte n°2 :" : "Finding #2:"}</span> {isFr ? "Dans une autre étude sur des personnes ayant perdu leur emploi, celles qui écrivaient sur leurs émotions avaient deux fois plus de chances de retrouver un travail" : "In another study of people who had lost their jobs, those who wrote about their emotions were twice as likely to find a new job"}
                                 <sup><a href="#ref2" aria-label="See reference 2" className="no-underline"> **</a></sup>.
                             </li>
                         </ul>
@@ -611,9 +769,9 @@ export default function Home() {
                 <section className="py-24 md:py-40 bg-white">
                     <div className="container">
                         <div className="text-center max-w-3xl mx-auto mb-20">
-                            <span className="text-primary/60 text-[10px] uppercase tracking-[0.3em] font-bold mb-4 block">Your Integrity, Our Priority</span>
-                            <h2 className="text-4xl md:text-6xl font-headline mb-6">A sanctuary where you stay in full control.</h2>
-                            <p className="text-stone-500 font-light text-lg">Aurum is built around one simple idea: your inner world belongs to you, and only you.</p>
+                            <span className="text-primary/60 text-[10px] uppercase tracking-[0.3em] font-bold mb-4 block">{isFr ? "Ton intégrité, notre priorité" : "Your Integrity, Our Priority"}</span>
+                            <h2 className="text-4xl md:text-6xl font-headline mb-6">{isFr ? "Un sanctuaire où tu restes en contrôle total." : "A sanctuary where you stay in full control."}</h2>
+                            <p className="text-stone-500 font-light text-lg">{isFr ? "Aurum repose sur une idée simple : ton monde intérieur t'appartient, à toi seule." : "Aurum is built around one simple idea: your inner world belongs to you, and only you."}</p>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-20">
@@ -621,9 +779,9 @@ export default function Home() {
                                 <div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center mb-6 text-primary">
                                     <Lock className="w-6 h-6" />
                                 </div>
-                                <h3 className="text-xl font-headline mb-3 text-primary">Absolute Privacy</h3>
+                                <h3 className="text-xl font-headline mb-3 text-primary">{isFr ? "Confidentialité absolue" : "Absolute Privacy"}</h3>
                                 <p className="text-sm text-stone-500 font-light leading-relaxed mb-4">
-                                    Your thoughts are encrypted (AES-256) directly on your device. Even we cannot read your private notes.
+                                    {isFr ? "Tes pensées sont chiffrées (AES-256) directement sur ton appareil. Même nous ne pouvons pas lire tes notes privées." : "Your thoughts are encrypted (AES-256) directly on your device. Even we cannot read your private notes."}
                                 </p>
                                 {/* Security page removed - TABULA RASA */}
                             </div>
@@ -632,9 +790,9 @@ export default function Home() {
                                 <div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center mb-6 text-primary">
                                     <Fingerprint className="w-6 h-6" />
                                 </div>
-                                <h3 className="text-xl font-headline mb-3 text-primary">Guaranteed Anonymity</h3>
+                                <h3 className="text-xl font-headline mb-3 text-primary">{isFr ? "Anonymat garanti" : "Guaranteed Anonymity"}</h3>
                                 <p className="text-sm text-stone-500 font-light leading-relaxed">
-                                    No personal data is tied to your writing. The Aurum analysis engine runs locally on your device.
+                                    {isFr ? "Aucune donnée personnelle n'est liée à tes écrits. Le moteur d'analyse Aurum fonctionne localement sur ton appareil." : "No personal data is tied to your writing. The Aurum analysis engine runs locally on your device."}
                                 </p>
                             </div>
 
@@ -642,9 +800,9 @@ export default function Home() {
                                 <div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center mb-6 text-primary">
                                     <ShieldCheck className="w-6 h-6" />
                                 </div>
-                                <h3 className="text-xl font-headline mb-3 text-primary">Right to Be Forgotten</h3>
+                                <h3 className="text-xl font-headline mb-3 text-primary">{isFr ? "Droit à l'oubli" : "Right to Be Forgotten"}</h3>
                                 <p className="text-sm text-stone-500 font-light leading-relaxed">
-                                    You keep 100% ownership of your data. Export your journals or delete your account in one click.
+                                    {isFr ? "Tu gardes 100% la propriété de tes données. Exporte tes journaux ou supprime ton compte en un clic." : "You keep 100% ownership of your data. Export your journals or delete your account in one click."}
                                 </p>
                             </div>
                         </div>
@@ -652,15 +810,17 @@ export default function Home() {
                         <div className="bg-stone-900 rounded-[2rem] p-8 md:p-16 text-white relative overflow-hidden">
                             <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
                                 <div className="max-w-xl text-center md:text-left">
-                                    <h4 className="text-3xl font-headline mb-4">Our Trust Manifesto</h4>
+                                    <h4 className="text-3xl font-headline mb-4">{isFr ? "Notre manifeste de confiance" : "Our Trust Manifesto"}</h4>
                                     <p className="text-stone-400 font-light leading-relaxed">
-                                        "We do not sell ads. We do not sell your data. We deliver clarity and peace of mind. Your journal is not a product, it is your private sanctuary."
+                                        {isFr
+                                            ? "\"Nous ne vendons pas de publicité. Nous ne vendons pas tes données. Nous livrons de la clarté et de la sérénité. Ton journal n'est pas un produit, c'est ton sanctuaire privé.\""
+                                            : "\"We do not sell ads. We do not sell your data. We deliver clarity and peace of mind. Your journal is not a product, it is your private sanctuary.\""}
                                     </p>
                                 </div>
                                 <div className="flex flex-col items-center gap-4">
                                     <div className="text-7xl font-headline text-primary/20 select-none">Aurum</div>
                                     <div className="w-20 h-px bg-white/20"></div>
-                                    <span className="text-[10px] uppercase tracking-[0.4em] font-medium opacity-50">Protection Seal</span>
+                                    <span className="text-[10px] uppercase tracking-[0.4em] font-medium opacity-50">{isFr ? "Sceau de protection" : "Protection Seal"}</span>
                                 </div>
                             </div>
                             <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 blur-[100px] -translate-y-1/2 translate-x-1/2 rounded-full"></div>
@@ -673,33 +833,37 @@ export default function Home() {
 
                 {/* SECTION 7: CTA Final */}
                 <section className="container py-24 md:py-32 text-center border-t border-black/5">
-                    <PricingOfferBlock className="mb-10" ctaHref="/pricing" locale="en" />
+                    <PricingOfferBlock className="mb-10" ctaHref={isFr ? "/fr/pricing" : "/pricing"} locale={isFr ? "fr" : "en"} />
                     <Button asChild size="lg" className="h-14 px-12 text-base">
-                        <Link href="/sanctuary/write">Discover my first reflection</Link>
+                        <Link href={isFr ? "/fr/sanctuary/write" : "/sanctuary/write"}>
+                          {isFr ? "Découvrir ma première réflexion" : "Discover my first reflection"}
+                        </Link>
                     </Button>
                     <div className="mt-6">
-                        <span className="text-xs text-stone-400 font-light">Instant access • 100% Encrypted • No card required</span>
+                        <span className="text-xs text-stone-400 font-light">
+                          {isFr ? "Accès instantané • 100% chiffré • Sans carte bancaire" : "Instant access • 100% Encrypted • No card required"}
+                        </span>
                     </div>
                     <div className="mt-10 max-w-5xl mx-auto">
                         <p className="text-stone-600 font-light text-lg mb-6">
-                            In your Aurum space, you get a clear framework to move forward every day.
+                            {isFr ? "Dans ton espace Aurum, tu obtiens un cadre clair pour avancer chaque jour." : "In your Aurum space, you get a clear framework to move forward every day."}
                         </p>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-left">
                             <div className="rounded-2xl border border-stone-200 bg-white p-5">
-                                <p className="text-[11px] uppercase tracking-[0.16em] text-stone-500 mb-2 font-semibold">Personal Space</p>
-                                <p className="text-sm text-stone-600 font-light">Your private journal, structured and easy to resume.</p>
+                                <p className="text-[11px] uppercase tracking-[0.16em] text-stone-500 mb-2 font-semibold">{isFr ? "Espace personnel" : "Personal Space"}</p>
+                                <p className="text-sm text-stone-600 font-light">{isFr ? "Ton journal privé, structuré et facile à reprendre." : "Your private journal, structured and easy to resume."}</p>
                             </div>
                             <div className="rounded-2xl border border-stone-200 bg-white p-5">
-                                <p className="text-[11px] uppercase tracking-[0.16em] text-stone-500 mb-2 font-semibold">Useful Stats</p>
-                                <p className="text-sm text-stone-600 font-light">Simple markers to track your emotional progress.</p>
+                                <p className="text-[11px] uppercase tracking-[0.16em] text-stone-500 mb-2 font-semibold">{isFr ? "Statistiques utiles" : "Useful Stats"}</p>
+                                <p className="text-sm text-stone-600 font-light">{isFr ? "Des repères simples pour suivre ton évolution émotionnelle." : "Simple markers to track your emotional progress."}</p>
                             </div>
                             <div className="rounded-2xl border border-stone-200 bg-white p-5">
-                                <p className="text-[11px] uppercase tracking-[0.16em] text-stone-500 mb-2 font-semibold">Guided Assessments</p>
-                                <p className="text-sm text-stone-600 font-light">Fast paths to understand yourself without overwhelm.</p>
+                                <p className="text-[11px] uppercase tracking-[0.16em] text-stone-500 mb-2 font-semibold">{isFr ? "Questionnaires guidés" : "Guided Assessments"}</p>
+                                <p className="text-sm text-stone-600 font-light">{isFr ? "Des parcours rapides pour mieux te comprendre sans surcharge." : "Fast paths to understand yourself without overwhelm."}</p>
                             </div>
                             <div className="rounded-2xl border border-stone-200 bg-white p-5">
-                                <p className="text-[11px] uppercase tracking-[0.16em] text-stone-500 mb-2 font-semibold">Talk with Aurum</p>
-                                <p className="text-sm text-stone-600 font-light">A private dialogue to clarify what you are going through.</p>
+                                <p className="text-[11px] uppercase tracking-[0.16em] text-stone-500 mb-2 font-semibold">{isFr ? "Parler avec Aurum" : "Talk with Aurum"}</p>
+                                <p className="text-sm text-stone-600 font-light">{isFr ? "Un dialogue privé pour clarifier ce que tu traverses." : "A private dialogue to clarify what you are going through."}</p>
                             </div>
                         </div>
                     </div>
@@ -707,12 +871,12 @@ export default function Home() {
 
                 {/* SECTION 8: Interactive personality quiz (moved above FAQ) */}
                 <div id="evaluation">
-                    <QuizSection />
+                    <QuizSection isFr={isFr} />
                 </div>
 
                 <section className="container max-w-3xl pb-24 md:pb-32">
                     <h2 className="text-4xl font-headline text-center mb-12">
-                        Frequently Asked Questions
+                        {isFr ? "Questions fréquentes" : "Frequently Asked Questions"}
                     </h2>
                     <Accordion type="single" collapsible className="w-full">
                         {faqs.map((faq, index) => (
@@ -728,7 +892,7 @@ export default function Home() {
 
                 <section className="container max-w-4xl pb-24 md:pb-28">
                     <div className="rounded-2xl border border-stone-200 bg-stone-50/60 p-6 md:p-8">
-                        <h3 className="text-sm font-semibold tracking-wider uppercase text-stone-500 mb-4">References</h3>
+                        <h3 className="text-sm font-semibold tracking-wider uppercase text-stone-500 mb-4">{isFr ? "Références" : "References"}</h3>
                         <ul className="space-y-3 text-xs text-stone-500 leading-relaxed">
                             <li id="ref1">
                                 <strong>*</strong> Pennebaker, J. W., & Beall, S. K. (1986). <em>Confronting a traumatic event: Toward an understanding of inhibition and disease.</em> Journal of Abnormal Psychology, 95, 274-281.
@@ -748,8 +912,8 @@ export default function Home() {
 
             </div>
 
-            <FloatingCTA visible={showCTA} />
-            <ExitIntent />
+            <FloatingCTA visible={showCTA} isFr={isFr} />
+            <ExitIntent isFr={isFr} />
         </main>
     );
 }

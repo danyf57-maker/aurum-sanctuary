@@ -110,15 +110,17 @@ function resolveLocale(request: NextRequest): SupportedLocale {
     const country = (request.headers.get('x-vercel-ip-country') || request.headers.get('cf-ipcountry') || '').toUpperCase();
     if (country) return getLocaleFromCountry(country);
 
+    // Preserve explicit user choice first when available.
+    const cookieLocale = normalizeLocale(request.cookies.get(LOCALE_COOKIE_NAME)?.value);
+    if (cookieLocale) return cookieLocale;
+
     // Fallback when country header is unavailable (some devices/proxies).
     const acceptLanguage = request.headers.get('accept-language');
     const headerLocale = getLocaleFromAcceptLanguage(acceptLanguage);
     if (headerLocale) return headerLocale;
 
-    // Last fallback: previous cookie value.
-    const cookieLocale = normalizeLocale(request.cookies.get(LOCALE_COOKIE_NAME)?.value);
-    if (cookieLocale) return cookieLocale;
-    return 'en';
+    // French-first default for Aurum public website.
+    return 'fr';
 }
 
 function normalizeLocale(value?: string): SupportedLocale | null {

@@ -3,38 +3,100 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { usePathname } from "next/navigation";
 
 const HeroIntegrated = () => {
+  const pathname = usePathname();
+  const locale = pathname.startsWith("/fr") ? "fr" : "en";
+  const to = (href: string) => {
+    if (!href.startsWith("/")) return href;
+    if (locale === "fr") return href === "/" ? "/fr" : `/fr${href}`;
+    return href;
+  };
+
+  const content = useMemo(
+    () =>
+      locale === "fr"
+        ? {
+            overline: "UN INSTANT DE CALME",
+            title: "Ta tête est pleine. Dépose-la ici.",
+            subtitle: "Un sanctuaire privé pour transformer ton chaos intérieur en clarté.",
+            cta: "Entrer dans le Sanctuaire",
+            badge: "100% chiffré • anonyme • ton jardin privé.",
+            switchFr: "FR",
+            switchEn: "EN",
+          }
+        : {
+            overline: "A MOMENT OF CALM",
+            title: "Your mind is full. Lighten it here.",
+            subtitle: "A private sanctuary to turn inner chaos into immediate clarity.",
+            cta: "Enter the Sanctuary",
+            badge: "100% Encrypted • Anonymous • Your private garden.",
+            switchFr: "FR",
+            switchEn: "EN",
+          },
+    [locale]
+  );
+
   const placeholders = useMemo(
-    () => [
-      "I cannot sleep, my mind keeps looping on tomorrow's meeting...",
-      "I feel completely overwhelmed by my task list today...",
-      "I just need to clear my head before I explode...",
-    ],
-    []
+    () =>
+      locale === "fr"
+        ? [
+            "Je n'arrive pas à dormir, mon esprit tourne en boucle sur demain...",
+            "Je me sens complètement submergé par ma to-do aujourd'hui...",
+            "J'ai juste besoin de vider ma tête avant d'exploser...",
+          ]
+        : [
+            "I cannot sleep, my mind keeps looping on tomorrow's meeting...",
+            "I feel completely overwhelmed by my task list today...",
+            "I just need to clear my head before I explode...",
+          ],
+    [locale]
   );
   const rotatingQuotes = useMemo(
-    () => [
-      {
-        hint: "Lay down your thoughts. Calm your mind before sleep.",
-        detail: "Simply write what is on your mind, unfiltered.",
-        quote: "Writing is a way of talking without being interrupted.",
-        author: "Jules Renard",
-      },
-      {
-        hint: "An encrypted space where you can unload everything, without filters.",
-        detail: "You remain the only one who can read what you write.",
-        quote: "Paper is more patient than people.",
-        author: "Anne Frank",
-      },
-      {
-        hint: "Writing is your mind's pause button.",
-        detail: "Even a few lines can already calm you down.",
-        quote: "I write to find out what I think.",
-        author: "Joan Didion",
-      },
-    ],
-    []
+    () =>
+      locale === "fr"
+        ? [
+            {
+              hint: "Couche tes pensées. Apaise ton esprit avant de dormir.",
+              detail: "Écris simplement ce que tu as en tête, sans filtre.",
+              quote: "Écrire, c’est une façon de parler sans être interrompu.",
+              author: "Jules Renard",
+            },
+            {
+              hint: "Un espace chiffré où tu peux tout déposer, sans filtre.",
+              detail: "Tu restes la seule personne à pouvoir relire tes mots.",
+              quote: "Le papier est plus patient que les hommes.",
+              author: "Anne Frank",
+            },
+            {
+              hint: "L'écriture est le bouton pause de ton mental.",
+              detail: "Même quelques lignes peuvent déjà t'apaiser.",
+              quote: "J’écris pour savoir ce que je pense.",
+              author: "Joan Didion",
+            },
+          ]
+        : [
+            {
+              hint: "Lay down your thoughts. Calm your mind before sleep.",
+              detail: "Simply write what is on your mind, unfiltered.",
+              quote: "Writing is a way of talking without being interrupted.",
+              author: "Jules Renard",
+            },
+            {
+              hint: "An encrypted space where you can unload everything, without filters.",
+              detail: "You remain the only one who can read what you write.",
+              quote: "Paper is more patient than people.",
+              author: "Anne Frank",
+            },
+            {
+              hint: "Writing is your mind's pause button.",
+              detail: "Even a few lines can already calm you down.",
+              quote: "I write to find out what I think.",
+              author: "Joan Didion",
+            },
+          ],
+    [locale]
   );
   const [thought, setThought] = useState("");
   const [placeholderText, setPlaceholderText] = useState("");
@@ -44,8 +106,8 @@ const HeroIntegrated = () => {
   const [quoteIndex, setQuoteIndex] = useState(0);
   const writeHref =
     thought.trim().length > 0
-      ? `/sanctuary/write?initial=${encodeURIComponent(thought)}`
-      : "/sanctuary/write";
+      ? `${to("/sanctuary/write")}?initial=${encodeURIComponent(thought)}`
+      : to("/sanctuary/write");
 
   useEffect(() => {
     const current = placeholders[placeholderIndex];
@@ -80,15 +142,31 @@ const HeroIntegrated = () => {
     <section className="bg-stone-50 py-24 md:py-32">
       <div className="container">
         <div className="mx-auto flex max-w-4xl flex-col items-center gap-10 text-center">
+          <div className="w-full flex justify-end">
+            <div className="inline-flex rounded-full border border-stone-200 bg-white p-1 text-xs">
+              <Link
+                href={locale === "fr" ? pathname : `${pathname}?lang=fr`}
+                className={`px-3 py-1 rounded-full ${locale === "fr" ? "bg-stone-900 text-white" : "text-stone-600 hover:text-stone-900"}`}
+              >
+                {content.switchFr}
+              </Link>
+              <Link
+                href={locale === "en" ? pathname : `${pathname}?lang=en`}
+                className={`px-3 py-1 rounded-full ${locale === "en" ? "bg-stone-900 text-white" : "text-stone-600 hover:text-stone-900"}`}
+              >
+                {content.switchEn}
+              </Link>
+            </div>
+          </div>
           <div className="space-y-4">
             <p className="font-body text-xs uppercase tracking-[0.35em] text-[#D4AF37] font-semibold">
-              A MOMENT OF CALM
+              {content.overline}
             </p>
             <h1 className="font-headline text-4xl md:text-6xl text-stone-900">
-              Your mind is full. Lighten it here.
+              {content.title}
             </h1>
             <p className="font-body text-lg md:text-xl text-stone-600">
-              A private sanctuary to turn inner chaos into immediate clarity.
+              {content.subtitle}
             </p>
           </div>
 
@@ -125,11 +203,11 @@ const HeroIntegrated = () => {
                 className="h-12 md:h-14 px-8 rounded-xl bg-[#D4AF37] text-stone-900 hover:bg-[#D4AF37]/90"
               >
                 <Link href={writeHref}>
-                  Enter the Sanctuary
+                  {content.cta}
                 </Link>
               </Button>
               <span className="font-body text-xs uppercase tracking-[0.2em] text-stone-500">
-                100% Encrypted • Anonymous • Your private garden.
+                {content.badge}
               </span>
             </div>
           </div>
