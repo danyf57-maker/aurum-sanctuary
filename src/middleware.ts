@@ -38,6 +38,11 @@ export function middleware(request: NextRequest) {
         const cleanUrl = new URL(request.url);
         cleanUrl.searchParams.delete('lang');
         response = NextResponse.redirect(cleanUrl);
+    } else if (!pathLocale && resolvedLocale === 'fr' && (request.method === 'GET' || request.method === 'HEAD')) {
+        // Canonicalize French visitors to /fr/* URLs to avoid mixed-language navigation.
+        const localizedUrl = nextUrl.clone();
+        localizedUrl.pathname = localizedPath(pathname, 'fr');
+        response = NextResponse.redirect(localizedUrl);
     } else if (isProtectedRoute && !hasLikelySession) {
         // 1. Redirect unauthenticated users from protected routes to login
         const loginUrl = new URL(localizedPath('/login', resolvedLocale), request.url);
