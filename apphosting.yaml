@@ -48,6 +48,17 @@ env:
     secret: STRIPE_SECRET_KEY
     availability:
       - RUNTIME
+  # Stripe price IDs (public, used by pricing UI and checkout API allow-list)
+  - variable: NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY
+    value: price_1T6WWiKP1iVKF5bkaWN40cLs
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_STRIPE_PRICE_ID_YEARLY
+    value: price_1T6WcWKP1iVKF5bkNTzX8XBO
+    availability:
+      - BUILD
+      - RUNTIME
   # Google OAuth
   - variable: NEXT_PUBLIC_GOOGLE_CLIENT_ID
     value: 441444254589-sb7d3bv2tt9r0s7a8korcbsvrb2bpf7l.apps.googleusercontent.com
