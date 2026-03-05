@@ -2,9 +2,9 @@ name: Privacy & Security Checks
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, develop, staging]
   pull_request:
-    branches: [main, develop]
+    branches: [main, develop, staging]
 
 jobs:
   privacy-docs-check:

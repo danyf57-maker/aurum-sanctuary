@@ -10,63 +10,63 @@ runConfig:
 env:
   # Firebase Client SDK (public config)
   - variable: NEXT_PUBLIC_FIREBASE_API_KEY
-    value: AIzaSyBQhFZfS6CmlmcYKTtdo21H0VrCxp7pgjc
+    secret: NEXT_PUBLIC_FIREBASE_API_KEY
     availability:
       - BUILD
       - RUNTIME
   - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
-    value: aurum-diary-prod.firebaseapp.com
+    value: aurum-staging-ae856.firebaseapp.com
     availability:
       - BUILD
       - RUNTIME
   - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
-    value: aurum-diary-prod
+    value: aurum-staging-ae856
     availability:
       - BUILD
       - RUNTIME
   - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
-    value: aurum-diary-prod.firebasestorage.app
+    value: aurum-staging-ae856.firebasestorage.app
     availability:
       - BUILD
       - RUNTIME
   - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
-    value: "441444254589"
+    secret: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
     availability:
       - BUILD
       - RUNTIME
   - variable: NEXT_PUBLIC_FIREBASE_APP_ID
-    value: "1:441444254589:web:fd4f49567496e8478a8214"
+    secret: NEXT_PUBLIC_FIREBASE_APP_ID
     availability:
       - BUILD
       - RUNTIME
   # Secrets (from Secret Manager)
   - variable: DEEPSEEK_API_KEY
-    secret: deepseek_api_key
+    secret: DEEPSEEK_API_KEY
     availability:
       - RUNTIME
   - variable: STRIPE_SECRET_KEY
     secret: STRIPE_SECRET_KEY
     availability:
       - RUNTIME
-  # Stripe price IDs (public, used by pricing UI and checkout API allow-list)
+  # Stripe price IDs (staging/test only)
   - variable: NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY
-    value: price_1T6WWiKP1iVKF5bkaWN40cLs
+    secret: NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY
     availability:
       - BUILD
       - RUNTIME
   - variable: NEXT_PUBLIC_STRIPE_PRICE_ID_YEARLY
-    value: price_1T6WcWKP1iVKF5bkNTzX8XBO
+    secret: NEXT_PUBLIC_STRIPE_PRICE_ID_YEARLY
     availability:
       - BUILD
       - RUNTIME
   # Google OAuth
   - variable: NEXT_PUBLIC_GOOGLE_CLIENT_ID
-    value: 441444254589-sb7d3bv2tt9r0s7a8korcbsvrb2bpf7l.apps.googleusercontent.com
+    secret: NEXT_PUBLIC_GOOGLE_CLIENT_ID
     availability:
       - BUILD
       - RUNTIME
   - variable: NEXT_PUBLIC_APP_URL
-    value: https://aurumdiary.com
+    value: https://aurum-staging--aurum-staging-ae856.europe-west4.hosted.app
     availability:
       - BUILD
       - RUNTIME
