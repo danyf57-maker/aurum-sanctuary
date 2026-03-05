@@ -20,9 +20,12 @@ import { AuthDialog } from "@/components/auth/auth-dialog";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { Feather, Sparkles, Shield, Lock, ChevronRight } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 export default function WritePage() {
   const { user, loading } = useAuth();
+  const pathname = usePathname();
+  const isEnglish = pathname?.startsWith("/en");
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const writingQuotes = [
@@ -247,10 +250,12 @@ export default function WritePage() {
                 <Feather className="h-5 w-5 text-[#C5A059]" />
               </div>
               <h1 className="font-headline text-3xl md:text-4xl text-stone-900 tracking-tight mb-2">
-                Your writing space
+                {isEnglish ? "Your writing space" : "Ton espace d'écriture"}
               </h1>
               <p className="text-stone-500 text-lg">
-                Place here what is moving through your mind.
+                {isEnglish
+                  ? "Place here what is moving through your mind."
+                  : "Dépose ici ce qui traverse ton esprit."}
               </p>
             </motion.header>
 
