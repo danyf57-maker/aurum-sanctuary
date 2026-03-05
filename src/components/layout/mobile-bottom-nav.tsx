@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 
 const navItems = [
   {
-    title: 'Write',
+    title: 'Écrire',
     href: '/sanctuary/write',
     icon: PenSquare,
   },
