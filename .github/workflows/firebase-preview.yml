@@ -2,6 +2,10 @@ name: Preview on Firebase Hosting
 
 on:
   pull_request:
+    branches:
+      - develop
+      - staging
+      - main
 
 concurrency:
   group: firebase-hosting-pr-${{ github.event.number }}
@@ -10,11 +14,11 @@ concurrency:
 permissions:
   contents: read
   pull-requests: write
+  checks: write
 
 jobs:
   preview:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
