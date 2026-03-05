@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { usePathname } from "next/navigation";
 
 interface WelcomePresenceProps {
   userName?: string;
@@ -19,6 +20,8 @@ interface WelcomePresenceProps {
 export function WelcomePresence({ userName }: WelcomePresenceProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [hasBeenShown, setHasBeenShown] = useState(false);
+  const pathname = usePathname();
+  const isEnglish = pathname?.startsWith("/en");
 
   useEffect(() => {
     // Check if already shown this session
@@ -94,26 +97,32 @@ export function WelcomePresence({ userName }: WelcomePresenceProps) {
                 {/* Greeting */}
                 <div className="space-y-2">
                   <h2 className="font-headline text-3xl text-stone-900">
-                    Welcome, {firstName}
+                    {isEnglish ? "Welcome" : "Bienvenue"}, {firstName}
                   </h2>
                   <div className="h-px w-16 mx-auto bg-gradient-to-r from-transparent via-amber-300 to-transparent" />
                 </div>
 
                 {/* Message */}
                 <div className="space-y-4 text-stone-700 leading-relaxed">
-                  <p className="text-lg">This space is yours.</p>
+                  <p className="text-lg">
+                    {isEnglish ? "This space is yours." : "Cet espace est le tien."}
+                  </p>
                   <p className="text-base">
-                    Here, there is no rush and nothing to prove. Aurum supports you without steering you.
+                    {isEnglish
+                      ? "Here, there is no rush and nothing to prove. Aurum supports you without steering you."
+                      : "Ici, pas d'urgence et rien à prouver. Aurum t'accompagne sans te diriger."}
                   </p>
                   <p className="text-sm text-stone-500 italic">
-                    Write what needs to be set down. The rest will come.
+                    {isEnglish
+                      ? "Write what needs to be set down. The rest will come."
+                      : "Écris ce qui demande à être posé. Le reste viendra."}
                   </p>
                 </div>
 
                 {/* Subtle decoration */}
                 <div className="pt-4">
                   <div className="inline-block px-4 py-2 rounded-full bg-amber-100/50 text-amber-800 text-xs font-medium tracking-wide">
-                    Premium Presence
+                    {isEnglish ? "Premium Presence" : "Présence Premium"}
                   </div>
                 </div>
               </div>

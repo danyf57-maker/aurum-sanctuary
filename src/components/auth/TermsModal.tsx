@@ -28,6 +28,7 @@ export function TermsModal() {
     const [accepted, setAccepted] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const pathname = usePathname();
+    const isEnglish = pathname?.startsWith("/en");
 
     // Don't show if:
     // 1. Loading auth
@@ -52,13 +53,19 @@ export function TermsModal() {
         <AlertDialog open={termsAccepted === false}>
             <AlertDialogContent className="max-w-md">
                 <AlertDialogHeader>
-                    <AlertDialogTitle className="text-2xl font-serif">Terms Update</AlertDialogTitle>
+                    <AlertDialogTitle className="text-2xl font-serif">
+                        {isEnglish ? "Terms Update" : "Mise à jour des conditions"}
+                    </AlertDialogTitle>
                     <AlertDialogDescription className="space-y-4 pt-2 text-base">
                         <p>
-                            To continue using Aurum Sanctuary, you must accept our updated terms of use and privacy policy.
+                            {isEnglish
+                                ? "To continue using Aurum Sanctuary, you must accept our updated terms of use and privacy policy."
+                                : "Pour continuer à utiliser Aurum Sanctuary, tu dois accepter nos conditions d'utilisation et notre politique de confidentialité mises à jour."}
                         </p>
                         <p className="text-sm">
-                            We updated our encryption protocols and legal notices to better protect your mental health data.
+                            {isEnglish
+                                ? "We updated our encryption protocols and legal notices to better protect your mental health data."
+                                : "Nous avons renforcé nos protocoles de chiffrement et nos mentions légales pour mieux protéger tes données de santé mentale."}
                         </p>
 
                         <div className="flex flex-col space-y-2 pt-2">
@@ -67,14 +74,14 @@ export function TermsModal() {
                                 target="_blank"
                                 className="text-primary hover:underline text-sm font-medium"
                             >
-                                Read Terms of Use
+                                {isEnglish ? "Read Terms of Use" : "Lire les conditions d'utilisation"}
                             </Link>
                             <Link
                                 href="/privacy"
                                 target="_blank"
                                 className="text-primary hover:underline text-sm font-medium"
                             >
-                                Read Privacy Policy
+                                {isEnglish ? "Read Privacy Policy" : "Lire la politique de confidentialité"}
                             </Link>
                         </div>
 
@@ -88,7 +95,9 @@ export function TermsModal() {
                                 htmlFor="modal-terms"
                                 className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                             >
-                                I have read and accept the terms of use and privacy policy.
+                                {isEnglish
+                                    ? "I have read and accept the terms of use and privacy policy."
+                                    : "J'ai lu et j'accepte les conditions d'utilisation et la politique de confidentialité."}
                             </label>
                         </div>
                     </AlertDialogDescription>
@@ -99,7 +108,13 @@ export function TermsModal() {
                         disabled={!accepted || submitting}
                         onClick={handleAccept}
                     >
-                        {submitting ? "Accepting..." : "Accept and continue"}
+                        {submitting
+                            ? isEnglish
+                                ? "Accepting..."
+                                : "Validation..."
+                            : isEnglish
+                                ? "Accept and continue"
+                                : "Accepter et continuer"}
                     </Button>
                 </AlertDialogFooter>
             </AlertDialogContent>
