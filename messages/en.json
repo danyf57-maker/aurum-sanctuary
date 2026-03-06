@@ -451,5 +451,28 @@
       "export": "Data export",
       "reflections": "In-depth reflections"
     }
+  },
+  "hero": {
+    "badge": "MOMENT OF SERENITY",
+    "title": "Your mind is full. Lighten it here.",
+    "subtitle": "Your private journal to transform your inner chaos into clarity.",
+    "cta": "Create my free account",
+    "ctaSecondary": "Write first, no commitment",
+    "trust": "100% Encrypted • Anonymous • Your private garden.",
+    "placeholders": {
+      "0": "I can't sleep, my mind keeps replaying tomorrow's meeting...",
+      "1": "I feel completely overwhelmed by my to-do list today...",
+      "2": "I just need to clear my head before I explode..."
+    },
+    "quotes": {
+      "0": { "hint": "Put your thoughts to rest. Calm your mind before sleep.", "detail": "Just write what's on your mind, without filtering.", "quote": "Writing is a way of talking without being interrupted.", "author": "Jules Renard" },
+      "1": { "hint": "When you're ruminating, write down what keeps looping.", "detail": "Getting words out helps your mind slow down.", "quote": "I write to find out what I think.", "author": "Joan Didion" },
+      "2": { "hint": "If you're carrying too much, set it all down here, line by line.", "detail": "You don't need to write perfectly, just write honestly.", "quote": "There is no greater agony than bearing an untold story inside you.", "author": "Maya Angelou" },
+      "3": { "hint": "When you doubt yourself, return to the facts and your feelings.", "detail": "A few lines can give you solid ground again.", "quote": "One word at a time — that's the power.", "author": "Margaret Atwood" },
+      "4": { "hint": "When mental load rises, this space becomes your decompression.", "detail": "You can set down your priorities and find some air.", "quote": "We write to taste life twice.", "author": "Anaïs Nin" },
+      "5": { "hint": "After a heavy day, empty your mind before the night.", "detail": "Even 2 minutes of writing can shift your state.", "quote": "Writing is a form of therapy.", "author": "Graham Greene" },
+      "6": { "hint": "When everything is foggy, one clear sentence is enough to start again.", "detail": "Start small: one fact, one emotion, one need.", "quote": "Writing is a way of talking without being interrupted.", "author": "Jules Renard" },
+      "7": { "hint": "When your mind speeds up, slow down with simple words.", "detail": "Here, you can set things down without judgment.", "quote": "I write to find out what I think.", "author": "Joan Didion" }
+    }
   }
 }

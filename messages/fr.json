@@ -451,5 +451,28 @@
       "export": "Export des données",
       "reflections": "Reflets approfondis"
     }
+  },
+  "hero": {
+    "badge": "INSTANT DE SÉRÉNITÉ",
+    "title": "Ton esprit est plein. Allège-le ici.",
+    "subtitle": "Ton journal intime privé pour transformer ton chaos intérieur en clarté.",
+    "cta": "Créer mon compte gratuitement",
+    "ctaSecondary": "Écrire d'abord sans engagement",
+    "trust": "100% Chiffré • Anonyme • Ton jardin privé.",
+    "placeholders": {
+      "0": "Je n'arrive pas à dormir, mon cerveau tourne en boucle sur la réunion de demain...",
+      "1": "Je me sens complètement submergé par ma liste de tâches aujourd'hui...",
+      "2": "J'ai juste besoin de vider ma tête avant d'exploser..."
+    },
+    "quotes": {
+      "0": { "hint": "Couche tes pensées. Apaise ton esprit avant de dormir.", "detail": "Écris simplement ce que tu as en tête, sans filtre.", "quote": "Écrire, c'est une façon de parler sans être interrompu.", "author": "Jules Renard" },
+      "1": { "hint": "Quand tu rumines, écris ce qui tourne en boucle.", "detail": "Mettre les mots dehors aide ton mental à ralentir.", "quote": "J'écris pour découvrir ce que je pense.", "author": "Joan Didion" },
+      "2": { "hint": "Si tu portes trop, dépose tout ici, ligne après ligne.", "detail": "Tu n'as pas besoin d'écrire parfaitement, juste d'écrire vrai.", "quote": "Il n'y a pas de plus grande agonie que de porter une histoire non racontée en soi.", "author": "Maya Angelou" },
+      "3": { "hint": "Quand tu doutes de toi, reviens aux faits et à ton ressenti.", "detail": "Quelques lignes peuvent te redonner un point d'appui.", "quote": "Un mot après l'autre, c'est le pouvoir.", "author": "Margaret Atwood" },
+      "4": { "hint": "Quand la charge mentale monte, ce cadre devient ton sas.", "detail": "Tu peux poser tes priorités et retrouver de l'air.", "quote": "Nous écrivons pour goûter la vie deux fois.", "author": "Anaïs Nin" },
+      "5": { "hint": "Après une journée lourde, vide ta tête avant la nuit.", "detail": "Même 2 minutes d'écriture peuvent changer ton état.", "quote": "Écrire est une forme de thérapie.", "author": "Graham Greene" },
+      "6": { "hint": "Quand tout est flou, une phrase claire suffit pour repartir.", "detail": "Commence petit: un fait, une émotion, un besoin.", "quote": "Écrire, c'est une façon de parler sans être interrompu.", "author": "Jules Renard" },
+      "7": { "hint": "Quand ton esprit accélère, ralentis avec des mots simples.", "detail": "Ici, tu peux déposer sans te juger.", "quote": "J'écris pour découvrir ce que je pense.", "author": "Joan Didion" }
+    }
   }
 }
