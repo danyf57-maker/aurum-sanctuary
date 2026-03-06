@@ -4,68 +4,24 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { LanguageSwitch } from "@/components/layout/language-switch";
+import { useTranslations } from "next-intl";
 
 const HeroIntegrated = () => {
+  const t = useTranslations("hero");
+
   const placeholders = useMemo(
-    () => [
-      "Je n'arrive pas à dormir, mon cerveau tourne en boucle sur la réunion de demain...",
-      "Je me sens complètement submergé par ma liste de tâches aujourd'hui...",
-      "J'ai juste besoin de vider ma tête avant d'exploser...",
-    ],
-    []
+    () => [t("placeholders.0"), t("placeholders.1"), t("placeholders.2")],
+    [t]
   );
   const rotatingQuotes = useMemo(
-    () => [
-      {
-        hint: "Couche tes pensées. Apaise ton esprit avant de dormir.",
-        detail: "Écris simplement ce que tu as en tête, sans filtre.",
-        quote: "Écrire, c'est une façon de parler sans être interrompu.",
-        author: "Jules Renard",
-      },
-      {
-        hint: "Quand tu rumines, écris ce qui tourne en boucle.",
-        detail: "Mettre les mots dehors aide ton mental à ralentir.",
-        quote: "J'écris pour découvrir ce que je pense.",
-        author: "Joan Didion",
-      },
-      {
-        hint: "Si tu portes trop, dépose tout ici, ligne après ligne.",
-        detail: "Tu n'as pas besoin d'écrire parfaitement, juste d'écrire vrai.",
-        quote: "Il n'y a pas de plus grande agonie que de porter une histoire non racontée en soi.",
-        author: "Maya Angelou",
-      },
-      {
-        hint: "Quand tu doutes de toi, reviens aux faits et à ton ressenti.",
-        detail: "Quelques lignes peuvent te redonner un point d'appui.",
-        quote: "Un mot après l'autre, c'est le pouvoir.",
-        author: "Margaret Atwood",
-      },
-      {
-        hint: "Quand la charge mentale monte, ce cadre devient ton sas.",
-        detail: "Tu peux poser tes priorités et retrouver de l'air.",
-        quote: "Nous écrivons pour goûter la vie deux fois.",
-        author: "Anaïs Nin",
-      },
-      {
-        hint: "Après une journée lourde, vide ta tête avant la nuit.",
-        detail: "Même 2 minutes d'écriture peuvent changer ton état.",
-        quote: "Écrire est une forme de thérapie.",
-        author: "Graham Greene",
-      },
-      {
-        hint: "Quand tout est flou, une phrase claire suffit pour repartir.",
-        detail: "Commence petit: un fait, une émotion, un besoin.",
-        quote: "Écrire, c'est une façon de parler sans être interrompu.",
-        author: "Jules Renard",
-      },
-      {
-        hint: "Quand ton esprit accélère, ralentis avec des mots simples.",
-        detail: "Ici, tu peux déposer sans te juger.",
-        quote: "J'écris pour découvrir ce que je pense.",
-        author: "Joan Didion",
-      },
-    ],
-    []
+    () =>
+      Array.from({ length: 8 }, (_, i) => ({
+        hint: t(`quotes.${i}.hint`),
+        detail: t(`quotes.${i}.detail`),
+        quote: t(`quotes.${i}.quote`),
+        author: t(`quotes.${i}.author`),
+      })),
+    [t]
   );
   const [thought, setThought] = useState("");
   const [placeholderText, setPlaceholderText] = useState("");
@@ -117,13 +73,13 @@ const HeroIntegrated = () => {
         <div className="mx-auto flex max-w-4xl flex-col items-center gap-10 text-center">
           <div className="space-y-4">
             <p className="font-body text-xs uppercase tracking-[0.35em] text-[#D4AF37] font-semibold">
-              INSTANT DE SÉRÉNITÉ
+              {t("badge")}
             </p>
             <h1 className="font-headline text-4xl md:text-6xl text-stone-900">
-              Ton esprit est plein. Allège-le ici.
+              {t("title")}
             </h1>
             <p className="font-body text-lg md:text-xl text-stone-600">
-              Ton journal intime privé pour transformer ton chaos intérieur en clarté.
+              {t("subtitle")}
             </p>
           </div>
 
@@ -160,14 +116,14 @@ const HeroIntegrated = () => {
                 className="h-12 md:h-14 px-8 rounded-xl bg-[#D4AF37] text-stone-900 hover:bg-[#D4AF37]/90"
               >
                 <Link href={signupHref}>
-                  Créer mon compte gratuitement
+                  {t("cta")}
                 </Link>
               </Button>
               <Link href={writeHref} className="font-body text-sm text-stone-600 hover:text-stone-900 transition-colors">
-                Écrire d&apos;abord sans engagement
+                {t("ctaSecondary")}
               </Link>
               <span className="font-body text-xs uppercase tracking-[0.2em] text-stone-500">
-                100% Chiffré • Anonyme • Ton jardin privé.
+                {t("trust")}
               </span>
             </div>
           </div>
