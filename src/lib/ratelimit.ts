@@ -2,7 +2,6 @@
 "use server";
 
 import { db } from "@/lib/firebase/admin";
-import { Timestamp } from "firebase-admin/firestore";
 import { logger } from "@/lib/logger/safe";
 
 type RateLimitAction = 'submitAurumMessage' | 'exportUserData' | 'deleteUserAccount';
@@ -30,7 +29,7 @@ export async function checkRateLimit(userId: string, action: RateLimitAction): P
         throw new Error(`Configuration de rate limit non trouvée pour l'action: ${action}`);
     }
 
-    const now = Timestamp.now();
+    const now = new Date();
     const userRateLimitRef = db.collection('rateLimits').doc(userId);
 
     try {
@@ -38,11 +37,13 @@ export async function checkRateLimit(userId: string, action: RateLimitAction): P
         const data = doc.data() || {};
 
         const actionData = data[action] || { count: 0, resetAt: now };
-        const resetAt = (actionData.resetAt as Timestamp);
+        const resetAt = actionData.resetAt?.toDate?.() instanceof Date
+            ? actionData.resetAt.toDate()
+            : new Date(actionData.resetAt || now);
 
         if (now >= resetAt) {
             // Période expirée, on réinitialise
-            const newResetAt = Timestamp.fromMillis(now.toMillis() + config.duration * 1000);
+            const newResetAt = new Date(now.getTime() + config.duration * 1000);
             await userRateLimitRef.set({
                 [action]: {
                     count: 1,
@@ -53,7 +54,7 @@ export async function checkRateLimit(userId: string, action: RateLimitAction): P
             return {
                 allowed: true,
                 remaining: config.limit - 1,
-                resetAt: newResetAt.toDate()
+                resetAt: newResetAt
             };
         }
 
@@ -62,7 +63,7 @@ export async function checkRateLimit(userId: string, action: RateLimitAction): P
             return {
                 allowed: false,
                 remaining: 0,
-                resetAt: resetAt.toDate()
+                resetAt
             };
         }
 
@@ -76,7 +77,7 @@ export async function checkRateLimit(userId: string, action: RateLimitAction): P
         return {
             allowed: true,
             remaining: config.limit - (actionData.count + 1),
-            resetAt: resetAt.toDate()
+            resetAt
         };
 
     } catch (error) {

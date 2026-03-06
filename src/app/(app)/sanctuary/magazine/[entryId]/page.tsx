@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { MagazineEntryEditor } from '@/components/sanctuary/magazine-entry-editor';
 import type { EncryptedData } from '@/lib/crypto/encryption';
+import { useLocalizedHref } from '@/hooks/use-localized-href';
 
 type EntryImage = {
   id: string;
@@ -29,6 +30,7 @@ type EntryDetails = {
 };
 
 export default function MagazineEntryPage() {
+  const to = useLocalizedHref();
   const { user, loading } = useAuth();
   const { isReady: encryptionReady, decrypt } = useEncryption();
   const params = useParams<{ entryId: string }>();
@@ -129,7 +131,7 @@ export default function MagazineEntryPage() {
     return (
       <div className="container mx-auto max-w-4xl py-8 md:py-12">
         <Button asChild variant="ghost" className="mb-4 pl-0 text-stone-600 hover:text-stone-900">
-          <Link href="/sanctuary/magazine">
+          <Link href={to("/sanctuary/magazine")}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             Retour au journal
           </Link>
@@ -145,7 +147,7 @@ export default function MagazineEntryPage() {
     <div className="container mx-auto max-w-4xl py-8 md:py-12">
       <div className="mb-8">
         <Button asChild variant="ghost" className="mb-4 pl-0 text-stone-600 hover:text-stone-900">
-          <Link href="/sanctuary/magazine">
+          <Link href={to("/sanctuary/magazine")}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             Retour au journal
           </Link>

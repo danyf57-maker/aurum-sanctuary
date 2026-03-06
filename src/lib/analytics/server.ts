@@ -1,7 +1,6 @@
 import "server-only";
 
 import { db } from "@/lib/firebase/admin";
-import { Timestamp } from "firebase-admin/firestore";
 import type { TrackedEventName } from "@/lib/analytics/types";
 
 type ServerTrackPayload = {
@@ -24,7 +23,7 @@ export async function trackServerEvent(
       clientId: payload.clientId ?? null,
       path: payload.path ?? null,
       params: payload.params ?? {},
-      occurredAt: Timestamp.now(),
+      occurredAt: new Date(),
       source: "server",
     });
   } catch (error) {

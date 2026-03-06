@@ -6,11 +6,16 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Cookie } from 'lucide-react';
+import { useLocale } from '@/hooks/use-locale';
+import { localizeHref } from '@/lib/i18n/path';
 
 const COOKIE_CONSENT_KEY = 'aurum_cookie_consent';
 
 export function CookieConsent() {
   const [isVisible, setIsVisible] = useState(false);
+  const locale = useLocale();
+  const isFr = locale === 'fr';
+  const to = (href: string) => localizeHref(href, locale);
 
   useEffect(() => {
     // This effect runs only on the client
@@ -39,15 +44,17 @@ export function CookieConsent() {
         <div className="flex items-start gap-3">
           <Cookie className="h-5 w-5 mt-1 text-primary flex-shrink-0" />
           <p className="text-sm text-muted-foreground">
-            Nous utilisons des cookies essentiels pour assurer le bon fonctionnement du site, comme la gestion de votre session de connexion. En continuant, vous acceptez notre{' '}
-            <Link href="/legal/privacy" className="underline hover:text-foreground">
-              Politique de Confidentialité
+            {isFr
+              ? "Nous utilisons des cookies essentiels pour assurer le bon fonctionnement du site, comme la gestion de votre session de connexion. En continuant, vous acceptez notre "
+              : "We use essential cookies to keep the site running, including your authenticated session. By continuing, you accept our "}
+            <Link href={to("/legal/privacy")} className="underline hover:text-foreground">
+              {isFr ? "Politique de Confidentialité" : "Privacy Policy"}
             </Link>.
           </p>
         </div>
         <div className="flex gap-2 flex-shrink-0">
           <Button size="sm" onClick={() => handleConsent('accepted')}>
-            Compris
+            {isFr ? "Compris" : "Got it"}
           </Button>
         </div>
       </div>

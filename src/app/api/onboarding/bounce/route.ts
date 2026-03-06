@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Timestamp } from "firebase-admin/firestore";
 import { db } from "@/lib/firebase/admin";
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 type BouncePayload = {
   email?: string;
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     }
 
     const usersSnap = await db.collection("users").where("email", "==", email).limit(20).get();
-    const now = Timestamp.now();
+    const now = new Date();
     const updates = usersSnap.docs.map((userDoc: any) =>
       Promise.all([
         userDoc.ref.collection("settings").doc("preferences").set(
@@ -62,4 +62,3 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ message: "Bounce processing failed", error: message }, { status: 500 });
   }
 }
-

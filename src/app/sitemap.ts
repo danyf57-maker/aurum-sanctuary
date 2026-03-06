@@ -1,6 +1,5 @@
 
 import { MetadataRoute } from 'next';
-import { getPublicPosts } from '@/lib/firebase/firestore';
 import { knowledgeHubTopics } from '@/lib/knowledge-hub';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -27,15 +26,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     let blogRoutes: MetadataRoute.Sitemap = [];
     try {
-        const posts = await getPublicPosts();
-        blogRoutes = posts
-            .filter((post) => Boolean(post.slug))
-            .map((post) => ({
-                url: `${baseUrl}/blog/${post.slug}`,
-                lastModified: post.publishedAt ?? new Date(),
-                changeFrequency: 'monthly' as const,
-                priority: 0.7,
-            }));
+        const hasFirebaseWebConfig = Boolean(
+            process.env.NEXT_PUBLIC_FIREBASE_API_KEY &&
+            process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN &&
+            process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID
+        );
+
+        if (hasFirebaseWebConfig) {
+            const { getPublicPosts } = await import('@/lib/firebase/firestore');
+            const posts = await getPublicPosts();
+            blogRoutes = posts
+                .filter((post) => Boolean(post.slug))
+                .map((post) => ({
+                    url: `${baseUrl}/blog/${post.slug}`,
+                    lastModified: post.publishedAt ?? new Date(),
+                    changeFrequency: 'monthly' as const,
+                    priority: 0.7,
+                }));
+        }
     } catch {
         blogRoutes = [];
     }

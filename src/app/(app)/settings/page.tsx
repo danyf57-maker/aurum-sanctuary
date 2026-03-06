@@ -48,8 +48,13 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { collection, getDocs, Timestamp } from "firebase/firestore";
+import Link from "next/link";
+import { useLocalizedHref } from "@/hooks/use-localized-href";
+import { useTranslations } from "next-intl";
 
 export default function SettingsPage() {
+  const to = useLocalizedHref();
+  const t = useTranslations("settings");
   const { user, loading: authLoading, logout } = useAuth();
   const {
     preferences,
@@ -63,7 +68,7 @@ export default function SettingsPage() {
   const { toast } = useToast();
 
   const handleDeleteAccount = async () => {
-    if (deleteConfirmation !== "DELETE") return;
+    if (deleteConfirmation !== "SUPPRIMER") return;
 
     setIsDeleting(true);
     try {
@@ -71,16 +76,16 @@ export default function SettingsPage() {
       await deleteAccountFn();
 
       await logout();
-      router.push("/");
+      router.push(to("/"));
       toast({
-        title: "Account Deleted",
-        description: "Your account has been permanently deleted.",
+        title: t("deleteSuccessTitle"),
+        description: t("deleteSuccessDescription"),
       });
     } catch (error) {
       console.error("Account deletion failed:", error);
       toast({
-        title: "Error",
-        description: "Failed to delete account. Please try again.",
+        title: t("deleteErrorTitle"),
+        description: t("deleteErrorDescription"),
         variant: "destructive",
       });
       setIsDeleting(false);
@@ -166,14 +171,14 @@ export default function SettingsPage() {
       URL.revokeObjectURL(url);
 
       toast({
-        title: "Export Complete",
-        description: "Your data has been downloaded successfully.",
+        title: t("exportSuccessTitle"),
+        description: t("exportSuccessDescription"),
       });
     } catch (error) {
       console.error("Export failed:", error);
       toast({
-        title: "Export Failed",
-        description: "Failed to export data. Please try again.",
+        title: t("exportErrorTitle"),
+        description: t("exportErrorDescription"),
         variant: "destructive",
       });
     } finally {
@@ -192,17 +197,17 @@ export default function SettingsPage() {
   return (
     <div className="container max-w-4xl mx-auto py-8 px-4 space-y-8">
       <div className="space-y-2">
-        <h1 className="text-3xl font-serif text-primary">Settings</h1>
+        <h1 className="text-3xl font-serif text-primary">Paramètres</h1>
         <p className="text-muted-foreground">
-          Manage your account settings and preferences.
+          Gérez vos préférences et les paramètres de votre compte.
         </p>
       </div>
 
       <Tabs defaultValue="general" className="w-full">
         <TabsList className="grid w-full grid-cols-3 mb-8">
-          <TabsTrigger value="general">General</TabsTrigger>
-          <TabsTrigger value="account">Account</TabsTrigger>
-          <TabsTrigger value="privacy">Privacy</TabsTrigger>
+          <TabsTrigger value="general">Général</TabsTrigger>
+          <TabsTrigger value="account">Compte</TabsTrigger>
+          <TabsTrigger value="privacy">Confidentialité</TabsTrigger>
         </TabsList>
 
         {/* General Tab */}
@@ -211,15 +216,15 @@ export default function SettingsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Globe className="w-5 h-5 text-primary" />
-                Language & Region
+                Langue et région
               </CardTitle>
               <CardDescription>
-                Customize your language and time settings.
+                Personnalisez votre langue et vos préférences horaires.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="language">Language</Label>
+                <Label htmlFor="language">Langue</Label>
                 <Select
                   value={preferences.language}
                   onValueChange={(val: any) =>
@@ -227,23 +232,23 @@ export default function SettingsPage() {
                   }
                 >
                   <SelectTrigger id="language">
-                    <SelectValue placeholder="Select language" />
+                    <SelectValue placeholder="Choisir une langue" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="en">English (US)</SelectItem>
+                    <SelectItem value="en">Anglais (US)</SelectItem>
                     <SelectItem value="fr">Français</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="timezone">Timezone</Label>
+                <Label htmlFor="timezone">Fuseau horaire</Label>
                 <Select
                   value={preferences.timezone}
                   onValueChange={(val) => updatePreferences({ timezone: val })}
                 >
                   <SelectTrigger id="timezone">
-                    <SelectValue placeholder="Select timezone" />
+                    <SelectValue placeholder="Choisir un fuseau horaire" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="UTC">UTC</SelectItem>
@@ -263,18 +268,18 @@ export default function SettingsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Sun className="w-5 h-5 text-primary" />
-                Appearance
+                Apparence
               </CardTitle>
               <CardDescription>
-                Customize how Aurum looks on your device.
+                Personnalisez l'affichage d'Aurum sur votre appareil.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label className="text-base">Theme</Label>
+                  <Label className="text-base">Thème</Label>
                   <p className="text-sm text-muted-foreground">
-                    Select your preferred visual theme.
+                    Choisissez votre thème visuel préféré.
                   </p>
                 </div>
                 <Select
@@ -284,12 +289,12 @@ export default function SettingsPage() {
                   }
                 >
                   <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Select theme" />
+                    <SelectValue placeholder="Choisir un thème" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="light">Light</SelectItem>
-                    <SelectItem value="dark">Dark</SelectItem>
-                    <SelectItem value="system">System</SelectItem>
+                    <SelectItem value="light">Clair</SelectItem>
+                    <SelectItem value="dark">Sombre</SelectItem>
+                    <SelectItem value="system">Système</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -303,15 +308,15 @@ export default function SettingsPage() {
                 Notifications
               </CardTitle>
               <CardDescription>
-                Manage how we communicate with you.
+                Gérez la manière dont nous communiquons avec vous.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label className="text-base">Insight Alerts</Label>
+                  <Label className="text-base">Alertes d'analyses</Label>
                   <p className="text-sm text-muted-foreground">
-                    Receive notifications when your weekly insights are ready.
+                    Recevez une notification quand vos analyses hebdomadaires sont prêtes.
                   </p>
                 </div>
                 <Switch
@@ -331,10 +336,10 @@ export default function SettingsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <User className="w-5 h-5 text-primary" />
-                Profile Info
+                Profil
               </CardTitle>
               <CardDescription>
-                Your personal account information.
+                Vos informations de compte.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -344,7 +349,7 @@ export default function SettingsPage() {
                   <Input value={user?.email || ""} readOnly disabled />
                 </div>
                 <div className="space-y-2">
-                  <Label>Display Name</Label>
+                  <Label>Nom affiché</Label>
                   <Input value={user?.displayName || ""} readOnly disabled />
                 </div>
               </div>
@@ -355,49 +360,51 @@ export default function SettingsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Lock className="w-5 h-5 text-primary" />
-                Subscription
+                Abonnement
               </CardTitle>
               <CardDescription>
-                Manage your Aurum subscription plan.
+                Gérez votre formule d'abonnement Aurum.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between p-4 border rounded-lg bg-secondary/50">
                 <div>
-                  <p className="font-medium">Current Plan</p>
-                  <p className="text-sm text-muted-foreground">Free Tier</p>
+                  <p className="font-medium">Formule actuelle</p>
+                  <p className="text-sm text-muted-foreground">Aucune formule active</p>
                 </div>
-                <Button variant="outline">Upgrade to Pro</Button>
+                <Button asChild variant="outline">
+                  <Link href={to("/pricing")}>Voir les tarifs</Link>
+                </Button>
               </div>
             </CardContent>
           </Card>
 
           <Card className="border-destructive/20">
             <CardHeader>
-              <CardTitle className="text-destructive">Danger Zone</CardTitle>
-              <CardDescription>Irreversible account actions.</CardDescription>
+              <CardTitle className="text-destructive">Zone sensible</CardTitle>
+              <CardDescription>Actions irréversibles sur le compte.</CardDescription>
             </CardHeader>
             <CardContent>
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="destructive">Delete Account</Button>
+                  <Button variant="destructive">Supprimer le compte</Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Are you absolutely sure?</DialogTitle>
+                    <DialogTitle>Confirmez-vous cette suppression&nbsp;?</DialogTitle>
                     <DialogDescription>
-                      This action cannot be undone. This will permanently delete
-                      your account and remove your data from our servers.
+                      Cette action est irréversible. Elle supprimera définitivement votre compte
+                      et vos données de nos serveurs.
                     </DialogDescription>
                   </DialogHeader>
                   <div className="space-y-4 py-4">
                     <div className="space-y-2">
                       <Label htmlFor="confirm-delete">
-                        Type "DELETE" to confirm
+                        Tapez "SUPPRIMER" pour confirmer
                       </Label>
                       <Input
                         id="confirm-delete"
-                        placeholder="DELETE"
+                        placeholder="SUPPRIMER"
                         value={deleteConfirmation}
                         onChange={(e) => setDeleteConfirmation(e.target.value)}
                       />
@@ -408,17 +415,17 @@ export default function SettingsPage() {
                       variant="outline"
                       onClick={() => setDeleteConfirmation("")}
                     >
-                      Cancel
+                      Annuler
                     </Button>
                     <Button
                       variant="destructive"
-                      disabled={deleteConfirmation !== "DELETE" || isDeleting}
+                      disabled={deleteConfirmation !== "SUPPRIMER" || isDeleting}
                       onClick={handleDeleteAccount}
                     >
                       {isDeleting ? (
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       ) : null}
-                      Delete Account
+                      Supprimer le compte
                     </Button>
                   </DialogFooter>
                 </DialogContent>
@@ -431,17 +438,17 @@ export default function SettingsPage() {
         <TabsContent value="privacy" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Your Data</CardTitle>
+              <CardTitle>Vos données</CardTitle>
               <CardDescription>
-                Control your personal data and exports.
+                Gérez vos données personnelles et vos exports.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label className="text-base">Export Data</Label>
+                  <Label className="text-base">Exporter mes données</Label>
                   <p className="text-sm text-muted-foreground">
-                    Download a copy of all your journal entries and insights
+                    Téléchargez une copie de toutes vos entrées et analyses
                     (JSON).
                   </p>
                 </div>
@@ -453,7 +460,7 @@ export default function SettingsPage() {
                   {isExporting ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   ) : null}
-                  Download JSON
+                  Télécharger le JSON
                 </Button>
               </div>
             </CardContent>
@@ -461,7 +468,7 @@ export default function SettingsPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Legal</CardTitle>
+              <CardTitle>Mentions légales</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               <Button
@@ -469,9 +476,9 @@ export default function SettingsPage() {
                 className="px-0 flex items-center gap-2"
                 asChild
               >
-                <a href="/privacy" target="_blank" rel="noopener noreferrer">
-                  Privacy Policy <ExternalLink className="w-3 h-3" />
-                </a>
+                <Link href={to("/privacy")} target="_blank" rel="noopener noreferrer">
+                  Politique de confidentialité <ExternalLink className="w-3 h-3" />
+                </Link>
               </Button>
               <Separator />
               <Button
@@ -479,9 +486,9 @@ export default function SettingsPage() {
                 className="px-0 flex items-center gap-2"
                 asChild
               >
-                <a href="/terms" target="_blank" rel="noopener noreferrer">
-                  Terms of Service <ExternalLink className="w-3 h-3" />
-                </a>
+                <Link href={to("/terms")} target="_blank" rel="noopener noreferrer">
+                  Conditions d'utilisation <ExternalLink className="w-3 h-3" />
+                </Link>
               </Button>
             </CardContent>
           </Card>

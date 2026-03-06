@@ -32,6 +32,7 @@ import { WellbeingRadar } from "@/components/sanctuary/wellbeing-radar";
 import { RyffQuestionnaire } from "@/components/sanctuary/ryff-questionnaire";
 import { PersonalityRadar } from "@/components/sanctuary/personality-radar";
 import { PersonalityQuestionnaire } from "@/components/sanctuary/personality-questionnaire";
+import { useLocalizedHref } from "@/hooks/use-localized-href";
 import type {
   RyffDimensionScores,
   WellbeingScore,
@@ -127,6 +128,14 @@ function buildPersonalityNarrative(scores: PersonalityScores, archetype: string)
 function parseCreatedAt(value: unknown): Date | null {
   if (!value) return null;
   if (value instanceof Date) return value;
+  if (typeof value === "string") {
+    const parsed = new Date(value);
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
+  }
+  if (typeof value === "number") {
+    const parsed = new Date(value);
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
+  }
   try {
     if (typeof value === "object" && value !== null && "toDate" in value) {
       return (value as { toDate: () => Date }).toDate();
@@ -175,6 +184,7 @@ function generateIssueExcerpt(content: string, maxLength = 170) {
 }
 
 export default function MagazinePage() {
+  const to = useLocalizedHref();
   const { user, loading } = useAuth();
   const { toast } = useToast();
   const [issues, setIssues] = useState<MagazineIssue[]>([]);
@@ -256,13 +266,29 @@ export default function MagazinePage() {
         user.uid,
         "wellbeingScores"
       );
-      const q = query(scoresRef, orderBy("computedAt", "desc"), limit(1));
-      const snap = await getDocs(q);
-      if (!snap.empty) {
-        const d = snap.docs[0].data() as Record<string, unknown>;
+      let latestDoc: QueryDocumentSnapshot<DocumentData> | null = null;
+      try {
+        const q = query(scoresRef, orderBy("computedAt", "desc"), limit(1));
+        const snap = await getDocs(q);
+        latestDoc = snap.empty ? null : snap.docs[0];
+      } catch {
+        // Fallback for heterogeneous historical data (timestamp/string)
+        const snap = await getDocs(scoresRef);
+        latestDoc =
+          snap.docs
+            .map((docSnap) => ({
+              docSnap,
+              when: parseCreatedAt((docSnap.data() as Record<string, unknown>).computedAt),
+            }))
+            .sort((a, b) => (b.when?.getTime() ?? 0) - (a.when?.getTime() ?? 0))[0]?.docSnap ??
+          null;
+      }
+
+      if (latestDoc) {
+        const d = latestDoc.data() as Record<string, unknown>;
         const computedAt = parseCreatedAt(d.computedAt);
         setWellbeingScore({
-          id: snap.docs[0].id,
+          id: latestDoc.id,
           source: (d.source as WellbeingScore["source"]) || "ai",
           computedAt: computedAt || new Date(),
           entryCount: typeof d.entryCount === "number" ? d.entryCount : 0,
@@ -294,13 +320,29 @@ export default function MagazinePage() {
         user.uid,
         "personalityScores"
       );
-      const q = query(scoresRef, orderBy("computedAt", "desc"), limit(1));
-      const snap = await getDocs(q);
-      if (!snap.empty) {
-        const d = snap.docs[0].data() as Record<string, unknown>;
+      let latestDoc: QueryDocumentSnapshot<DocumentData> | null = null;
+      try {
+        const q = query(scoresRef, orderBy("computedAt", "desc"), limit(1));
+        const snap = await getDocs(q);
+        latestDoc = snap.empty ? null : snap.docs[0];
+      } catch {
+        // Fallback for heterogeneous historical data (timestamp/string)
+        const snap = await getDocs(scoresRef);
+        latestDoc =
+          snap.docs
+            .map((docSnap) => ({
+              docSnap,
+              when: parseCreatedAt((docSnap.data() as Record<string, unknown>).computedAt),
+            }))
+            .sort((a, b) => (b.when?.getTime() ?? 0) - (a.when?.getTime() ?? 0))[0]?.docSnap ??
+          null;
+      }
+
+      if (latestDoc) {
+        const d = latestDoc.data() as Record<string, unknown>;
         const computedAt = parseCreatedAt(d.computedAt);
         setPersonalityResult({
-          id: snap.docs[0].id,
+          id: latestDoc.id,
           source: (d.source as PersonalityResult["source"]) || "ai",
           computedAt: computedAt || new Date(),
           entryCount: typeof d.entryCount === "number" ? d.entryCount : 0,
@@ -1183,7 +1225,7 @@ export default function MagazinePage() {
               asChild
               className="bg-stone-900 text-stone-50 hover:bg-stone-800"
             >
-              <Link href="/sanctuary/write">
+              <Link href={to("/sanctuary/write")}>
                 <PenSquare className="mr-2 h-4 w-4" />
                 Write an entry
               </Link>

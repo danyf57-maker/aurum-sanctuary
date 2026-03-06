@@ -3,10 +3,12 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle } from 'lucide-react';
+import { useLocalizedHref } from '@/hooks/use-localized-href';
 
 export const dynamic = 'force-dynamic';
 
 function NotFound() {
+  const to = useLocalizedHref();
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-amber-50 to-orange-100 px-4">
       <AlertTriangle className="w-16 h-16 text-amber-600 mb-6" />
@@ -17,7 +19,7 @@ function NotFound() {
         Désolé, cette page n'existe pas.
       </p>
       <Button asChild variant="default" size="lg">
-        <Link href="/">
+        <Link href={to('/')}>
           Retour à l'accueil
         </Link>
       </Button>

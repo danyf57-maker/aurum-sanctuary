@@ -1,115 +1,123 @@
-/**
- * Privacy Policy Page
- *
- * Explains how data is handled, encrypted, and processed according to privacy-by-design principles.
- */
-
-import React from "react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { getRequestLocale } from "@/lib/locale-server";
+import type { Metadata } from "next";
 
-export default function PrivacyPage() {
-  const lastUpdated = "January 29, 2026";
+const copy = {
+  fr: {
+    title: "Politique de Confidentialité",
+    updated: "Dernière mise à jour : 29 janvier 2026",
+    back: "Retour à aurumdiary.com",
+    i1t: "1. Introduction",
+    i1b:
+      "Cette politique décrit comment Aurum collecte, utilise et protège vos données dans une logique privacy-by-design.",
+    i2t: "2. Données collectées",
+    i2a: "Données de compte: email et informations de profil.",
+    i2b: "Entrées de journal: stockées de façon sécurisée.",
+    i2c: "Métadonnées d'usage: fréquence, durée, navigation produit.",
+    i3t: "3. Utilisation des données",
+    i3b:
+      "Les données servent à fournir le service, sécuriser votre compte, et améliorer la qualité des fonctionnalités.",
+    i4t: "4. Sécurité",
+    i4b:
+      "Nous appliquons chiffrement en transit, contrôles d'accès stricts et journalisation de sécurité.",
+    i5t: "5. Vos droits",
+    i5b:
+      "Vous pouvez accéder, corriger, exporter et supprimer vos données conformément au RGPD.",
+  },
+  en: {
+    title: "Privacy Policy",
+    updated: "Last updated: January 29, 2026",
+    back: "Back to aurumdiary.com",
+    i1t: "1. Introduction",
+    i1b:
+      "This policy explains how Aurum collects, uses, and protects your data under a privacy-by-design model.",
+    i2t: "2. Data We Collect",
+    i2a: "Account data: email and profile information.",
+    i2b: "Journal entries: stored securely.",
+    i2c: "Usage metadata: frequency, session duration, product navigation.",
+    i3t: "3. How We Use Data",
+    i3b:
+      "Data is used to provide the service, secure your account, and improve feature quality.",
+    i4t: "4. Security",
+    i4b:
+      "We apply encryption in transit, strict access controls, and security logging.",
+    i5t: "5. Your Rights",
+    i5b:
+      "You can access, correct, export, and delete your data in line with GDPR requirements.",
+  },
+} as const;
+
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getRequestLocale();
+  const isFr = locale === "fr";
+  const title = isFr ? "Politique de Confidentialité | Aurum" : "Privacy Policy | Aurum";
+  const description = isFr
+    ? "Comment Aurum collecte, protège et traite vos données selon une approche privacy-by-design."
+    : "How Aurum collects, protects, and processes your data with a privacy-by-design approach.";
+  const canonical = "https://aurumdiary.com/privacy";
+
+  return {
+    title,
+    description,
+    alternates: { canonical },
+    openGraph: {
+      title,
+      description,
+      url: canonical,
+      type: "article",
+      locale: isFr ? "fr_FR" : "en_US",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/og-image.png"],
+    },
+  };
+}
+
+export default async function PrivacyPage() {
+  const locale = await getRequestLocale();
+  const t = copy[locale];
 
   return (
-    <div className="container mx-auto max-w-4xl px-4 py-12">
-      <Card className="border-none bg-transparent shadow-none">
+    <div className="container mx-auto py-12 px-4 max-w-4xl">
+      <Card className="border-none shadow-none bg-transparent">
         <CardHeader className="text-center">
-          <CardTitle className="text-4xl font-serif">Privacy Policy</CardTitle>
-          <p className="mt-2 text-muted-foreground">Last updated: {lastUpdated}</p>
+          <CardTitle className="text-4xl font-serif">{t.title}</CardTitle>
+          <p className="text-muted-foreground mt-2">{t.updated}</p>
           <div className="mt-6">
             <Button asChild variant="outline">
-              <Link href="https://aurumdiary.com">Back to aurumdiary.com</Link>
+              <Link href="https://aurumdiary.com">{t.back}</Link>
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="prose prose-slate mt-8 max-w-none dark:prose-invert">
+        <CardContent className="prose prose-slate dark:prose-invert max-w-none mt-8">
           <section>
-            <h2 className="mt-6 text-2xl font-serif">1. Introduction</h2>
-            <p>
-              At Aurum Sanctuary, we believe mental wellbeing requires strict confidentiality. This policy
-              explains how we protect your data through a privacy-by-design architecture.
-            </p>
+            <h2 className="text-2xl font-serif mt-6">{t.i1t}</h2>
+            <p>{t.i1b}</p>
           </section>
-
           <section>
-            <h2 className="mt-6 text-2xl font-serif">2. Data We Collect</h2>
+            <h2 className="text-2xl font-serif mt-6">{t.i2t}</h2>
             <ul>
-              <li>
-                <strong>Account data:</strong> Email and profile information (securely stored using Firebase).
-              </li>
-              <li>
-                <strong>Journal entries:</strong> Encrypted on your device (client-side encryption). We do not
-                keep persistent plaintext access to your content.
-              </li>
-              <li>
-                <strong>Metadata:</strong> Entry frequency and session duration (used for lightweight product
-                analytics).
-              </li>
+              <li>{t.i2a}</li>
+              <li>{t.i2b}</li>
+              <li>{t.i2c}</li>
             </ul>
           </section>
-
           <section>
-            <h2 className="mt-6 text-2xl font-serif">3. How We Use Your Data</h2>
-            <p>Your data is used only to:</p>
-            <ul>
-              <li>Provide and improve Application features.</li>
-              <li>Generate personalized reflections through the Aurum engine (ephemeral processing).</li>
-              <li>Manage your subscription and preferences.</li>
-            </ul>
+            <h2 className="text-2xl font-serif mt-6">{t.i3t}</h2>
+            <p>{t.i3b}</p>
           </section>
-
           <section>
-            <h2 className="mt-6 text-2xl font-serif">4. Security Architecture</h2>
-            <p>Our system relies on three pillars:</p>
-            <ol>
-              <li>
-                <strong>Strong encryption:</strong> Industry-standard algorithms are used (AES-256).
-              </li>
-              <li>
-                <strong>Admin-blind design:</strong> System administrators cannot decrypt your content.
-                Decryption keys are managed by KMS services with strict access controls.
-              </li>
-              <li>
-                <strong>Ephemeral processing:</strong> During Aurum analysis, text is decrypted in memory only
-                and is never written as plaintext to disk.
-              </li>
-            </ol>
+            <h2 className="text-2xl font-serif mt-6">{t.i4t}</h2>
+            <p>{t.i4b}</p>
           </section>
-
           <section>
-            <h2 className="mt-6 text-2xl font-serif">5. Your Rights (GDPR)</h2>
-            <p>Under GDPR, you have the following rights:</p>
-            <ul>
-              <li>
-                <strong>Right of access:</strong> You can view your data at any time.
-              </li>
-              <li>
-                <strong>Right to rectification:</strong> You can edit your information.
-              </li>
-              <li>
-                <strong>Right to erasure:</strong> You can delete your account and associated data.
-              </li>
-              <li>
-                <strong>Portability:</strong> You can export your data in a structured format.
-              </li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="mt-6 text-2xl font-serif">6. Data Retention</h2>
-            <p>
-              We keep your data while your account is active. If you delete your account, encrypted data and
-              related metadata are permanently removed from active systems within 30 days, including backups.
-            </p>
-          </section>
-
-          <section className="mt-12 rounded-lg bg-slate-100 p-6 dark:bg-slate-900">
-            <p className="text-sm italic">
-              We never sell your personal data to third parties. Aurum Sanctuary is funded through user
-              subscriptions.
-            </p>
+            <h2 className="text-2xl font-serif mt-6">{t.i5t}</h2>
+            <p>{t.i5b}</p>
           </section>
         </CardContent>
       </Card>

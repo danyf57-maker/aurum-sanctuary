@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { getRequestLocale } from "@/lib/locale-server";
+import { toLocalePath } from "@/i18n/routing";
 
 export const metadata: Metadata = {
   title: "Auteur: Alma",
@@ -9,7 +12,9 @@ export const metadata: Metadata = {
   },
 };
 
-export default function AuteurPage() {
+export default async function AuteurPage() {
+  const locale = await getRequestLocale();
+  const methodologyHref = toLocalePath("/methodologie", locale);
   return (
     <div className="bg-stone-50/50 min-h-screen">
       <section className="py-24 md:py-32">
@@ -34,7 +39,7 @@ export default function AuteurPage() {
             </p>
             <p>
               Pour la méthodologie IA utilisée dans Aurum, consulte la page
-              dédiée: <a className="underline" href="/methodologie">/methodologie</a>.
+              dédiée: <Link className="underline" href={methodologyHref}>/methodologie</Link>.
             </p>
           </div>
         </div>

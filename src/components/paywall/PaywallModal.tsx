@@ -25,7 +25,7 @@ export function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
 
     const handleSubscribe = async () => {
         if (!user) {
-            setError('Please sign in to subscribe');
+            setError('Veuillez vous connecter pour vous abonner.');
             return;
         }
 
@@ -47,13 +47,13 @@ export function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.error || 'Failed to create checkout session');
+                throw new Error(errorData.error || 'Impossible de créer la session de paiement.');
             }
 
             const { url } = await response.json();
 
             if (!url) {
-                throw new Error('No checkout URL received');
+                throw new Error('Aucune URL de paiement reçue.');
             }
 
             // Redirect to Stripe Checkout
@@ -61,7 +61,7 @@ export function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
 
         } catch (err: any) {
             console.error('Error creating checkout session:', err);
-            setError(err.message || 'Something went wrong');
+            setError(err.message || 'Une erreur est survenue.');
             setLoading(false);
         }
     };
@@ -75,7 +75,7 @@ export function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
                 <button
                     onClick={onClose}
                     className="absolute top-4 right-4 text-[#8B4513] hover:opacity-70 transition-opacity"
-                    aria-label="Close"
+                    aria-label="Fermer"
                 >
                     <X className="w-5 h-5" />
                 </button>
@@ -89,33 +89,33 @@ export function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
 
                 {/* Title */}
                 <h2 className="text-2xl font-serif text-[#8B4513] text-center mb-4">
-                    Your weekly insight is ready
+                    Votre analyse hebdomadaire est prête
                 </h2>
 
                 {/* Benefits */}
                 <div className="space-y-4 mb-6">
                     <p className="text-[#8B4513] text-center opacity-80">
-                        Subscribe to:
+                        Abonnez-vous pour&nbsp;:
                     </p>
                     <ul className="space-y-3 text-[#8B4513]">
                         <li className="flex items-start">
                             <span className="mr-3 text-[#D4AF37] font-bold">✓</span>
-                            <span>See your full insight</span>
+                            <span>Voir votre analyse complète</span>
                         </li>
                         <li className="flex items-start">
                             <span className="mr-3 text-[#D4AF37] font-bold">✓</span>
-                            <span>Access all past insights</span>
+                            <span>Accéder à toutes vos analyses passées</span>
                         </li>
                         <li className="flex items-start">
                             <span className="mr-3 text-[#D4AF37] font-bold">✓</span>
-                            <span>Continue building your emotional clarity map</span>
+                            <span>Continuer à construire votre carte de clarté émotionnelle</span>
                         </li>
                     </ul>
                 </div>
 
                 {/* Reassurance */}
                 <p className="text-sm text-[#8B4513] opacity-70 text-center mb-6 italic">
-                    No pressure. Your writing is always safe and private.
+                    Sans pression. Vos écrits restent privés et sécurisés.
                 </p>
 
                 {/* Error message */}
@@ -135,10 +135,10 @@ export function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
                         {loading ? (
                             <>
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                Loading...
+                                Chargement...
                             </>
                         ) : (
-                            'Subscribe Now'
+                            'S’abonner'
                         )}
                     </Button>
                     <Button
@@ -147,7 +147,7 @@ export function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
                         className="w-full text-[#8B4513] hover:bg-[#8B4513]/5"
                         disabled={loading}
                     >
-                        Maybe Later
+                        Plus tard
                     </Button>
                 </div>
             </div>

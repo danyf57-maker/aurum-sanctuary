@@ -12,17 +12,59 @@ import { stripe } from '@/lib/stripe/server';
 import { firestore as db } from '@/lib/firebase/admin';
 import Stripe from 'stripe';
 import { trackServerEvent } from '@/lib/analytics/server';
+import { logger } from '@/lib/logger/safe';
+import { STRIPE_TRIAL_REMINDER_DAYS } from '@/lib/billing/config';
 
 // Disable body parsing - Stripe needs raw body for signature verification
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+
+function fromUnix(value?: number | null): Date | null {
+    if (!value || value <= 0) return null;
+    return new Date(value * 1000);
+}
+
+function normalizeBillingPhase(status: string): string {
+    if (status === 'trialing') return 'trial';
+    if (status === 'active') return 'paid';
+    if (status === 'past_due' || status === 'unpaid' || status === 'incomplete') return 'payment_issue';
+    if (status === 'canceled' || status === 'incomplete_expired') return 'canceled';
+    return 'checkout_started';
+}
+
+async function notifyTrialWillEnd(params: {
+    userId: string;
+    subscription: Stripe.Subscription;
+}) {
+    const { userId, subscription } = params;
+    const trialEndsAt = fromUnix(subscription.trial_end);
+    const now = new Date();
+
+    await db.doc(`users/${userId}`).set({
+        trialWillEndNotifiedAt: now,
+        subscriptionTrialEndsAt: trialEndsAt,
+        billingPhase: 'trial_ending',
+        updatedAt: now,
+    }, { merge: true });
+
+    const notifId = `trial_will_end_${subscription.id}_${subscription.trial_end || 'none'}`;
+    await db.doc(`users/${userId}/notifications/${notifId}`).set({
+        type: 'other',
+        read: false,
+        message: `Votre periode d'essai se termine dans environ ${STRIPE_TRIAL_REMINDER_DAYS} jours. Pensez a verifier votre moyen de paiement pour eviter une interruption.`,
+        createdAt: now,
+        category: 'billing',
+        subscriptionId: subscription.id,
+        trialEndsAt,
+    }, { merge: true });
+}
 
 export async function POST(req: NextRequest) {
     const body = await req.text();
     const signature = req.headers.get('stripe-signature');
 
     if (!signature) {
-        console.error('❌ No Stripe signature found');
+        logger.warnSafe('No Stripe signature found');
         return NextResponse.json(
             { error: 'No signature' },
             { status: 400 }
@@ -30,7 +72,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (!process.env.STRIPE_WEBHOOK_SECRET) {
-        console.error('❌ STRIPE_WEBHOOK_SECRET not configured');
+        logger.errorSafe('STRIPE_WEBHOOK_SECRET not configured');
         return NextResponse.json(
             { error: 'Webhook secret not configured' },
             { status: 500 }
@@ -47,14 +89,14 @@ export async function POST(req: NextRequest) {
             process.env.STRIPE_WEBHOOK_SECRET
         );
     } catch (err: any) {
-        console.error('❌ Webhook signature verification failed:', err.message);
+        logger.errorSafe('Webhook signature verification failed', err);
         return NextResponse.json(
             { error: 'Invalid signature' },
             { status: 400 }
         );
     }
 
-    console.log(`📨 Received webhook event: ${event.type}`);
+    logger.infoSafe('Received webhook event', { eventType: event.type });
 
     // Idempotency guard: Stripe can resend events, process each ID once.
     try {
@@ -80,7 +122,7 @@ export async function POST(req: NextRequest) {
                 const userId = subscription.metadata.firebaseUid;
 
                 if (!userId) {
-                    console.error('❌ No firebaseUid in subscription metadata');
+                    logger.warnSafe('Missing firebaseUid in subscription metadata');
                     return NextResponse.json(
                         { error: 'Missing user ID in metadata' },
                         { status: 400 }
@@ -94,6 +136,9 @@ export async function POST(req: NextRequest) {
                     subscriptionId: subscription.id,
                     subscriptionPriceId: subscription.items.data[0]?.price.id,
                     subscriptionCurrentPeriodEnd: new Date(subscription.current_period_end * 1000),
+                    subscriptionTrialEndsAt: fromUnix(subscription.trial_end),
+                    trialConsumedAt: subscription.status === 'trialing' ? new Date() : undefined,
+                    billingPhase: normalizeBillingPhase(subscription.status),
                     updatedAt: new Date(),
                 });
 
@@ -105,7 +150,27 @@ export async function POST(req: NextRequest) {
                     }, { merge: true });
                 }
 
-                console.log(`✅ Subscription ${subscription.status} for user ${userId}`);
+                logger.infoSafe('Subscription updated', {
+                    subscriptionStatus: subscription.status,
+                    userId,
+                });
+                break;
+            }
+
+            case 'customer.subscription.trial_will_end': {
+                const subscription = event.data.object as Stripe.Subscription;
+                const userId = subscription.metadata.firebaseUid;
+
+                if (!userId) {
+                    logger.warnSafe('Missing firebaseUid in trial_will_end metadata');
+                    return NextResponse.json(
+                        { error: 'Missing user ID in metadata' },
+                        { status: 400 }
+                    );
+                }
+
+                await notifyTrialWillEnd({ userId, subscription });
+                logger.infoSafe('Trial ending reminder created', { userId });
                 break;
             }
 
@@ -114,7 +179,7 @@ export async function POST(req: NextRequest) {
                 const userId = subscription.metadata.firebaseUid;
 
                 if (!userId) {
-                    console.error('❌ No firebaseUid in subscription metadata');
+                    logger.warnSafe('Missing firebaseUid in subscription metadata');
                     return NextResponse.json(
                         { error: 'Missing user ID in metadata' },
                         { status: 400 }
@@ -125,16 +190,18 @@ export async function POST(req: NextRequest) {
                 await db.doc(`users/${userId}`).update({
                     subscriptionStatus: 'canceled',
                     subscriptionCurrentPeriodEnd: new Date(subscription.current_period_end * 1000),
+                    subscriptionTrialEndsAt: fromUnix(subscription.trial_end),
+                    billingPhase: 'canceled',
                     updatedAt: new Date(),
                 });
 
-                console.log(`✅ Subscription canceled for user ${userId}`);
+                logger.infoSafe('Subscription canceled', { userId });
                 break;
             }
 
             case 'invoice.payment_succeeded': {
                 const invoice = event.data.object as Stripe.Invoice;
-                console.log(`✅ Payment succeeded: ${invoice.id}`);
+                logger.infoSafe('Payment succeeded', { invoiceId: invoice.id });
 
                 // Optionally: Log payment event to Firestore
                 if (invoice.subscription) {
@@ -144,6 +211,12 @@ export async function POST(req: NextRequest) {
                     const userId = subscription.metadata.firebaseUid;
 
                     if (userId) {
+                        await db.doc(`users/${userId}`).set({
+                            subscriptionStatus: 'active',
+                            billingPhase: 'paid',
+                            updatedAt: new Date(),
+                        }, { merge: true });
+
                         await db.collection(`users/${userId}/payments`).add({
                             invoiceId: invoice.id,
                             amount: invoice.amount_paid,
@@ -168,7 +241,7 @@ export async function POST(req: NextRequest) {
 
             case 'invoice.payment_failed': {
                 const invoice = event.data.object as Stripe.Invoice;
-                console.log(`⚠️  Payment failed: ${invoice.id}`);
+                logger.warnSafe('Payment failed', { invoiceId: invoice.id });
 
                 if (invoice.subscription) {
                     const subscription = await stripe.subscriptions.retrieve(
@@ -180,6 +253,7 @@ export async function POST(req: NextRequest) {
                         // Update subscription status to past_due
                         await db.doc(`users/${userId}`).update({
                             subscriptionStatus: 'past_due',
+                            billingPhase: 'payment_issue',
                             updatedAt: new Date(),
                         });
 
@@ -192,7 +266,7 @@ export async function POST(req: NextRequest) {
                             createdAt: new Date(),
                         });
 
-                        console.log(`⚠️  Subscription marked as past_due for user ${userId}`);
+                        logger.warnSafe('Subscription marked as past_due', { userId });
                     }
                 }
                 break;
@@ -200,7 +274,7 @@ export async function POST(req: NextRequest) {
 
             case 'checkout.session.completed': {
                 const session = event.data.object as Stripe.Checkout.Session;
-                console.log(`✅ Checkout session completed: ${session.id}`);
+                logger.infoSafe('Checkout session completed', { checkoutSessionId: session.id });
                 const userId = session.metadata?.firebaseUid || null;
                 await trackServerEvent('checkout_start', {
                     userId,
@@ -218,13 +292,13 @@ export async function POST(req: NextRequest) {
             }
 
             default:
-                console.log(`ℹ️  Unhandled event type: ${event.type}`);
+                logger.infoSafe('Unhandled webhook event type', { eventType: event.type });
         }
 
         return NextResponse.json({ received: true });
 
     } catch (error: any) {
-        console.error('❌ Error processing webhook:', error);
+        logger.errorSafe('Error processing webhook', error);
         return NextResponse.json(
             { error: 'Webhook processing failed' },
             { status: 500 }

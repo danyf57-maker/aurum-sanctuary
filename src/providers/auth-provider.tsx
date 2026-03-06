@@ -18,6 +18,7 @@ import { addDoc, collection, doc, getDoc, setDoc, serverTimestamp } from 'fireba
 import { auth as firebaseAuth, firestore as db } from '@/lib/firebase/web-client';
 import { logger } from '@/lib/logger/safe';
 import { useToast } from '@/hooks/use-toast';
+import { useLocale } from '@/hooks/use-locale';
 
 
 interface AuthContextType {
@@ -39,6 +40,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [termsAccepted, setTermsAccepted] = useState<boolean | null>(null);
   const { toast } = useToast();
+  const locale = useLocale();
+  const isFr = locale === 'fr';
+  const txt = (fr: string, en: string) => (isFr ? fr : en);
   const QUIZ_STORAGE_KEY = 'aurum-quiz-data';
   const QUIZ_SYNC_KEY = 'aurum-quiz-synced-at';
 
@@ -116,11 +120,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const getEmailVerificationSettings = () => {
     const appUrl = resolveAppUrl();
+    const lang = isFr ? "fr" : "en";
     return {
-      url: `${appUrl}/auth/action`,
+      url: `${appUrl}/auth/action?lang=${lang}`,
       handleCodeInApp: false, // False to use the custom action handler page
     };
   };
+
+  const getResetPasswordSettings = () => {
+    const appUrl = resolveAppUrl();
+    const lang = isFr ? "fr" : "en";
+    return {
+      url: `${appUrl}/login?lang=${lang}`,
+      handleCodeInApp: false,
+    };
+  };
+
+  useEffect(() => {
+    firebaseAuth.languageCode = isFr ? "fr" : "en";
+  }, [isFr]);
 
   useEffect(() => {
     logger.infoSafe('AuthProvider mounted');
@@ -234,10 +252,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       logger.infoSafe('Google Client ID check', { present: !!googleClientId });
       if (!googleClientId) {
         const message =
-          "NEXT_PUBLIC_GOOGLE_CLIENT_ID est manquant. Ajoutez-le pour activer la connexion Google.";
+          txt(
+            "NEXT_PUBLIC_GOOGLE_CLIENT_ID est manquant. Ajoutez-le pour activer la connexion Google.",
+            "NEXT_PUBLIC_GOOGLE_CLIENT_ID is missing. Add it to enable Google sign-in."
+          );
         logger.warnSafe(message);
         toast({
-          title: "Connexion Google indisponible",
+          title: txt("Connexion Google indisponible", "Google sign-in unavailable"),
           description: message,
           variant: "destructive",
         });
@@ -281,10 +302,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           : "";
       const isDisallowedUserAgent = message.includes("disallowed_useragent");
       toast({
-        title: "Erreur de connexion",
+        title: txt("Erreur de connexion", "Sign-in error"),
         description: isDisallowedUserAgent
-          ? "Google bloque ce navigateur intégré. Ouvre Aurum dans Safari ou Chrome, puis réessaie."
-          : "Impossible de se connecter avec Google.",
+          ? txt(
+              "Google bloque ce navigateur intégré. Ouvre Aurum dans Safari ou Chrome, puis réessaie.",
+              "Google blocks this in-app browser. Open Aurum in Safari or Chrome and try again."
+            )
+          : txt("Impossible de se connecter avec Google.", "Unable to sign in with Google."),
         variant: "destructive",
       });
       throw error;
@@ -298,8 +322,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         await sendEmailVerification(cred.user, getEmailVerificationSettings());
         await signOut(firebaseAuth);
         toast({
-          title: "Email non vérifié",
-          description: "Nous venons de renvoyer un email de vérification. Vérifiez votre boîte de réception.",
+          title: txt("Email non vérifié", "Email not verified"),
+          description: txt(
+            "Nous venons de renvoyer un email de vérification. Vérifiez votre boîte de réception.",
+            "We sent a new verification email. Please check your inbox."
+          ),
           variant: "destructive",
         });
         throw new Error("EMAIL_NOT_VERIFIED");
@@ -308,8 +335,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       logger.errorSafe('Email Sign In Failed', error);
       if ((error as Error)?.message !== "EMAIL_NOT_VERIFIED") {
         toast({
-          title: "Erreur de connexion",
-          description: "Email ou mot de passe incorrect.",
+          title: txt("Erreur de connexion", "Sign-in error"),
+          description: txt("Email ou mot de passe incorrect.", "Invalid email or password."),
           variant: "destructive",
         });
       }
@@ -324,14 +351,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await sendEmailVerification(cred.user, getEmailVerificationSettings());
       await signOut(firebaseAuth);
       toast({
-        title: "Vérifiez votre email",
-        description: "Un message de vérification vient d'être envoyé.",
+        title: txt("Vérifiez votre email", "Check your email"),
+        description: txt(
+          "Un message de vérification vient d'être envoyé.",
+          "A verification email has just been sent."
+        ),
       });
     } catch (error) {
       logger.errorSafe('Sign Up Failed', error);
       toast({
-        title: "Erreur d'inscription",
-        description: "Impossible de créer le compte.",
+        title: txt("Erreur d'inscription", "Sign-up error"),
+        description: txt("Impossible de créer le compte.", "Unable to create your account."),
         variant: "destructive",
       });
       throw error;
@@ -370,9 +400,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const resetPassword = async (email: string) => {
     try {
-      await sendPasswordResetEmail(firebaseAuth, email);
+      await sendPasswordResetEmail(firebaseAuth, email, getResetPasswordSettings());
+      toast({
+        title: txt("Email envoyé", "Email sent"),
+        description: txt(
+          "Vérifiez vos mails et vos spams pour réinitialiser votre mot de passe.",
+          "Check your inbox and spam folder to reset your password."
+        ),
+      });
     } catch (error) {
       logger.errorSafe('Password Reset Failed', error);
+      toast({
+        title: txt("Erreur de réinitialisation", "Reset error"),
+        description: txt(
+          "Impossible d'envoyer l'email de réinitialisation.",
+          "Unable to send the password reset email."
+        ),
+        variant: "destructive",
+      });
       throw error;
     }
   };

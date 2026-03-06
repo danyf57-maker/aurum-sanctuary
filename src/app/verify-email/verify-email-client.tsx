@@ -6,12 +6,16 @@ import { applyActionCode } from 'firebase/auth';
 import { auth } from '@/lib/firebase/web-client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useLocale } from '@/hooks/use-locale';
+import { localizeHref } from '@/lib/i18n/path';
 
 type Status = 'idle' | 'verifying' | 'success' | 'error';
 
 export default function VerifyEmailClient() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const locale = useLocale();
+  const to = (href: string) => localizeHref(href, locale);
   const [status, setStatus] = useState<Status>('idle');
   const [error, setError] = useState<string | null>(null);
 
@@ -57,7 +61,7 @@ export default function VerifyEmailClient() {
               <p className="text-sm text-stone-700">
                 Votre email est vérifié. Vous pouvez maintenant vous connecter.
               </p>
-              <Button onClick={() => router.push('/login?verified=1')} className="w-full">
+              <Button onClick={() => router.push(to('/login?verified=1'))} className="w-full">
                 Se connecter
               </Button>
             </>
@@ -65,7 +69,7 @@ export default function VerifyEmailClient() {
           {status === 'error' && (
             <>
               <p className="text-sm text-destructive">{error}</p>
-              <Button variant="outline" onClick={() => router.push('/login')} className="w-full">
+              <Button variant="outline" onClick={() => router.push(to('/login'))} className="w-full">
                 Retour à la connexion
               </Button>
             </>

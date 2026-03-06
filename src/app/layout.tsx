@@ -9,6 +9,9 @@ import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
 import ProductEventTracker from '@/components/analytics/ProductEventTracker';
 import { CookieConsent } from '@/components/legal/CookieConsent';
 import { TermsModal } from '@/components/auth/TermsModal';
+import { getRequestLocale } from '@/lib/locale-server';
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages } from 'next-intl/server';
 
 import { Cormorant_Garamond, Inter, Dawning_of_a_New_Day } from 'next/font/google';
 
@@ -32,42 +35,66 @@ const dawning = Dawning_of_a_New_Day({
   display: 'swap',
 });
 
-export const metadata: Metadata = {
-  title: 'Aurum Diary | Journal intime chiffré pour vider ta tête et apaiser ton esprit',
-  description: 'Quand ta tête tourne en boucle, écris ici. Aurum Diary est un journal intime en ligne 100% chiffré pour soulager ta charge mentale, calmer l\'overthinking et retrouver de la clarté.',
-  manifest: "/manifest.json",
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "default",
-    title: "Aurum",
-  },
-  openGraph: {
-    title: 'Aurum Diary | Journal intime chiffré pour vider ta tête',
-    description: 'Quand ta tête tourne en boucle, écris ici. Un journal intime 100% chiffré pour relâcher la pression et retrouver de la clarté.',
-    url: 'https://aurumdiary.com',
-    siteName: 'Aurum Diary',
-    images: [
-      {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'Aurum Diary',
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getRequestLocale();
+  const isFr = locale === "fr";
+
+  const title = isFr
+    ? "Aurum Diary | Journal intime chiffré pour vider ta tête et apaiser ton esprit"
+    : "Aurum Diary | Encrypted private journal to clear your mind and calm stress";
+  const description = isFr
+    ? "Quand ta tête tourne en boucle, écris ici. Aurum Diary est un journal intime en ligne 100% chiffré pour soulager ta charge mentale, calmer l'overthinking et retrouver de la clarté."
+    : "When your mind keeps spinning, write here. Aurum Diary is a fully encrypted private journal to reduce mental load, ease overthinking, and regain clarity.";
+  const ogTitle = isFr
+    ? "Aurum Diary | Journal intime chiffré pour vider ta tête"
+    : "Aurum Diary | Encrypted private journal for mental clarity";
+  const ogDescription = isFr
+    ? "Quand ta tête tourne en boucle, écris ici. Un journal intime 100% chiffré pour relâcher la pression et retrouver de la clarté."
+    : "Write to release pressure and regain clarity with a fully encrypted private journal.";
+
+  return {
+    title,
+    description,
+    manifest: "/manifest.json",
+    appleWebApp: {
+      capable: true,
+      statusBarStyle: "default",
+      title: "Aurum",
+    },
+    openGraph: {
+      title: ogTitle,
+      description: ogDescription,
+      url: "https://aurumdiary.com",
+      siteName: "Aurum Diary",
+      images: [
+        {
+          url: "/og-image.png",
+          width: 1200,
+          height: 630,
+          alt: "Aurum Diary",
+        },
+      ],
+      locale: isFr ? "fr_FR" : "en_US",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: ogTitle,
+      description: isFr
+        ? "Écris pour relâcher ta charge mentale. Journal intime en ligne 100% chiffré."
+        : "Write to ease mental load. Fully encrypted private online journaling.",
+      images: ["/og-image.png"],
+    },
+    alternates: {
+      canonical: "https://aurumdiary.com",
+      languages: {
+        en: "https://aurumdiary.com",
+        fr: "https://aurumdiary.com/fr",
       },
-    ],
-    locale: 'fr_FR',
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Aurum Diary | Journal intime chiffré pour vider ta tête',
-    description: 'Écris pour relâcher ta charge mentale. Journal intime en ligne 100% chiffré.',
-    images: ['/og-image.png'],
-  },
-  alternates: {
-    canonical: 'https://aurumdiary.com',
-  },
-  metadataBase: new URL('https://aurumdiary.com'),
-};
+    },
+    metadataBase: new URL("https://aurumdiary.com"),
+  };
+}
 
 export const viewport: Viewport = {
   themeColor: "#1c1917",
@@ -77,35 +104,47 @@ export const viewport: Viewport = {
   userScalable: false,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getRequestLocale();
+  const isFr = locale === "fr";
+  const messages = await getMessages();
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
     name: 'Aurum',
-    description:
-      "Journal intime en ligne 100% chiffré pour relâcher la charge mentale, calmer l'overthinking et retrouver de la clarté.",
+    description: isFr
+      ? "Journal intime en ligne 100% chiffré pour relâcher la charge mentale, calmer l'overthinking et retrouver de la clarté."
+      : "A fully encrypted online private journal to reduce mental load, calm overthinking, and regain clarity.",
     applicationCategory: ['HealthApplication', 'LifestyleApplication'],
     operatingSystem: 'Web, iOS, Android',
     offers: {
       '@type': 'Offer',
-      price: '0',
+      price: '13',
       priceCurrency: 'EUR',
     },
-    featureList: [
-      "Journal intime en ligne chiffré AES-256",
-      "Gestion de la charge mentale",
-      "Suivi des émotions et de l'humeur",
-      "Journal guidé avec intelligence artificielle",
-      "Alternative privée à Rosebud"
-    ]
+    featureList: isFr
+      ? [
+          "Journal intime en ligne chiffré AES-256",
+          "Gestion de la charge mentale",
+          "Suivi des émotions et de l'humeur",
+          "Journal guidé avec intelligence artificielle",
+          "Alternative privée à Rosebud",
+        ]
+      : [
+          "AES-256 encrypted private online journal",
+          "Mental load support",
+          "Mood and emotion tracking",
+          "AI-guided journaling",
+          "Private alternative to Rosebud",
+        ]
   };
 
   return (
-    <html lang="fr" suppressHydrationWarning={true}>
+    <html lang={locale} suppressHydrationWarning={true}>
       <head>
         <script
           type="application/ld+json"
@@ -122,16 +161,18 @@ export default function RootLayout({
         )}
         suppressHydrationWarning={true}
       >
-        <AuthProvider>
-          <TermsModal />
-          <Suspense fallback={null}>
-            <GoogleAnalytics />
-            <ProductEventTracker />
-          </Suspense>
-          {children}
-          <Toaster />
-          <CookieConsent />
-        </AuthProvider>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <AuthProvider>
+            <TermsModal />
+            <Suspense fallback={null}>
+              <GoogleAnalytics />
+              <ProductEventTracker />
+            </Suspense>
+            {children}
+            <Toaster />
+            <CookieConsent />
+          </AuthProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

@@ -22,20 +22,27 @@ import Link from 'next/link';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import { usePathname } from 'next/navigation';
+import { useLocale } from '@/hooks/use-locale';
+import { localizeHref } from '@/lib/i18n/path';
+import { stripLocalePrefix } from '@/i18n/routing';
+import { useTranslations } from 'next-intl';
 
 export function TermsModal() {
     const { user, termsAccepted, acceptTerms, loading } = useAuth();
     const [accepted, setAccepted] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const pathname = usePathname();
-    const isEnglish = pathname?.startsWith("/en");
+    const locale = useLocale();
+    const t = useTranslations('termsModal');
+    const to = (href: string) => localizeHref(href, locale);
+    const normalizedPath = stripLocalePrefix(pathname || '/');
 
     // Don't show if:
     // 1. Loading auth
     // 2. Not logged in
     // 3. Terms already accepted
     // 4. On the landing page (to avoid scaring visitors)
-    if (loading || !user || termsAccepted === true || pathname === '/') return null;
+    if (loading || !user || termsAccepted === true || normalizedPath === '/') return null;
 
     const handleAccept = async () => {
         if (!accepted) return;
@@ -54,34 +61,28 @@ export function TermsModal() {
             <AlertDialogContent className="max-w-md">
                 <AlertDialogHeader>
                     <AlertDialogTitle className="text-2xl font-serif">
-                        {isEnglish ? "Terms Update" : "Mise à jour des conditions"}
+                        {t("title")}
                     </AlertDialogTitle>
                     <AlertDialogDescription className="space-y-4 pt-2 text-base">
-                        <p>
-                            {isEnglish
-                                ? "To continue using Aurum Sanctuary, you must accept our updated terms of use and privacy policy."
-                                : "Pour continuer à utiliser Aurum Sanctuary, tu dois accepter nos conditions d'utilisation et notre politique de confidentialité mises à jour."}
-                        </p>
+                        <p>{t("intro")}</p>
                         <p className="text-sm">
-                            {isEnglish
-                                ? "We updated our encryption protocols and legal notices to better protect your mental health data."
-                                : "Nous avons renforcé nos protocoles de chiffrement et nos mentions légales pour mieux protéger tes données de santé mentale."}
+                            {t("detail")}
                         </p>
 
                         <div className="flex flex-col space-y-2 pt-2">
                             <Link
-                                href="/terms"
+                                href={to('/terms')}
                                 target="_blank"
                                 className="text-primary hover:underline text-sm font-medium"
                             >
-                                {isEnglish ? "Read Terms of Use" : "Lire les conditions d'utilisation"}
+                                {t("readTerms")}
                             </Link>
                             <Link
-                                href="/privacy"
+                                href={to('/privacy')}
                                 target="_blank"
                                 className="text-primary hover:underline text-sm font-medium"
                             >
-                                {isEnglish ? "Read Privacy Policy" : "Lire la politique de confidentialité"}
+                                {t("readPrivacy")}
                             </Link>
                         </div>
 
@@ -95,9 +96,7 @@ export function TermsModal() {
                                 htmlFor="modal-terms"
                                 className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                             >
-                                {isEnglish
-                                    ? "I have read and accept the terms of use and privacy policy."
-                                    : "J'ai lu et j'accepte les conditions d'utilisation et la politique de confidentialité."}
+                                {t("checkbox")}
                             </label>
                         </div>
                     </AlertDialogDescription>
@@ -108,13 +107,7 @@ export function TermsModal() {
                         disabled={!accepted || submitting}
                         onClick={handleAccept}
                     >
-                        {submitting
-                            ? isEnglish
-                                ? "Accepting..."
-                                : "Validation..."
-                            : isEnglish
-                                ? "Accept and continue"
-                                : "Accepter et continuer"}
+                        {submitting ? t("accepting") : t("accept")}
                     </Button>
                 </AlertDialogFooter>
             </AlertDialogContent>

@@ -16,6 +16,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { motion } from 'framer-motion';
 import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
 import { firestore as db } from '@/lib/firebase/web-client';
+import { useLocalizedHref } from '@/hooks/use-localized-href';
 
 export const dynamic = 'force-dynamic';
 
@@ -57,7 +58,7 @@ function AurumExchangePreview({ exchanges }: { exchanges: AurumExchange[] }) {
       <div className="mb-1.5 flex items-center gap-1.5">
         <Flame className="h-3 w-3 text-amber-500" />
         <span className="text-[10px] font-medium uppercase tracking-wider text-amber-600">
-          Aurum reflection
+          Réflexion d&apos;Aurum
         </span>
       </div>
       <p className="line-clamp-2 text-xs leading-relaxed text-stone-600">{latestAurum.text}</p>
@@ -122,6 +123,7 @@ function computeStreak(entries: JournalEntry[]): number {
 }
 
 function SanctuaryPageContent() {
+  const to = useLocalizedHref();
   const { user, loading: authLoading } = useAuth();
   const searchParams = useSearchParams();
   const tag = searchParams.get('tag');
@@ -161,8 +163,8 @@ function SanctuaryPageContent() {
       } catch (error) {
         console.error('Failed to fetch sanctuary data:', error);
         toast({
-          title: 'Error',
-          description: 'Unable to load your journal.',
+          title: 'Erreur',
+          description: 'Impossible de charger votre journal.',
           variant: 'destructive',
         });
         setEntries([]);
@@ -202,10 +204,10 @@ function SanctuaryPageContent() {
         <Alert variant="destructive">
           <ShieldAlert className="h-4 w-4" />
           <AlertTitle>Accès restreint</AlertTitle>
-          <AlertDescription>You must be signed in to view your history.</AlertDescription>
+          <AlertDescription>Vous devez être connecté pour voir votre historique.</AlertDescription>
         </Alert>
         <Button asChild className="mt-6">
-          <Link href="/sanctuary/write">Start writing</Link>
+          <Link href={to('/sanctuary/write')}>Commencer à écrire</Link>
         </Button>
       </div>
     );
@@ -222,22 +224,22 @@ function SanctuaryPageContent() {
             <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-stone-500">
               <span className="inline-flex items-center gap-1.5">
                 <BookOpen className="h-4 w-4" />
-                {totalEntries} entr{totalEntries > 1 ? 'ies' : 'y'}
+                {totalEntries} entrée{totalEntries > 1 ? 's' : ''}
               </span>
               <span className="inline-flex items-center gap-1.5">
                 <CalendarDays className="h-4 w-4" />
-                {thisMonthCount} this month
+                {thisMonthCount} ce mois
               </span>
               {streak > 1 && (
                 <span className="inline-flex items-center gap-1.5">
                   <Flame className="h-4 w-4 text-orange-400" />
-                  {streak} day streak
+                  {streak} jours de suite
                 </span>
               )}
             </div>
           ) : (
             <p className="mt-2 max-w-xl text-stone-500">
-              Your long-term archive of everything you wrote.
+              L&apos;archive de toutes tes pages enregistrées, dans la durée.
             </p>
           )}
           {tags.length > 0 && (
@@ -263,50 +265,50 @@ function SanctuaryPageContent() {
           </motion.div>
         ) : (
           <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
-            {/* Hero area */}
+            {/* Zone héro */}
             <div className="border-b border-stone-100 bg-gradient-to-b from-stone-50 to-white px-10 py-12 text-center">
               <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-50 ring-1 ring-amber-200/70">
                 <BookOpen className="h-7 w-7 text-amber-700" />
               </div>
               <h2 className="text-lg font-semibold text-stone-900">
-                The archive of all your pages
+                L&apos;archive de toutes tes pages
               </h2>
               <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-stone-500">
-                Every page saved from <span className="font-medium text-stone-700">Write</span> appears here over time.
-                Your journal is your complete memory.
+                Chaque page enregistrée depuis <span className="font-medium text-stone-700">Écrire</span> apparaît ici,
+                classée dans la durée. Ton journal, c&apos;est ta mémoire complète.
               </p>
               <p className="mx-auto mt-3 max-w-md text-xs italic text-stone-400">
-                &ldquo;Writing is the beginning of seeing more clearly.&rdquo; - Joan Didion (adapted)
+                &ldquo;Écrire, c&apos;est commencer à y voir plus clair.&rdquo; - Joan Didion (adapté)
               </p>
             </div>
 
-            {/* Pillars */}
+            {/* Piliers */}
             <div className="grid divide-x divide-stone-100 sm:grid-cols-3">
               <div className="flex flex-col items-center p-7 text-center">
                 <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">
                   <CalendarDays className="h-4 w-4 text-stone-600" />
                 </div>
-                <p className="text-sm font-medium text-stone-900">Timeline</p>
+                <p className="text-sm font-medium text-stone-900">Chronologie</p>
                 <p className="mt-1.5 text-xs leading-relaxed text-stone-500">
-                  All your pages in writing order, nothing lost.
+                  Toutes tes pages dans l&apos;ordre où tu les as écrites, sans rien perdre.
                 </p>
               </div>
               <div className="flex flex-col items-center p-7 text-center">
                 <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">
                   <Heart className="h-4 w-4 text-stone-600" />
                 </div>
-                <p className="text-sm font-medium text-stone-900">Filters & moods</p>
+                <p className="text-sm font-medium text-stone-900">Filtres & humeurs</p>
                 <p className="mt-1.5 text-xs leading-relaxed text-stone-500">
-                  Find any page by mood, tag, or period. Your past, navigable.
+                  Retrouve une page par humeur, étiquette ou période. Ton passé, navigable.
                 </p>
               </div>
               <div className="flex flex-col items-center p-7 text-center">
                 <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">
                   <BookOpen className="h-4 w-4 text-stone-600" />
                 </div>
-                <p className="text-sm font-medium text-stone-900">Review</p>
+                <p className="text-sm font-medium text-stone-900">Consultation</p>
                 <p className="mt-1.5 text-xs leading-relaxed text-stone-500">
-                  Re-read, edit, or deepen any entry with Aurum.
+                  Relis, modifie ou approfondit n&apos;importe quelle entrée avec Aurum.
                 </p>
               </div>
             </div>
@@ -317,9 +319,9 @@ function SanctuaryPageContent() {
                 asChild
                 className="bg-stone-900 text-stone-50 hover:bg-stone-800"
               >
-                <Link href="/sanctuary/write">
+                <Link href={to('/sanctuary/write')}>
                   <PenSquare className="mr-2 h-4 w-4" />
-                  Write my first page
+                  Écrire ma première page
                 </Link>
               </Button>
             </div>
@@ -330,7 +332,7 @@ function SanctuaryPageContent() {
         asChild
         className="fixed bottom-20 right-6 h-14 w-14 rounded-full bg-[#C5A059] text-white shadow-lg hover:bg-[#b08d4a] lg:bottom-8 lg:right-8 lg:h-16 lg:w-16"
       >
-        <Link href="/sanctuary/write" aria-label="Write a new entry">
+        <Link href={to('/sanctuary/write')} aria-label="Rédiger une nouvelle entrée">
           <PenSquare className="h-6 w-6" />
         </Link>
       </Button>

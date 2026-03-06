@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { auth, db } from '@/lib/firebase/admin';
-import { Timestamp } from 'firebase-admin/firestore';
 import { logger } from '@/lib/logger/safe';
 
 function stripImageMarkdown(content: string) {
@@ -52,7 +51,7 @@ export async function POST() {
         tags?: string[];
         mood?: string;
         sentiment?: string;
-        createdAt?: Timestamp;
+        createdAt?: Date;
       };
 
       const isEncrypted = Boolean(entry.encryptedContent);
@@ -60,7 +59,7 @@ export async function POST() {
       const title = isEncrypted ? 'Entree privee' : generateTitle(stripImageMarkdown(rawContent));
       const excerpt = isEncrypted ? 'Entree chiffree • Contenu prive' : generateExcerpt(rawContent);
       const coverImageUrl = Array.isArray(entry.images) ? entry.images[0]?.url || null : null;
-      const createdAt = entry.createdAt || Timestamp.now();
+      const createdAt = entry.createdAt || new Date();
 
       const issueRef = db
         .collection('users')
@@ -80,7 +79,7 @@ export async function POST() {
           sentiment: entry.sentiment || null,
           createdAt,
           publishedAt: createdAt,
-          updatedAt: Timestamp.now(),
+          updatedAt: new Date(),
         },
         { merge: true },
       );

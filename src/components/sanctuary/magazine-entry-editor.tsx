@@ -20,6 +20,7 @@ import { useAuth } from "@/providers/auth-provider";
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { firestore as clientDb } from "@/lib/firebase/web-client";
 import { cn } from "@/lib/utils";
+import { useLocalizedHref } from "@/hooks/use-localized-href";
 
 type EntryImage = {
   id: string;
@@ -59,6 +60,7 @@ export function MagazineEntryEditor({
   readOnly,
 }: MagazineEntryEditorProps) {
   const router = useRouter();
+  const to = useLocalizedHref();
   const { user } = useAuth();
   const { toast } = useToast();
   const [content, setContent] = useState(initialContent);
@@ -140,7 +142,7 @@ export function MagazineEntryEditor({
         title: "Entrée supprimée",
         description: "L'entrée a été retirée du journal.",
       });
-      router.push("/sanctuary/magazine");
+      router.push(to("/sanctuary/magazine"));
       router.refresh();
     } finally {
       setIsDeleting(false);

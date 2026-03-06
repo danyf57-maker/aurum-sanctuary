@@ -2,7 +2,6 @@
 "use server";
 
 import { db } from "@/lib/firebase/admin";
-import { Timestamp } from "firebase-admin/firestore";
 
 export type AuditAction = 
     | 'USER_LOGIN_GOOGLE'
@@ -16,7 +15,7 @@ export type AuditAction =
 interface AuditEvent {
     userId: string;
     action: AuditAction;
-    timestamp: Timestamp;
+    timestamp: Date;
     metadata?: Record<string, any>;
 }
 
@@ -29,7 +28,7 @@ export async function logAuditEvent(userId: string, action: AuditAction, metadat
     const log: AuditEvent = {
         userId,
         action,
-        timestamp: Timestamp.now(),
+        timestamp: new Date(),
     };
 
     if (metadata) {

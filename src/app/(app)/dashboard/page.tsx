@@ -13,8 +13,10 @@ import { EntryHeatmap } from "@/components/stats/entry-heatmap";
 import { ClarityScoreCard } from "@/components/dashboard/clarity-score-card";
 import { LastInsightCard } from "@/components/dashboard/last-insight-card";
 import { motion } from "framer-motion";
+import { useLocalizedHref } from "@/hooks/use-localized-href";
 
 export default function DashboardPage() {
+  const to = useLocalizedHref();
   const { user, loading: authLoading } = useAuth();
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -63,10 +65,10 @@ export default function DashboardPage() {
         </div>
         <h1 className="text-2xl font-bold mb-2">Accès restreint</h1>
         <p className="text-stone-500 mb-8 max-w-sm">
-          You must be signed in to access your command center.
+          Vous devez être connecté pour accéder à votre centre de commande.
         </p>
         <Button asChild size="lg">
-          <Link href="/login">Sign in</Link>
+          <Link href={to("/login")}>Se connecter</Link>
         </Button>
       </div>
     );
@@ -86,7 +88,7 @@ export default function DashboardPage() {
             Command Center
           </h1>
           <p className="text-stone-500 font-medium">
-            Glad to see you again,{" "}
+            Heureux de vous revoir,{" "}
             {(user?.displayName ?? "").split(" ")[0] || "Daniel"}.
           </p>
         </motion.div>
@@ -96,9 +98,9 @@ export default function DashboardPage() {
           size="lg"
           className="bg-stone-900 text-stone-50 hover:bg-stone-800 rounded-xl px-8 shadow-xl hover:shadow-2xl transition-all group"
         >
-          <Link href="/sanctuary/write">
+          <Link href={to("/sanctuary/write")}>
             <PenSquare className="h-4 w-4 mr-2" />
-            Open the Forge
+            Ouvrir la Forge
             <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
           </Link>
         </Button>
@@ -127,9 +129,9 @@ export default function DashboardPage() {
             ) : (
               <div className="h-full rounded-2xl border-2 border-dashed border-stone-200 flex flex-col items-center justify-center p-8 text-center bg-stone-50">
                 <Eye className="h-8 w-8 text-stone-300 mb-4" />
-                <h3 className="font-bold text-stone-400">No Echo Yet</h3>
+                <h3 className="font-bold text-stone-400">Aucun Écho</h3>
                 <p className="text-sm text-stone-400 mt-1 max-w-[200px]">
-                  Write to receive your first Aurum reflection.
+                  Écrivez pour recevoir un reflet d'Aurum.
                 </p>
               </div>
             )}
@@ -155,13 +157,13 @@ export default function DashboardPage() {
         >
           <div className="flex items-center justify-between mb-6">
             <h3 className="font-bold text-sm uppercase tracking-widest text-stone-500">
-              Introspection frequency
+              Fréquence d'introspection
             </h3>
             <Link
-              href="/insights"
+              href={to("/insights")}
               className="text-xs font-bold text-amber-600 hover:underline"
             >
-              View full insights
+              Voir les analyses complètes
             </Link>
           </div>
           <EntryHeatmap entries={entries} />
