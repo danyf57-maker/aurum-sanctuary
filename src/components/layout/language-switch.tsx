@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useLocale } from "@/hooks/use-locale";
 import { LOCALE_COOKIE_NAME, type Locale } from "@/lib/locale";
@@ -25,7 +25,6 @@ function setLocaleCookie(locale: Locale) {
 }
 
 export function LanguageSwitch({ className, compact = false }: LanguageSwitchProps) {
-  const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const locale = useLocale();
@@ -33,12 +32,11 @@ export function LanguageSwitch({ className, compact = false }: LanguageSwitchPro
   const handleSwitch = (nextLocale: Locale) => {
     if (nextLocale === locale) return;
     setLocaleCookie(nextLocale);
-    document.documentElement.lang = nextLocale;
 
     const normalizedPath = stripLocalePrefix(pathname || "/");
     const targetPath = toLocalePath(normalizedPath, nextLocale);
     const query = searchParams.toString();
-    router.push(query ? `${targetPath}?${query}` : targetPath);
+    window.location.href = query ? `${targetPath}?${query}` : targetPath;
   };
 
   return (
