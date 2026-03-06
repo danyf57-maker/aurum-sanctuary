@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { Loader2, Activity } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import {
   RadarChart,
   Radar,
@@ -13,6 +14,7 @@ import {
   Legend,
 } from 'recharts';
 import type { RyffDimensionScores } from '@/lib/types';
+import { useLocale } from '@/hooks/use-locale';
 
 type WellbeingRadarProps = {
   aiScores: RyffDimensionScores | null;
@@ -25,105 +27,23 @@ type WellbeingRadarProps = {
   canAnalyze: boolean;
 };
 
-const DIMENSION_LABELS: Record<keyof RyffDimensionScores, string> = {
-  acceptationDeSoi: 'Acceptation de soi',
-  developpementPersonnel: 'Développement',
-  sensDeLaVie: 'Sens de la vie',
-  maitriseEnvironnement: 'Maîtrise',
-  autonomie: 'Autonomie',
-  relationsPositives: 'Relations',
-};
-
-const DIMENSION_FULL_LABELS: Record<keyof RyffDimensionScores, string> = {
-  acceptationDeSoi: 'Acceptation de soi',
-  developpementPersonnel: 'Développement personnel',
-  sensDeLaVie: 'Sens de la vie',
-  maitriseEnvironnement: "Maîtrise de l'environnement",
-  autonomie: 'Autonomie',
-  relationsPositives: 'Relations positives',
-};
-
-const DIMENSION_KEYS = Object.keys(DIMENSION_LABELS) as (keyof RyffDimensionScores)[];
-
-const DIMENSION_HINTS: Record<keyof RyffDimensionScores, string> = {
-  acceptationDeSoi: "Parle-toi comme à un ami proche: juste, pas dur.",
-  developpementPersonnel: "Choisis un mini-apprentissage concret pour cette semaine.",
-  sensDeLaVie: "Note une action qui te rapproche de ce qui compte pour toi.",
-  maitriseEnvironnement: "Découpe ta journée en un seul objectif prioritaire.",
-  autonomie: "Prends une décision simple qui te ressemble vraiment.",
-  relationsPositives: "Envoie un message sincère à une personne ressource.",
-};
-
-const WRITING_BENEFITS: Record<keyof RyffDimensionScores, string> = {
-  acceptationDeSoi:
-    "Écrire régulièrement apaise l'autocritique et t'aide à retrouver une voix intérieure plus juste.",
-  developpementPersonnel:
-    "Écrire fixe tes apprentissages, ce qui accélère ta progression et évite l'impression de stagner.",
-  sensDeLaVie:
-    "Écrire relie tes actions à tes valeurs: tu avances avec plus de direction et moins de flou.",
-  maitriseEnvironnement:
-    "Écrire transforme le chaos mental en priorités concrètes: tu récupères du contrôle sur ta journée.",
-  autonomie:
-    "Écrire te recentre sur ce que tu choisis vraiment, au lieu de suivre la pression extérieure.",
-  relationsPositives:
-    "Écrire clarifie tes besoins relationnels et rend tes échanges plus calmes et plus vrais.",
-};
-
-const JOURNAL_STARTERS: Record<keyof RyffDimensionScores, string> = {
-  acceptationDeSoi:
-    "Aujourd'hui, une chose que j'ai bien faite (même petite), c'est...",
-  developpementPersonnel:
-    "Cette semaine, ce que j'ai appris sur moi et que je veux garder, c'est...",
-  sensDeLaVie:
-    "Ce qui compte vraiment pour moi maintenant, et l'action qui suit, c'est...",
-  maitriseEnvironnement:
-    "Pour reprendre la main aujourd'hui, ma priorité unique est...",
-  autonomie:
-    "La décision que je prends pour moi aujourd'hui, sans me trahir, c'est...",
-  relationsPositives:
-    "La relation que je veux nourrir cette semaine, et comment je m'y prends, c'est...",
-};
-
-const DIMENSION_3DAY_PLANS: Record<keyof RyffDimensionScores, string[]> = {
-  acceptationDeSoi: [
-    "Jour 1: note une qualité réelle que tu as utilisée aujourd'hui.",
-    "Jour 2: transforme une autocritique en phrase plus juste.",
-    "Jour 3: écris une preuve concrète de progression récente.",
-  ],
-  developpementPersonnel: [
-    "Jour 1: choisis un mini-apprentissage de 10 minutes.",
-    "Jour 2: applique-le dans une situation réelle.",
-    "Jour 3: note ce que cela change dans ta semaine.",
-  ],
-  sensDeLaVie: [
-    "Jour 1: écris ce qui compte le plus pour toi en ce moment.",
-    "Jour 2: choisis une action alignée avec cette priorité.",
-    "Jour 3: fais le bilan de ce que tu as ressenti.",
-  ],
-  maitriseEnvironnement: [
-    "Jour 1: définis une priorité unique pour demain.",
-    "Jour 2: protège un créneau sans distractions.",
-    "Jour 3: supprime une friction qui te freine chaque jour.",
-  ],
-  autonomie: [
-    "Jour 1: prends une décision courte selon ton propre critère.",
-    "Jour 2: refuse une demande non prioritaire avec clarté.",
-    "Jour 3: note ce que ce choix t'a apporté.",
-  ],
-  relationsPositives: [
-    "Jour 1: envoie un message de gratitude à une personne clé.",
-    "Jour 2: pose une question sincère à quelqu'un de proche.",
-    "Jour 3: écris ce que cette relation t'apporte vraiment.",
-  ],
-};
+const DIMENSION_KEYS: (keyof RyffDimensionScores)[] = [
+  'acceptationDeSoi',
+  'developpementPersonnel',
+  'sensDeLaVie',
+  'maitriseEnvironnement',
+  'autonomie',
+  'relationsPositives',
+];
 const ACTIVE_PLAN_STORAGE_KEY = "aurum-active-plan";
 
 function buildChartData(
   aiScores: RyffDimensionScores | null,
-  questionnaireScores: RyffDimensionScores | null
+  questionnaireScores: RyffDimensionScores | null,
+  labels: Record<keyof RyffDimensionScores, string>
 ) {
   return DIMENSION_KEYS.map((key) => ({
-    dimension: DIMENSION_LABELS[key],
+    dimension: labels[key],
     ai: aiScores?.[key] ?? 0,
     questionnaire: questionnaireScores?.[key] ?? 0,
   }));
@@ -139,8 +59,18 @@ export function WellbeingRadar({
   onOpenQuestionnaire,
   canAnalyze,
 }: WellbeingRadarProps) {
+  const locale = useLocale();
+  const isFr = locale === 'fr';
+  const t = useTranslations('sanctuary.wellbeingRadar');
+  const labels = t.raw('labels') as Record<keyof RyffDimensionScores, string>;
+  const fullLabels = t.raw('fullLabels') as Record<keyof RyffDimensionScores, string>;
+  const hints = t.raw('hints') as Record<keyof RyffDimensionScores, string>;
+  const writingBenefits = t.raw('writingBenefits') as Record<keyof RyffDimensionScores, string>;
+  const starters = t.raw('starters') as Record<keyof RyffDimensionScores, string>;
+  const plans = t.raw('plans') as Record<keyof RyffDimensionScores, string[]>;
+
   const hasAny = aiScores || questionnaireScores;
-  const data = buildChartData(aiScores, questionnaireScores);
+  const data = buildChartData(aiScores, questionnaireScores, labels);
   const activeScores = aiScores ?? questionnaireScores;
   const sortedDimensions = activeScores
     ? (Object.entries(activeScores) as [keyof RyffDimensionScores, number][]).sort(
@@ -152,19 +82,19 @@ export function WellbeingRadar({
   const journalHref =
     growthDimension != null
       ? `/sanctuary/write?initial=${encodeURIComponent(
-          `Plan express 3 jours\n${DIMENSION_3DAY_PLANS[growthDimension][0]}\n\nCe que je ressens maintenant:`
+          `${t('planTitle')}\n${plans[growthDimension][0]}\n\n${t('actionPrompt')}`
         )}`
       : '/sanctuary/write';
 
   const handleApplyPlan = () => {
     if (typeof window === "undefined" || !growthDimension) return;
-    const steps = DIMENSION_3DAY_PLANS[growthDimension];
+    const steps = plans[growthDimension];
     localStorage.setItem(
       ACTIVE_PLAN_STORAGE_KEY,
       JSON.stringify({
         version: 1,
         source: "wellbeing",
-        title: "Plan express 3 jours",
+        title: t('planTitle'),
         steps,
         currentStep: 0,
         createdAt: new Date().toISOString(),
@@ -181,10 +111,12 @@ export function WellbeingRadar({
             <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#C5A059]/10">
               <Activity className="h-3.5 w-3.5 text-[#C5A059]" />
             </div>
-            <h2 className="font-headline text-xl text-stone-900">Bien-être psychologique</h2>
+            <h2 className="font-headline text-xl text-stone-900">
+              {t('title')}
+            </h2>
           </div>
           <p className="mt-1 text-xs text-stone-500">
-            Comprends vite ce qui te fatigue, ce qui te porte et où retrouver de l&apos;élan.
+            {t('subtitle')}
           </p>
         </div>
         <div className="flex gap-2">
@@ -194,14 +126,14 @@ export function WellbeingRadar({
             disabled={isLoading || !canAnalyze}
             className="rounded-xl border border-stone-300 bg-stone-50 px-3 py-1.5 text-xs text-stone-700 transition-colors hover:border-[#C5A059] disabled:opacity-50"
           >
-            {isLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : 'Analyser mes pages'}
+            {isLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : t('analyzePages')}
           </button>
           <button
             type="button"
             onClick={onOpenQuestionnaire}
             className="rounded-xl border border-[#C5A059]/50 bg-[#C5A059]/10 px-3 py-1.5 text-xs text-[#7A5D24] transition-colors hover:bg-[#C5A059]/20"
           >
-            Parcours guidé
+            {t('guidedPath')}
           </button>
         </div>
       </div>
@@ -211,17 +143,17 @@ export function WellbeingRadar({
         <div className="mt-6 rounded-xl border border-dashed border-stone-300 bg-stone-50/70 p-6 text-center">
           <Activity className="mx-auto h-8 w-8 text-stone-400" />
           <div className="mt-3 inline-flex rounded-full bg-amber-100 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-amber-800">
-            Recommandé pour commencer
+            {t('recommended')}
           </div>
           <p className="mt-3 text-sm text-stone-600">
-            Option rapide: réponds au parcours guidé en 2 minutes.
+            {t('emptyQuickOption')}
           </p>
           <p className="mt-1 text-xs text-stone-500">
-            Tu obtiens une lecture claire de ton niveau d&apos;énergie, de calme et d&apos;équilibre.
+            {t('emptyOutcome')}
           </p>
           {!canAnalyze && (
             <p className="mt-1 text-xs text-stone-400">
-              Pour l&apos;analyse automatique de tes pages, il faut au moins 5 entrées non chiffrées.
+              {t('emptyAnalyzeRequirement')}
             </p>
           )}
         </div>
@@ -231,7 +163,9 @@ export function WellbeingRadar({
       {isLoading && !hasAny && (
         <div className="mt-6 flex items-center justify-center py-12">
           <Loader2 className="h-6 w-6 animate-spin text-[#C5A059]" />
-          <span className="ml-3 text-sm text-stone-500">Analyse en cours...</span>
+          <span className="ml-3 text-sm text-stone-500">
+            {t('analysisInProgress')}
+          </span>
         </div>
       )}
 
@@ -253,7 +187,7 @@ export function WellbeingRadar({
               />
               {aiScores && (
                 <Radar
-                  name="Analyse"
+                  name={t('analysisLegend')}
                   dataKey="ai"
                   stroke="#C5A059"
                   fill="#C5A059"
@@ -263,7 +197,7 @@ export function WellbeingRadar({
               )}
               {questionnaireScores && (
                 <Radar
-                  name="Questionnaire"
+                  name={t('questionnaireLegend')}
                   dataKey="questionnaire"
                   stroke="#78716C"
                   fill="transparent"
@@ -286,43 +220,51 @@ export function WellbeingRadar({
           {/* Narrative */}
           {(narrative || (strongestDimension && growthDimension)) && (
             <div className="mt-2 rounded-2xl border border-[#C5A059]/20 bg-[#C5A059]/5 px-4 py-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#7A5D24]">
-                Lecture Aurum premium
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#7A5D24]">
+                {t('premiumReading')}
               </p>
               {narrative && (
                 <p className="mt-2 text-sm leading-relaxed text-stone-700">{narrative}</p>
               )}
               {strongestDimension && (
                 <p className="mt-2 text-xs text-stone-600">
-                  <span className="font-medium text-stone-700">Point fort actuel:</span>{" "}
-                  {DIMENSION_FULL_LABELS[strongestDimension]}.
+                  <span className="font-medium text-stone-700">
+                    {t('currentStrength')}
+                  </span>{" "}
+                  {fullLabels[strongestDimension]}.
                 </p>
               )}
               {growthDimension && (
                 <p className="mt-1 text-xs text-stone-600">
-                  <span className="font-medium text-stone-700">Micro-action conseillée:</span>{" "}
-                  {DIMENSION_HINTS[growthDimension]}
+                  <span className="font-medium text-stone-700">
+                    {t('suggestedMicroAction')}
+                  </span>{" "}
+                  {hints[growthDimension]}
                 </p>
               )}
               {growthDimension && (
                 <div className="mt-2 rounded-xl border border-stone-200 bg-white/70 px-3 py-2">
                   <p className="text-xs text-stone-700">
-                    <span className="font-medium">Pourquoi écrire maintenant:</span>{" "}
-                    {WRITING_BENEFITS[growthDimension]}
+                    <span className="font-medium">
+                      {t('whyWriteNow')}
+                    </span>{" "}
+                    {writingBenefits[growthDimension]}
                   </p>
                   <p className="mt-1 text-xs text-stone-600">
-                    <span className="font-medium">Première phrase utile:</span>{" "}
-                    {JOURNAL_STARTERS[growthDimension]}
+                    <span className="font-medium">
+                      {t('helpfulFirstSentence')}
+                    </span>{" "}
+                    {starters[growthDimension]}
                   </p>
                 </div>
               )}
               {growthDimension && (
                 <div className="mt-3 rounded-xl border border-[#C5A059]/20 bg-white/70 px-3 py-3">
                   <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#7A5D24]/90">
-                    Plan express 3 jours
+                    {t('planTitle')}
                   </p>
                   <ul className="mt-2 space-y-1 text-xs text-stone-700">
-                    {DIMENSION_3DAY_PLANS[growthDimension].map((step) => (
+                    {plans[growthDimension].map((step) => (
                       <li key={step}>{step}</li>
                     ))}
                   </ul>
@@ -331,7 +273,7 @@ export function WellbeingRadar({
                     onClick={handleApplyPlan}
                     className="mt-3 inline-flex rounded-lg bg-[#C5A059] px-3 py-1.5 text-xs font-medium text-stone-900 transition-colors hover:bg-[#b8924e]"
                   >
-                    Appliquer ce plan dans mon journal
+                    {t('applyPlan')}
                   </Link>
                 </div>
               )}
@@ -345,7 +287,7 @@ export function WellbeingRadar({
               return (
                 <div key={key} className="flex items-center gap-3">
                   <span className="w-40 truncate text-xs text-stone-600">
-                    {DIMENSION_FULL_LABELS[key]}
+                    {fullLabels[key]}
                   </span>
                   <div className="flex-1 h-1.5 rounded-full bg-stone-100">
                     <div
@@ -364,8 +306,8 @@ export function WellbeingRadar({
           {/* Footer */}
           {computedAt && (
             <p className="mt-4 text-[10px] text-stone-400">
-              Dernière analyse :{' '}
-              {computedAt.toLocaleDateString('fr-FR', {
+              {t('lastAnalysis')}{' '}
+              {computedAt.toLocaleDateString(isFr ? 'fr-FR' : 'en-US', {
                 day: 'numeric',
                 month: 'long',
                 year: 'numeric',

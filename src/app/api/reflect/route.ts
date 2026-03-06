@@ -10,7 +10,6 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { auth, db } from '@/lib/firebase/admin';
-import { Timestamp } from 'firebase-admin/firestore';
 import { logger } from '@/lib/logger/safe';
 import { getUserPatterns, batchUpdatePatterns, cleanupStalePatterns } from '@/lib/patterns/storage';
 import { detectPatterns, detectionToStorageFormat } from '@/lib/patterns/detect';
@@ -376,7 +375,7 @@ export async function POST(request: NextRequest) {
             conversationRef.add({
               role: 'user',
               text: userMessage.trim(),
-              createdAt: Timestamp.now(),
+              createdAt: new Date(),
               intent,
               skillId,
             }).catch(() => {});
@@ -385,7 +384,7 @@ export async function POST(request: NextRequest) {
           conversationRef.add({
             role: 'aurum',
             text: fullText,
-            createdAt: Timestamp.now(),
+            createdAt: new Date(),
             intent,
             skillId,
           }).catch(() => {});

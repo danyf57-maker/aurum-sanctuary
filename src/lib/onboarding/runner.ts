@@ -1,6 +1,5 @@
 import "server-only";
 
-import { Timestamp } from "firebase-admin/firestore";
 import { db } from "@/lib/firebase/admin";
 import { trackServerEvent } from "@/lib/analytics/server";
 import { renderOnboardingEmail } from "@/lib/onboarding/templates";
@@ -166,7 +165,7 @@ export async function runOnboardingSequence() {
       await outboxRef.create({
         emailId: nextEmail,
         status: "sending",
-        createdAt: Timestamp.now(),
+        createdAt: new Date(),
       });
     } catch (lockError: any) {
       const code = String(lockError?.code || "");
@@ -208,8 +207,8 @@ export async function runOnboardingSequence() {
       await outboxRef.set(
         {
           status: "sent",
-          sentAt: Timestamp.now(),
-          updatedAt: Timestamp.now(),
+          sentAt: new Date(),
+          updatedAt: new Date(),
         },
         { merge: true }
       );
@@ -241,7 +240,7 @@ export async function runOnboardingSequence() {
   }
 
   await db.collection("onboardingJobs").add({
-    createdAt: Timestamp.now(),
+    createdAt: new Date(),
     scannedUsers: usersSnap.size,
     sentCount,
     skippedCount: skipped,

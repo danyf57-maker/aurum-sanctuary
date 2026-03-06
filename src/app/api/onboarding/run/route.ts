@@ -4,6 +4,7 @@ import { runOnboardingSequence } from "@/lib/onboarding/runner";
 import { isAdminEmail, auth } from "@/lib/firebase/admin";
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
   try {
@@ -37,4 +38,3 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ message: "Run failed", error: message }, { status: 500 });
   }
 }
-

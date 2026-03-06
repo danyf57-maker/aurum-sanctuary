@@ -19,6 +19,7 @@ import {
 } from 'firebase/auth';
 import { auth } from './web-client';
 import { logger } from '@/lib/logger/safe';
+import { normalizeLocale } from '@/lib/locale';
 
 function resolveAppUrl(): string {
   const fallbackOrigin = window.location.origin;
@@ -49,6 +50,26 @@ function resolveAppUrl(): string {
   }
 }
 
+function readClientLocale(): "fr" | "en" {
+  if (typeof document === "undefined") return "en";
+  const match = document.cookie
+    .split(";")
+    .map((part) => part.trim())
+    .find((part) => part.startsWith("aurum-locale="));
+  const value = match?.split("=")[1] ?? "";
+  return normalizeLocale(decodeURIComponent(value)) ?? "en";
+}
+
+function getEmailActionSettings() {
+  const locale = readClientLocale();
+  const appUrl = resolveAppUrl();
+  return {
+    locale,
+    verificationUrl: `${appUrl}/auth/action?lang=${locale}`,
+    resetUrl: `${appUrl}/login?lang=${locale}`,
+  };
+}
+
 /**
  * Hook to get current authenticated user
  * 
@@ -76,13 +97,17 @@ export function useAuth() {
 export async function signInWithGoogle() {
   const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
   if (!googleClientId) {
+    const locale = readClientLocale();
     const message =
-      "NEXT_PUBLIC_GOOGLE_CLIENT_ID est manquant. Ajoutez-le pour activer la connexion Google.";
+      locale === "fr"
+        ? "NEXT_PUBLIC_GOOGLE_CLIENT_ID est manquant. Ajoutez-le pour activer la connexion Google."
+        : "NEXT_PUBLIC_GOOGLE_CLIENT_ID is missing. Add it to enable Google sign-in.";
     logger.warnSafe(message);
     return { user: null, error: message };
   }
   const provider = new GoogleAuthProvider();
   try {
+    auth.languageCode = readClientLocale();
     const result = await signInWithPopup(auth, provider);
     return { user: result.user, error: null };
   } catch (error: any) {
@@ -95,10 +120,12 @@ export async function signInWithGoogle() {
  */
 export async function signInWithEmail(email: string, password: string) {
   try {
+    const settings = getEmailActionSettings();
+    auth.languageCode = settings.locale;
     const result = await signInWithEmailAndPassword(auth, email, password);
     if (!result.user.emailVerified) {
       await sendEmailVerification(result.user, {
-        url: `${resolveAppUrl()}/auth/action`,
+        url: settings.verificationUrl,
         handleCodeInApp: false,
       });
       await firebaseSignOut(auth);
@@ -127,7 +154,12 @@ export async function signOut() {
  */
 export async function resetPassword(email: string) {
   try {
-    await sendPasswordResetEmail(auth, email);
+    const settings = getEmailActionSettings();
+    auth.languageCode = settings.locale;
+    await sendPasswordResetEmail(auth, email, {
+      url: settings.resetUrl,
+      handleCodeInApp: false,
+    });
     return { error: null };
   } catch (error: any) {
     return { error: error.message };

@@ -2,20 +2,16 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
-
-const STEPS = [
-  'Analyse Tonale',
-  'Détection de Biais',
-  'Extraction de Patterns',
-  'Synthèse du Reflet',
-];
 
 interface ReflectionPulseProps {
   className?: string;
 }
 
 export function ReflectionPulse({ className }: ReflectionPulseProps) {
+  const t = useTranslations('sanctuary.reflectionPulse');
+  const steps = [t('steps.toneAnalysis'), t('steps.biasDetection'), t('steps.patternExtraction'), t('steps.reflectionSynthesis')];
   const [activeStep, setActiveStep] = useState(0);
 
   useEffect(() => {
@@ -28,7 +24,7 @@ export function ReflectionPulse({ className }: ReflectionPulseProps) {
 
   return (
     <div className={cn('flex items-center justify-center gap-1', className)}>
-      {STEPS.map((label, index) => {
+      {steps.map((label, index) => {
         const isCompleted = index < activeStep;
         const isActive = index === activeStep;
 

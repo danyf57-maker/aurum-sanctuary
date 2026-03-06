@@ -2,18 +2,20 @@
 
 import { useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { useLocalizedHref } from "@/hooks/use-localized-href";
 
 export default function EntryRedirectPage() {
   const params = useParams<{ entryId: string }>();
   const router = useRouter();
+  const to = useLocalizedHref();
   const entryId = params?.entryId || "";
 
   useEffect(() => {
     if (entryId) {
       // Redirect to the magazine entry page
-      router.replace(`/sanctuary/magazine/${entryId}`);
+      router.replace(to(`/sanctuary/magazine/${entryId}`));
     }
-  }, [entryId, router]);
+  }, [entryId, router, to]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#FDFBF7]">

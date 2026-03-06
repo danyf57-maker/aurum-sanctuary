@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { LanguageSwitch } from "@/components/layout/language-switch";
 
 const HeroIntegrated = () => {
   const placeholders = useMemo(
@@ -22,15 +23,45 @@ const HeroIntegrated = () => {
         author: "Jules Renard",
       },
       {
-        hint: "Un espace chiffré où tu peux tout déposer, sans filtre.",
-        detail: "Tu restes le seul à lire ce que tu écris.",
-        quote: "Le papier est plus patient que les hommes.",
-        author: "Anne Frank",
+        hint: "Quand tu rumines, écris ce qui tourne en boucle.",
+        detail: "Mettre les mots dehors aide ton mental à ralentir.",
+        quote: "J'écris pour découvrir ce que je pense.",
+        author: "Joan Didion",
       },
       {
-        hint: "L'écriture, c'est le bouton pause de ton mental.",
-        detail: "Même quelques lignes peuvent déjà t'apaiser.",
-        quote: "J'écris pour savoir ce que je pense.",
+        hint: "Si tu portes trop, dépose tout ici, ligne après ligne.",
+        detail: "Tu n'as pas besoin d'écrire parfaitement, juste d'écrire vrai.",
+        quote: "Il n'y a pas de plus grande agonie que de porter une histoire non racontée en soi.",
+        author: "Maya Angelou",
+      },
+      {
+        hint: "Quand tu doutes de toi, reviens aux faits et à ton ressenti.",
+        detail: "Quelques lignes peuvent te redonner un point d'appui.",
+        quote: "Un mot après l'autre, c'est le pouvoir.",
+        author: "Margaret Atwood",
+      },
+      {
+        hint: "Quand la charge mentale monte, ce cadre devient ton sas.",
+        detail: "Tu peux poser tes priorités et retrouver de l'air.",
+        quote: "Nous écrivons pour goûter la vie deux fois.",
+        author: "Anaïs Nin",
+      },
+      {
+        hint: "Après une journée lourde, vide ta tête avant la nuit.",
+        detail: "Même 2 minutes d'écriture peuvent changer ton état.",
+        quote: "Écrire est une forme de thérapie.",
+        author: "Graham Greene",
+      },
+      {
+        hint: "Quand tout est flou, une phrase claire suffit pour repartir.",
+        detail: "Commence petit: un fait, une émotion, un besoin.",
+        quote: "Écrire, c'est une façon de parler sans être interrompu.",
+        author: "Jules Renard",
+      },
+      {
+        hint: "Quand ton esprit accélère, ralentis avec des mots simples.",
+        detail: "Ici, tu peux déposer sans te juger.",
+        quote: "J'écris pour découvrir ce que je pense.",
         author: "Joan Didion",
       },
     ],
@@ -46,6 +77,7 @@ const HeroIntegrated = () => {
     thought.trim().length > 0
       ? `/sanctuary/write?initial=${encodeURIComponent(thought)}`
       : "/sanctuary/write";
+  const signupHref = "/signup";
 
   useEffect(() => {
     const current = placeholders[placeholderIndex];
@@ -79,16 +111,19 @@ const HeroIntegrated = () => {
   return (
     <section className="bg-stone-50 py-24 md:py-32">
       <div className="container">
+        <div className="mb-6 flex justify-end">
+          <LanguageSwitch compact />
+        </div>
         <div className="mx-auto flex max-w-4xl flex-col items-center gap-10 text-center">
           <div className="space-y-4">
             <p className="font-body text-xs uppercase tracking-[0.35em] text-[#D4AF37] font-semibold">
               INSTANT DE SÉRÉNITÉ
             </p>
             <h1 className="font-headline text-4xl md:text-6xl text-stone-900">
-              Votre esprit est plein. Allégez-le ici.
+              Ton esprit est plein. Allège-le ici.
             </h1>
             <p className="font-body text-lg md:text-xl text-stone-600">
-              Un sanctuaire secret pour transformer votre chaos intérieur en une clarté immédiate.
+              Ton journal intime privé pour transformer ton chaos intérieur en clarté.
             </p>
           </div>
 
@@ -124,12 +159,15 @@ const HeroIntegrated = () => {
                 size="lg"
                 className="h-12 md:h-14 px-8 rounded-xl bg-[#D4AF37] text-stone-900 hover:bg-[#D4AF37]/90"
               >
-                <Link href={writeHref}>
-                  Entrer dans le Sanctuaire
+                <Link href={signupHref}>
+                  Créer mon compte gratuitement
                 </Link>
               </Button>
+              <Link href={writeHref} className="font-body text-sm text-stone-600 hover:text-stone-900 transition-colors">
+                Écrire d&apos;abord sans engagement
+              </Link>
               <span className="font-body text-xs uppercase tracking-[0.2em] text-stone-500">
-                100% Chiffré • Anonyme • Votre jardin privé.
+                100% Chiffré • Anonyme • Ton jardin privé.
               </span>
             </div>
           </div>

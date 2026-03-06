@@ -4,13 +4,17 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { db, auth, isAdminEmail } from "@/lib/firebase/admin";
-import { Timestamp } from "firebase-admin/firestore";
 import slugify from "slugify";
 import { generateInsights } from "@/lib/ai/deepseek";
 import { getEntries as getEntriesForUser } from "@/lib/firebase/firestore";
 import { getAuthedUserId } from "@/app/actions/auth";
 import { logger } from "@/lib/logger/safe";
 import { trackServerEvent } from "@/lib/analytics/server";
+import { getRequestLocale } from "@/lib/locale-server";
+import type { Locale } from "@/lib/locale";
+
+const txt = (locale: Locale, fr: string, en: string) =>
+  locale === "fr" ? fr : en;
 
 const requiredString = (message: string) =>
   z.preprocess(
@@ -32,25 +36,32 @@ const journalImageSchema = z.object({
   name: z.string().min(1),
 });
 
-// Schema for encrypted mode (AES-256-GCM)
-const formSchema = z.object({
-  // Encrypted fields
-  encryptedContent: optionalString(),
-  iv: optionalString(),
-  version: optionalString(), // Encryption version for future migration
-  // Plaintext field (optional - legacy compatibility)
-  content: optionalString(),
-  idToken: optionalString(),
-  images: optionalString(),
-  tags: optionalString(),
-  publishAsPost: z.boolean(),
-  sentiment: optionalString(),
-  mood: optionalString(),
-  insight: optionalString(),
-}).refine(
-  (data) => data.encryptedContent || data.content,
-  { message: "Contenu (chiffré ou plaintext) requis.", path: ["content"] }
-);
+function buildFormSchema(locale: Locale) {
+  return z
+    .object({
+      // Encrypted fields
+      encryptedContent: optionalString(),
+      iv: optionalString(),
+      version: optionalString(), // Encryption version for future migration
+      // Plaintext field (optional - legacy compatibility)
+      content: optionalString(),
+      idToken: optionalString(),
+      images: optionalString(),
+      tags: optionalString(),
+      publishAsPost: z.boolean(),
+      sentiment: optionalString(),
+      mood: optionalString(),
+      insight: optionalString(),
+    })
+    .refine((data) => data.encryptedContent || data.content, {
+      message: txt(
+        locale,
+        "Contenu (chiffré ou texte) requis.",
+        "Content (encrypted or plaintext) is required."
+      ),
+      path: ["content"],
+    });
+}
 
 export type FormState = {
   message?: string;
@@ -120,7 +131,7 @@ async function addEntryOnServer(entryData: {
   sentiment?: string;
   mood?: string;
   insight?: string;
-}, publishAsPost: boolean, userEmail: string) {
+}, publishAsPost: boolean, userEmail: string, locale: Locale) {
   try {
     // Extract userId for routing, but don't store it in the document
     const { userId, ...dataToStore } = entryData;
@@ -133,8 +144,8 @@ async function addEntryOnServer(entryData: {
           version: dataToStore.version || '1', // Default to version 1
           images: dataToStore.images || [],
           tags: dataToStore.tags,
-          createdAt: Timestamp.fromDate(entryData.createdAt),
-          updatedAt: Timestamp.fromDate(entryData.createdAt),
+          createdAt: entryData.createdAt,
+          updatedAt: entryData.createdAt,
           sentiment: dataToStore.sentiment,
           mood: dataToStore.mood,
           insight: dataToStore.insight,
@@ -143,8 +154,8 @@ async function addEntryOnServer(entryData: {
           content: dataToStore.content!, // PLAINTEXT (legacy)
           images: dataToStore.images || [],
           tags: dataToStore.tags,
-          createdAt: Timestamp.fromDate(entryData.createdAt),
-          updatedAt: Timestamp.fromDate(entryData.createdAt),
+          createdAt: entryData.createdAt,
+          updatedAt: entryData.createdAt,
           sentiment: dataToStore.sentiment,
           mood: dataToStore.mood,
           insight: dataToStore.insight,
@@ -160,7 +171,13 @@ async function addEntryOnServer(entryData: {
     // If "publish" is checked and the user is Alma, save to publicPosts as well
     if (publishAsPost && isAdminEmail(userEmail)) {
       if (!entryData.content) {
-        throw new Error("Contenu manquant pour la publication publique.");
+        throw new Error(
+          txt(
+            locale,
+            "Contenu manquant pour la publication publique.",
+            "Missing content for public post publishing."
+          )
+        );
       }
       const title = generateTitle(entryData.content);
       const slug = createSlug(title);
@@ -171,7 +188,7 @@ async function addEntryOnServer(entryData: {
         content: entryData.content,
         tags: entryData.tags,
         slug: slug,
-        publishedAt: Timestamp.fromDate(entryData.createdAt),
+        publishedAt: entryData.createdAt,
         isPublic: true,
       });
     }
@@ -187,6 +204,8 @@ export async function saveJournalEntry(
   prevState: FormState,
   formData: FormData
 ): Promise<FormState> {
+  const locale = await getRequestLocale();
+  const formSchema = buildFormSchema(locale);
   const validatedFields = formSchema.safeParse({
     encryptedContent: formData.get("encryptedContent"),
     iv: formData.get("iv"),
@@ -204,7 +223,7 @@ export async function saveJournalEntry(
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
-      message: "La validation a échoué.",
+      message: txt(locale, "La validation a échoué.", "Validation failed."),
     };
   }
 
@@ -216,8 +235,12 @@ export async function saveJournalEntry(
       parsedImages = z.array(journalImageSchema).parse(maybeImages);
     } catch {
       return {
-        errors: { images: ["Format d'images invalide."] },
-        message: "La validation a échoué.",
+        errors: {
+          images: [
+            txt(locale, "Format d'images invalide.", "Invalid images format."),
+          ],
+        },
+        message: txt(locale, "La validation a échoué.", "Validation failed."),
       };
     }
   }
@@ -234,7 +257,11 @@ export async function saveJournalEntry(
   }
   if (!userId) {
     return {
-      message: "Utilisateur non authentifié. Veuillez vous reconnecter.",
+      message: txt(
+        locale,
+        "Utilisateur non authentifié. Veuillez vous reconnecter.",
+        "Unauthenticated user. Please sign in again."
+      ),
     };
   }
   let isFirstEntry = false;
@@ -264,13 +291,19 @@ export async function saveJournalEntry(
       sentiment,
       mood,
       insight,
-    }, publishAsPost, userEmail);
+    }, publishAsPost, userEmail, locale);
 
     if (entryResult.error) {
       throw new Error(entryResult.error);
     }
     if (!entryResult.id) {
-      throw new Error("ID d'entrée manquant après sauvegarde.");
+      throw new Error(
+        txt(
+          locale,
+          "ID d'entrée manquant après sauvegarde.",
+          "Missing entry ID after save."
+        )
+      );
     }
     entryId = entryResult.id;
 
@@ -298,8 +331,8 @@ export async function saveJournalEntry(
         tags: tags ? tags.split(",").map((tag) => tag.trim().toLowerCase()).filter(Boolean) : [],
         mood: mood || null,
         sentiment: sentiment || null,
-        createdAt: Timestamp.now(),
-        publishedAt: Timestamp.now(),
+        createdAt: new Date(),
+        publishedAt: new Date(),
       }, { merge: true });
 
     // Update entry count using Admin SDK API
@@ -307,8 +340,8 @@ export async function saveJournalEntry(
     await userDocRef.set({
       entryCount: entryCount + 1,
       email: userEmail || null,
-      firstEntryAt: isFirstEntry ? Timestamp.now() : (userData?.firstEntryAt || null),
-      updatedAt: Timestamp.now(),
+      firstEntryAt: isFirstEntry ? new Date() : (userData?.firstEntryAt || null),
+      updatedAt: new Date(),
     }, { merge: true });
 
     await trackServerEvent("entry_created", {
@@ -341,7 +374,13 @@ export async function saveJournalEntry(
     if (error instanceof Error) {
       return { message: error.message };
     }
-    return { message: "Une erreur inattendue est survenue lors de l'enregistrement de votre entrée. Veuillez réessayer." };
+    return {
+      message: txt(
+        locale,
+        "Une erreur inattendue est survenue lors de l'enregistrement de votre entrée. Veuillez réessayer.",
+        "An unexpected error occurred while saving your entry. Please try again."
+      ),
+    };
   }
 
   // No redirect, component will handle UI changes
@@ -349,16 +388,25 @@ export async function saveJournalEntry(
 }
 
 export async function generateUserInsights() {
+  const locale = await getRequestLocale();
   const userId = await getAuthedUserId();
   if (!userId) {
-    return { error: 'Utilisateur non authentifié.' };
+    return {
+      error: txt(locale, "Utilisateur non authentifié.", "Unauthenticated user."),
+    };
   }
 
   try {
     const entries = await getEntriesForUser(userId, null, 30); // Use last 30 entries for insights
 
     if (entries.length < 3) {
-      return { error: 'Pas assez de données pour générer des insights significatifs. Continuez à écrire !' };
+      return {
+        error: txt(
+          locale,
+          "Pas assez de données pour générer des insights significatifs. Continuez à écrire !",
+          "Not enough data to generate meaningful insights yet. Keep writing!"
+        ),
+      };
     }
 
     const insights = await generateInsights(entries);
@@ -369,7 +417,7 @@ export async function generateUserInsights() {
     await userDocRef.update({
       insights: {
         ...insights,
-        lastUpdatedAt: Timestamp.now()
+        lastUpdatedAt: new Date()
       }
     });
 
@@ -378,7 +426,15 @@ export async function generateUserInsights() {
 
   } catch (error: any) {
     logger.errorSafe("Error generating user insights", error);
-    return { error: error.message || "Une erreur est survenue lors de la génération des insights." };
+    return {
+      error:
+        error.message ||
+        txt(
+          locale,
+          "Une erreur est survenue lors de la génération des insights.",
+          "An error occurred while generating insights."
+        ),
+    };
   }
 }
 
@@ -386,15 +442,20 @@ export async function updateJournalEntry(
   entryId: string,
   payload: { content: string; tags?: string }
 ): Promise<EntryMutationState> {
+  const locale = await getRequestLocale();
   try {
     const userId = await getAuthedUserId();
     if (!userId) {
-      return { error: "Utilisateur non authentifié." };
+      return {
+        error: txt(locale, "Utilisateur non authentifié.", "Unauthenticated user."),
+      };
     }
 
     const cleanContent = String(payload.content || "").trim();
     if (!cleanContent) {
-      return { error: "Le contenu ne peut pas être vide." };
+      return {
+        error: txt(locale, "Le contenu ne peut pas être vide.", "Content cannot be empty."),
+      };
     }
 
     const nextTags = String(payload.tags || "")
@@ -410,14 +471,14 @@ export async function updateJournalEntry(
 
     const entryDoc = await entryRef.get();
     if (!entryDoc.exists) {
-      return { error: "Entrée introuvable." };
+      return { error: txt(locale, "Entrée introuvable.", "Entry not found.") };
     }
 
     await entryRef.set(
       {
         content: cleanContent,
         tags: nextTags,
-        updatedAt: Timestamp.now(),
+        updatedAt: new Date(),
       },
       { merge: true }
     );
@@ -440,7 +501,7 @@ export async function updateJournalEntry(
           excerpt,
           coverImageUrl,
           tags: nextTags,
-          updatedAt: Timestamp.now(),
+          updatedAt: new Date(),
         },
         { merge: true }
       );
@@ -448,18 +509,23 @@ export async function updateJournalEntry(
     revalidatePath("/sanctuary/magazine");
     revalidatePath(`/sanctuary/magazine/${entryId}`);
     revalidatePath("/sanctuary/write");
-    return { message: "Entrée mise à jour." };
+    return { message: txt(locale, "Entrée mise à jour.", "Entry updated.") };
   } catch (error) {
     logger.errorSafe("Error updating entry", error);
-    return { error: "Impossible de mettre à jour l'entrée." };
+    return {
+      error: txt(locale, "Impossible de mettre à jour l'entrée.", "Unable to update entry."),
+    };
   }
 }
 
 export async function deleteJournalEntry(entryId: string): Promise<EntryMutationState> {
+  const locale = await getRequestLocale();
   try {
     const userId = await getAuthedUserId();
     if (!userId) {
-      return { error: "Utilisateur non authentifié." };
+      return {
+        error: txt(locale, "Utilisateur non authentifié.", "Unauthenticated user."),
+      };
     }
 
     await db
@@ -479,9 +545,11 @@ export async function deleteJournalEntry(entryId: string): Promise<EntryMutation
     revalidatePath("/sanctuary/magazine");
     revalidatePath(`/sanctuary/magazine/${entryId}`);
     revalidatePath("/sanctuary/write");
-    return { message: "Entrée supprimée." };
+    return { message: txt(locale, "Entrée supprimée.", "Entry deleted.") };
   } catch (error) {
     logger.errorSafe("Error deleting entry", error);
-    return { error: "Impossible de supprimer l'entrée." };
+    return {
+      error: txt(locale, "Impossible de supprimer l'entrée.", "Unable to delete entry."),
+    };
   }
 }

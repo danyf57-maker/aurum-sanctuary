@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Sparkles, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useLocalizedHref } from "@/hooks/use-localized-href";
 
 interface QuizData {
   answers: string[];
@@ -73,6 +74,7 @@ const QUIZ_STORAGE_KEY = "aurum-quiz-data";
 const QUIZ_SHOWN_KEY = "aurum-quiz-shown";
 
 export default function QuizResultModal() {
+  const to = useLocalizedHref();
   const [isOpen, setIsOpen] = useState(false);
   const [profile, setProfile] = useState<ProfileResult | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -209,7 +211,7 @@ export default function QuizResultModal() {
                   size="lg"
                   className="h-14 px-8 text-lg rounded-2xl shadow-lg hover:shadow-xl transition-all"
                 >
-                  <Link href="/sanctuary/write">
+                  <Link href={to("/sanctuary/write")}>
                     Commencer mon premier journal
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Link>

@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
+import { useLocalizedHref } from "@/hooks/use-localized-href";
 
 type TagFilterProps = {
   tags: string[];
@@ -18,14 +19,15 @@ type TagFilterProps = {
 
 export function TagFilter({ tags }: TagFilterProps) {
   const router = useRouter();
+  const to = useLocalizedHref();
   const searchParams = useSearchParams();
   const currentTag = searchParams.get("tag");
 
   const onSelectTag = (tag: string) => {
     if (tag === "all") {
-      router.push("/sanctuary");
+      router.push(to("/sanctuary"));
     } else {
-      router.push(`/sanctuary?tag=${tag}`);
+      router.push(to(`/sanctuary?tag=${encodeURIComponent(tag)}`));
     }
   };
 

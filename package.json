@@ -28,7 +28,8 @@
     "build": "NODE_ENV=production next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:e2e:i18n": "node scripts/i18n-e2e.mjs"
   },
   "dependencies": {
     "@ducanh2912/next-pwa": "^10.2.9",
@@ -75,6 +76,7 @@
     "genkit": "^1.20.0",
     "lucide-react": "^0.475.0",
     "next": "14.2.18",
+    "next-intl": "^3.26.5",
     "openai": "^4.52.7",
     "patch-package": "^8.0.0",
     "react": "^18.3.1",

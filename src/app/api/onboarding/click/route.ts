@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { trackServerEvent } from "@/lib/analytics/server";
 import { verifyOnboardingToken } from "@/lib/onboarding/token";
 
+export const runtime = "nodejs";
+
 function safeTarget(target: string) {
   try {
     const url = new URL(target);
@@ -46,4 +48,3 @@ export async function GET(request: NextRequest) {
 
   return NextResponse.redirect(fallback, 302);
 }
-

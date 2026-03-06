@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import {
   Dialog,
   DialogContent,
@@ -11,6 +12,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import type { RyffDimensionScores } from '@/lib/types';
+import { useLocale } from '@/hooks/use-locale';
 
 type RyffQuestionnaireProps = {
   open: boolean;
@@ -26,7 +28,7 @@ type Question = {
   reversed: boolean;
 };
 
-const QUESTIONS: Question[] = [
+const QUESTIONS_FR: Question[] = [
   // Acceptation de soi
   {
     id: 'AS1',
@@ -147,8 +149,118 @@ const QUESTIONS: Question[] = [
     reversed: true,
   },
 ];
+const QUESTIONS_EN: Question[] = [
+  {
+    id: 'AS1',
+    dimension: 'acceptationDeSoi',
+    text: 'Overall, I feel confident and positive about myself.',
+    reversed: false,
+  },
+  {
+    id: 'AS2',
+    dimension: 'acceptationDeSoi',
+    text: 'I can acknowledge my flaws without feeling crushed by them.',
+    reversed: false,
+  },
+  {
+    id: 'AS3',
+    dimension: 'acceptationDeSoi',
+    text: 'I often look back with shame and guilt.',
+    reversed: true,
+  },
+  {
+    id: 'DP1',
+    dimension: 'developpementPersonnel',
+    text: 'I feel I am evolving and growing as a person.',
+    reversed: false,
+  },
+  {
+    id: 'DP2',
+    dimension: 'developpementPersonnel',
+    text: 'I am open to new experiences that challenge my view of the world.',
+    reversed: false,
+  },
+  {
+    id: 'DP3',
+    dimension: 'developpementPersonnel',
+    text: 'I do not feel like I am progressing in life.',
+    reversed: true,
+  },
+  {
+    id: 'SV1',
+    dimension: 'sensDeLaVie',
+    text: "Some people wander through life without a purpose - that's not me.",
+    reversed: false,
+  },
+  {
+    id: 'SV2',
+    dimension: 'sensDeLaVie',
+    text: 'I feel my life has meaning and direction.',
+    reversed: false,
+  },
+  {
+    id: 'SV3',
+    dimension: 'sensDeLaVie',
+    text: "I don't really see what I am trying to accomplish in life.",
+    reversed: true,
+  },
+  {
+    id: 'ME1',
+    dimension: 'maitriseEnvironnement',
+    text: 'I handle the responsibilities of daily life well.',
+    reversed: false,
+  },
+  {
+    id: 'ME2',
+    dimension: 'maitriseEnvironnement',
+    text: 'I am skilled at organizing my time to achieve my goals.',
+    reversed: false,
+  },
+  {
+    id: 'ME3',
+    dimension: 'maitriseEnvironnement',
+    text: 'I often feel overwhelmed by my responsibilities.',
+    reversed: true,
+  },
+  {
+    id: 'AU1',
+    dimension: 'autonomie',
+    text: "I make decisions based on my own convictions, not others' expectations.",
+    reversed: false,
+  },
+  {
+    id: 'AU2',
+    dimension: 'autonomie',
+    text: 'I am rarely influenced by people around me.',
+    reversed: false,
+  },
+  {
+    id: 'AU3',
+    dimension: 'autonomie',
+    text: "What others think of me strongly influences my decisions.",
+    reversed: true,
+  },
+  {
+    id: 'RP1',
+    dimension: 'relationsPositives',
+    text: 'I know I can count on my friends, and they can count on me.',
+    reversed: false,
+  },
+  {
+    id: 'RP2',
+    dimension: 'relationsPositives',
+    text: 'I have warm and satisfying relationships with others.',
+    reversed: false,
+  },
+  {
+    id: 'RP3',
+    dimension: 'relationsPositives',
+    text: 'I have few deep and trusting relationships.',
+    reversed: true,
+  },
+];
 
-const DIMENSION_NAMES: Record<keyof RyffDimensionScores, string> = {
+const DIMENSION_NAMES_FR: Record<keyof RyffDimensionScores, string> = {
   acceptationDeSoi: 'Acceptation de soi',
   developpementPersonnel: 'Développement personnel',
   sensDeLaVie: 'Sens de la vie',
@@ -156,8 +268,16 @@ const DIMENSION_NAMES: Record<keyof RyffDimensionScores, string> = {
   autonomie: 'Autonomie',
   relationsPositives: 'Relations positives',
 };
+const DIMENSION_NAMES_EN: Record<keyof RyffDimensionScores, string> = {
+  acceptationDeSoi: 'Self-acceptance',
+  developpementPersonnel: 'Personal growth',
+  sensDeLaVie: 'Purpose in life',
+  maitriseEnvironnement: 'Environmental mastery',
+  autonomie: 'Autonomy',
+  relationsPositives: 'Positive relationships',
+};
 
-const SCALE_LABELS = [
+const SCALE_LABELS_FR = [
   'Pas du tout d\'accord',
   'En désaccord',
   'Plutôt en désaccord',
@@ -165,8 +285,16 @@ const SCALE_LABELS = [
   'D\'accord',
   'Tout à fait d\'accord',
 ];
+const SCALE_LABELS_EN = [
+  'Strongly disagree',
+  'Disagree',
+  'Somewhat disagree',
+  'Somewhat agree',
+  'Agree',
+  'Strongly agree',
+];
 
-function computeScores(answers: Record<string, number>): RyffDimensionScores {
+function computeScores(answers: Record<string, number>, questions: Question[]): RyffDimensionScores {
   const dimensionSums: Record<keyof RyffDimensionScores, number[]> = {
     acceptationDeSoi: [],
     developpementPersonnel: [],
@@ -176,7 +304,7 @@ function computeScores(answers: Record<string, number>): RyffDimensionScores {
     relationsPositives: [],
   };
 
-  for (const q of QUESTIONS) {
+  for (const q of questions) {
     const raw = answers[q.id];
     if (raw == null) continue;
     const score = q.reversed ? 7 - raw : raw;
@@ -209,30 +337,36 @@ export function RyffQuestionnaire({
   onComplete,
   isSubmitting,
 }: RyffQuestionnaireProps) {
+  const locale = useLocale();
+  const isFr = locale === 'fr';
+  const t = useTranslations('sanctuary.ryffQuestionnaire');
+  const questions = isFr ? QUESTIONS_FR : QUESTIONS_EN;
+  const dimensionNames = isFr ? DIMENSION_NAMES_FR : DIMENSION_NAMES_EN;
+  const scaleLabels = isFr ? SCALE_LABELS_FR : SCALE_LABELS_EN;
+
   const [answers, setAnswers] = useState<Record<string, number>>({});
 
-  const allAnswered = QUESTIONS.every((q) => answers[q.id] != null);
+  const allAnswered = questions.every((q) => answers[q.id] != null);
 
   const handleSubmit = async () => {
     if (!allAnswered) return;
-    const scores = computeScores(answers);
+    const scores = computeScores(answers, questions);
     await onComplete(scores);
     setAnswers({});
   };
 
   // Group questions by dimension
-  const dimensions = Object.keys(DIMENSION_NAMES) as (keyof RyffDimensionScores)[];
+  const dimensions = Object.keys(dimensionNames) as (keyof RyffDimensionScores)[];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90dvh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="font-headline text-xl text-stone-900">
-            Évaluez votre bien-être
+            {t('title')}
           </DialogTitle>
           <DialogDescription className="text-stone-500">
-            18 questions basées sur l&apos;échelle de Ryff. Répondez spontanément, il n&apos;y a pas
-            de bonne ou mauvaise réponse.
+            {t('description')}
           </DialogDescription>
         </DialogHeader>
 
@@ -241,25 +375,24 @@ export function RyffQuestionnaire({
           <div className="flex-1 h-1.5 rounded-full bg-stone-100">
             <div
               className="h-1.5 rounded-full bg-[#C5A059] transition-all duration-300"
-              style={{ width: `${(Object.keys(answers).length / 18) * 100}%` }}
+              style={{ width: `${(Object.keys(answers).length / questions.length) * 100}%` }}
             />
           </div>
           <span className="text-xs text-stone-500">
-            {Object.keys(answers).length} / 18
+            {Object.keys(answers).length} / {questions.length}
           </span>
         </div>
 
         {/* Questions grouped by dimension */}
         <div className="space-y-6">
           {dimensions.map((dimKey) => {
-            const dimQuestions = QUESTIONS.filter((q) => q.dimension === dimKey);
             return (
               <div key={dimKey}>
                 <h3 className="mb-3 text-xs font-bold uppercase tracking-[0.15em] text-[#7A5D24]">
-                  {DIMENSION_NAMES[dimKey]}
+                  {dimensionNames[dimKey]}
                 </h3>
                 <div className="space-y-4">
-                  {dimQuestions.map((q) => (
+                  {questions.filter((q) => q.dimension === dimKey).map((q) => (
                     <div key={q.id} className="rounded-xl border border-stone-200 bg-stone-50/50 p-4">
                       <p className="text-sm text-stone-700 leading-relaxed">{q.text}</p>
                       <div className="mt-3 flex flex-wrap gap-2">
@@ -275,15 +408,15 @@ export function RyffQuestionnaire({
                                 ? 'border-[#C5A059] bg-[#C5A059]/15 text-[#7A5D24]'
                                 : 'border-stone-200 bg-white text-stone-600 hover:border-stone-300'
                             }`}
-                            title={SCALE_LABELS[value - 1]}
+                            title={scaleLabels[value - 1]}
                           >
                             {value}
                           </button>
                         ))}
                       </div>
                       <div className="mt-1.5 flex justify-between text-[10px] text-stone-400">
-                        <span>Pas du tout d&apos;accord</span>
-                        <span>Tout à fait d&apos;accord</span>
+                        <span>{t('scaleMin')}</span>
+                        <span>{t('scaleMax')}</span>
                       </div>
                     </div>
                   ))}
@@ -303,10 +436,10 @@ export function RyffQuestionnaire({
             {isSubmitting ? (
               <span className="flex items-center gap-2">
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                Enregistrement...
+                {t('saving')}
               </span>
             ) : (
-              'Valider mes réponses'
+              t('submit')
             )}
           </button>
         </DialogFooter>

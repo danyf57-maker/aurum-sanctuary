@@ -10,8 +10,8 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
-import { usePathname } from "next/navigation";
 
 interface WelcomePresenceProps {
   userName?: string;
@@ -20,8 +20,7 @@ interface WelcomePresenceProps {
 export function WelcomePresence({ userName }: WelcomePresenceProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [hasBeenShown, setHasBeenShown] = useState(false);
-  const pathname = usePathname();
-  const isEnglish = pathname?.startsWith("/en");
+  const t = useTranslations("sanctuary.welcomePresence");
 
   useEffect(() => {
     // Check if already shown this session
@@ -49,7 +48,8 @@ export function WelcomePresence({ userName }: WelcomePresenceProps) {
     return null;
   }
 
-  const firstName = (userName ?? "").split(" ")[0] || "friend";
+  const firstName =
+    (userName ?? "").split(" ")[0] || t("defaultFirstName");
 
   return (
     <AnimatePresence>
@@ -84,10 +84,10 @@ export function WelcomePresence({ userName }: WelcomePresenceProps) {
               )}
             >
               {/* Close button */}
-              <button
-                onClick={handleDismiss}
-                className="absolute top-4 right-4 text-stone-400 hover:text-stone-600 transition-colors"
-                aria-label="Close"
+                <button
+                  onClick={handleDismiss}
+                  className="absolute top-4 right-4 text-stone-400 hover:text-stone-600 transition-colors"
+                aria-label={t("close")}
               >
                 <X className="h-5 w-5" />
               </button>
@@ -97,7 +97,7 @@ export function WelcomePresence({ userName }: WelcomePresenceProps) {
                 {/* Greeting */}
                 <div className="space-y-2">
                   <h2 className="font-headline text-3xl text-stone-900">
-                    {isEnglish ? "Welcome" : "Bienvenue"}, {firstName}
+                    {t("welcome")}, {firstName}
                   </h2>
                   <div className="h-px w-16 mx-auto bg-gradient-to-r from-transparent via-amber-300 to-transparent" />
                 </div>
@@ -105,24 +105,20 @@ export function WelcomePresence({ userName }: WelcomePresenceProps) {
                 {/* Message */}
                 <div className="space-y-4 text-stone-700 leading-relaxed">
                   <p className="text-lg">
-                    {isEnglish ? "This space is yours." : "Cet espace est le tien."}
+                    {t("line1")}
                   </p>
                   <p className="text-base">
-                    {isEnglish
-                      ? "Here, there is no rush and nothing to prove. Aurum supports you without steering you."
-                      : "Ici, pas d'urgence et rien à prouver. Aurum t'accompagne sans te diriger."}
+                    {t("line2")}
                   </p>
                   <p className="text-sm text-stone-500 italic">
-                    {isEnglish
-                      ? "Write what needs to be set down. The rest will come."
-                      : "Écris ce qui demande à être posé. Le reste viendra."}
+                    {t("line3")}
                   </p>
                 </div>
 
                 {/* Subtle decoration */}
                 <div className="pt-4">
                   <div className="inline-block px-4 py-2 rounded-full bg-amber-100/50 text-amber-800 text-xs font-medium tracking-wide">
-                    {isEnglish ? "Premium Presence" : "Présence Premium"}
+                    {t("badge")}
                   </div>
                 </div>
               </div>

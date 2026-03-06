@@ -28,6 +28,9 @@ import { motion } from "framer-motion";
 import { trackEvent } from "@/lib/analytics/client";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { firestore as db } from "@/lib/firebase/web-client";
+import { localizeHref } from "@/lib/i18n/path";
+import { useLocale } from "@/hooks/use-locale";
+import { useTranslations } from "next-intl";
 
 interface QuizData {
   answers: string[];
@@ -38,27 +41,41 @@ interface QuizData {
 const QUIZ_STORAGE_KEY = "aurum-quiz-data";
 const QUIZ_SYNC_KEY = "aurum-quiz-synced-at";
 
-const signupSchema = z
-  .object({
-    email: z.string().email("Invalid email"),
-    password: z
-      .string()
-      .min(8, "Password must contain at least 8 characters")
-      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-      .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-      .regex(/[0-9]/, "Password must contain at least one number"),
-    confirmPassword: z.string(),
-    acceptTerms: z.boolean().refine((val) => val === true, {
-      message: "You must accept the terms of use",
-    }),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
+function makeSignupSchema(v: Record<string, string>) {
+  return z
+    .object({
+      email: z.string().email(v.invalidEmail),
+      password: z
+        .string()
+        .min(8, v.passwordMinLength)
+        .regex(/[A-Z]/, v.passwordUppercase)
+        .regex(/[a-z]/, v.passwordLowercase)
+        .regex(/[0-9]/, v.passwordDigit),
+      confirmPassword: z.string(),
+      acceptTerms: z.boolean().refine((val) => val === true, {
+        message: v.termsRequired,
+      }),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: v.passwordsMismatch,
+      path: ["confirmPassword"],
+    });
+}
 
 function SignupPage() {
   const { user, signUpWithEmail, signInWithGoogle, loading: authLoading } = useAuth();
+  const locale = useLocale();
+  const to = (href: string) => localizeHref(href, locale);
+  const tSign = useTranslations("signup");
+  const signupSchema = makeSignupSchema({
+    invalidEmail: tSign("validation.invalidEmail"),
+    passwordMinLength: tSign("validation.passwordMinLength"),
+    passwordUppercase: tSign("validation.passwordUppercase"),
+    passwordLowercase: tSign("validation.passwordLowercase"),
+    passwordDigit: tSign("validation.passwordDigit"),
+    termsRequired: tSign("validation.termsRequired"),
+    passwordsMismatch: tSign("validation.passwordsMismatch"),
+  });
   const router = useRouter();
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
@@ -188,10 +205,10 @@ function SignupPage() {
           params: { method: "email", profile_result: quizData.profile },
         });
       }
-      router.push("/login?check_email=1");
+      router.push(to("/login?check_email=1"));
     } catch (error) {
       if ((error as Error)?.message === "EMAIL_NOT_VERIFIED") {
-        setInfo("Check your inbox to activate your account.");
+        setInfo(tSign("checkEmail"));
       }
       // Other error toasts shown by AuthProvider
     } finally {
@@ -226,7 +243,7 @@ function SignupPage() {
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">Loading...</p>
+          <p className="mt-4 text-muted-foreground">{tSign("loading")}</p>
         </div>
       </div>
     );
@@ -236,10 +253,8 @@ function SignupPage() {
     <div className="flex min-h-screen items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Create account</CardTitle>
-          <CardDescription>
-            Join Aurum Sanctuary and start your journey
-          </CardDescription>
+          <CardTitle>{tSign("title")}</CardTitle>
+          <CardDescription>{tSign("description")}</CardDescription>
 
           {/* Quiz Teaser */}
           {showQuizTeaser && quizData?.profile && (
@@ -251,11 +266,11 @@ function SignupPage() {
               <div className="flex items-center gap-2 mb-2">
                 <Sparkles className="h-4 w-4 text-amber-600 dark:text-amber-400" />
                 <span className="text-xs font-semibold uppercase tracking-wider text-amber-700 dark:text-amber-300">
-                  Your profile is waiting
+                  {tSign("quizBadge")}
                 </span>
               </div>
               <p className="text-sm text-amber-800 dark:text-amber-200">
-                Your reflection profile is ready. Create your account to see your personalized result and begin your experience.
+                {tSign("quizText")}
               </p>
             </motion.div>
           )}
@@ -263,7 +278,7 @@ function SignupPage() {
           <div className="flex items-center gap-2 mt-3 px-3 py-2 bg-emerald-50 dark:bg-emerald-950/30 rounded-lg border border-emerald-200 dark:border-emerald-800">
             <Shield className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
             <p className="text-sm text-emerald-700 dark:text-emerald-300 font-medium">
-              Your data is end-to-end encrypted
+              {tSign("encrypted")}
             </p>
           </div>
         </CardHeader>
@@ -275,8 +290,7 @@ function SignupPage() {
           )}
           {isInAppBrowser && (
             <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
-              Google sign-in is blocked in this in-app browser. Open this page in Safari or
-              Chrome and try again.
+              {tSign("inAppBrowser")}
             </div>
           )}
           {/* Google OAuth Button */}
@@ -305,7 +319,7 @@ function SignupPage() {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
               />
             </svg>
-            Continue with Google
+            {tSign("google")}
           </Button>
 
           <div className="relative">
@@ -314,7 +328,7 @@ function SignupPage() {
             </div>
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-background px-2 text-muted-foreground">
-                Or continue with
+                {tSign("or")}
               </span>
             </div>
           </div>
@@ -327,7 +341,7 @@ function SignupPage() {
                 id="email"
                 name="email"
                 type="email"
-                placeholder="you@example.com"
+                placeholder={tSign("emailPlaceholder")}
                 required
                 disabled={loading}
               />
@@ -337,7 +351,7 @@ function SignupPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{tSign("password")}</Label>
               <div className="relative">
                 <Input
                   id="password"
@@ -365,12 +379,12 @@ function SignupPage() {
                 <p className="text-sm text-destructive">{errors.password}</p>
               )}
               <p className="text-xs text-muted-foreground">
-                At least 8 characters, 1 uppercase, 1 lowercase, 1 number
+                {tSign("passwordHint")}
               </p>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm password</Label>
+              <Label htmlFor="confirmPassword">{tSign("confirmPassword")}</Label>
               <div className="relative">
                 <Input
                   id="confirmPassword"
@@ -411,21 +425,21 @@ function SignupPage() {
                 htmlFor="acceptTerms"
                 className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
-                I accept the{" "}
+                {tSign("acceptTerms")}{" "}
                 <Link
-                  href="/terms"
+                  href={to("/terms")}
                   className="text-primary hover:underline"
                   target="_blank"
                 >
-                  terms of use
+                  {tSign("terms")}
                 </Link>{" "}
-                and the{" "}
+                {tSign("and")}{" "}
                 <Link
-                  href="/privacy"
+                  href={to("/privacy")}
                   className="text-primary hover:underline"
                   target="_blank"
                 >
-                  privacy policy
+                  {tSign("privacy")}
                 </Link>
               </label>
             </div>
@@ -434,18 +448,18 @@ function SignupPage() {
             )}
 
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Creating..." : "Create account"}
+              {loading ? tSign("creating") : tSign("create")}
             </Button>
             <p className="text-xs text-muted-foreground text-center">
-              A verification email will be sent to activate your account.
+              {tSign("emailNote")}
             </p>
           </form>
         </CardContent>
         <CardFooter className="flex justify-center">
           <p className="text-sm text-muted-foreground">
-            Already have an account?{" "}
-            <Link href="/login" className="text-primary hover:underline">
-              Sign in
+            {tSign("alreadyAccount")}{" "}
+            <Link href={to("/login")} className="text-primary hover:underline">
+              {tSign("signIn")}
             </Link>
           </p>
         </CardFooter>
@@ -462,7 +476,6 @@ export default function SignupPageWrapper() {
         <div className="flex min-h-screen items-center justify-center">
           <div className="text-center">
             <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto"></div>
-            <p className="mt-4 text-muted-foreground">Loading...</p>
           </div>
         </div>
       }

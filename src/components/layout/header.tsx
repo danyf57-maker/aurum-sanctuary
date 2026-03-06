@@ -6,6 +6,9 @@ import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { AuthButton } from '@/components/auth/auth-button';
 import { MobileNav } from './mobile-nav';
+import { LanguageSwitch } from './language-switch';
+import { stripLocalePrefix } from '@/i18n/routing';
+import { useLocalizedHref } from '@/hooks/use-localized-href';
 
 const Logo = (props: React.SVGProps<SVGSVGElement>) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props}>
@@ -15,27 +18,29 @@ const Logo = (props: React.SVGProps<SVGSVGElement>) => (
 
 export function Header() {
   const pathname = usePathname();
-  const isHomepage = pathname === '/';
+  const to = useLocalizedHref();
+  const normalizedPath = stripLocalePrefix(pathname || '/');
+  const isHomepage = normalizedPath === '/';
 
   // Do not render the header on the homepage to allow for a custom hero header
   if (isHomepage) {
     return null;
   }
 
-  const isAdminPage = pathname.startsWith('/admin');
-  const isAppPage = pathname.startsWith('/dashboard') || pathname.startsWith('/sanctuary') || pathname.startsWith('/insights') || pathname.startsWith('/settings');
-  const currentSection = pathname.startsWith('/sanctuary/write')
-    ? 'Write'
-    : pathname.startsWith('/sanctuary/magazine')
+  const isAdminPage = normalizedPath.startsWith('/admin');
+  const isAppPage = normalizedPath.startsWith('/dashboard') || normalizedPath.startsWith('/sanctuary') || normalizedPath.startsWith('/insights') || normalizedPath.startsWith('/settings');
+  const currentSection = normalizedPath.startsWith('/sanctuary/write')
+    ? 'Écrire'
+    : normalizedPath.startsWith('/sanctuary/magazine')
     ? 'Magazine'
-    : pathname.startsWith('/sanctuary')
+    : normalizedPath.startsWith('/sanctuary')
     ? 'Journal'
-    : pathname.startsWith('/dashboard')
-    ? 'Dashboard'
-    : pathname.startsWith('/insights')
-    ? 'Insights'
-    : pathname.startsWith('/settings')
-    ? 'Settings'
+    : normalizedPath.startsWith('/dashboard')
+    ? 'Tableau de bord'
+    : normalizedPath.startsWith('/insights')
+    ? 'Analyses'
+    : normalizedPath.startsWith('/settings')
+    ? 'Paramètres'
     : null;
 
   if (isAdminPage) {
@@ -43,7 +48,7 @@ export function Header() {
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 pt-[env(safe-area-inset-top)]">
         <div className="container flex h-14 max-w-screen-2xl items-center">
           <div className="mr-4 hidden md:flex">
-            <Link href="/" className="mr-6 flex items-center space-x-2">
+            <Link href={to('/')} className="mr-6 flex items-center space-x-2">
               <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
                 <Logo className="h-6 w-6 text-amber-600" />
               </motion.div>
@@ -53,6 +58,7 @@ export function Header() {
             </Link>
           </div>
           <div className="flex flex-1 items-center justify-end space-x-2">
+            <LanguageSwitch className="hidden sm:inline-flex" compact />
             <AuthButton />
           </div>
         </div>
@@ -65,7 +71,7 @@ export function Header() {
       <div className="container flex h-14 max-w-screen-2xl items-center">
         {!isAppPage && (
           <div className="mr-4 hidden md:flex">
-            <Link href="/" className="mr-6 flex items-center space-x-2">
+            <Link href={to('/')} className="mr-6 flex items-center space-x-2">
               <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
                 <Logo className="h-6 w-6 text-amber-600" />
               </motion.div>
@@ -75,19 +81,19 @@ export function Header() {
             </Link>
             <nav className="flex items-center gap-6 text-sm">
               <Link
-                href="/sanctuary/write"
+                href={to('/sanctuary/write')}
                 className="transition-colors hover:text-foreground/80 text-foreground/60"
               >
-                Write
+                Écrire
               </Link>
               <Link
-                href="/sanctuary"
+                href={to('/sanctuary')}
                 className="transition-colors hover:text-foreground/80 text-foreground/60"
               >
                 Journal
               </Link>
               <Link
-                href="/sanctuary/magazine"
+                href={to('/sanctuary/magazine')}
                 className="transition-colors hover:text-foreground/80 text-foreground/60"
               >
                 Magazine
@@ -99,11 +105,12 @@ export function Header() {
         <MobileNav />
 
         <div className="flex flex-1 items-center justify-end space-x-2">
+          <LanguageSwitch className="hidden sm:inline-flex" compact />
           {isAppPage && (
             <div className="hidden lg:flex items-center gap-4 mr-4">
               {currentSection && (
                 <div className="rounded-full border border-stone-200 bg-stone-100/70 px-3 py-1 text-xs font-medium text-stone-700">
-                  Active section: {currentSection}
+                  Section active : {currentSection}
                 </div>
               )}
             </div>

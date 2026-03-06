@@ -11,6 +11,7 @@ import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '
 import { CartesianGrid, XAxis, YAxis, Line, ResponsiveContainer, LineChart } from 'recharts';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
+import { useLocalizedHref } from '@/hooks/use-localized-href';
 
 export const dynamic = 'force-dynamic';
 
@@ -119,6 +120,7 @@ async function downloadCsvFromApi(url: string, filename: string) {
 }
 
 export default function AdminDashboard() {
+  const to = useLocalizedHref();
   const { user, loading } = useAuth();
   const router = useRouter();
   const [data, setData] = useState<AdminAnalyticsResponse | null>(null);
@@ -127,7 +129,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push('/');
+      router.push(to('/'));
       return;
     }
     if (loading || !user) return;
@@ -139,7 +141,7 @@ export default function AdminDashboard() {
         const response = await fetch('/api/admin/analytics', { method: 'GET' });
         if (!response.ok) {
           if (response.status === 401 || response.status === 403) {
-            router.push('/');
+            router.push(to('/'));
             return;
           }
           throw new Error('Failed to fetch admin analytics');
@@ -156,7 +158,7 @@ export default function AdminDashboard() {
     return () => {
       cancelled = true;
     };
-  }, [user, loading, router]);
+  }, [user, loading, router, to]);
 
   if (loading || !user || loadingData || !data) {
     return <DashboardSkeleton />;

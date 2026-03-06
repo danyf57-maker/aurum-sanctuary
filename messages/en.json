@@ -1,0 +1,455 @@
+{
+  "app": {
+    "name": "Aurum"
+  },
+  "lang": {
+    "fr": "French",
+    "en": "English"
+  },
+  "authButton": {
+    "signedOut": "You have been signed out.",
+    "settings": "Settings",
+    "signOut": "Sign out",
+    "signIn": "Sign in",
+    "userAlt": "User"
+  },
+  "entryForm": {
+    "savedTitle": "Entry saved",
+    "savedDescription": "Your thought has been encrypted and saved.",
+    "encryptionActive": "End-to-end encryption is active",
+    "save": "Save"
+  },
+  "settings": {
+    "deleteSuccessTitle": "Account deleted",
+    "deleteSuccessDescription": "Your account has been permanently deleted.",
+    "deleteErrorTitle": "Error",
+    "deleteErrorDescription": "Unable to delete the account. Please try again.",
+    "exportSuccessTitle": "Export completed",
+    "exportSuccessDescription": "Your data has been downloaded successfully.",
+    "exportErrorTitle": "Export failed",
+    "exportErrorDescription": "Unable to export data. Please try again."
+  },
+  "accountData": {
+    "exportErrorTitle": "Export error",
+    "exportSuccessTitle": "Export successful",
+    "exportSuccessDescription": "Your data has been downloaded.",
+    "deleteErrorTitle": "Deletion error",
+    "accountDeletedTitle": "Account deleted",
+    "accountDeletedDescription": "We are sad to see you go."
+  },
+  "termsModal": {
+    "title": "Terms update",
+    "intro": "To continue using Aurum Sanctuary, you need to accept our updated Terms of Use and Privacy Policy.",
+    "detail": "We updated our encryption protocols and legal notices to better protect your mental health data.",
+    "readTerms": "Read Terms of Use",
+    "readPrivacy": "Read Privacy Policy",
+    "checkbox": "I have read and accept the Terms of Use and Privacy Policy.",
+    "accepting": "Accepting...",
+    "accept": "Accept and continue"
+  },
+  "login": {
+    "invalidEmail": "Invalid email",
+    "passwordMin": "Password must contain at least 6 characters",
+    "emailNotVerified": "Your email is not verified yet. We sent a new message. Please check your inbox and spam folder.",
+    "loading": "Loading...",
+    "title": "Sign in",
+    "description": "Sign in to your Aurum Sanctuary account",
+    "quizBadge": "Your profile is waiting",
+    "quizText": "Your reflection profile is ready. Sign in to view your personalized result.",
+    "verified": "Email verified. You can sign in now.",
+    "checkEmail": "A verification email has just been sent. Please check your inbox and spam folder.",
+    "inAppBrowser": "Google sign-in is blocked in this in-app browser. Open this page in Safari or Chrome and try again.",
+    "google": "Continue with Google",
+    "or": "OR CONTINUE WITH",
+    "emailPlaceholder": "you@example.com",
+    "password": "Password",
+    "forgot": "Forgot password?",
+    "signingIn": "Signing in...",
+    "signIn": "Sign in",
+    "noAccount": "Don't have an account yet?",
+    "signUp": "Sign up"
+  },
+  "sanctuary": {
+    "insightsPanel": {
+      "title": "Trends",
+      "analyze": "Analyze",
+      "digest": "Digest",
+      "emptyState": "Run an analysis to reveal recurring themes, writing rhythms, and emotional evolution.",
+      "recurringThemes": "Recurring themes",
+      "mostActiveTime": "Most active time",
+      "emotionalTrend": "Emotional trend",
+      "suggestions": "Suggestions",
+      "weeklyDigest": "Weekly digest"
+    },
+    "welcomePresence": {
+      "defaultFirstName": "dear explorer",
+      "close": "Close",
+      "welcome": "Welcome",
+      "line1": "This space is yours.",
+      "line2": "No rush here. No score to chase. Aurum supports you, without steering you.",
+      "line3": "Write what needs to be placed into words. The rest will come.",
+      "badge": "Premium Presence"
+    },
+    "personalityQuestionnaire": {
+      "fallbackArchetype": "The Decider",
+      "title": "Personality profile",
+      "description": "12 questions to reveal your style. Answer spontaneously; there are no right or wrong answers.",
+      "scaleMin": "Strongly disagree",
+      "scaleMax": "Strongly agree",
+      "saving": "Saving...",
+      "submit": "Reveal my profile"
+    },
+    "ryffQuestionnaire": {
+      "title": "Assess your well-being",
+      "description": "18 questions based on the Ryff scale. Answer spontaneously; there are no right or wrong answers.",
+      "scaleMin": "Strongly disagree",
+      "scaleMax": "Strongly agree",
+      "saving": "Saving...",
+      "submit": "Submit my answers"
+    },
+    "personalityRadar": {
+      "title": "Personality profile",
+      "subtitle": "Discover how you decide, communicate, and move forward daily.",
+      "analyzePages": "Analyze my pages",
+      "guidedPath": "Guided path",
+      "recommended": "Recommended to start",
+      "emptyQuickOption": "Quick option: take the guided path to reveal your operating style.",
+      "emptyOutcome": "You leave with practical cues about how you act and communicate.",
+      "emptyAnalyzeRequirement": "Automatic page analysis needs at least 5 non-encrypted entries.",
+      "analysisInProgress": "Analysis in progress...",
+      "analysisLegend": "Analysis",
+      "questionnaireLegend": "Questionnaire",
+      "premiumReading": "Aurum premium reading",
+      "currentStrength": "Current strength:",
+      "suggestedMicroAction": "Suggested micro-action:",
+      "whyWriteAfterProfile": "Why write after this profile:",
+      "helpfulFirstSentence": "Helpful first sentence:",
+      "planTitle": "3-day express plan",
+      "actionPrompt": "Action I choose today:",
+      "applyPlan": "Apply this plan in my journal",
+      "lastAnalysis": "Last analysis:",
+      "labels": {
+        "determination": "Determination",
+        "influence": "Influence",
+        "stabilite": "Stability",
+        "rigueur": "Rigor"
+      },
+      "hints": {
+        "determination": "Channel your energy into one single priority to avoid scattering.",
+        "influence": "Express your idea in one clear sentence before convincing the group.",
+        "stabilite": "Protect your rhythm with a short but consistent routine.",
+        "rigueur": "Aim for useful precision, not perfection."
+      },
+      "writingBenefits": {
+        "determination": "Writing channels your energy: you move from strong impulse to useful action.",
+        "influence": "Writing clarifies your message before discussion, so you are better understood and more impactful.",
+        "stabilite": "Writing stabilizes your rhythm: you stay consistent even when the week gets heavy.",
+        "rigueur": "Writing sorts essentials from details: you keep quality without getting stuck in perfection."
+      },
+      "starters": {
+        "determination": "The decisive action I choose today (and why) is...",
+        "influence": "The message I want to communicate clearly today is...",
+        "stabilite": "The short ritual I protect to stay steady this week is...",
+        "rigueur": "The quality level that is enough to move forward today is..."
+      },
+      "plans": {
+        "determination": [
+          "Day 1: define one priority decision to make.",
+          "Day 2: take action within 20 minutes max.",
+          "Day 3: measure the real impact of that choice."
+        ],
+        "influence": [
+          "Day 1: phrase your idea in one clear sentence.",
+          "Day 2: share it with one key person and listen to feedback.",
+          "Day 3: adjust your message for more clarity."
+        ],
+        "stabilite": [
+          "Day 1: set a fixed 10-minute routine.",
+          "Day 2: protect this routine despite surprises.",
+          "Day 3: note effects on your calm and consistency."
+        ],
+        "rigueur": [
+          "Day 1: define one simple quality standard.",
+          "Day 2: apply it to one concrete task.",
+          "Day 3: decide what to simplify to move faster."
+        ]
+      }
+    },
+    "wellbeingRadar": {
+      "title": "Psychological well-being",
+      "subtitle": "Quickly understand what drains you, what supports you, and where to recover momentum.",
+      "analyzePages": "Analyze my pages",
+      "guidedPath": "Guided path",
+      "recommended": "Recommended to start",
+      "emptyQuickOption": "Quick option: complete the guided path in 2 minutes.",
+      "emptyOutcome": "Get a clear reading of your energy, calm, and balance levels.",
+      "emptyAnalyzeRequirement": "Automatic page analysis needs at least 5 non-encrypted entries.",
+      "analysisInProgress": "Analysis in progress...",
+      "analysisLegend": "Analysis",
+      "questionnaireLegend": "Questionnaire",
+      "premiumReading": "Aurum premium reading",
+      "currentStrength": "Current strength:",
+      "suggestedMicroAction": "Suggested micro-action:",
+      "whyWriteNow": "Why write now:",
+      "helpfulFirstSentence": "Helpful first sentence:",
+      "planTitle": "3-day express plan",
+      "actionPrompt": "What I feel right now:",
+      "applyPlan": "Apply this plan in my journal",
+      "lastAnalysis": "Last analysis:",
+      "labels": {
+        "acceptationDeSoi": "Self-acceptance",
+        "developpementPersonnel": "Growth",
+        "sensDeLaVie": "Purpose",
+        "maitriseEnvironnement": "Mastery",
+        "autonomie": "Autonomy",
+        "relationsPositives": "Relationships"
+      },
+      "fullLabels": {
+        "acceptationDeSoi": "Self-acceptance",
+        "developpementPersonnel": "Personal growth",
+        "sensDeLaVie": "Purpose in life",
+        "maitriseEnvironnement": "Environmental mastery",
+        "autonomie": "Autonomy",
+        "relationsPositives": "Positive relationships"
+      },
+      "hints": {
+        "acceptationDeSoi": "Speak to yourself like a close friend: fair, not harsh.",
+        "developpementPersonnel": "Pick one concrete micro-learning goal for this week.",
+        "sensDeLaVie": "Write one action that moves you closer to what matters.",
+        "maitriseEnvironnement": "Break your day into one single priority.",
+        "autonomie": "Make one simple decision that truly feels like you.",
+        "relationsPositives": "Send one sincere message to a key person in your life."
+      },
+      "writingBenefits": {
+        "acceptationDeSoi": "Regular writing reduces self-criticism and helps you recover a kinder inner voice.",
+        "developpementPersonnel": "Writing anchors learning, accelerates growth, and prevents the feeling of stagnation.",
+        "sensDeLaVie": "Writing links your actions to your values, bringing direction and reducing mental fog.",
+        "maitriseEnvironnement": "Writing turns mental chaos into concrete priorities, so you regain control of your day.",
+        "autonomie": "Writing recenters you on what you truly choose, not on outside pressure.",
+        "relationsPositives": "Writing clarifies relational needs and makes your conversations calmer and more authentic."
+      },
+      "starters": {
+        "acceptationDeSoi": "Today, one thing I did well (even a small one) is...",
+        "developpementPersonnel": "This week, what I learned about myself and want to keep is...",
+        "sensDeLaVie": "What truly matters to me right now, and the action that follows, is...",
+        "maitriseEnvironnement": "To regain control today, my single top priority is...",
+        "autonomie": "The decision I make for myself today, without betraying myself, is...",
+        "relationsPositives": "The relationship I want to nurture this week, and how I'll do it, is..."
+      },
+      "plans": {
+        "acceptationDeSoi": [
+          "Day 1: note one real strength you used today.",
+          "Day 2: rewrite one self-criticism into a fairer sentence.",
+          "Day 3: write one concrete proof of recent progress."
+        ],
+        "developpementPersonnel": [
+          "Day 1: choose one 10-minute micro-learning goal.",
+          "Day 2: apply it in a real situation.",
+          "Day 3: write what changed in your week."
+        ],
+        "sensDeLaVie": [
+          "Day 1: write what matters most to you right now.",
+          "Day 2: choose one action aligned with that priority.",
+          "Day 3: reflect on how it felt."
+        ],
+        "maitriseEnvironnement": [
+          "Day 1: define one top priority for tomorrow.",
+          "Day 2: protect one distraction-free slot.",
+          "Day 3: remove one recurring friction."
+        ],
+        "autonomie": [
+          "Day 1: make one short decision based on your own criteria.",
+          "Day 2: decline one non-priority request clearly.",
+          "Day 3: note what this choice gave you."
+        ],
+        "relationsPositives": [
+          "Day 1: send a gratitude message to one key person.",
+          "Day 2: ask one sincere question to someone close.",
+          "Day 3: write what this relationship truly gives you."
+        ]
+      }
+    },
+    "reflectionPulse": {
+      "steps": {
+        "toneAnalysis": "Tone analysis",
+        "biasDetection": "Bias detection",
+        "patternExtraction": "Pattern extraction",
+        "reflectionSynthesis": "Reflection synthesis"
+      }
+    },
+    "reflectionResponse": {
+      "title": "Aurum reflection",
+      "patternsUsed": "This reflection uses {count} explored theme(s)."
+    },
+    "premiumJournalForm": {
+      "restoredTitle": "Your text was restored",
+      "restoredDescription": "Continue writing where you left off.",
+      "dayLabel": "Day",
+      "todayPrompt": "What I write today:",
+      "dropImageHere": "Drop your image here",
+      "dragAndDropHint": "Drag and drop images to enrich your writing",
+      "addImage": "Add an image",
+      "removeImageAria": "Remove image",
+      "tagsLabel": "Tags",
+      "uploadImage": "Uploading image...",
+      "saving": "Saving...",
+      "saveThought": "Save this thought",
+      "savedThoughtTitle": "Thought saved",
+      "savedThoughtSubtitle": "Encrypted and secure",
+      "getReflection": "Get your reflection",
+      "getReflectionDescription": "Aurum reflects what it perceives in your words, without judgment or pressure.",
+      "revealReflection": "Reveal my reflection",
+      "continueWithAurum": "Continue with Aurum",
+      "aurumThinking": "Aurum is thinking...",
+      "send": "Send",
+      "anythingElse": "Anything else to put down?",
+      "openNewWritingSpace": "Open a new writing space",
+      "placeholders": {
+        "write": "Write what needs to be put into words...",
+        "caption": "Add a caption...",
+        "tags": "Tags (optional)",
+        "replyToAurum": "Write your reply to Aurum..."
+      },
+      "toasts": {
+        "signInRequiredTitle": "Sign in required",
+        "signInRequiredDescription": "Sign in with Google to add images.",
+        "unsupportedFormatTitle": "Unsupported format",
+        "unsupportedFormatDescription": "Drop an image (jpg, png, webp...).",
+        "imageAddedTitle": "Image added",
+        "imagesAddedCount": "{count} images added.",
+        "imageAddedDescription": "Image added to your entry.",
+        "imageErrorTitle": "Image error",
+        "errorTitle": "Error",
+        "sessionExpiredTitle": "Session expired",
+        "sessionExpiredDescription": "Please sign in again.",
+        "planCompletedTitle": "Plan completed",
+        "planCompletedDescription": "Great work. You completed all steps of this plan.",
+        "entrySavedTitle": "Entry saved",
+        "entrySavedDescription": "Your writing is secure.",
+        "validationErrorTitle": "Validation error"
+      },
+      "errors": {
+        "signInToAddImage": "Sign in required to add an image.",
+        "uploadFailed": "Image upload failed.",
+        "storageUnauthorized": "You are signed in, but image upload is blocked by Storage rules (permission).",
+        "storageUnauthenticated": "Your session is not active for upload. Sign in again and retry.",
+        "storageQuotaExceeded": "Firebase Storage quota is exceeded. Retry later or increase quota.",
+        "storageRetryLimitExceeded": "Network interrupted during upload. Check your connection and retry.",
+        "formErrorReload": "Form error. Please reload the page.",
+        "unableToSaveWithoutAuth": "Unable to save without authentication",
+        "contentCannotBeEmpty": "Content cannot be empty.",
+        "waitImageUpload": "Wait until image upload is complete.",
+        "encryptionNotReady": "Encryption not ready yet. Wait a few seconds and retry.",
+        "noServerResponse": "No response from server. Please retry.",
+        "generic": "An error occurred.",
+        "signInRequired": "Sign in required.",
+        "sessionExpiredReload": "Session expired. Reload the page and sign in again if needed.",
+        "generatingReflection": "Error while generating reflection",
+        "emptyResponse": "Empty response"
+      },
+      "conversation": {
+        "userLabel": "User",
+        "aurumLabel": "Aurum",
+        "replyInstruction": "Reply to the user in continuity with the exchange."
+      }
+    }
+  },
+  "forgotPassword": {
+    "title": "Forgot password",
+    "description": "Enter your email to receive a reset link",
+    "emailPlaceholder": "you@example.com",
+    "invalidEmail": "Invalid email",
+    "sending": "Sending...",
+    "submit": "Send reset link",
+    "successTitle": "Email sent!",
+    "successMessage": "Check your inbox and follow the instructions to reset your password.",
+    "backToSignIn": "Back to sign in"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "dashboardDesc": "Overview",
+    "write": "Write",
+    "writeDesc": "New page",
+    "journal": "Journal",
+    "journalDesc": "Your entries",
+    "magazine": "Magazine",
+    "magazineDesc": "Profiles & progress",
+    "insights": "Insights",
+    "insightsDesc": "Guided clarity",
+    "settings": "Settings",
+    "settingsDesc": "Account & data",
+    "signOut": "Sign out",
+    "signIn": "Sign in",
+    "user": "User",
+    "memberAurum": "Aurum member",
+    "tip": "Tip",
+    "tipText": "2 minutes of writing beats a long session postponed."
+  },
+  "signup": {
+    "title": "Create an account",
+    "description": "Join Aurum Sanctuary and start your journey",
+    "quizBadge": "Your profile is waiting",
+    "quizText": "Your reflection profile is ready! Create your account to discover your personalized result and begin your experience.",
+    "encrypted": "Your data is end-to-end encrypted",
+    "inAppBrowser": "Google sign-in is blocked in this in-app browser. Open this page in Safari or Chrome and try again.",
+    "google": "Continue with Google",
+    "or": "Or continue with",
+    "emailPlaceholder": "you@example.com",
+    "password": "Password",
+    "passwordHint": "At least 8 characters, 1 uppercase, 1 lowercase, 1 digit",
+    "confirmPassword": "Confirm password",
+    "acceptTerms": "I accept the",
+    "terms": "terms of use",
+    "and": "and the",
+    "privacy": "privacy policy",
+    "creating": "Creating...",
+    "create": "Create account",
+    "emailNote": "A verification email will be sent to activate your account.",
+    "alreadyAccount": "Already have an account?",
+    "signIn": "Sign in",
+    "checkEmail": "Check your inbox to activate your account.",
+    "loading": "Loading...",
+    "validation": {
+      "invalidEmail": "Invalid email",
+      "passwordMinLength": "Password must contain at least 8 characters",
+      "passwordUppercase": "Password must contain at least one uppercase letter",
+      "passwordLowercase": "Password must contain at least one lowercase letter",
+      "passwordDigit": "Password must contain at least one digit",
+      "termsRequired": "You must accept the terms of use",
+      "passwordsMismatch": "Passwords do not match"
+    }
+  },
+  "pricing": {
+    "checkoutUnavailableTitle": "Payment unavailable",
+    "checkoutUnavailableDescription": "Unable to open Stripe right now. Please try again in a few seconds.",
+    "checkoutNotConfigured": "Payment is not yet configured for this offer.",
+    "checkoutSessionError": "Unable to create the checkout session.",
+    "checkoutNoUrl": "No payment URL received.",
+    "offerPending": "Offer in preparation. Contact us at aurumdiary.com to be notified.",
+    "title": "Choose your plan",
+    "subtitle": "Full Aurum access from 13€/month or 129€/year.",
+    "recommended": "Recommended",
+    "stripeNote": "Subscriptions are handled by Stripe. Cancel anytime.",
+    "currentPlan": "Current plan",
+    "comingSoon": "Coming soon",
+    "monthly": {
+      "name": "Monthly",
+      "period": "/month",
+      "description": "Full Aurum access, billed monthly.",
+      "cta": "Choose monthly"
+    },
+    "yearly": {
+      "name": "Yearly",
+      "period": "/year",
+      "description": "Same full access, with 2 months free.",
+      "cta": "Choose yearly"
+    },
+    "features": {
+      "entries": "Unlimited journal entries",
+      "conversations": "Unlimited conversations with Aurum",
+      "history": "Full history",
+      "export": "Data export",
+      "reflections": "In-depth reflections"
+    }
+  }
+}

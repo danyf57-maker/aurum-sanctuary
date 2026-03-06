@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Timestamp } from "firebase-admin/firestore";
 import { db } from "@/lib/firebase/admin";
 import { trackServerEvent } from "@/lib/analytics/server";
 import { verifyOnboardingToken } from "@/lib/onboarding/token";
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 export async function GET(request: NextRequest) {
   const uid = request.nextUrl.searchParams.get("uid") || "";
@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
   try {
     const verified = verifyOnboardingToken(token);
     if (verified && verified.uid === uid && verified.eid === eid && verified.kind === "unsubscribe") {
-      const now = Timestamp.now();
+      const now = new Date();
       await Promise.all([
         db.collection("users").doc(uid).collection("settings").doc("preferences").set(
           {
@@ -71,4 +71,3 @@ export async function GET(request: NextRequest) {
     status: success ? 200 : 400,
   });
 }
-

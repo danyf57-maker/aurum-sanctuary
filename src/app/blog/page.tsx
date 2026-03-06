@@ -1,7 +1,6 @@
 
 import type { Metadata } from "next";
 import Link from 'next/link';
-import { getPublicPosts } from '@/lib/firebase/firestore';
 import { BlogCard } from '@/components/blog/blog-card';
 
 export const metadata: Metadata = {
@@ -24,7 +23,15 @@ export const metadata: Metadata = {
 export default async function BlogPage() {
     let posts: any[] = [];
     try {
-        posts = await getPublicPosts();
+        const hasFirebaseWebConfig = Boolean(
+            process.env.NEXT_PUBLIC_FIREBASE_API_KEY &&
+            process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN &&
+            process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID
+        );
+        if (hasFirebaseWebConfig) {
+            const { getPublicPosts } = await import('@/lib/firebase/firestore');
+            posts = await getPublicPosts();
+        }
     } catch (error) {
         console.warn('Failed to fetch blog posts:', error);
     }

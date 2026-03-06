@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { trackServerEvent } from "@/lib/analytics/server";
 import { verifyOnboardingToken } from "@/lib/onboarding/token";
 
+export const runtime = "nodejs";
+
 const PIXEL_GIF = Buffer.from(
   "R0lGODlhAQABAPAAAAAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==",
   "base64"
@@ -36,4 +38,3 @@ export async function GET(request: NextRequest) {
     },
   });
 }
-

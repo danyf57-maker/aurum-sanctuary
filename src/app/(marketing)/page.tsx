@@ -11,7 +11,7 @@ import { useAuth } from '@/providers/auth-provider';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { firestore as db } from '@/lib/firebase/web-client';
 import { trackEvent } from '@/lib/analytics/client';
-import { PricingOfferBlock } from '@/components/marketing/pricing-offer-block';
+import { useLocalizedHref } from '@/hooks/use-localized-href';
 
 const ExitIntent = () => {
     const [show, setShow] = useState(false);
@@ -79,6 +79,7 @@ const ExitIntent = () => {
 
 const QuizSection = () => {
     const { user } = useAuth();
+    const to = useLocalizedHref();
     const [step, setStep] = useState(0);
     const [answers, setAnswers] = useState<string[]>([]);
     const quizStartedAtRef = useRef<number | null>(null);
@@ -340,7 +341,7 @@ const QuizSection = () => {
                                 </p>
                                 <Button size="lg" className="h-16 px-16 text-lg rounded-2xl shadow-xl hover:shadow-2xl transition-all" asChild>
                                     <Link
-                                        href={user ? "/sanctuary/magazine" : `/signup?quiz=complete&profile=${finalProfile}`}
+                                        href={user ? to('/sanctuary/magazine') : to(`/signup?quiz=complete&profile=${finalProfile}`)}
                                         onClick={() =>
                                             void trackEvent({
                                                 name: "quiz_cta_clicked",
@@ -367,18 +368,20 @@ const QuizSection = () => {
     );
 };
 
-const FloatingCTA = ({ visible }: { visible: boolean }) => (
-    <AnimatePresence>
-        {visible && (
-            <motion.div
+const FloatingCTA = ({ visible }: { visible: boolean }) => {
+    const to = useLocalizedHref();
+    return (
+        <AnimatePresence>
+            {visible && (
+                <motion.div
                 initial={{ opacity: 0, y: 100 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 100 }}
                 className="fixed bottom-8 right-8 z-[100]"
             >
                 <Button asChild size="lg" className="rounded-full shadow-2xl bg-primary hover:bg-primary/90 px-8 h-14 group border-4 border-white/20 backdrop-blur-sm">
-                    <Link href="/sanctuary/write" className="flex items-center gap-3">
-                        <span className="font-headline font-semibold">Commencer mon Sanctuaire</span>
+                    <Link href={to('/signup')} className="flex items-center gap-3">
+                        <span className="font-headline font-semibold">Créer mon compte</span>
                         <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                     </Link>
                 </Button>
@@ -386,11 +389,13 @@ const FloatingCTA = ({ visible }: { visible: boolean }) => (
                     <span className="text-[9px] text-white bg-black/40 backdrop-blur-sm px-3 py-1 rounded-full uppercase tracking-tighter font-bold">Sans engagement • Privé</span>
                 </div>
             </motion.div>
-        )}
-    </AnimatePresence>
-);
+            )}
+        </AnimatePresence>
+    );
+};
 export default function Home() {
     const [showCTA, setShowCTA] = useState(false);
+    const to = useLocalizedHref();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -431,14 +436,66 @@ export default function Home() {
             answer: "Choisis un journal intime chiffré de bout en bout, sans publicité, où tes notes ne sont pas exposées publiquement. Sur Aurum, tu écris dans un espace privé conçu pour la clarté mentale."
         },
         {
-            question: "Est-ce gratuit ?",
-            answer: "Oui, tu peux commencer gratuitement. Des plans payants existent si tu veux aller plus loin avec des fonctionnalités avancées."
+            question: "Combien coûte Aurum ?",
+            answer: "Aurum propose une formule mensuelle à 13€/mois et une formule annuelle à 129€/an (2 mois offerts)."
         }
     ];
-
     return (
         <main>
             <HeroIntegrated />
+            <section className="py-14 md:py-16 bg-white border-y border-stone-200/70">
+                <div className="container">
+                    <div className="max-w-4xl mx-auto text-center mb-8">
+                        <h2 className="text-3xl md:text-4xl font-headline text-stone-900 mb-4">
+                            Sais-tu que l&apos;écriture peut vraiment t&apos;aider ?
+                        </h2>
+                        <p className="text-stone-600 font-light text-lg">
+                            Des recherches sérieuses montrent des effets concrets. Voici des résultats et des exemples simples.
+                        </p>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-6xl mx-auto">
+                        <article className="rounded-2xl border border-stone-200 bg-stone-50/70 p-6">
+                            <p className="text-[11px] uppercase tracking-[0.14em] text-stone-500 mb-3 font-semibold">Sais-tu que...</p>
+                            <h3 className="text-xl font-headline text-stone-900 mb-2">écrire un stress vécu peut réduire des symptômes physiques ?</h3>
+                            <p className="text-sm text-stone-600 font-light leading-relaxed mb-3">
+                                Dans une étude fondatrice, les personnes qui écrivaient sur un événement difficile ont montré de meilleurs indicateurs de santé.
+                            </p>
+                            <p className="text-xs text-stone-500 font-light">
+                                Exemple concret : 10 minutes le soir pour poser ce qui te pèse au lieu de ruminer au lit.
+                                <sup><a href={to('/etudes-scientifiques#etude-1')} aria-label="Voir l'étude scientifique 1" className="no-underline font-semibold text-stone-700"> 1</a></sup>
+                            </p>
+                        </article>
+                        <article className="rounded-2xl border border-stone-200 bg-stone-50/70 p-6">
+                            <p className="text-[11px] uppercase tracking-[0.14em] text-stone-500 mb-3 font-semibold">Sais-tu que...</p>
+                            <h3 className="text-xl font-headline text-stone-900 mb-2">mettre tes émotions en mots peut améliorer ton rebond ?</h3>
+                            <p className="text-sm text-stone-600 font-light leading-relaxed mb-3">
+                                Une étude sur des personnes en période de perte d&apos;emploi a trouvé un meilleur retour à l&apos;action chez celles qui écrivaient.
+                            </p>
+                            <p className="text-xs text-stone-500 font-light">
+                                Exemple concret : écrire 3 fois par semaine ce que tu ressens, puis ton prochain pas réaliste.
+                                <sup><a href={to('/etudes-scientifiques#etude-2')} aria-label="Voir l'étude scientifique 2" className="no-underline font-semibold text-stone-700"> 2</a></sup>
+                            </p>
+                        </article>
+                        <article className="rounded-2xl border border-stone-200 bg-stone-50/70 p-6">
+                            <p className="text-[11px] uppercase tracking-[0.14em] text-stone-500 mb-3 font-semibold">Sais-tu que...</p>
+                            <h3 className="text-xl font-headline text-stone-900 mb-2">les revues systématiques confirment un gain de bien-être ?</h3>
+                            <p className="text-sm text-stone-600 font-light leading-relaxed mb-3">
+                                Les synthèses récentes montrent un effet positif du journaling sur le stress et le bien-être psychologique.
+                            </p>
+                            <p className="text-xs text-stone-500 font-light">
+                                Exemple concret : une routine de 5 minutes par jour peut déjà changer ton niveau de clarté.
+                                <sup><a href={to('/etudes-scientifiques#etude-3')} aria-label="Voir l'étude scientifique 3" className="no-underline font-semibold text-stone-700"> 3</a></sup>
+                                <sup><a href={to('/etudes-scientifiques#etude-4')} aria-label="Voir l'étude scientifique 4" className="no-underline font-semibold text-stone-700"> 4</a></sup>
+                            </p>
+                        </article>
+                    </div>
+                    <div className="mt-8 text-center">
+                        <Button asChild size="lg" className="h-12 px-8 rounded-xl">
+                            <Link href={to('/signup')}>Créer mon compte et commencer aujourd&apos;hui</Link>
+                        </Button>
+                    </div>
+                </div>
+            </section>
             <section id="use-cases-seo" className="py-20 md:py-24 bg-white border-y border-stone-200/70">
                 <div className="container">
                     <div className="max-w-3xl mx-auto text-center mb-12">
@@ -460,8 +517,8 @@ export default function Home() {
                                 Écris ce qui tourne en boucle. En pratique: 3 lignes avant de dormir
                                 (fait, émotion, besoin) peuvent déjà apaiser ton esprit.
                             </p>
-                            <Link href="/sanctuary/write" className="mt-auto text-primary font-medium hover:underline">
-                                Apaiser mes nuits →
+                            <Link href={to('/signup')} className="mt-auto text-primary font-medium hover:underline">
+                                Commencer gratuitement →
                             </Link>
                         </article>
 
@@ -475,8 +532,8 @@ export default function Home() {
                                 Quand la petite voix dit &quot;je suis nul&quot;, écris une version plus juste:
                                 &quot;j&apos;avance petit à petit&quot;. Ça aide à reprendre confiance.
                             </p>
-                            <Link href="/sanctuary/write" className="mt-auto text-primary font-medium hover:underline">
-                                Reprendre confiance →
+                            <Link href={to('/signup')} className="mt-auto text-primary font-medium hover:underline">
+                                Créer mon compte →
                             </Link>
                         </article>
 
@@ -490,8 +547,8 @@ export default function Home() {
                                 Écris une idée par ligne. Tu transformes la confusion mentale en points
                                 clairs, puis tu choisis un seul petit pas pour aujourd&apos;hui.
                             </p>
-                            <Link href="/sanctuary/write" className="mt-auto text-primary font-medium hover:underline">
-                                Retrouver de la clarté →
+                            <Link href={to('/signup')} className="mt-auto text-primary font-medium hover:underline">
+                                Je veux essayer →
                             </Link>
                         </article>
 
@@ -505,8 +562,8 @@ export default function Home() {
                                 Quelques lignes régulières valent mieux qu&apos;une longue session rare.
                                 Tu décompresses avant saturation et tu retrouves plus de calme.
                             </p>
-                            <Link href="/sanctuary/write" className="mt-auto text-primary font-medium hover:underline">
-                                Relâcher la pression →
+                            <Link href={to('/signup')} className="mt-auto text-primary font-medium hover:underline">
+                                Je commence maintenant →
                             </Link>
                         </article>
 
@@ -520,8 +577,8 @@ export default function Home() {
                                 Règle simple: commence par un fait, une émotion, un besoin.
                                 C&apos;est suffisant pour démarrer sans pression, même en 2 minutes.
                             </p>
-                            <Link href="/sanctuary/write" className="mt-auto text-primary font-medium hover:underline">
-                                Commencer maintenant →
+                            <Link href={to('/signup')} className="mt-auto text-primary font-medium hover:underline">
+                                Ouvrir mon journal →
                             </Link>
                         </article>
 
@@ -535,21 +592,88 @@ export default function Home() {
                                 Pose un minuteur 5 minutes et écris sans corriger:
                                 faits, émotions, besoins. Cette routine courte te redonne de l&apos;air mental.
                             </p>
-                            <Link href="/sanctuary/write" className="mt-auto text-primary font-medium hover:underline">
-                                Alléger ma charge mentale →
+                            <Link href={to('/signup')} className="mt-auto text-primary font-medium hover:underline">
+                                Créer mon espace →
+                            </Link>
+                        </article>
+                        <article className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm h-full flex flex-col">
+                            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-stone-100 px-3 py-1 text-[11px] uppercase tracking-[0.12em] text-stone-600 font-medium w-fit">
+                                <Compass className="h-3.5 w-3.5" />
+                                Conflit
+                            </div>
+                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Après une dispute, ton mental rejoue la scène</h3>
+                            <p className="text-stone-600 font-light leading-relaxed mb-6">
+                                Pose les faits, ce que tu as ressenti, puis ce dont tu as besoin maintenant.
+                                Tu sors du film mental et tu reviens à toi.
+                            </p>
+                            <Link href={to('/signup')} className="mt-auto text-primary font-medium hover:underline">
+                                Revenir au calme →
+                            </Link>
+                        </article>
+                        <article className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm h-full flex flex-col">
+                            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-stone-100 px-3 py-1 text-[11px] uppercase tracking-[0.12em] text-stone-600 font-medium w-fit">
+                                <Moon className="h-3.5 w-3.5" />
+                                Fatigue mentale
+                            </div>
+                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Tu te sens vidé sans savoir pourquoi</h3>
+                            <p className="text-stone-600 font-light leading-relaxed mb-6">
+                                Écris 5 lignes en fin de journée: ce qui t&apos;a pris de l&apos;énergie, ce qui t&apos;en a donné.
+                                Tu retrouves des repères pour demain.
+                            </p>
+                            <Link href={to('/signup')} className="mt-auto text-primary font-medium hover:underline">
+                                Retrouver de l&apos;énergie →
+                            </Link>
+                        </article>
+                        <article className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm h-full flex flex-col">
+                            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-stone-100 px-3 py-1 text-[11px] uppercase tracking-[0.12em] text-stone-600 font-medium w-fit">
+                                <ListChecks className="h-3.5 w-3.5" />
+                                Décision
+                            </div>
+                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Tu bloques sur une décision importante</h3>
+                            <p className="text-stone-600 font-light leading-relaxed mb-6">
+                                Divise ta page en deux colonnes: ce que tu gagnes, ce que tu perds.
+                                Mettre à plat tes pensées fait souvent émerger ton vrai choix.
+                            </p>
+                            <Link href={to('/signup')} className="mt-auto text-primary font-medium hover:underline">
+                                Clarifier ma décision →
                             </Link>
                         </article>
                     </div>
                     <p className="mt-8 text-xs text-stone-500 text-center font-light">
                         Basé sur des recherches récentes sur l&apos;écriture et le bien-être psychologique
                         <sup>
-                            <a href="#ref3" aria-label="Voir référence 3" className="no-underline"> 3</a>
+                            <a href={to('/etudes-scientifiques#etude-3')} aria-label="Voir l'étude scientifique 3" className="no-underline font-semibold text-stone-700"> 3</a>
                         </sup>
                         <sup>
-                            <a href="#ref4" aria-label="Voir référence 4" className="no-underline"> 4</a>
+                            <a href={to('/etudes-scientifiques#etude-4')} aria-label="Voir l'étude scientifique 4" className="no-underline font-semibold text-stone-700"> 4</a>
                         </sup>
                         .
                     </p>
+                </div>
+            </section>
+
+            {/* SECTION 3: Scientific social proof */}
+            <section className="py-24 md:py-32 bg-stone-100/50">
+                <div className="container max-w-4xl mx-auto">
+                    <div className="text-center max-w-3xl mx-auto mb-14">
+                        <h2 className="text-4xl md:text-5xl font-headline mb-6">Ce n'est pas de la magie, c'est un phénomène observé.</h2>
+                        <p className="text-stone-600 font-light text-lg leading-relaxed">
+                            Des chercheurs se sont penchés sur le pouvoir de l'écriture. Dans leurs études, ils ont fait des découvertes surprenantes :
+                        </p>
+                    </div>
+                    <ul className="space-y-5 text-stone-700 font-light leading-relaxed text-lg max-w-3xl mx-auto">
+                        <li className="rounded-2xl border border-stone-200 bg-white p-6">
+                            <span className="font-medium text-stone-900">Découverte n°1 :</span> Les participants qui prenaient le temps
+                            d'écrire sur leurs soucis ont vu leurs visites chez le médecin diminuer de moitié
+                            <sup><a href={to('/etudes-scientifiques#etude-1')} aria-label="Voir l'étude scientifique 1" className="no-underline font-semibold text-stone-700"> 1</a></sup>.
+                        </li>
+                        <li className="rounded-2xl border border-stone-200 bg-white p-6">
+                            <span className="font-medium text-stone-900">Découverte n°2 :</span> Dans une autre étude sur des personnes
+                            ayant perdu leur emploi, celles qui écrivaient sur leurs émotions avaient deux fois plus de chances de retrouver
+                            un travail que les autres
+                            <sup><a href={to('/etudes-scientifiques#etude-2')} aria-label="Voir l'étude scientifique 2" className="no-underline font-semibold text-stone-700"> 2</a></sup>.
+                        </li>
+                    </ul>
                 </div>
             </section>
 
@@ -579,31 +703,6 @@ export default function Home() {
                             Écrire tes pensées, même les plus secrètes, c'est comme leur dire "Stop !". Ça les calme.
                             Aurum est ton outil pour faire ça, en toute sécurité.
                         </p>
-                    </div>
-                </section>
-
-                {/* SECTION 3: Scientific social proof */}
-                <section className="py-24 md:py-32 bg-stone-100/50">
-                    <div className="container max-w-4xl mx-auto">
-                        <div className="text-center max-w-3xl mx-auto mb-14">
-                            <h2 className="text-4xl md:text-5xl font-headline mb-6">Ce n'est pas de la magie, c'est un phénomène observé.</h2>
-                            <p className="text-stone-600 font-light text-lg leading-relaxed">
-                                Des chercheurs se sont penchés sur le pouvoir de l'écriture. Dans leurs études, ils ont fait des découvertes surprenantes :
-                            </p>
-                        </div>
-                        <ul className="space-y-5 text-stone-700 font-light leading-relaxed text-lg max-w-3xl mx-auto">
-                            <li className="rounded-2xl border border-stone-200 bg-white p-6">
-                                <span className="font-medium text-stone-900">Découverte n°1 :</span> Les participants qui prenaient le temps
-                                d'écrire sur leurs soucis ont vu leurs visites chez le médecin diminuer de moitié
-                                <sup><a href="#ref1" aria-label="Voir référence 1" className="no-underline"> *</a></sup>.
-                            </li>
-                            <li className="rounded-2xl border border-stone-200 bg-white p-6">
-                                <span className="font-medium text-stone-900">Découverte n°2 :</span> Dans une autre étude sur des personnes
-                                ayant perdu leur emploi, celles qui écrivaient sur leurs émotions avaient deux fois plus de chances de retrouver
-                                un travail que les autres
-                                <sup><a href="#ref2" aria-label="Voir référence 2" className="no-underline"> **</a></sup>.
-                            </li>
-                        </ul>
                     </div>
                 </section>
 
@@ -673,12 +772,11 @@ export default function Home() {
 
                 {/* SECTION 7: CTA Final */}
                 <section className="container py-24 md:py-32 text-center border-t border-black/5">
-                    <PricingOfferBlock className="mb-10" ctaHref="/fr/pricing" locale="fr" />
                     <Button asChild size="lg" className="h-14 px-12 text-base">
-                        <Link href="/sanctuary/write">Découvrir mon premier reflet</Link>
+                        <Link href={to('/signup')}>Créer mon compte gratuitement</Link>
                     </Button>
                     <div className="mt-6">
-                        <span className="text-xs text-stone-400 font-light">Accès immédiat • 100% Chiffré • Aucune carte requise</span>
+                        <span className="text-xs text-stone-400 font-light">Accès immédiat • 100% chiffré • Aucune carte requise</span>
                     </div>
                     <div className="mt-10 max-w-5xl mx-auto">
                         <p className="text-stone-600 font-light text-lg mb-6">
@@ -731,10 +829,10 @@ export default function Home() {
                         <h3 className="text-sm font-semibold tracking-wider uppercase text-stone-500 mb-4">Références</h3>
                         <ul className="space-y-3 text-xs text-stone-500 leading-relaxed">
                             <li id="ref1">
-                                <strong>*</strong> Pennebaker, J. W., & Beall, S. K. (1986). <em>Confronting a traumatic event: Toward an understanding of inhibition and disease.</em> Journal of Abnormal Psychology, 95, 274-281.
+                                <strong>1</strong> Pennebaker, J. W., & Beall, S. K. (1986). <em>Confronting a traumatic event: Toward an understanding of inhibition and disease.</em> Journal of Abnormal Psychology, 95, 274-281.
                             </li>
                             <li id="ref2">
-                                <strong>**</strong> Spera, S. P., Buhrfeind, E. D., & Pennebaker, J. W. (1994). <em>Expressive writing and coping with job loss.</em> Academy of Management Journal, 37, 722-733.
+                                <strong>2</strong> Spera, S. P., Buhrfeind, E. D., & Pennebaker, J. W. (1994). <em>Expressive writing and coping with job loss.</em> Academy of Management Journal, 37, 722-733.
                             </li>
                             <li id="ref3">
                                 <strong>3</strong> Sohal, M., Singh, P., Dhillon, B. S., & Gill, H. S. (2022). <em>Efficacy of journaling in the management of mental illness: a systematic review and meta-analysis.</em> Family Medicine and Community Health.

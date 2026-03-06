@@ -16,6 +16,7 @@ import { SentimentPieChart } from '@/components/stats/sentiment-pie-chart';
 import { SentimentChart } from '@/components/journal/sentiment-chart';
 import { JournalEntry } from '@/lib/types';
 import { motion } from 'framer-motion';
+import { useLocale } from '@/hooks/use-locale';
 
 interface Insight {
     id: string;
@@ -27,6 +28,8 @@ interface Insight {
 }
 
 export default function InsightsPage() {
+    const locale = useLocale();
+    const isFr = locale === 'fr';
     const { user, loading: authLoading } = useAuth();
     const { isPremium, loading: subscriptionLoading } = useSubscription();
     const [insights, setInsights] = useState<Insight[]>([]);
@@ -92,10 +95,12 @@ export default function InsightsPage() {
             <header className="mb-12 flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
                     <h1 className="text-4xl font-bold font-headline tracking-tight text-stone-900">
-                        L'Écho Aurum
+                        {isFr ? "L'Écho Aurum" : "Aurum Echo"}
                     </h1>
                     <p className="text-stone-500 mt-2 font-medium">
-                        Perspective approfondie sur vos schémas émotionnels et cognitifs.
+                        {isFr
+                            ? "Perspective approfondie sur vos schémas émotionnels et cognitifs."
+                            : "A deeper perspective on your emotional and cognitive patterns."}
                     </p>
                 </div>
                 {isPremium && (
@@ -111,7 +116,9 @@ export default function InsightsPage() {
                 <section className="space-y-8">
                     <div className="flex items-center gap-2 text-stone-400">
                         <TrendingUp className="h-4 w-4" />
-                        <h2 className="text-xs font-bold uppercase tracking-[0.2em]">Trajectoires Émotionnelles</h2>
+                        <h2 className="text-xs font-bold uppercase tracking-[0.2em]">
+                            {isFr ? "Trajectoires Émotionnelles" : "Emotional trajectories"}
+                        </h2>
                     </div>
                     
                     <div className="grid gap-8 lg:grid-cols-2">
@@ -148,7 +155,9 @@ export default function InsightsPage() {
                 <section className="space-y-8">
                     <div className="flex items-center gap-2 text-stone-400">
                         <Compass className="h-4 w-4" />
-                        <h2 className="text-xs font-bold uppercase tracking-[0.2em]">Synthèses Hebdomadaires</h2>
+                        <h2 className="text-xs font-bold uppercase tracking-[0.2em]">
+                            {isFr ? "Synthèses Hebdomadaires" : "Weekly syntheses"}
+                        </h2>
                     </div>
 
                     {insights.length > 0 ? (
@@ -172,12 +181,18 @@ export default function InsightsPage() {
                     ) : (
                         <div className="bg-stone-50 border-2 border-dashed border-stone-200 rounded-2xl p-12 text-center">
                             <Eye className="w-12 h-12 text-stone-300 mx-auto mb-4" />
-                            <h3 className="text-lg font-bold text-stone-400">En attente de données</h3>
+                            <h3 className="text-lg font-bold text-stone-400">
+                                {isFr ? "En attente de données" : "Waiting for data"}
+                            </h3>
                             <p className="text-stone-400 text-sm mt-2 max-w-md mx-auto">
-                                Continuez à écrire pendant 7 jours pour générer votre première synthèse hebdomadaire.
+                                {isFr
+                                    ? "Continuez à écrire pendant 7 jours pour générer votre première synthèse hebdomadaire."
+                                    : "Keep writing for 7 days to generate your first weekly synthesis."}
                             </p>
                             <p className="text-stone-400 text-xs mt-3 italic">
-                                &ldquo;Un mot après l&apos;autre.&rdquo; - Margaret Atwood
+                                {isFr
+                                    ? "“Un mot après l'autre.” - Margaret Atwood"
+                                    : '"A word after a word after a word is power." - Margaret Atwood'}
                             </p>
                         </div>
                     )}

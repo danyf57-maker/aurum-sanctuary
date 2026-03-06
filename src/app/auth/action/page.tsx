@@ -19,12 +19,16 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle2, XCircle, Loader2 } from 'lucide-react';
+import { useLocale } from '@/hooks/use-locale';
+import { localizeHref } from '@/lib/i18n/path';
 
 type ActionMode = 'verifyEmail' | 'resetPassword' | 'recoverEmail' | null;
 
 function AuthActionContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const locale = useLocale();
+  const to = (href: string) => localizeHref(href, locale);
 
   const [mode, setMode] = useState<ActionMode>(null);
   const [actionCode, setActionCode] = useState<string | null>(null);
@@ -72,7 +76,7 @@ function AuthActionContent() {
       setTimeout(() => {
         const params = new URLSearchParams({ verified: 'true' });
         if (email) params.set('email', email);
-        router.push(`/login?${params.toString()}`);
+        router.push(to(`/login?${params.toString()}`));
       }, 3000);
     } catch (error: any) {
       console.error('Email verification error:', error);
@@ -130,7 +134,7 @@ function AuthActionContent() {
       setMessage('Votre mot de passe a été réinitialisé avec succès !');
 
       setTimeout(() => {
-        router.push('/login?reset=true');
+        router.push(to('/login?reset=true'));
       }, 2000);
     } catch (error: any) {
       console.error('Password reset error:', error);
@@ -221,7 +225,7 @@ function AuthActionContent() {
                 if (mode === 'verifyEmail') params.set('verified', 'true');
                 if (verifiedEmail) params.set('email', verifiedEmail);
                 const suffix = params.toString();
-                router.push(suffix ? `/login?${suffix}` : '/login');
+                router.push(suffix ? to(`/login?${suffix}`) : to('/login'));
               }}
               className="w-full"
             >
