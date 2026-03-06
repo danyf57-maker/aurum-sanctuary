@@ -9,6 +9,7 @@ import { MobileNav } from './mobile-nav';
 import { LanguageSwitch } from './language-switch';
 import { stripLocalePrefix } from '@/i18n/routing';
 import { useLocalizedHref } from '@/hooks/use-localized-href';
+import { useTranslations } from 'next-intl';
 
 const Logo = (props: React.SVGProps<SVGSVGElement>) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props}>
@@ -18,6 +19,8 @@ const Logo = (props: React.SVGProps<SVGSVGElement>) => (
 
 export function Header() {
   const pathname = usePathname();
+  const tNav = useTranslations('nav');
+  const tHeader = useTranslations('header');
   const to = useLocalizedHref();
   const normalizedPath = stripLocalePrefix(pathname || '/');
   const isHomepage = normalizedPath === '/';
@@ -30,17 +33,17 @@ export function Header() {
   const isAdminPage = normalizedPath.startsWith('/admin');
   const isAppPage = normalizedPath.startsWith('/dashboard') || normalizedPath.startsWith('/sanctuary') || normalizedPath.startsWith('/insights') || normalizedPath.startsWith('/settings');
   const currentSection = normalizedPath.startsWith('/sanctuary/write')
-    ? 'Écrire'
+    ? tNav('write')
     : normalizedPath.startsWith('/sanctuary/magazine')
-    ? 'Magazine'
+    ? tNav('magazine')
     : normalizedPath.startsWith('/sanctuary')
-    ? 'Journal'
+    ? tNav('journal')
     : normalizedPath.startsWith('/dashboard')
-    ? 'Tableau de bord'
+    ? tNav('dashboard')
     : normalizedPath.startsWith('/insights')
-    ? 'Analyses'
+    ? tNav('insights')
     : normalizedPath.startsWith('/settings')
-    ? 'Paramètres'
+    ? tNav('settings')
     : null;
 
   if (isAdminPage) {
@@ -53,7 +56,7 @@ export function Header() {
                 <Logo className="h-6 w-6 text-amber-600" />
               </motion.div>
               <span className="font-bold font-headline sm:inline-block">
-                Aurum <span className="text-muted-foreground font-normal text-sm">/ Admin</span>
+                Aurum <span className="text-muted-foreground font-normal text-sm">/ {tHeader('admin')}</span>
               </span>
             </Link>
           </div>
@@ -84,19 +87,19 @@ export function Header() {
                 href={to('/sanctuary/write')}
                 className="transition-colors hover:text-foreground/80 text-foreground/60"
               >
-                Écrire
+                {tHeader('quickWrite')}
               </Link>
               <Link
                 href={to('/sanctuary')}
                 className="transition-colors hover:text-foreground/80 text-foreground/60"
               >
-                Journal
+                {tHeader('journal')}
               </Link>
               <Link
                 href={to('/sanctuary/magazine')}
                 className="transition-colors hover:text-foreground/80 text-foreground/60"
               >
-                Magazine
+                {tHeader('magazine')}
               </Link>
             </nav>
           </div>
@@ -110,7 +113,7 @@ export function Header() {
             <div className="hidden lg:flex items-center gap-4 mr-4">
               {currentSection && (
                 <div className="rounded-full border border-stone-200 bg-stone-100/70 px-3 py-1 text-xs font-medium text-stone-700">
-                  Section active : {currentSection}
+                  {tHeader('activeSection', { section: currentSection })}
                 </div>
               )}
             </div>

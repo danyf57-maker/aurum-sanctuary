@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { signInWithGoogle } from '@/lib/firebase/auth';
 import { useAuth } from '@/providers/auth-provider';
-import { useLocale } from '@/hooks/use-locale';
+import { useTranslations } from 'next-intl';
 
 interface AuthDialogProps {
   open: boolean;
@@ -35,9 +35,7 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
 export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
   const { toast } = useToast();
   const { signUpWithEmail, signInWithEmail } = useAuth();
-  const locale = useLocale();
-  const isFr = locale === 'fr';
-  const txt = (fr: string, en: string) => (isFr ? fr : en);
+  const t = useTranslations('authDialog');
   const [isLoading, setIsLoading] = useState(false);
   const [mode, setMode] = useState<'signup' | 'login'>('signup');
   const [email, setEmail] = useState('');
@@ -50,7 +48,7 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
     const { error } = await signInWithGoogle();
     if (error) {
       toast({
-        title: txt('Erreur de connexion', 'Sign-in error'),
+        title: t('errors.signInTitle'),
         description: error,
         variant: 'destructive',
       });
@@ -67,8 +65,8 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
       if (mode === 'signup') {
         if (!name.trim()) {
           toast({
-            title: txt('Nom requis', 'Name required'),
-            description: txt('Veuillez entrer votre nom.', 'Please enter your name.'),
+            title: t('errors.nameRequiredTitle'),
+            description: t('errors.nameRequiredDescription'),
             variant: 'destructive',
           });
           setIsLoading(false);
@@ -91,14 +89,10 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
       <DialogContent className="sm:max-w-[450px]">
         <DialogHeader>
           <DialogTitle className="font-headline text-2xl text-center">
-            {mode === 'signup'
-              ? txt('Créer mon compte', 'Create my account')
-              : txt('Se connecter', 'Sign in')}
+            {mode === 'signup' ? t('createTitle') : t('signInTitle')}
           </DialogTitle>
           <DialogDescription className="text-center">
-            {mode === 'signup'
-              ? txt('Commencez votre voyage vers la clarté', 'Start your journey to clarity')
-              : txt('Retrouvez votre sanctuaire', 'Return to your sanctuary')}
+            {mode === 'signup' ? t('createDescription') : t('signInDescription')}
           </DialogDescription>
         </DialogHeader>
 
@@ -111,7 +105,7 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
             className="w-full"
           >
             {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <GoogleIcon className="mr-2" />}
-            {txt('Continuer avec Google', 'Continue with Google')}
+            {t('google')}
           </Button>
 
           <div className="relative">
@@ -120,7 +114,7 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
             </div>
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-background px-2 text-muted-foreground">
-                {txt('Ou', 'Or')}
+                {t('or')}
               </span>
             </div>
           </div>
@@ -130,7 +124,7 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
             {mode === 'signup' && (
               <Input
                 type="text"
-                placeholder={txt('Votre nom', 'Your name')}
+                placeholder={t('yourName')}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
@@ -150,7 +144,7 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
             <div className="relative">
               <Input
                 type={showPassword ? "text" : "password"}
-                placeholder={txt('Mot de passe', 'Password')}
+                placeholder={t('password')}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -169,8 +163,8 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {mode === 'signup'
-                ? txt('Créer mon compte', 'Create my account')
-                : txt('Sign in', 'Sign in')}
+                ? t('createCta')
+                : t('signInCta')}
             </Button>
           </form>
 
@@ -178,24 +172,24 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
           <div className="text-center text-sm text-muted-foreground">
             {mode === 'signup' ? (
               <>
-                {txt('Déjà un compte ?', 'Already have an account?')}{' '}
+                {t('alreadyAccount')}{' '}
                 <button
                   type="button"
                   onClick={() => setMode('login')}
                   className="text-primary hover:underline font-medium"
                 >
-                  {txt('Se connecter', 'Sign in')}
+                  {t('signInLink')}
                 </button>
               </>
             ) : (
               <>
-                {txt('Pas encore de compte ?', "Don't have an account yet?")}{' '}
+                {t('noAccount')}{' '}
                 <button
                   type="button"
                   onClick={() => setMode('signup')}
                   className="text-primary hover:underline font-medium"
                 >
-                  {txt('Créer un compte', 'Create an account')}
+                  {t('createAccountLink')}
                 </button>
               </>
             )}
