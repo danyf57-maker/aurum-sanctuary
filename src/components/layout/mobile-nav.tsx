@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils';
 import { LanguageSwitch } from './language-switch';
 import { stripLocalePrefix } from '@/i18n/routing';
 import { useLocalizedHref } from '@/hooks/use-localized-href';
+import { useTranslations } from 'next-intl';
 
 const Logo = (props: React.SVGProps<SVGSVGElement>) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props}>
@@ -18,16 +19,18 @@ const Logo = (props: React.SVGProps<SVGSVGElement>) => (
 )
 
 const mobileNavItems = [
-  { href: '/dashboard', label: 'Tableau de Bord', helper: 'Vue d’ensemble', icon: LayoutDashboard },
-  { href: '/sanctuary/write', label: 'Écrire', helper: 'Nouvelle page', icon: PenSquare },
-  { href: '/sanctuary', label: 'Journal', helper: 'Tes entrées', icon: BookOpenText },
-  { href: '/sanctuary/magazine', label: 'Magazine', helper: 'Profils & progression', icon: BarChart3 },
-  { href: '/insights', label: 'Analyses', helper: 'Clarté guidée', icon: Sparkles },
-  { href: '/settings', label: 'Paramètres', helper: 'Compte & données', icon: Settings },
+  { href: '/dashboard', key: 'dashboard', helperKey: 'overview', icon: LayoutDashboard },
+  { href: '/sanctuary/write', key: 'write', helperKey: 'newPage', icon: PenSquare },
+  { href: '/sanctuary', key: 'journal', helperKey: 'yourEntries', icon: BookOpenText },
+  { href: '/sanctuary/magazine', key: 'magazine', helperKey: 'profilesProgress', icon: BarChart3 },
+  { href: '/insights', key: 'insights', helperKey: 'guidedClarity', icon: Sparkles },
+  { href: '/settings', key: 'settings', helperKey: 'accountData', icon: Settings },
 ] as const;
 
 export function MobileNav() {
   const [open, setOpen] = React.useState(false);
+  const tNav = useTranslations('nav');
+  const tMobileNav = useTranslations('mobileNav');
   const pathname = usePathname();
   const normalizedPath = stripLocalePrefix(pathname || '/');
   const to = useLocalizedHref();
@@ -47,11 +50,11 @@ export function MobileNav() {
             className="h-10 w-10 rounded-xl border border-stone-200 bg-white/90 p-0 text-stone-800 shadow-sm hover:bg-white focus-visible:ring-0 focus-visible:ring-offset-0"
           >
             <Menu className="h-6 w-6" />
-            <span className="sr-only">Ouvrir le menu</span>
+            <span className="sr-only">{tMobileNav('openMenu')}</span>
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="border-r border-stone-200/80 bg-gradient-to-b from-stone-50 to-white pr-0 pt-[calc(env(safe-area-inset-top)+1.5rem)]">
-          <SheetTitle className="sr-only">Menu de navigation principal</SheetTitle>
+          <SheetTitle className="sr-only">{tMobileNav('mainTitle')}</SheetTitle>
           <MobileLink
             href={to('/')}
             className="mb-4 flex items-center rounded-2xl border border-stone-200/80 bg-white px-3 py-2 shadow-sm"
@@ -68,7 +71,7 @@ export function MobileNav() {
             </div>
             <div className="flex flex-col space-y-1.5 pr-4">
               <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-stone-500">
-                Navigation rapide
+                {tMobileNav('quickNavigation')}
               </p>
               {mobileNavItems.map((item) => {
                 const isActive = isItemActive(item.href);
@@ -76,9 +79,9 @@ export function MobileNav() {
                   <MobileLink key={item.href} href={to(item.href)} onOpenChange={setOpen} active={isActive}>
                     <div className="flex items-center gap-3">
                       <item.icon className={cn("h-4.5 w-4.5", isActive ? "text-amber-600" : "text-stone-400")} />
-                      <span className="font-semibold">{item.label}</span>
+                      <span className="font-semibold">{tNav(item.key)}</span>
                     </div>
-                    <span className="mt-0.5 pl-7 text-xs text-stone-500">{item.helper}</span>
+                    <span className="mt-0.5 pl-7 text-xs text-stone-500">{tNav(item.helperKey)}</span>
                   </MobileLink>
                 );
               })}

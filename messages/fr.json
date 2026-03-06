@@ -465,14 +465,586 @@
       "2": "J'ai juste besoin de vider ma tête avant d'exploser..."
     },
     "quotes": {
-      "0": { "hint": "Couche tes pensées. Apaise ton esprit avant de dormir.", "detail": "Écris simplement ce que tu as en tête, sans filtre.", "quote": "Écrire, c'est une façon de parler sans être interrompu.", "author": "Jules Renard" },
-      "1": { "hint": "Quand tu rumines, écris ce qui tourne en boucle.", "detail": "Mettre les mots dehors aide ton mental à ralentir.", "quote": "J'écris pour découvrir ce que je pense.", "author": "Joan Didion" },
-      "2": { "hint": "Si tu portes trop, dépose tout ici, ligne après ligne.", "detail": "Tu n'as pas besoin d'écrire parfaitement, juste d'écrire vrai.", "quote": "Il n'y a pas de plus grande agonie que de porter une histoire non racontée en soi.", "author": "Maya Angelou" },
-      "3": { "hint": "Quand tu doutes de toi, reviens aux faits et à ton ressenti.", "detail": "Quelques lignes peuvent te redonner un point d'appui.", "quote": "Un mot après l'autre, c'est le pouvoir.", "author": "Margaret Atwood" },
-      "4": { "hint": "Quand la charge mentale monte, ce cadre devient ton sas.", "detail": "Tu peux poser tes priorités et retrouver de l'air.", "quote": "Nous écrivons pour goûter la vie deux fois.", "author": "Anaïs Nin" },
-      "5": { "hint": "Après une journée lourde, vide ta tête avant la nuit.", "detail": "Même 2 minutes d'écriture peuvent changer ton état.", "quote": "Écrire est une forme de thérapie.", "author": "Graham Greene" },
-      "6": { "hint": "Quand tout est flou, une phrase claire suffit pour repartir.", "detail": "Commence petit: un fait, une émotion, un besoin.", "quote": "Écrire, c'est une façon de parler sans être interrompu.", "author": "Jules Renard" },
-      "7": { "hint": "Quand ton esprit accélère, ralentis avec des mots simples.", "detail": "Ici, tu peux déposer sans te juger.", "quote": "J'écris pour découvrir ce que je pense.", "author": "Joan Didion" }
+      "0": {
+        "hint": "Couche tes pensées. Apaise ton esprit avant de dormir.",
+        "detail": "Écris simplement ce que tu as en tête, sans filtre.",
+        "quote": "Écrire, c'est une façon de parler sans être interrompu.",
+        "author": "Jules Renard"
+      },
+      "1": {
+        "hint": "Quand tu rumines, écris ce qui tourne en boucle.",
+        "detail": "Mettre les mots dehors aide ton mental à ralentir.",
+        "quote": "J'écris pour découvrir ce que je pense.",
+        "author": "Joan Didion"
+      },
+      "2": {
+        "hint": "Si tu portes trop, dépose tout ici, ligne après ligne.",
+        "detail": "Tu n'as pas besoin d'écrire parfaitement, juste d'écrire vrai.",
+        "quote": "Il n'y a pas de plus grande agonie que de porter une histoire non racontée en soi.",
+        "author": "Maya Angelou"
+      },
+      "3": {
+        "hint": "Quand tu doutes de toi, reviens aux faits et à ton ressenti.",
+        "detail": "Quelques lignes peuvent te redonner un point d'appui.",
+        "quote": "Un mot après l'autre, c'est le pouvoir.",
+        "author": "Margaret Atwood"
+      },
+      "4": {
+        "hint": "Quand la charge mentale monte, ce cadre devient ton sas.",
+        "detail": "Tu peux poser tes priorités et retrouver de l'air.",
+        "quote": "Nous écrivons pour goûter la vie deux fois.",
+        "author": "Anaïs Nin"
+      },
+      "5": {
+        "hint": "Après une journée lourde, vide ta tête avant la nuit.",
+        "detail": "Même 2 minutes d'écriture peuvent changer ton état.",
+        "quote": "Écrire est une forme de thérapie.",
+        "author": "Graham Greene"
+      },
+      "6": {
+        "hint": "Quand tout est flou, une phrase claire suffit pour repartir.",
+        "detail": "Commence petit: un fait, une émotion, un besoin.",
+        "quote": "Écrire, c'est une façon de parler sans être interrompu.",
+        "author": "Jules Renard"
+      },
+      "7": {
+        "hint": "Quand ton esprit accélère, ralentis avec des mots simples.",
+        "detail": "Ici, tu peux déposer sans te juger.",
+        "quote": "J'écris pour découvrir ce que je pense.",
+        "author": "Joan Didion"
+      }
     }
+  },
+  "marketingPage": {
+    "exitIntent": {
+      "title": "Une dernière chose avant de partir...",
+      "description": "Tu ne sais pas par où commencer ? Fais notre évaluation de bien-être en 30 secondes pour obtenir ton profil personnalisé.",
+      "cta": "Faire le parcours (30s)",
+      "dismiss": "Non merci, je souhaite continuer à naviguer"
+    },
+    "quiz": {
+      "stepBadge": "Parcours de réflexion • {current}/{total}",
+      "resultTitle": "Ton profil est prêt.",
+      "resultCtaLoggedIn": "Voir mon résultat dans Magazine",
+      "resultCtaGuest": "Créer mon compte pour voir mon résultat",
+      "questions": [
+        {
+          "q": "Quand tu penses à ta journée, qu'est-ce qui ressort le plus ?",
+          "options": [
+            {
+              "label": "D",
+              "text": "J'ai beaucoup de choses à faire et je veux avancer vite"
+            },
+            {
+              "label": "I",
+              "text": "J'ai besoin de connecter avec les autres et partager"
+            },
+            {
+              "label": "S",
+              "text": "Je cherche la tranquillité et l'harmonie"
+            },
+            {
+              "label": "C",
+              "text": "J'analyse les situations avant d'agir"
+            }
+          ]
+        },
+        {
+          "q": "Face à une situation difficile, ta première réaction est de :",
+          "options": [
+            {
+              "label": "D",
+              "text": "Prendre le problème en main et trouver une solution"
+            },
+            {
+              "label": "I",
+              "text": "En parler pour voir différentes perspectives"
+            },
+            {
+              "label": "S",
+              "text": "Retrouver mon calme avant de réagir"
+            },
+            {
+              "label": "C",
+              "text": "Comprendre tous les détails avant de décider"
+            }
+          ]
+        },
+        {
+          "q": "Si tu ouvrais ton journal maintenant, tu écrirais sur :",
+          "options": [
+            {
+              "label": "D",
+              "text": "Tes objectifs et ce que tu veux accomplir"
+            },
+            {
+              "label": "I",
+              "text": "Tes interactions et ce qui t'a touché émotionnellement"
+            },
+            {
+              "label": "S",
+              "text": "Ton besoin de paix et de stabilité"
+            },
+            {
+              "label": "C",
+              "text": "Tes réflexions profondes et analyses"
+            }
+          ]
+        },
+        {
+          "q": "Ce que tu cherches avant tout en ce moment :",
+          "options": [
+            {
+              "label": "D",
+              "text": "Du momentum et de l'action"
+            },
+            {
+              "label": "I",
+              "text": "De la connexion et de l'inspiration"
+            },
+            {
+              "label": "S",
+              "text": "De la sécurité et du réconfort"
+            },
+            {
+              "label": "C",
+              "text": "De la clarté et de la structure"
+            }
+          ]
+        },
+        {
+          "q": "Quand tu dois choisir, tu privilégies :",
+          "options": [
+            {
+              "label": "D",
+              "text": "L'efficacité et la rapidité"
+            },
+            {
+              "label": "I",
+              "text": "L'impact sur les autres"
+            },
+            {
+              "label": "S",
+              "text": "La sécurité et la prévisibilité"
+            },
+            {
+              "label": "C",
+              "text": "La logique et les faits"
+            }
+          ]
+        },
+        {
+          "q": "Ton style de communication naturel :",
+          "options": [
+            {
+              "label": "D",
+              "text": "Direct et concis"
+            },
+            {
+              "label": "I",
+              "text": "Chaleureux et expressif"
+            },
+            {
+              "label": "S",
+              "text": "Posé et réfléchi"
+            },
+            {
+              "label": "C",
+              "text": "Structuré et précis"
+            }
+          ]
+        },
+        {
+          "q": "Ton environnement idéal :",
+          "options": [
+            {
+              "label": "D",
+              "text": "Dynamique, avec des défis constants"
+            },
+            {
+              "label": "I",
+              "text": "Collaboratif, avec beaucoup d'échanges"
+            },
+            {
+              "label": "S",
+              "text": "Stable, avec peu de changements"
+            },
+            {
+              "label": "C",
+              "text": "Organisé, avec des processus clairs"
+            }
+          ]
+        },
+        {
+          "q": "Ce qui te motive le plus :",
+          "options": [
+            {
+              "label": "D",
+              "text": "Les résultats et la victoire"
+            },
+            {
+              "label": "I",
+              "text": "La reconnaissance et la connexion"
+            },
+            {
+              "label": "S",
+              "text": "La sécurité et l'appartenance"
+            },
+            {
+              "label": "C",
+              "text": "La maîtrise et l'excellence"
+            }
+          ]
+        }
+      ],
+      "profiles": {
+        "D": {
+          "title": "Le Pionnier",
+          "description": "Tu aimes avancer vite et décider. Ton journal t'aide à canaliser cette énergie."
+        },
+        "I": {
+          "title": "Le Connecteur",
+          "description": "Tu es guidé par les relations et les émotions. Ton journal devient un espace d'expression."
+        },
+        "S": {
+          "title": "L'Ancre",
+          "description": "Tu cherches la paix et la constance. Ton journal t'offre un refuge stable."
+        },
+        "C": {
+          "title": "L'Architecte",
+          "description": "Tu aimes comprendre avant d'agir. Ton journal devient ton laboratoire d'idées."
+        },
+        "MIXTE": {
+          "title": "Profil mixte • L'Équilibriste",
+          "description": "Tu combines plusieurs forces. Ton journal s'adapte à ta complexité."
+        }
+      }
+    },
+    "floatingCta": {
+      "cta": "Créer mon compte",
+      "label": "Sans engagement • Privé"
+    },
+    "studySection": {
+      "title": "Sais-tu que l'écriture peut vraiment t'aider ?",
+      "subtitle": "Des recherches sérieuses montrent des effets concrets. Voici des résultats et des exemples simples.",
+      "cta": "Créer mon compte et commencer aujourd'hui"
+    },
+    "studyCards": [
+      {
+        "eyebrow": "Sais-tu que...",
+        "title": "écrire un stress vécu peut réduire des symptômes physiques ?",
+        "body": "Dans une étude fondatrice, les personnes qui écrivaient sur un événement difficile ont montré de meilleurs indicateurs de santé.",
+        "example": "Exemple concret : 10 minutes le soir pour poser ce qui te pèse au lieu de ruminer au lit."
+      },
+      {
+        "eyebrow": "Sais-tu que...",
+        "title": "mettre tes émotions en mots peut améliorer ton rebond ?",
+        "body": "Une étude sur des personnes en période de perte d'emploi a trouvé un meilleur retour à l'action chez celles qui écrivaient.",
+        "example": "Exemple concret : écrire 3 fois par semaine ce que tu ressens, puis ton prochain pas réaliste."
+      },
+      {
+        "eyebrow": "Sais-tu que...",
+        "title": "les revues systématiques confirment un gain de bien-être ?",
+        "body": "Les synthèses récentes montrent un effet positif du journaling sur le stress et le bien-être psychologique.",
+        "example": "Exemple concret : une routine de 5 minutes par jour peut déjà changer ton niveau de clarté."
+      }
+    ],
+    "useCases": {
+      "title": "Douleurs fréquentes : comment l'écriture peut vraiment aider",
+      "subtitle": "Des exemples concrets pour relâcher la charge mentale, calmer l'anxiété et sortir de la rumination.",
+      "note": "Basé sur des recherches récentes sur l'écriture et le bien-être psychologique",
+      "cards": [
+        {
+          "badge": "Insomnie",
+          "title": "Ton cerveau tourne la nuit",
+          "body": "Écris ce qui tourne en boucle. En pratique: 3 lignes avant de dormir (fait, émotion, besoin) peuvent déjà apaiser ton esprit.",
+          "cta": "Commencer gratuitement →"
+        },
+        {
+          "badge": "Self-talk",
+          "title": "Tu te parles trop durement",
+          "body": "Quand la petite voix dit \"je suis nul\", écris une version plus juste: \"j'avance petit à petit\". Ça aide à reprendre confiance.",
+          "cta": "Créer mon compte →"
+        },
+        {
+          "badge": "Overthinking",
+          "title": "Tout est confus dans ta tête",
+          "body": "Écris une idée par ligne. Tu transformes la confusion mentale en points clairs, puis tu choisis un seul petit pas pour aujourd'hui.",
+          "cta": "Je veux essayer →"
+        },
+        {
+          "badge": "Pression",
+          "title": "Tu gardes tout, puis tu exploses",
+          "body": "Quelques lignes régulières valent mieux qu'une longue session rare. Tu décompresses avant saturation et tu retrouves plus de calme.",
+          "cta": "Je commence maintenant →"
+        },
+        {
+          "badge": "Démarrage",
+          "title": "Tu ne sais pas par où commencer",
+          "body": "Règle simple: commence par un fait, une émotion, un besoin. C'est suffisant pour démarrer sans pression, même en 2 minutes.",
+          "cta": "Ouvrir mon journal →"
+        },
+        {
+          "badge": "Charge mentale",
+          "title": "Ta liste de tâches t'étouffe",
+          "body": "Pose un minuteur 5 minutes et écris sans corriger: faits, émotions, besoins. Cette routine courte te redonne de l'air mental.",
+          "cta": "Créer mon espace →"
+        },
+        {
+          "badge": "Conflit",
+          "title": "Après une dispute, ton mental rejoue la scène",
+          "body": "Pose les faits, ce que tu as ressenti, puis ce dont tu as besoin maintenant. Tu sors du film mental et tu reviens à toi.",
+          "cta": "Revenir au calme →"
+        },
+        {
+          "badge": "Fatigue mentale",
+          "title": "Tu te sens vidé sans savoir pourquoi",
+          "body": "Écris 5 lignes en fin de journée: ce qui t'a pris de l'énergie, ce qui t'en a donné. Tu retrouves des repères pour demain.",
+          "cta": "Retrouver de l'énergie →"
+        },
+        {
+          "badge": "Décision",
+          "title": "Tu bloques sur une décision importante",
+          "body": "Divise ta page en deux colonnes: ce que tu gagnes, ce que tu perds. Mettre à plat tes pensées fait souvent émerger ton vrai choix.",
+          "cta": "Clarifier ma décision →"
+        }
+      ]
+    },
+    "scientificProof": {
+      "title": "Ce n'est pas de la magie, c'est un phénomène observé.",
+      "subtitle": "Des chercheurs se sont penchés sur le pouvoir de l'écriture. Dans leurs études, ils ont fait des découvertes surprenantes :",
+      "discoveries": [
+        {
+          "label": "Découverte n°1 :",
+          "body": "Les participants qui prenaient le temps d'écrire sur leurs soucis ont vu leurs visites chez le médecin diminuer de moitié"
+        },
+        {
+          "label": "Découverte n°2 :",
+          "body": "Dans une autre étude sur des personnes ayant perdu leur emploi, celles qui écrivaient sur leurs émotions avaient deux fois plus de chances de retrouver un travail que les autres"
+        }
+      ]
+    },
+    "problem": {
+      "title": "C'est comment, une tête en bazar ?",
+      "body": "C'est quand les pensées tournent en rond sans s'arrêter. Ça peut empêcher de dormir, rendre triste ou énervé. On a parfois l'impression d'être coincé."
+    },
+    "solution": {
+      "title": "Le super-pouvoir de l'écriture.",
+      "body": "Écrire tes pensées, même les plus secrètes, c'est comme leur dire \"Stop !\". Ça les calme. Aurum est ton outil pour faire ça, en toute sécurité."
+    },
+    "trust": {
+      "eyebrow": "Ton intégrité, notre priorité",
+      "title": "Un sanctuaire où tu es le seul maître.",
+      "subtitle": "Nous avons conçu Aurum autour d'une idée simple : ton monde intérieur ne regarde que toi. Pas même nous.",
+      "cards": [
+        {
+          "title": "Confidentialité absolue",
+          "body": "Tes pensées sont chiffrées (AES-256) directement sur ton appareil. Même nous ne pouvons pas lire tes secrets."
+        },
+        {
+          "title": "Anonymat garanti",
+          "body": "Aucune donnée personnelle n'est liée à tes écrits. Le moteur d'analyse Aurum opère en local sur ton appareil."
+        },
+        {
+          "title": "Droit à l'oubli",
+          "body": "Tu restes propriétaire de tes données à 100%. Exporte tes journaux ou supprime ton compte en un clic, sans délai."
+        }
+      ],
+      "manifestoTitle": "Notre manifeste de confiance",
+      "manifestoBody": "« Nous ne vendons pas de publicité. Nous ne vendons pas tes données. Nous vendons de la clarté et de la tranquillité d'esprit. Ton journal n'est pas un produit, c'est ton jardin sacré. »",
+      "seal": "Sceau de confiance"
+    },
+    "finalCta": {
+      "button": "Créer mon sanctuaire maintenant",
+      "note": "Sans engagement • Chiffrement de bout en bout",
+      "subtitle": "Tu entres dans un espace conçu pour écrire régulièrement, comprendre ce qui te traverse et retrouver de la clarté sans exposition.",
+      "cards": [
+        {
+          "title": "writing",
+          "eyebrow": "Écriture",
+          "body": "Un espace calme pour déposer ce qui t'occupe, sans distraction."
+        },
+        {
+          "title": "analysis",
+          "eyebrow": "Lecture",
+          "body": "Des repères pour voir émerger tes thèmes, tes rythmes et tes besoins."
+        },
+        {
+          "title": "privacy",
+          "eyebrow": "Confidentialité",
+          "body": "Tes mots restent chiffrés et protégés par défaut."
+        },
+        {
+          "title": "continuity",
+          "eyebrow": "Continuité",
+          "body": "Tu construis un lieu à toi, page après page, sans repartir de zéro."
+        }
+      ]
+    },
+    "faqTitle": "Questions fréquentes",
+    "faqs": [
+      {
+        "question": "Qui peut lire mes données ?",
+        "answer": "Personne. Nous utilisons une architecture « Admin-Blind » avec chiffrement AES-256 côté client. Tes entrées sont chiffrées avec ta clé privée avant d'être envoyées. Techniquement, même avec un accès total à nos serveurs, il est impossible de déchiffrer tes écrits sans ton mot de passe."
+      },
+      {
+        "question": "Comment calmer l'anxiété la nuit et mieux dormir ?",
+        "answer": "Écris 3 lignes avant de te coucher : ce qui te pèse, ce que tu ressens, puis ce dont tu as besoin demain. Le but est de sortir la rumination de ta tête pour apaiser ton esprit."
+      },
+      {
+        "question": "Comment réduire la charge mentale en 5 minutes ?",
+        "answer": "Pose un minuteur 5 minutes et écris sans corriger : faits, émotions, besoins. Cette routine courte t'aide à relâcher la pression et à retrouver de la clarté, même pendant une journée chargée."
+      },
+      {
+        "question": "Comment arrêter de trop penser (overthinking) rapidement ?",
+        "answer": "Quand tout tourne dans ta tête, écris une idée par ligne. Cela transforme un flot confus en liste concrète. Ensuite, choisis une seule petite action à faire aujourd'hui."
+      },
+      {
+        "question": "Est-ce que l'écriture aide vraiment contre le stress et l'anxiété ?",
+        "answer": "Les études montrent que l'écriture régulière peut améliorer le bien-être psychologique et réduire certains symptômes liés au stress et à l'anxiété. Ce n'est pas magique, mais c'est un outil simple, accessible et utile."
+      },
+      {
+        "question": "Quel journal intime en ligne est vraiment privé ?",
+        "answer": "Choisis un journal intime chiffré de bout en bout, sans publicité, où tes notes ne sont pas exposées publiquement. Sur Aurum, tu écris dans un espace privé conçu pour la clarté mentale."
+      },
+      {
+        "question": "Combien coûte Aurum ?",
+        "answer": "Aurum propose une formule mensuelle à 13€/mois et une formule annuelle à 129€/an (2 mois offerts)."
+      }
+    ],
+    "references": {
+      "title": "Références scientifiques",
+      "aria1": "Voir l'étude scientifique 1",
+      "aria2": "Voir l'étude scientifique 2",
+      "aria3": "Voir l'étude scientifique 3",
+      "aria4": "Voir l'étude scientifique 4"
+    }
+  },
+  "header": {
+    "activeSection": "Section active : {section}",
+    "quickWrite": "Écrire",
+    "journal": "Journal",
+    "magazine": "Magazine",
+    "admin": "Admin"
+  },
+  "mobileNav": {
+    "openMenu": "Ouvrir le menu",
+    "mainTitle": "Menu de navigation principal",
+    "quickNavigation": "Navigation rapide"
+  },
+  "authDialog": {
+    "createTitle": "Créer mon compte",
+    "createDescription": "Commence ton chemin vers plus de clarté",
+    "signInTitle": "Se connecter",
+    "signInDescription": "Retrouve ton sanctuaire",
+    "google": "Continuer avec Google",
+    "or": "Ou",
+    "yourName": "Ton nom",
+    "email": "Email",
+    "password": "Mot de passe",
+    "createCta": "Créer mon compte",
+    "signInCta": "Se connecter",
+    "alreadyAccount": "Tu as déjà un compte ?",
+    "noAccount": "Pas encore de compte ?",
+    "createAccountLink": "Créer un compte",
+    "signInLink": "Se connecter",
+    "errors": {
+      "signInTitle": "Erreur de connexion",
+      "nameRequiredTitle": "Nom requis",
+      "nameRequiredDescription": "Veuillez entrer votre nom."
+    }
+  },
+  "writePage": {
+    "anonymous": {
+      "privateBadge": "Espace privé",
+      "titleLine1": "Ton sanctuaire",
+      "titleLine2": "t'attend",
+      "description": "Un espace chiffré où tes pensées trouvent leur place, sans jugement ni interruption.",
+      "featurePrivate": "100% privé",
+      "featureEncrypted": "Chiffré",
+      "featureAi": "IA bienveillante",
+      "cta": "Entrer dans le Sanctuaire",
+      "signInNote": "Connexion sécurisée via Google ou Email",
+      "footerQuote": "\"Écris ce qui demande à être posé. Le reste viendra.\""
+    },
+    "authenticated": {
+      "title": "Ton espace d'écriture",
+      "subtitle": "Dépose ici ce qui traverse ton esprit."
+    },
+    "quotes": [
+      {
+        "text": "J'écris pour découvrir ce que je pense.",
+        "author": "Joan Didion"
+      },
+      {
+        "text": "Un mot après l'autre, c'est le pouvoir.",
+        "author": "Margaret Atwood"
+      },
+      {
+        "text": "Écrire est une forme de thérapie.",
+        "author": "Graham Greene (attribution courante)"
+      },
+      {
+        "text": "Écrire, c'est une façon de parler sans être interrompu.",
+        "author": "Jules Renard"
+      }
+    ]
+  },
+  "landingV2": {
+    "header": {
+      "philosophy": "Philosophie",
+      "signIn": "Connexion"
+    },
+    "hero": {
+      "eyebrow": "Le Vide Libérateur",
+      "title": "Votre esprit est plein. Déposez-le ici.",
+      "subtitle": "Un sanctuaire chiffré pour vos pensées les plus intimes.",
+      "cta": "Entrer dans le Sanctuaire"
+    },
+    "placeholders": [
+      "Qu’est-ce qui pèse sur toi ?",
+      "Une petite victoire...",
+      "Une intuition...",
+      "Un rêve de la nuit dernière...",
+      "Une frustration à libérer..."
+    ],
+    "noise": {
+      "title": "Le Bruit",
+      "body": "Notifications, fragments de tâches, doutes persistants. Votre esprit sature, étouffé par le chaos numérique.",
+      "lines": [
+        "Toujours plus vite.",
+        "Trop d'informations.",
+        "Aucun répit."
+      ]
+    },
+    "sanctuary": {
+      "title": "Le Sanctuaire",
+      "body": "Un espace doré, silencieux. Ici, vos paroles retrouvent leur poids. Chaque respiration redevient consciente.",
+      "badge": "Clarté retrouvée"
+    },
+    "security": {
+      "eyebrow": "Votre sécurité",
+      "title": "L'élégance du secret.",
+      "features": [
+        {
+          "title": "Chiffrement absolu",
+          "description": "Vos pensées sont scellées avant même de quitter votre appareil. Personne d’autre ne peut les lire."
+        },
+        {
+          "title": "Miroir intérieur",
+          "description": "Un reflet bienveillant qui vous aide à identifier vos patterns émotionnels sans jugement."
+        },
+        {
+          "title": "Vitesse pure",
+          "description": "Une expérience fluide, conçue pour ne jamais interrompre le fil de vos idées."
+        }
+      ]
+    }
+  },
+  "heroMinimal": {
+    "title": "Votre esprit est plein. Déposez-le ici.",
+    "subtitle": "Un sanctuaire chiffré pour vos pensées les plus intimes.",
+    "placeholder": "Écrivez ici...",
+    "cta": "Entrer dans le Sanctuaire"
   }
 }
