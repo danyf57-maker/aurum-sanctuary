@@ -16,6 +16,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { motion } from 'framer-motion';
 import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
 import { firestore as db } from '@/lib/firebase/web-client';
+import { useLocale } from '@/hooks/use-locale';
 import { useLocalizedHref } from '@/hooks/use-localized-href';
 
 export const dynamic = 'force-dynamic';
@@ -47,7 +48,7 @@ async function getAurumExchanges(userId: string, entryId: string): Promise<Aurum
   }
 }
 
-function AurumExchangePreview({ exchanges }: { exchanges: AurumExchange[] }) {
+function AurumExchangePreview({ exchanges, isFr }: { exchanges: AurumExchange[]; isFr: boolean }) {
   const aurumMessages = exchanges.filter((e) => e.role === 'aurum');
   if (aurumMessages.length === 0) return null;
 
@@ -58,7 +59,7 @@ function AurumExchangePreview({ exchanges }: { exchanges: AurumExchange[] }) {
       <div className="mb-1.5 flex items-center gap-1.5">
         <Flame className="h-3 w-3 text-amber-500" />
         <span className="text-[10px] font-medium uppercase tracking-wider text-amber-600">
-          Réflexion d&apos;Aurum
+          {isFr ? "Réflexion d'Aurum" : 'Aurum reflection'}
         </span>
       </div>
       <p className="line-clamp-2 text-xs leading-relaxed text-stone-600">{latestAurum.text}</p>
@@ -70,10 +71,12 @@ function EntryWithExchange({
   entry,
   index,
   userId,
+  isFr,
 }: {
   entry: JournalEntry;
   index: number;
   userId: string;
+  isFr: boolean;
 }) {
   const [exchanges, setExchanges] = useState<AurumExchange[]>([]);
   const [loading, setLoading] = useState(true);
@@ -89,12 +92,16 @@ function EntryWithExchange({
   }, [userId, entry.id]);
 
   return (
-    <motion.div
-      variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}
-    >
-      <JournalMagazineCard entry={entry} index={index} exchangePreview={
-        !loading && exchanges.length > 0 ? <AurumExchangePreview exchanges={exchanges} /> : undefined
-      } />
+    <motion.div variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}>
+      <JournalMagazineCard
+        entry={entry}
+        index={index}
+        exchangePreview={
+          !loading && exchanges.length > 0 ? (
+            <AurumExchangePreview exchanges={exchanges} isFr={isFr} />
+          ) : undefined
+        }
+      />
     </motion.div>
   );
 }
@@ -124,6 +131,8 @@ function computeStreak(entries: JournalEntry[]): number {
 
 function SanctuaryPageContent() {
   const to = useLocalizedHref();
+  const locale = useLocale();
+  const isFr = locale === 'fr';
   const { user, loading: authLoading } = useAuth();
   const searchParams = useSearchParams();
   const tag = searchParams.get('tag');
@@ -163,8 +172,10 @@ function SanctuaryPageContent() {
       } catch (error) {
         console.error('Failed to fetch sanctuary data:', error);
         toast({
-          title: 'Erreur',
-          description: 'Impossible de charger votre journal.',
+          title: isFr ? 'Erreur' : 'Error',
+          description: isFr
+            ? 'Impossible de charger votre journal.'
+            : 'Unable to load your journal.',
           variant: 'destructive',
         });
         setEntries([]);
@@ -173,15 +184,15 @@ function SanctuaryPageContent() {
       }
     }
     fetchData();
-  }, [user, authLoading, tag, toast]);
+  }, [user, authLoading, tag, toast, isFr]);
 
-  // Stats
   const totalEntries = entries?.length ?? 0;
   const now = new Date();
-  const thisMonthCount = entries?.filter((e) => {
-    const d = new Date(e.createdAt);
-    return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
-  }).length ?? 0;
+  const thisMonthCount =
+    entries?.filter((e) => {
+      const d = new Date(e.createdAt);
+      return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+    }).length ?? 0;
   const streak = entries ? computeStreak(entries) : 0;
 
   if (loading || authLoading) {
@@ -203,11 +214,15 @@ function SanctuaryPageContent() {
       <div className="container mx-auto max-w-2xl py-20 text-center md:py-28">
         <Alert variant="destructive">
           <ShieldAlert className="h-4 w-4" />
-          <AlertTitle>Accès restreint</AlertTitle>
-          <AlertDescription>Vous devez être connecté pour voir votre historique.</AlertDescription>
+          <AlertTitle>{isFr ? 'Accès restreint' : 'Restricted access'}</AlertTitle>
+          <AlertDescription>
+            {isFr
+              ? 'Vous devez être connecté pour voir votre historique.'
+              : 'You need to sign in to view your journal history.'}
+          </AlertDescription>
         </Alert>
         <Button asChild className="mt-6">
-          <Link href={to('/sanctuary/write')}>Commencer à écrire</Link>
+          <Link href={to('/sanctuary/write')}>{isFr ? 'Commencer à écrire' : 'Start writing'}</Link>
         </Button>
       </div>
     );
@@ -216,30 +231,35 @@ function SanctuaryPageContent() {
   return (
     <>
       <div className="container max-w-7xl py-8 md:py-12">
-        {/* Header portfolio */}
         <header className="mb-10">
           <div className="mb-4 h-px w-10 bg-amber-600/50" />
-          <h1 className="font-headline text-4xl tracking-tight text-stone-900">Journal</h1>
+          <h1 className="font-headline text-4xl tracking-tight text-stone-900">
+            {isFr ? 'Journal' : 'Journal'}
+          </h1>
           {totalEntries > 0 ? (
             <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-stone-500">
               <span className="inline-flex items-center gap-1.5">
                 <BookOpen className="h-4 w-4" />
-                {totalEntries} entrée{totalEntries > 1 ? 's' : ''}
+                {isFr
+                  ? `${totalEntries} entrée${totalEntries > 1 ? 's' : ''}`
+                  : `${totalEntries} ${totalEntries > 1 ? 'entries' : 'entry'}`}
               </span>
               <span className="inline-flex items-center gap-1.5">
                 <CalendarDays className="h-4 w-4" />
-                {thisMonthCount} ce mois
+                {isFr ? `${thisMonthCount} ce mois` : `${thisMonthCount} this month`}
               </span>
               {streak > 1 && (
                 <span className="inline-flex items-center gap-1.5">
                   <Flame className="h-4 w-4 text-orange-400" />
-                  {streak} jours de suite
+                  {isFr ? `${streak} jours de suite` : `${streak} day streak`}
                 </span>
               )}
             </div>
           ) : (
             <p className="mt-2 max-w-xl text-stone-500">
-              L&apos;archive de toutes tes pages enregistrées, dans la durée.
+              {isFr
+                ? "L'archive de toutes tes pages enregistrées, dans la durée."
+                : 'The archive of every page you keep, over time.'}
             </p>
           )}
           {tags.length > 0 && (
@@ -260,68 +280,79 @@ function SanctuaryPageContent() {
             className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3"
           >
             {entries.map((entry, i) => (
-              <EntryWithExchange key={entry.id} entry={entry} index={i} userId={user.uid} />
+              <EntryWithExchange key={entry.id} entry={entry} index={i} userId={user.uid} isFr={isFr} />
             ))}
           </motion.div>
         ) : (
           <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
-            {/* Zone héro */}
             <div className="border-b border-stone-100 bg-gradient-to-b from-stone-50 to-white px-10 py-12 text-center">
               <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-50 ring-1 ring-amber-200/70">
                 <BookOpen className="h-7 w-7 text-amber-700" />
               </div>
               <h2 className="text-lg font-semibold text-stone-900">
-                L&apos;archive de toutes tes pages
+                {isFr ? "L'archive de toutes tes pages" : 'The archive of all your pages'}
               </h2>
               <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-stone-500">
-                Chaque page enregistrée depuis <span className="font-medium text-stone-700">Écrire</span> apparaît ici,
-                classée dans la durée. Ton journal, c&apos;est ta mémoire complète.
+                {isFr ? (
+                  <>
+                    Chaque page enregistrée depuis <span className="font-medium text-stone-700">Écrire</span> apparaît ici,
+                    classée dans la durée. Ton journal, c&apos;est ta mémoire complète.
+                  </>
+                ) : (
+                  <>
+                    Every page you save from <span className="font-medium text-stone-700">Write</span> appears here,
+                    ordered over time. Your journal becomes your full memory.
+                  </>
+                )}
               </p>
               <p className="mx-auto mt-3 max-w-md text-xs italic text-stone-400">
-                &ldquo;Écrire, c&apos;est commencer à y voir plus clair.&rdquo; - Joan Didion (adapté)
+                {isFr
+                  ? '"Écrire, c\'est commencer à y voir plus clair." - Joan Didion (adapté)'
+                  : '"Writing is the beginning of seeing more clearly." - Joan Didion (adapted)'}
               </p>
             </div>
 
-            {/* Piliers */}
             <div className="grid divide-x divide-stone-100 sm:grid-cols-3">
               <div className="flex flex-col items-center p-7 text-center">
                 <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">
                   <CalendarDays className="h-4 w-4 text-stone-600" />
                 </div>
-                <p className="text-sm font-medium text-stone-900">Chronologie</p>
+                <p className="text-sm font-medium text-stone-900">{isFr ? 'Chronologie' : 'Timeline'}</p>
                 <p className="mt-1.5 text-xs leading-relaxed text-stone-500">
-                  Toutes tes pages dans l&apos;ordre où tu les as écrites, sans rien perdre.
+                  {isFr
+                    ? "Toutes tes pages dans l'ordre où tu les as écrites, sans rien perdre."
+                    : 'Every page in the order you wrote it, with nothing lost.'}
                 </p>
               </div>
               <div className="flex flex-col items-center p-7 text-center">
                 <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">
                   <Heart className="h-4 w-4 text-stone-600" />
                 </div>
-                <p className="text-sm font-medium text-stone-900">Filtres & humeurs</p>
+                <p className="text-sm font-medium text-stone-900">{isFr ? 'Filtres & humeurs' : 'Filters & moods'}</p>
                 <p className="mt-1.5 text-xs leading-relaxed text-stone-500">
-                  Retrouve une page par humeur, étiquette ou période. Ton passé, navigable.
+                  {isFr
+                    ? 'Retrouve une page par humeur, étiquette ou période. Ton passé, navigable.'
+                    : 'Find a page by mood, tag, or period. Your past becomes navigable.'}
                 </p>
               </div>
               <div className="flex flex-col items-center p-7 text-center">
                 <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">
                   <BookOpen className="h-4 w-4 text-stone-600" />
                 </div>
-                <p className="text-sm font-medium text-stone-900">Consultation</p>
+                <p className="text-sm font-medium text-stone-900">{isFr ? 'Consultation' : 'Revisit & edit'}</p>
                 <p className="mt-1.5 text-xs leading-relaxed text-stone-500">
-                  Relis, modifie ou approfondit n&apos;importe quelle entrée avec Aurum.
+                  {isFr
+                    ? "Relis, modifie ou approfondit n'importe quelle entrée avec Aurum."
+                    : 'Revisit, edit, or deepen any entry with Aurum.'}
                 </p>
               </div>
             </div>
 
-            {/* Action */}
             <div className="flex items-center justify-center border-t border-stone-100 bg-stone-50/60 px-10 py-6">
-              <Button
-                asChild
-                className="bg-stone-900 text-stone-50 hover:bg-stone-800"
-              >
+              <Button asChild className="bg-stone-900 text-stone-50 hover:bg-stone-800">
                 <Link href={to('/sanctuary/write')}>
                   <PenSquare className="mr-2 h-4 w-4" />
-                  Écrire ma première page
+                  {isFr ? 'Écrire ma première page' : 'Write my first page'}
                 </Link>
               </Button>
             </div>
@@ -332,7 +363,7 @@ function SanctuaryPageContent() {
         asChild
         className="fixed bottom-20 right-6 h-14 w-14 rounded-full bg-[#C5A059] text-white shadow-lg hover:bg-[#b08d4a] lg:bottom-8 lg:right-8 lg:h-16 lg:w-16"
       >
-        <Link href={to('/sanctuary/write')} aria-label="Rédiger une nouvelle entrée">
+        <Link href={to('/sanctuary/write')} aria-label={isFr ? 'Rédiger une nouvelle entrée' : 'Write a new entry'}>
           <PenSquare className="h-6 w-6" />
         </Link>
       </Button>
