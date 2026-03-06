@@ -1,28 +1,22 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { LanguageSwitch } from "@/components/layout/language-switch";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 const HeroIntegrated = () => {
+  const locale = useLocale();
   const t = useTranslations("hero");
 
-  const placeholders = useMemo(
-    () => [t("placeholders.0"), t("placeholders.1"), t("placeholders.2")],
-    [t]
-  );
-  const rotatingQuotes = useMemo(
-    () =>
-      Array.from({ length: 8 }, (_, i) => ({
-        hint: t(`quotes.${i}.hint`),
-        detail: t(`quotes.${i}.detail`),
-        quote: t(`quotes.${i}.quote`),
-        author: t(`quotes.${i}.author`),
-      })),
-    [t]
-  );
+  const placeholders = [t("placeholders.0"), t("placeholders.1"), t("placeholders.2")];
+  const rotatingQuotes = Array.from({ length: 8 }, (_, i) => ({
+    hint: t(`quotes.${i}.hint`),
+    detail: t(`quotes.${i}.detail`),
+    quote: t(`quotes.${i}.quote`),
+    author: t(`quotes.${i}.author`),
+  }));
   const [thought, setThought] = useState("");
   const [placeholderText, setPlaceholderText] = useState("");
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
@@ -34,6 +28,14 @@ const HeroIntegrated = () => {
       ? `/sanctuary/write?initial=${encodeURIComponent(thought)}`
       : "/sanctuary/write";
   const signupHref = "/signup";
+
+  useEffect(() => {
+    setPlaceholderText("");
+    setPlaceholderIndex(0);
+    setCharIndex(0);
+    setIsDeleting(false);
+    setQuoteIndex(0);
+  }, [locale]);
 
   useEffect(() => {
     const current = placeholders[placeholderIndex];
