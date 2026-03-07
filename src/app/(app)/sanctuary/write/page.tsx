@@ -20,39 +20,14 @@ import { AuthDialog } from "@/components/auth/auth-dialog";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { Feather, Sparkles, Shield, Lock, ChevronRight } from "lucide-react";
-import { useLocale } from "@/hooks/use-locale";
+import { useTranslations } from "next-intl";
 
 export default function WritePage() {
   const { user, loading } = useAuth();
-  const locale = useLocale();
-  const isFr = locale === "fr";
+  const t = useTranslations("writePage");
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const writingQuotes = isFr
-    ? [
-        { text: "J'écris pour découvrir ce que je pense.", author: "Joan Didion" },
-        { text: "Un mot après l'autre, c'est le pouvoir.", author: "Margaret Atwood" },
-        {
-          text: "Écrire est une forme de thérapie.",
-          author: "Graham Greene (attribution courante)",
-        },
-        {
-          text: "Écrire, c'est une façon de parler sans être interrompu.",
-          author: "Jules Renard",
-        },
-      ]
-    : [
-        { text: "I write to find out what I think.", author: "Joan Didion" },
-        {
-          text: "A word after a word after a word is power.",
-          author: "Margaret Atwood",
-        },
-        { text: "Writing is a form of therapy.", author: "Graham Greene" },
-        {
-          text: "Writing is a way of talking without being interrupted.",
-          author: "Jules Renard",
-        },
-      ];
+  const writingQuotes = t.raw("quotes") as { text: string; author: string }[];
   const [quoteIndex, setQuoteIndex] = useState(0);
 
   useEffect(() => {
@@ -139,7 +114,7 @@ export default function WritePage() {
                         >
                           <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#D4AF37]/10 text-[#B8941F] text-xs font-medium tracking-[0.15em] uppercase">
                             <Lock className="h-3 w-3" />
-                            {isFr ? "Espace Privé" : "Private space"}
+                            {t("anonymous.privateBadge")}
                           </span>
                         </motion.div>
 
@@ -151,10 +126,10 @@ export default function WritePage() {
                           className="space-y-4"
                         >
                           <h1 className="font-headline text-4xl md:text-6xl text-stone-900 tracking-tight leading-[1.1]">
-                            {isFr ? "Ton sanctuaire" : "Your sanctuary"}
+                            {t("anonymous.titleLine1")}
                             <br />
                             <span className="text-[#C5A059]">
-                              {isFr ? "t'attend" : "is waiting"}
+                              {t("anonymous.titleLine2")}
                             </span>
                           </h1>
                         </motion.div>
@@ -167,24 +142,22 @@ export default function WritePage() {
                           className="max-w-md mx-auto space-y-6"
                         >
                           <p className="text-stone-600 text-lg md:text-xl font-light leading-relaxed">
-                            {isFr
-                              ? "Un espace chiffré où tes pensées trouvent leur place, sans jugement ni interruption."
-                              : "An encrypted space where your thoughts can land, without judgment or interruption."}
+                            {t("anonymous.description")}
                           </p>
 
                           {/* Features */}
                           <div className="flex flex-wrap justify-center gap-4 text-sm text-stone-500">
                             <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-stone-100/80">
                               <Shield className="h-3.5 w-3.5 text-[#C5A059]" />
-                              <span>{isFr ? "100% Privé" : "100% Private"}</span>
+                              <span>{t("anonymous.featurePrivate")}</span>
                             </div>
                             <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-stone-100/80">
                               <Lock className="h-3.5 w-3.5 text-[#C5A059]" />
-                              <span>{isFr ? "Chiffré" : "Encrypted"}</span>
+                              <span>{t("anonymous.featureEncrypted")}</span>
                             </div>
                             <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-stone-100/80">
                               <Sparkles className="h-3.5 w-3.5 text-[#C5A059]" />
-                              <span>{isFr ? "IA Bienveillante" : "Supportive AI"}</span>
+                              <span>{t("anonymous.featureAi")}</span>
                             </div>
                           </div>
                         </motion.div>
@@ -201,13 +174,11 @@ export default function WritePage() {
                             size="lg"
                             className="group h-14 px-10 bg-gradient-to-r from-[#D4AF37] to-[#C5A059] text-stone-900 hover:from-[#C5A059] hover:to-[#D4AF37] rounded-2xl shadow-[0_12px_28px_rgba(212,175,55,0.3)] text-lg font-semibold transition-all duration-300 hover:shadow-[0_16px_36px_rgba(212,175,55,0.4)] hover:scale-[1.02]"
                           >
-                            {isFr ? "Entrer dans le Sanctuaire" : "Enter your sanctuary"}
+                            {t("anonymous.cta")}
                             <ChevronRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                           </Button>
                           <p className="mt-4 text-stone-400 text-sm">
-                            {isFr
-                              ? "Connexion sécurisée via Google ou Email"
-                              : "Secure sign-in via Google or email"}
+                            {t("anonymous.signInNote")}
                           </p>
                         </motion.div>
                       </div>
@@ -224,9 +195,7 @@ export default function WritePage() {
                 className="py-8 text-center"
               >
                 <p className="text-stone-400 text-sm">
-                  {isFr
-                    ? "“Écris ce qui demande à être posé. Le reste viendra.”"
-                    : "“Write what needs to be placed into words. The rest will come.”"}
+                  {t("anonymous.footerQuote")}
                 </p>
               </motion.footer>
             </motion.div>
@@ -265,12 +234,10 @@ export default function WritePage() {
                 <Feather className="h-5 w-5 text-[#C5A059]" />
               </div>
               <h1 className="font-headline text-3xl md:text-4xl text-stone-900 tracking-tight mb-2">
-                {isFr ? "Ton espace d'écriture" : "Your writing space"}
+                {t("authenticated.title")}
               </h1>
               <p className="text-stone-500 text-lg">
-                {isFr
-                  ? "Pose ici ce qui traverse ton esprit."
-                  : "Write here what is moving through your mind."}
+                {t("authenticated.subtitle")}
               </p>
             </motion.header>
 

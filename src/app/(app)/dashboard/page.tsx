@@ -13,10 +13,13 @@ import { EntryHeatmap } from "@/components/stats/entry-heatmap";
 import { ClarityScoreCard } from "@/components/dashboard/clarity-score-card";
 import { LastInsightCard } from "@/components/dashboard/last-insight-card";
 import { motion } from "framer-motion";
+import { useLocale } from "@/hooks/use-locale";
 import { useLocalizedHref } from "@/hooks/use-localized-href";
 
 export default function DashboardPage() {
   const to = useLocalizedHref();
+  const locale = useLocale();
+  const isFr = locale === "fr";
   const { user, loading: authLoading } = useAuth();
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -63,12 +66,16 @@ export default function DashboardPage() {
         <div className="p-4 rounded-full bg-red-50 text-red-600 mb-6">
           <ShieldAlert className="h-12 w-12" />
         </div>
-        <h1 className="text-2xl font-bold mb-2">Accès restreint</h1>
+        <h1 className="text-2xl font-bold mb-2">
+          {isFr ? "Accès restreint" : "Restricted access"}
+        </h1>
         <p className="text-stone-500 mb-8 max-w-sm">
-          Vous devez être connecté pour accéder à votre centre de commande.
+          {isFr
+            ? "Vous devez être connecté pour accéder à votre centre de commande."
+            : "You need to sign in to access your command center."}
         </p>
         <Button asChild size="lg">
-          <Link href={to("/login")}>Se connecter</Link>
+          <Link href={to("/login")}>{isFr ? "Se connecter" : "Sign in"}</Link>
         </Button>
       </div>
     );
@@ -85,10 +92,10 @@ export default function DashboardPage() {
           className="space-y-1"
         >
           <h1 className="text-4xl font-bold font-headline tracking-tight text-stone-900">
-            Command Center
+            {isFr ? "Centre de commande" : "Command Center"}
           </h1>
           <p className="text-stone-500 font-medium">
-            Heureux de vous revoir,{" "}
+            {isFr ? "Heureux de vous revoir, " : "Good to see you again, "}
             {(user?.displayName ?? "").split(" ")[0] || "Daniel"}.
           </p>
         </motion.div>
@@ -100,14 +107,13 @@ export default function DashboardPage() {
         >
           <Link href={to("/sanctuary/write")}>
             <PenSquare className="h-4 w-4 mr-2" />
-            Ouvrir la Forge
+            {isFr ? "Ouvrir la Forge" : "Open the Forge"}
             <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
           </Link>
         </Button>
       </header>
 
       <div className="grid gap-8">
-        {/* 1. Main Insight / Clarity Score */}
         <motion.div
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -117,7 +123,6 @@ export default function DashboardPage() {
         </motion.div>
 
         <div className="grid gap-8 md:grid-cols-12">
-          {/* 2. Last Insight (L'Écho) */}
           <motion.div
             className="md:col-span-8"
             initial={{ opacity: 0, x: -20 }}
@@ -129,15 +134,18 @@ export default function DashboardPage() {
             ) : (
               <div className="h-full rounded-2xl border-2 border-dashed border-stone-200 flex flex-col items-center justify-center p-8 text-center bg-stone-50">
                 <Eye className="h-8 w-8 text-stone-300 mb-4" />
-                <h3 className="font-bold text-stone-400">Aucun Écho</h3>
+                <h3 className="font-bold text-stone-400">
+                  {isFr ? "Aucun Écho" : "No Echo yet"}
+                </h3>
                 <p className="text-sm text-stone-400 mt-1 max-w-[200px]">
-                  Écrivez pour recevoir un reflet d'Aurum.
+                  {isFr
+                    ? "Écrivez pour recevoir un reflet d'Aurum."
+                    : "Write to receive a reflection from Aurum."}
                 </p>
               </div>
             )}
           </motion.div>
 
-          {/* 3. Quick Stats (Compact) */}
           <motion.div
             className="md:col-span-4 space-y-4"
             initial={{ opacity: 0, x: 20 }}
@@ -148,7 +156,6 @@ export default function DashboardPage() {
           </motion.div>
         </div>
 
-        {/* 4. Activity Heatmap */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -157,13 +164,13 @@ export default function DashboardPage() {
         >
           <div className="flex items-center justify-between mb-6">
             <h3 className="font-bold text-sm uppercase tracking-widest text-stone-500">
-              Fréquence d'introspection
+              {isFr ? "Fréquence d'introspection" : "Reflection frequency"}
             </h3>
             <Link
               href={to("/insights")}
               className="text-xs font-bold text-amber-600 hover:underline"
             >
-              Voir les analyses complètes
+              {isFr ? "Voir les analyses complètes" : "View full insights"}
             </Link>
           </div>
           <EntryHeatmap entries={entries} />

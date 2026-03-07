@@ -23,14 +23,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Loader2,
-  Moon,
   Sun,
   Globe,
   Bell,
   User,
   Lock,
   ExternalLink,
-  Fingerprint,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -45,15 +43,18 @@ import {
 import { httpsCallable } from "firebase/functions";
 import { functions, firestore } from "@/lib/firebase/web-client";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { collection, getDocs, Timestamp } from "firebase/firestore";
 import Link from "next/link";
 import { useLocalizedHref } from "@/hooks/use-localized-href";
 import { useTranslations } from "next-intl";
+import { useLocale } from "@/hooks/use-locale";
 
 export default function SettingsPage() {
   const to = useLocalizedHref();
+  const locale = useLocale();
+  const isFr = locale === "fr";
   const t = useTranslations("settings");
   const { user, loading: authLoading, logout } = useAuth();
   const {
@@ -67,8 +68,113 @@ export default function SettingsPage() {
   const router = useRouter();
   const { toast } = useToast();
 
+  const copy = useMemo(
+    () => ({
+      title: isFr ? "Paramètres" : "Settings",
+      subtitle: isFr
+        ? "Gérez vos préférences et les paramètres de votre compte."
+        : "Manage your preferences and account settings.",
+      tabs: {
+        general: isFr ? "Général" : "General",
+        account: isFr ? "Compte" : "Account",
+        privacy: isFr ? "Confidentialité" : "Privacy",
+      },
+      language: {
+        title: isFr ? "Langue et région" : "Language and region",
+        description: isFr
+          ? "Personnalisez votre langue et vos préférences horaires."
+          : "Adjust your language and time preferences.",
+        label: isFr ? "Langue" : "Language",
+        placeholder: isFr ? "Choisir une langue" : "Choose a language",
+        english: isFr ? "Anglais (US)" : "English (US)",
+        french: isFr ? "Français" : "French",
+        timezoneLabel: isFr ? "Fuseau horaire" : "Time zone",
+        timezonePlaceholder: isFr
+          ? "Choisir un fuseau horaire"
+          : "Choose a time zone",
+        local: isFr ? "Local" : "Local",
+      },
+      appearance: {
+        title: isFr ? "Apparence" : "Appearance",
+        description: isFr
+          ? "Personnalisez l'affichage d'Aurum sur votre appareil."
+          : "Customize how Aurum looks on your device.",
+        themeLabel: isFr ? "Thème" : "Theme",
+        themeDescription: isFr
+          ? "Choisissez votre thème visuel préféré."
+          : "Choose the visual theme you prefer.",
+        themePlaceholder: isFr ? "Choisir un thème" : "Choose a theme",
+        light: isFr ? "Clair" : "Light",
+        dark: isFr ? "Sombre" : "Dark",
+        system: isFr ? "Système" : "System",
+      },
+      notifications: {
+        title: isFr ? "Notifications" : "Notifications",
+        description: isFr
+          ? "Gérez la manière dont nous communiquons avec vous."
+          : "Control how we reach out to you.",
+        analysisLabel: isFr ? "Alertes d'analyses" : "Insight alerts",
+        analysisDescription: isFr
+          ? "Recevez une notification quand vos analyses hebdomadaires sont prêtes."
+          : "Get notified when your weekly insights are ready.",
+      },
+      profile: {
+        title: isFr ? "Profil" : "Profile",
+        description: isFr ? "Vos informations de compte." : "Your account details.",
+        email: "Email",
+        displayName: isFr ? "Nom affiché" : "Display name",
+      },
+      subscription: {
+        title: isFr ? "Abonnement" : "Subscription",
+        description: isFr
+          ? "Gérez votre formule d'abonnement Aurum."
+          : "Manage your Aurum subscription plan.",
+        currentPlan: isFr ? "Formule actuelle" : "Current plan",
+        noPlan: isFr ? "Aucune formule active" : "No active plan",
+        pricing: isFr ? "Voir les tarifs" : "View pricing",
+      },
+      danger: {
+        title: isFr ? "Zone sensible" : "Sensitive zone",
+        description: isFr
+          ? "Actions irréversibles sur le compte."
+          : "Irreversible account actions.",
+        trigger: isFr ? "Supprimer le compte" : "Delete account",
+        dialogTitle: isFr
+          ? "Confirmez-vous cette suppression ?"
+          : "Confirm account deletion?",
+        dialogDescription: isFr
+          ? "Cette action est irréversible. Elle supprimera définitivement votre compte et vos données de nos serveurs."
+          : "This action is irreversible. It will permanently delete your account and your data from our servers.",
+        confirmLabel: isFr
+          ? 'Tapez "SUPPRIMER" pour confirmer'
+          : 'Type "DELETE" to confirm',
+        confirmPlaceholder: isFr ? "SUPPRIMER" : "DELETE",
+        cancel: isFr ? "Annuler" : "Cancel",
+        confirm: isFr ? "Supprimer le compte" : "Delete account",
+        keyword: isFr ? "SUPPRIMER" : "DELETE",
+      },
+      data: {
+        title: isFr ? "Vos données" : "Your data",
+        description: isFr
+          ? "Gérez vos données personnelles et vos exports."
+          : "Manage your personal data and exports.",
+        exportLabel: isFr ? "Exporter mes données" : "Export my data",
+        exportDescription: isFr
+          ? "Téléchargez une copie de toutes vos entrées et analyses (JSON)."
+          : "Download a copy of all your entries and insights (JSON).",
+        exportButton: isFr ? "Télécharger le JSON" : "Download JSON",
+      },
+      legal: {
+        title: isFr ? "Mentions légales" : "Legal",
+        privacy: isFr ? "Politique de confidentialité" : "Privacy policy",
+        terms: isFr ? "Conditions d'utilisation" : "Terms of use",
+      },
+    }),
+    [isFr]
+  );
+
   const handleDeleteAccount = async () => {
-    if (deleteConfirmation !== "SUPPRIMER") return;
+    if (deleteConfirmation !== copy.danger.keyword) return;
 
     setIsDeleting(true);
     try {
@@ -96,13 +202,11 @@ export default function SettingsPage() {
     if (!user) return;
     setIsExporting(true);
     try {
-      // 1. Fetch Entries
       const entriesSnapshot = await getDocs(
         collection(firestore, "users", user.uid, "entries")
       );
       const decryptedEntries = entriesSnapshot.docs.map((doc) => {
         const data = doc.data();
-        // TABULA RASA: Export plaintext content directly
         return {
           id: doc.id,
           date:
@@ -119,7 +223,6 @@ export default function SettingsPage() {
         };
       });
 
-      // 2. Fetch Insights
       const insightsSnapshot = await getDocs(
         collection(firestore, "users", user.uid, "insights")
       );
@@ -143,7 +246,6 @@ export default function SettingsPage() {
         };
       });
 
-      // 3. Bundle Data
       const exportData = {
         user: {
           uid: user.uid,
@@ -152,19 +254,16 @@ export default function SettingsPage() {
           exportedAt: new Date().toISOString(),
         },
         entries: decryptedEntries,
-        insights: insights,
+        insights,
       };
 
-      // 4. Trigger Download
       const blob = new Blob([JSON.stringify(exportData, null, 2)], {
         type: "application/json",
       });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `aurum-data-${
-        (new Date().toISOString() ?? "").split("T")[0]
-      }.json`;
+      a.download = `aurum-data-${(new Date().toISOString() ?? "").split("T")[0]}.json`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -197,67 +296,57 @@ export default function SettingsPage() {
   return (
     <div className="container max-w-4xl mx-auto py-8 px-4 space-y-8">
       <div className="space-y-2">
-        <h1 className="text-3xl font-serif text-primary">Paramètres</h1>
-        <p className="text-muted-foreground">
-          Gérez vos préférences et les paramètres de votre compte.
-        </p>
+        <h1 className="text-3xl font-serif text-primary">{copy.title}</h1>
+        <p className="text-muted-foreground">{copy.subtitle}</p>
       </div>
 
       <Tabs defaultValue="general" className="w-full">
         <TabsList className="grid w-full grid-cols-3 mb-8">
-          <TabsTrigger value="general">Général</TabsTrigger>
-          <TabsTrigger value="account">Compte</TabsTrigger>
-          <TabsTrigger value="privacy">Confidentialité</TabsTrigger>
+          <TabsTrigger value="general">{copy.tabs.general}</TabsTrigger>
+          <TabsTrigger value="account">{copy.tabs.account}</TabsTrigger>
+          <TabsTrigger value="privacy">{copy.tabs.privacy}</TabsTrigger>
         </TabsList>
 
-        {/* General Tab */}
         <TabsContent value="general" className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Globe className="w-5 h-5 text-primary" />
-                Langue et région
+                {copy.language.title}
               </CardTitle>
-              <CardDescription>
-                Personnalisez votre langue et vos préférences horaires.
-              </CardDescription>
+              <CardDescription>{copy.language.description}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="language">Langue</Label>
+                <Label htmlFor="language">{copy.language.label}</Label>
                 <Select
                   value={preferences.language}
-                  onValueChange={(val: any) =>
-                    updatePreferences({ language: val })
-                  }
+                  onValueChange={(val: any) => updatePreferences({ language: val })}
                 >
                   <SelectTrigger id="language">
-                    <SelectValue placeholder="Choisir une langue" />
+                    <SelectValue placeholder={copy.language.placeholder} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="en">Anglais (US)</SelectItem>
-                    <SelectItem value="fr">Français</SelectItem>
+                    <SelectItem value="en">{copy.language.english}</SelectItem>
+                    <SelectItem value="fr">{copy.language.french}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="timezone">Fuseau horaire</Label>
+                <Label htmlFor="timezone">{copy.language.timezoneLabel}</Label>
                 <Select
                   value={preferences.timezone}
                   onValueChange={(val) => updatePreferences({ timezone: val })}
                 >
                   <SelectTrigger id="timezone">
-                    <SelectValue placeholder="Choisir un fuseau horaire" />
+                    <SelectValue placeholder={copy.language.timezonePlaceholder} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="UTC">UTC</SelectItem>
-                    <SelectItem
-                      value={Intl.DateTimeFormat().resolvedOptions().timeZone}
-                    >
-                      Local ({Intl.DateTimeFormat().resolvedOptions().timeZone})
+                    <SelectItem value={Intl.DateTimeFormat().resolvedOptions().timeZone}>
+                      {copy.language.local} ({Intl.DateTimeFormat().resolvedOptions().timeZone})
                     </SelectItem>
-                    {/* Add more timezones as needed */}
                   </SelectContent>
                 </Select>
               </div>
@@ -268,33 +357,29 @@ export default function SettingsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Sun className="w-5 h-5 text-primary" />
-                Apparence
+                {copy.appearance.title}
               </CardTitle>
-              <CardDescription>
-                Personnalisez l'affichage d'Aurum sur votre appareil.
-              </CardDescription>
+              <CardDescription>{copy.appearance.description}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label className="text-base">Thème</Label>
+                  <Label className="text-base">{copy.appearance.themeLabel}</Label>
                   <p className="text-sm text-muted-foreground">
-                    Choisissez votre thème visuel préféré.
+                    {copy.appearance.themeDescription}
                   </p>
                 </div>
                 <Select
                   value={preferences.theme}
-                  onValueChange={(val: any) =>
-                    updatePreferences({ theme: val })
-                  }
+                  onValueChange={(val: any) => updatePreferences({ theme: val })}
                 >
                   <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Choisir un thème" />
+                    <SelectValue placeholder={copy.appearance.themePlaceholder} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="light">Clair</SelectItem>
-                    <SelectItem value="dark">Sombre</SelectItem>
-                    <SelectItem value="system">Système</SelectItem>
+                    <SelectItem value="light">{copy.appearance.light}</SelectItem>
+                    <SelectItem value="dark">{copy.appearance.dark}</SelectItem>
+                    <SelectItem value="system">{copy.appearance.system}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -305,18 +390,16 @@ export default function SettingsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Bell className="w-5 h-5 text-primary" />
-                Notifications
+                {copy.notifications.title}
               </CardTitle>
-              <CardDescription>
-                Gérez la manière dont nous communiquons avec vous.
-              </CardDescription>
+              <CardDescription>{copy.notifications.description}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label className="text-base">Alertes d'analyses</Label>
+                  <Label className="text-base">{copy.notifications.analysisLabel}</Label>
                   <p className="text-sm text-muted-foreground">
-                    Recevez une notification quand vos analyses hebdomadaires sont prêtes.
+                    {copy.notifications.analysisDescription}
                   </p>
                 </div>
                 <Switch
@@ -330,26 +413,23 @@ export default function SettingsPage() {
           </Card>
         </TabsContent>
 
-        {/* Account Tab */}
         <TabsContent value="account" className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <User className="w-5 h-5 text-primary" />
-                Profil
+                {copy.profile.title}
               </CardTitle>
-              <CardDescription>
-                Vos informations de compte.
-              </CardDescription>
+              <CardDescription>{copy.profile.description}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label>Email</Label>
+                  <Label>{copy.profile.email}</Label>
                   <Input value={user?.email || ""} readOnly disabled />
                 </div>
                 <div className="space-y-2">
-                  <Label>Nom affiché</Label>
+                  <Label>{copy.profile.displayName}</Label>
                   <Input value={user?.displayName || ""} readOnly disabled />
                 </div>
               </div>
@@ -360,20 +440,18 @@ export default function SettingsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Lock className="w-5 h-5 text-primary" />
-                Abonnement
+                {copy.subscription.title}
               </CardTitle>
-              <CardDescription>
-                Gérez votre formule d'abonnement Aurum.
-              </CardDescription>
+              <CardDescription>{copy.subscription.description}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between p-4 border rounded-lg bg-secondary/50">
                 <div>
-                  <p className="font-medium">Formule actuelle</p>
-                  <p className="text-sm text-muted-foreground">Aucune formule active</p>
+                  <p className="font-medium">{copy.subscription.currentPlan}</p>
+                  <p className="text-sm text-muted-foreground">{copy.subscription.noPlan}</p>
                 </div>
                 <Button asChild variant="outline">
-                  <Link href={to("/pricing")}>Voir les tarifs</Link>
+                  <Link href={to("/pricing")}>{copy.subscription.pricing}</Link>
                 </Button>
               </div>
             </CardContent>
@@ -381,51 +459,41 @@ export default function SettingsPage() {
 
           <Card className="border-destructive/20">
             <CardHeader>
-              <CardTitle className="text-destructive">Zone sensible</CardTitle>
-              <CardDescription>Actions irréversibles sur le compte.</CardDescription>
+              <CardTitle className="text-destructive">{copy.danger.title}</CardTitle>
+              <CardDescription>{copy.danger.description}</CardDescription>
             </CardHeader>
             <CardContent>
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="destructive">Supprimer le compte</Button>
+                  <Button variant="destructive">{copy.danger.trigger}</Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Confirmez-vous cette suppression&nbsp;?</DialogTitle>
-                    <DialogDescription>
-                      Cette action est irréversible. Elle supprimera définitivement votre compte
-                      et vos données de nos serveurs.
-                    </DialogDescription>
+                    <DialogTitle>{copy.danger.dialogTitle}</DialogTitle>
+                    <DialogDescription>{copy.danger.dialogDescription}</DialogDescription>
                   </DialogHeader>
                   <div className="space-y-4 py-4">
                     <div className="space-y-2">
-                      <Label htmlFor="confirm-delete">
-                        Tapez "SUPPRIMER" pour confirmer
-                      </Label>
+                      <Label htmlFor="confirm-delete">{copy.danger.confirmLabel}</Label>
                       <Input
                         id="confirm-delete"
-                        placeholder="SUPPRIMER"
+                        placeholder={copy.danger.confirmPlaceholder}
                         value={deleteConfirmation}
                         onChange={(e) => setDeleteConfirmation(e.target.value)}
                       />
                     </div>
                   </div>
                   <DialogFooter>
-                    <Button
-                      variant="outline"
-                      onClick={() => setDeleteConfirmation("")}
-                    >
-                      Annuler
+                    <Button variant="outline" onClick={() => setDeleteConfirmation("") }>
+                      {copy.danger.cancel}
                     </Button>
                     <Button
                       variant="destructive"
-                      disabled={deleteConfirmation !== "SUPPRIMER" || isDeleting}
+                      disabled={deleteConfirmation !== copy.danger.keyword || isDeleting}
                       onClick={handleDeleteAccount}
                     >
-                      {isDeleting ? (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      ) : null}
-                      Supprimer le compte
+                      {isDeleting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                      {copy.danger.confirm}
                     </Button>
                   </DialogFooter>
                 </DialogContent>
@@ -434,33 +502,21 @@ export default function SettingsPage() {
           </Card>
         </TabsContent>
 
-        {/* Privacy Tab */}
         <TabsContent value="privacy" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Vos données</CardTitle>
-              <CardDescription>
-                Gérez vos données personnelles et vos exports.
-              </CardDescription>
+              <CardTitle>{copy.data.title}</CardTitle>
+              <CardDescription>{copy.data.description}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label className="text-base">Exporter mes données</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Téléchargez une copie de toutes vos entrées et analyses
-                    (JSON).
-                  </p>
+                  <Label className="text-base">{copy.data.exportLabel}</Label>
+                  <p className="text-sm text-muted-foreground">{copy.data.exportDescription}</p>
                 </div>
-                <Button
-                  variant="outline"
-                  onClick={handleExportData}
-                  disabled={isExporting}
-                >
-                  {isExporting ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : null}
-                  Télécharger le JSON
+                <Button variant="outline" onClick={handleExportData} disabled={isExporting}>
+                  {isExporting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                  {copy.data.exportButton}
                 </Button>
               </div>
             </CardContent>
@@ -468,26 +524,18 @@ export default function SettingsPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Mentions légales</CardTitle>
+              <CardTitle>{copy.legal.title}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-              <Button
-                variant="link"
-                className="px-0 flex items-center gap-2"
-                asChild
-              >
+              <Button variant="link" className="px-0 flex items-center gap-2" asChild>
                 <Link href={to("/privacy")} target="_blank" rel="noopener noreferrer">
-                  Politique de confidentialité <ExternalLink className="w-3 h-3" />
+                  {copy.legal.privacy} <ExternalLink className="w-3 h-3" />
                 </Link>
               </Button>
               <Separator />
-              <Button
-                variant="link"
-                className="px-0 flex items-center gap-2"
-                asChild
-              >
+              <Button variant="link" className="px-0 flex items-center gap-2" asChild>
                 <Link href={to("/terms")} target="_blank" rel="noopener noreferrer">
-                  Conditions d'utilisation <ExternalLink className="w-3 h-3" />
+                  {copy.legal.terms} <ExternalLink className="w-3 h-3" />
                 </Link>
               </Button>
             </CardContent>

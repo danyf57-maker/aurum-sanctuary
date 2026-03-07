@@ -12,10 +12,46 @@ import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { firestore as db } from '@/lib/firebase/web-client';
 import { trackEvent } from '@/lib/analytics/client';
 import { useLocalizedHref } from '@/hooks/use-localized-href';
+import { useTranslations } from 'next-intl';
+
+type MarketingFaq = {
+    question: string;
+    answer: string;
+};
+
+type MarketingCard = {
+    eyebrow?: string;
+    title: string;
+    body: string;
+    example?: string;
+    badge?: string;
+    cta?: string;
+};
+
+type MarketingStudyCard = {
+    eyebrow: string;
+    title: string;
+    body: string;
+    example: string;
+};
+
+type MarketingQuizQuestion = {
+    q: string;
+    options: Array<{
+        label: string;
+        text: string;
+    }>;
+};
+
+type MarketingProfile = {
+    title: string;
+    description: string;
+};
 
 const ExitIntent = () => {
     const [show, setShow] = useState(false);
     const [dismissed, setDismissed] = useState(false);
+    const t = useTranslations('marketingPage.exitIntent');
 
     useEffect(() => {
         const handleMouseLeave = (e: MouseEvent) => {
@@ -48,9 +84,9 @@ const ExitIntent = () => {
                     <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-8 text-primary">
                         <Compass className="w-8 h-8" />
                     </div>
-                    <h3 className="text-3xl md:text-4xl font-headline mb-6 text-stone-900">Une dernière chose avant de partir...</h3>
+                    <h3 className="text-3xl md:text-4xl font-headline mb-6 text-stone-900">{t('title')}</h3>
                     <p className="text-stone-500 text-lg mb-10 leading-relaxed font-light">
-                        Tu ne sais pas par où commencer ? Fais notre évaluation de bien-être en 30 secondes pour obtenir ton profil personnalisé.
+                        {t('description')}
                     </p>
                     <div className="flex flex-col gap-4 items-center">
                         <Button
@@ -62,13 +98,13 @@ const ExitIntent = () => {
                             size="lg"
                             className="h-16 px-12 text-lg rounded-2xl w-full sm:w-auto"
                         >
-                            Faire le parcours (30s)
+                            {t('cta')}
                         </Button>
                         <button
                             onClick={() => { setShow(false); setDismissed(true); }}
                             className="text-stone-400 text-sm hover:underline font-light"
                         >
-                            Non merci, je souhaite continuer à naviguer
+                            {t('dismiss')}
                         </button>
                     </div>
                 </div>
@@ -80,6 +116,7 @@ const ExitIntent = () => {
 const QuizSection = () => {
     const { user } = useAuth();
     const to = useLocalizedHref();
+    const t = useTranslations('marketingPage.quiz');
     const [step, setStep] = useState(0);
     const [answers, setAnswers] = useState<string[]>([]);
     const quizStartedAtRef = useRef<number | null>(null);
@@ -87,105 +124,11 @@ const QuizSection = () => {
     const hasTrackedStartRef = useRef(false);
     const hasTrackedResultRef = useRef(false);
 
-    const questions = [
-        {
-            q: "Quand tu penses à ta journée, qu'est-ce qui ressort le plus ?",
-            options: [
-                { label: "D", text: "J'ai beaucoup de choses à faire et je veux avancer vite" },
-                { label: "I", text: "J'ai besoin de connecter avec les autres et partager" },
-                { label: "S", text: "Je cherche la tranquillité et l'harmonie" },
-                { label: "C", text: "J'analyse les situations avant d'agir" },
-            ],
-        },
-        {
-            q: "Face à une situation difficile, ta première réaction est de :",
-            options: [
-                { label: "D", text: "Prendre le problème en main et trouver une solution" },
-                { label: "I", text: "En parler pour voir différentes perspectives" },
-                { label: "S", text: "Retrouver mon calme avant de réagir" },
-                { label: "C", text: "Comprendre tous les détails avant de décider" },
-            ],
-        },
-        {
-            q: "Si tu ouvrais ton journal maintenant, tu écrirais sur :",
-            options: [
-                { label: "D", text: "Tes objectifs et ce que tu veux accomplir" },
-                { label: "I", text: "Tes interactions et ce qui t'a touché émotionnellement" },
-                { label: "S", text: "Ton besoin de paix et de stabilité" },
-                { label: "C", text: "Tes réflexions profondes et analyses" },
-            ],
-        },
-        {
-            q: "Ce que tu cherches avant tout en ce moment :",
-            options: [
-                { label: "D", text: "Du momentum et de l'action" },
-                { label: "I", text: "De la connexion et de l'inspiration" },
-                { label: "S", text: "De la sécurité et du réconfort" },
-                { label: "C", text: "De la clarté et de la structure" },
-            ],
-        },
-        {
-            q: "Quand tu dois choisir, tu privilégies :",
-            options: [
-                { label: "D", text: "L'efficacité et la rapidité" },
-                { label: "I", text: "L'impact sur les autres" },
-                { label: "S", text: "La sécurité et la prévisibilité" },
-                { label: "C", text: "La logique et les faits" },
-            ],
-        },
-        {
-            q: "Ton style de communication naturel :",
-            options: [
-                { label: "D", text: "Direct et concis" },
-                { label: "I", text: "Chaleureux et expressif" },
-                { label: "S", text: "Posé et réfléchi" },
-                { label: "C", text: "Structuré et précis" },
-            ],
-        },
-        {
-            q: "Ton environnement idéal :",
-            options: [
-                { label: "D", text: "Dynamique, avec des défis constants" },
-                { label: "I", text: "Collaboratif, avec beaucoup d'échanges" },
-                { label: "S", text: "Stable, avec peu de changements" },
-                { label: "C", text: "Organisé, avec des processus clairs" },
-            ],
-        },
-        {
-            q: "Ce qui te motive le plus :",
-            options: [
-                { label: "D", text: "Les résultats et la victoire" },
-                { label: "I", text: "La reconnaissance et la connexion" },
-                { label: "S", text: "La sécurité et l'appartenance" },
-                { label: "C", text: "La maîtrise et l'excellence" },
-            ],
-        },
-    ];
+    const questions = t.raw('questions') as MarketingQuizQuestion[];
 
     type ProfileKey = "D" | "I" | "S" | "C" | "MIXTE";
 
-    const profileMap: Record<ProfileKey, { title: string; description: string }> = {
-        D: {
-            title: "Le Pionnier",
-            description: "Tu aimes avancer vite et décider. Ton journal t'aide à canaliser cette énergie.",
-        },
-        I: {
-            title: "Le Connecteur",
-            description: "Tu es guidé par les relations et les émotions. Ton journal devient un espace d'expression.",
-        },
-        S: {
-            title: "L'Ancre",
-            description: "Tu cherches la paix et la constance. Ton journal t'offre un refuge stable.",
-        },
-        C: {
-            title: "L'Architecte",
-            description: "Tu aimes comprendre avant d'agir. Ton journal devient ton laboratoire d'idées.",
-        },
-        MIXTE: {
-            title: "Profil mixte • L'Équilibriste",
-            description: "Tu combines plusieurs forces. Ton journal s'adapte à ta complexité.",
-        },
-    };
+    const profileMap = t.raw('profiles') as Record<ProfileKey, MarketingProfile>;
 
     const getProfile = (currentAnswers: string[]): ProfileKey => {
         const counts = { D: 0, I: 0, S: 0, C: 0 };
@@ -305,7 +248,9 @@ const QuizSection = () => {
                                 transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                                 className="text-center"
                             >
-                                <span className="text-primary/60 text-[10px] uppercase tracking-widest mb-6 block font-bold">Parcours de réflexion • {step + 1}/{questions.length}</span>
+                                <span className="text-primary/60 text-[10px] uppercase tracking-widest mb-6 block font-bold">
+                                    {t('stepBadge', { current: step + 1, total: questions.length })}
+                                </span>
                                 <h3 className="text-3xl md:text-5xl font-headline mb-12 text-stone-900">{questions[step].q}</h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     {questions[step].options.map((option) => (
@@ -333,7 +278,7 @@ const QuizSection = () => {
                                 <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-8 text-primary">
                                     <ShieldCheck className="w-10 h-10" />
                                 </div>
-                                <h3 className="text-3xl md:text-5xl font-headline mb-6 text-stone-900">Ton profil est prêt.</h3>
+                                <h3 className="text-3xl md:text-5xl font-headline mb-6 text-stone-900">{t('resultTitle')}</h3>
                                 <p className="text-stone-500 text-lg mb-12 max-w-xl mx-auto leading-relaxed">
                                     <span className="font-medium text-stone-700">{profile.title}</span>
                                     <br />
@@ -353,7 +298,7 @@ const QuizSection = () => {
                                             })
                                         }
                                     >
-                                        {user ? "Voir mon résultat dans Magazine" : "Créer mon compte pour voir mon résultat"}
+                                        {user ? t('resultCtaLoggedIn') : t('resultCtaGuest')}
                                     </Link>
                                 </Button>
                             </motion.div>
@@ -370,6 +315,7 @@ const QuizSection = () => {
 
 const FloatingCTA = ({ visible }: { visible: boolean }) => {
     const to = useLocalizedHref();
+    const t = useTranslations('marketingPage.floatingCta');
     return (
         <AnimatePresence>
             {visible && (
@@ -381,12 +327,12 @@ const FloatingCTA = ({ visible }: { visible: boolean }) => {
             >
                 <Button asChild size="lg" className="rounded-full shadow-2xl bg-primary hover:bg-primary/90 px-8 h-14 group border-4 border-white/20 backdrop-blur-sm">
                     <Link href={to('/signup')} className="flex items-center gap-3">
-                        <span className="font-headline font-semibold">Créer mon compte</span>
+                        <span className="font-headline font-semibold">{t('cta')}</span>
                         <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                     </Link>
                 </Button>
                 <div className="mt-2 text-center pointer-events-none">
-                    <span className="text-[9px] text-white bg-black/40 backdrop-blur-sm px-3 py-1 rounded-full uppercase tracking-tighter font-bold">Sans engagement • Privé</span>
+                    <span className="text-[9px] text-white bg-black/40 backdrop-blur-sm px-3 py-1 rounded-full uppercase tracking-tighter font-bold">{t('label')}</span>
                 </div>
             </motion.div>
             )}
@@ -396,6 +342,7 @@ const FloatingCTA = ({ visible }: { visible: boolean }) => {
 export default function Home() {
     const [showCTA, setShowCTA] = useState(false);
     const to = useLocalizedHref();
+    const t = useTranslations('marketingPage');
 
     useEffect(() => {
         const handleScroll = () => {
@@ -410,35 +357,17 @@ export default function Home() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const faqs = [
-        {
-            question: "Qui peut lire mes données ?",
-            answer: "Personne. Nous utilisons une architecture 'Admin-Blind' avec chiffrement AES-256 côté client. Tes entrées sont chiffrées avec ta clé privée avant d'être envoyées. Techniquement, même avec un accès total à nos serveurs, il est impossible de déchiffrer tes écrits sans ton mot de passe."
-        },
-        {
-            question: "Comment calmer l'anxiété la nuit et mieux dormir ?",
-            answer: "Écris 3 lignes avant de te coucher: ce qui te pèse, ce que tu ressens, puis ce dont tu as besoin demain. Le but est de sortir la rumination de ta tête pour apaiser ton esprit."
-        },
-        {
-            question: "Comment réduire la charge mentale en 5 minutes ?",
-            answer: "Pose un minuteur 5 minutes et écris sans corriger: faits, émotions, besoins. Cette routine courte t'aide à relâcher la pression et à retrouver de la clarté, même pendant une journée chargée."
-        },
-        {
-            question: "Comment arrêter de trop penser (overthinking) rapidement ?",
-            answer: "Quand tout tourne dans ta tête, écris une idée par ligne. Cela transforme un flot confus en liste concrète. Ensuite, choisis une seule petite action à faire aujourd'hui."
-        },
-        {
-            question: "Est-ce que l'écriture aide vraiment contre le stress et l'anxiété ?",
-            answer: "Les études montrent que l'écriture régulière peut améliorer le bien-être psychologique et réduire certains symptômes liés au stress et à l'anxiété. Ce n'est pas magique, mais c'est un outil simple, accessible et utile."
-        },
-        {
-            question: "Quel journal intime en ligne est vraiment privé ?",
-            answer: "Choisis un journal intime chiffré de bout en bout, sans publicité, où tes notes ne sont pas exposées publiquement. Sur Aurum, tu écris dans un espace privé conçu pour la clarté mentale."
-        },
-        {
-            question: "Combien coûte Aurum ?",
-            answer: "Aurum propose une formule mensuelle à 13€/mois et une formule annuelle à 129€/an (2 mois offerts)."
-        }
+    const faqs = t.raw('faqs') as MarketingFaq[];
+    const studyCards = t.raw('studyCards') as MarketingStudyCard[];
+    const useCaseCards = t.raw('useCases.cards') as MarketingCard[];
+    const trustCards = t.raw('trust.cards') as MarketingCard[];
+    const featureCards = t.raw('finalCta.cards') as MarketingCard[];
+    const discoveries = t.raw('scientificProof.discoveries') as Array<{ label: string; body: string }>;
+    const referenceAriaLabels = [
+        t('references.aria1'),
+        t('references.aria2'),
+        t('references.aria3'),
+        t('references.aria4'),
     ];
     return (
         <main>
@@ -447,51 +376,39 @@ export default function Home() {
                 <div className="container">
                     <div className="max-w-4xl mx-auto text-center mb-8">
                         <h2 className="text-3xl md:text-4xl font-headline text-stone-900 mb-4">
-                            Sais-tu que l&apos;écriture peut vraiment t&apos;aider ?
+                            {t('studySection.title')}
                         </h2>
                         <p className="text-stone-600 font-light text-lg">
-                            Des recherches sérieuses montrent des effets concrets. Voici des résultats et des exemples simples.
+                            {t('studySection.subtitle')}
                         </p>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-6xl mx-auto">
-                        <article className="rounded-2xl border border-stone-200 bg-stone-50/70 p-6">
-                            <p className="text-[11px] uppercase tracking-[0.14em] text-stone-500 mb-3 font-semibold">Sais-tu que...</p>
-                            <h3 className="text-xl font-headline text-stone-900 mb-2">écrire un stress vécu peut réduire des symptômes physiques ?</h3>
-                            <p className="text-sm text-stone-600 font-light leading-relaxed mb-3">
-                                Dans une étude fondatrice, les personnes qui écrivaient sur un événement difficile ont montré de meilleurs indicateurs de santé.
-                            </p>
-                            <p className="text-xs text-stone-500 font-light">
-                                Exemple concret : 10 minutes le soir pour poser ce qui te pèse au lieu de ruminer au lit.
-                                <sup><a href={to('/etudes-scientifiques#etude-1')} aria-label="Voir l'étude scientifique 1" className="no-underline font-semibold text-stone-700"> 1</a></sup>
-                            </p>
-                        </article>
-                        <article className="rounded-2xl border border-stone-200 bg-stone-50/70 p-6">
-                            <p className="text-[11px] uppercase tracking-[0.14em] text-stone-500 mb-3 font-semibold">Sais-tu que...</p>
-                            <h3 className="text-xl font-headline text-stone-900 mb-2">mettre tes émotions en mots peut améliorer ton rebond ?</h3>
-                            <p className="text-sm text-stone-600 font-light leading-relaxed mb-3">
-                                Une étude sur des personnes en période de perte d&apos;emploi a trouvé un meilleur retour à l&apos;action chez celles qui écrivaient.
-                            </p>
-                            <p className="text-xs text-stone-500 font-light">
-                                Exemple concret : écrire 3 fois par semaine ce que tu ressens, puis ton prochain pas réaliste.
-                                <sup><a href={to('/etudes-scientifiques#etude-2')} aria-label="Voir l'étude scientifique 2" className="no-underline font-semibold text-stone-700"> 2</a></sup>
-                            </p>
-                        </article>
-                        <article className="rounded-2xl border border-stone-200 bg-stone-50/70 p-6">
-                            <p className="text-[11px] uppercase tracking-[0.14em] text-stone-500 mb-3 font-semibold">Sais-tu que...</p>
-                            <h3 className="text-xl font-headline text-stone-900 mb-2">les revues systématiques confirment un gain de bien-être ?</h3>
-                            <p className="text-sm text-stone-600 font-light leading-relaxed mb-3">
-                                Les synthèses récentes montrent un effet positif du journaling sur le stress et le bien-être psychologique.
-                            </p>
-                            <p className="text-xs text-stone-500 font-light">
-                                Exemple concret : une routine de 5 minutes par jour peut déjà changer ton niveau de clarté.
-                                <sup><a href={to('/etudes-scientifiques#etude-3')} aria-label="Voir l'étude scientifique 3" className="no-underline font-semibold text-stone-700"> 3</a></sup>
-                                <sup><a href={to('/etudes-scientifiques#etude-4')} aria-label="Voir l'étude scientifique 4" className="no-underline font-semibold text-stone-700"> 4</a></sup>
-                            </p>
-                        </article>
+                        {studyCards.map((card, index) => (
+                            <article key={card.title} className="rounded-2xl border border-stone-200 bg-stone-50/70 p-6">
+                                <p className="text-[11px] uppercase tracking-[0.14em] text-stone-500 mb-3 font-semibold">{card.eyebrow}</p>
+                                <h3 className="text-xl font-headline text-stone-900 mb-2">{card.title}</h3>
+                                <p className="text-sm text-stone-600 font-light leading-relaxed mb-3">{card.body}</p>
+                                <p className="text-xs text-stone-500 font-light">
+                                    {card.example}
+                                    {index === 0 && (
+                                        <sup><a href={to('/etudes-scientifiques#etude-1')} aria-label={t('references.aria1')} className="no-underline font-semibold text-stone-700"> 1</a></sup>
+                                    )}
+                                    {index === 1 && (
+                                        <sup><a href={to('/etudes-scientifiques#etude-2')} aria-label={t('references.aria2')} className="no-underline font-semibold text-stone-700"> 2</a></sup>
+                                    )}
+                                    {index === 2 && (
+                                        <>
+                                            <sup><a href={to('/etudes-scientifiques#etude-3')} aria-label={t('references.aria3')} className="no-underline font-semibold text-stone-700"> 3</a></sup>
+                                            <sup><a href={to('/etudes-scientifiques#etude-4')} aria-label={t('references.aria4')} className="no-underline font-semibold text-stone-700"> 4</a></sup>
+                                        </>
+                                    )}
+                                </p>
+                            </article>
+                        ))}
                     </div>
                     <div className="mt-8 text-center">
                         <Button asChild size="lg" className="h-12 px-8 rounded-xl">
-                            <Link href={to('/signup')}>Créer mon compte et commencer aujourd&apos;hui</Link>
+                            <Link href={to('/signup')}>{t('studySection.cta')}</Link>
                         </Button>
                     </div>
                 </div>
@@ -500,152 +417,41 @@ export default function Home() {
                 <div className="container">
                     <div className="max-w-3xl mx-auto text-center mb-12">
                         <h2 className="text-3xl md:text-5xl font-headline text-stone-900 mb-4">
-                            Douleurs fréquentes : comment l&apos;écriture peut vraiment aider
+                            {t('useCases.title')}
                         </h2>
                         <p className="text-stone-600 font-light text-lg">
-                            Des exemples concrets pour relâcher la charge mentale, calmer l&apos;anxiété et sortir de la rumination.
+                            {t('useCases.subtitle')}
                         </p>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <article className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm h-full flex flex-col">
-                            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-stone-100 px-3 py-1 text-[11px] uppercase tracking-[0.12em] text-stone-600 font-medium w-fit">
-                                <Moon className="h-3.5 w-3.5" />
-                                Insomnie
-                            </div>
-                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Ton cerveau tourne la nuit</h3>
-                            <p className="text-stone-600 font-light leading-relaxed mb-6">
-                                Écris ce qui tourne en boucle. En pratique: 3 lignes avant de dormir
-                                (fait, émotion, besoin) peuvent déjà apaiser ton esprit.
-                            </p>
-                            <Link href={to('/signup')} className="mt-auto text-primary font-medium hover:underline">
-                                Commencer gratuitement →
-                            </Link>
-                        </article>
-
-                        <article className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm h-full flex flex-col">
-                            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-stone-100 px-3 py-1 text-[11px] uppercase tracking-[0.12em] text-stone-600 font-medium w-fit">
-                                <Brain className="h-3.5 w-3.5" />
-                                Self-talk
-                            </div>
-                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Tu te parles trop durement</h3>
-                            <p className="text-stone-600 font-light leading-relaxed mb-6">
-                                Quand la petite voix dit &quot;je suis nul&quot;, écris une version plus juste:
-                                &quot;j&apos;avance petit à petit&quot;. Ça aide à reprendre confiance.
-                            </p>
-                            <Link href={to('/signup')} className="mt-auto text-primary font-medium hover:underline">
-                                Créer mon compte →
-                            </Link>
-                        </article>
-
-                        <article className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm h-full flex flex-col">
-                            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-stone-100 px-3 py-1 text-[11px] uppercase tracking-[0.12em] text-stone-600 font-medium w-fit">
-                                <Wind className="h-3.5 w-3.5" />
-                                Overthinking
-                            </div>
-                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Tout est confus dans ta tête</h3>
-                            <p className="text-stone-600 font-light leading-relaxed mb-6">
-                                Écris une idée par ligne. Tu transformes la confusion mentale en points
-                                clairs, puis tu choisis un seul petit pas pour aujourd&apos;hui.
-                            </p>
-                            <Link href={to('/signup')} className="mt-auto text-primary font-medium hover:underline">
-                                Je veux essayer →
-                            </Link>
-                        </article>
-
-                        <article className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm h-full flex flex-col">
-                            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-stone-100 px-3 py-1 text-[11px] uppercase tracking-[0.12em] text-stone-600 font-medium w-fit">
-                                <Flame className="h-3.5 w-3.5" />
-                                Pression
-                            </div>
-                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Tu gardes tout, puis tu exploses</h3>
-                            <p className="text-stone-600 font-light leading-relaxed mb-6">
-                                Quelques lignes régulières valent mieux qu&apos;une longue session rare.
-                                Tu décompresses avant saturation et tu retrouves plus de calme.
-                            </p>
-                            <Link href={to('/signup')} className="mt-auto text-primary font-medium hover:underline">
-                                Je commence maintenant →
-                            </Link>
-                        </article>
-
-                        <article className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm h-full flex flex-col">
-                            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-stone-100 px-3 py-1 text-[11px] uppercase tracking-[0.12em] text-stone-600 font-medium w-fit">
-                                <CircleHelp className="h-3.5 w-3.5" />
-                                Démarrage
-                            </div>
-                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Tu ne sais pas par où commencer</h3>
-                            <p className="text-stone-600 font-light leading-relaxed mb-6">
-                                Règle simple: commence par un fait, une émotion, un besoin.
-                                C&apos;est suffisant pour démarrer sans pression, même en 2 minutes.
-                            </p>
-                            <Link href={to('/signup')} className="mt-auto text-primary font-medium hover:underline">
-                                Ouvrir mon journal →
-                            </Link>
-                        </article>
-
-                        <article className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm h-full flex flex-col">
-                            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-stone-100 px-3 py-1 text-[11px] uppercase tracking-[0.12em] text-stone-600 font-medium w-fit">
-                                <ListChecks className="h-3.5 w-3.5" />
-                                Charge mentale
-                            </div>
-                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Ta liste de tâches t&apos;étouffe</h3>
-                            <p className="text-stone-600 font-light leading-relaxed mb-6">
-                                Pose un minuteur 5 minutes et écris sans corriger:
-                                faits, émotions, besoins. Cette routine courte te redonne de l&apos;air mental.
-                            </p>
-                            <Link href={to('/signup')} className="mt-auto text-primary font-medium hover:underline">
-                                Créer mon espace →
-                            </Link>
-                        </article>
-                        <article className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm h-full flex flex-col">
-                            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-stone-100 px-3 py-1 text-[11px] uppercase tracking-[0.12em] text-stone-600 font-medium w-fit">
-                                <Compass className="h-3.5 w-3.5" />
-                                Conflit
-                            </div>
-                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Après une dispute, ton mental rejoue la scène</h3>
-                            <p className="text-stone-600 font-light leading-relaxed mb-6">
-                                Pose les faits, ce que tu as ressenti, puis ce dont tu as besoin maintenant.
-                                Tu sors du film mental et tu reviens à toi.
-                            </p>
-                            <Link href={to('/signup')} className="mt-auto text-primary font-medium hover:underline">
-                                Revenir au calme →
-                            </Link>
-                        </article>
-                        <article className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm h-full flex flex-col">
-                            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-stone-100 px-3 py-1 text-[11px] uppercase tracking-[0.12em] text-stone-600 font-medium w-fit">
-                                <Moon className="h-3.5 w-3.5" />
-                                Fatigue mentale
-                            </div>
-                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Tu te sens vidé sans savoir pourquoi</h3>
-                            <p className="text-stone-600 font-light leading-relaxed mb-6">
-                                Écris 5 lignes en fin de journée: ce qui t&apos;a pris de l&apos;énergie, ce qui t&apos;en a donné.
-                                Tu retrouves des repères pour demain.
-                            </p>
-                            <Link href={to('/signup')} className="mt-auto text-primary font-medium hover:underline">
-                                Retrouver de l&apos;énergie →
-                            </Link>
-                        </article>
-                        <article className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm h-full flex flex-col">
-                            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-stone-100 px-3 py-1 text-[11px] uppercase tracking-[0.12em] text-stone-600 font-medium w-fit">
-                                <ListChecks className="h-3.5 w-3.5" />
-                                Décision
-                            </div>
-                            <h3 className="text-2xl font-headline text-stone-900 mb-3">Tu bloques sur une décision importante</h3>
-                            <p className="text-stone-600 font-light leading-relaxed mb-6">
-                                Divise ta page en deux colonnes: ce que tu gagnes, ce que tu perds.
-                                Mettre à plat tes pensées fait souvent émerger ton vrai choix.
-                            </p>
-                            <Link href={to('/signup')} className="mt-auto text-primary font-medium hover:underline">
-                                Clarifier ma décision →
-                            </Link>
-                        </article>
+                        {useCaseCards.map((card, index) => (
+                            <article key={card.title} className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm h-full flex flex-col">
+                                <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-stone-100 px-3 py-1 text-[11px] uppercase tracking-[0.12em] text-stone-600 font-medium w-fit">
+                                    {index === 0 && <Moon className="h-3.5 w-3.5" />}
+                                    {index === 1 && <Brain className="h-3.5 w-3.5" />}
+                                    {index === 2 && <Wind className="h-3.5 w-3.5" />}
+                                    {index === 3 && <Flame className="h-3.5 w-3.5" />}
+                                    {index === 4 && <CircleHelp className="h-3.5 w-3.5" />}
+                                    {(index === 5 || index === 8) && <ListChecks className="h-3.5 w-3.5" />}
+                                    {index === 6 && <Compass className="h-3.5 w-3.5" />}
+                                    {index === 7 && <Moon className="h-3.5 w-3.5" />}
+                                    {card.badge}
+                                </div>
+                                <h3 className="text-2xl font-headline text-stone-900 mb-3">{card.title}</h3>
+                                <p className="text-stone-600 font-light leading-relaxed mb-6">{card.body}</p>
+                                <Link href={to('/signup')} className="mt-auto text-primary font-medium hover:underline">
+                                    {card.cta}
+                                </Link>
+                            </article>
+                        ))}
                     </div>
                     <p className="mt-8 text-xs text-stone-500 text-center font-light">
-                        Basé sur des recherches récentes sur l&apos;écriture et le bien-être psychologique
+                        {t('useCases.note')}
                         <sup>
-                            <a href={to('/etudes-scientifiques#etude-3')} aria-label="Voir l'étude scientifique 3" className="no-underline font-semibold text-stone-700"> 3</a>
+                            <a href={to('/etudes-scientifiques#etude-3')} aria-label={t('references.aria3')} className="no-underline font-semibold text-stone-700"> 3</a>
                         </sup>
                         <sup>
-                            <a href={to('/etudes-scientifiques#etude-4')} aria-label="Voir l'étude scientifique 4" className="no-underline font-semibold text-stone-700"> 4</a>
+                            <a href={to('/etudes-scientifiques#etude-4')} aria-label={t('references.aria4')} className="no-underline font-semibold text-stone-700"> 4</a>
                         </sup>
                         .
                     </p>
@@ -656,23 +462,18 @@ export default function Home() {
             <section className="py-24 md:py-32 bg-stone-100/50">
                 <div className="container max-w-4xl mx-auto">
                     <div className="text-center max-w-3xl mx-auto mb-14">
-                        <h2 className="text-4xl md:text-5xl font-headline mb-6">Ce n'est pas de la magie, c'est un phénomène observé.</h2>
+                        <h2 className="text-4xl md:text-5xl font-headline mb-6">{t('scientificProof.title')}</h2>
                         <p className="text-stone-600 font-light text-lg leading-relaxed">
-                            Des chercheurs se sont penchés sur le pouvoir de l'écriture. Dans leurs études, ils ont fait des découvertes surprenantes :
+                            {t('scientificProof.subtitle')}
                         </p>
                     </div>
                     <ul className="space-y-5 text-stone-700 font-light leading-relaxed text-lg max-w-3xl mx-auto">
-                        <li className="rounded-2xl border border-stone-200 bg-white p-6">
-                            <span className="font-medium text-stone-900">Découverte n°1 :</span> Les participants qui prenaient le temps
-                            d'écrire sur leurs soucis ont vu leurs visites chez le médecin diminuer de moitié
-                            <sup><a href={to('/etudes-scientifiques#etude-1')} aria-label="Voir l'étude scientifique 1" className="no-underline font-semibold text-stone-700"> 1</a></sup>.
-                        </li>
-                        <li className="rounded-2xl border border-stone-200 bg-white p-6">
-                            <span className="font-medium text-stone-900">Découverte n°2 :</span> Dans une autre étude sur des personnes
-                            ayant perdu leur emploi, celles qui écrivaient sur leurs émotions avaient deux fois plus de chances de retrouver
-                            un travail que les autres
-                            <sup><a href={to('/etudes-scientifiques#etude-2')} aria-label="Voir l'étude scientifique 2" className="no-underline font-semibold text-stone-700"> 2</a></sup>.
-                        </li>
+                        {discoveries.map((discovery, index) => (
+                            <li key={discovery.label} className="rounded-2xl border border-stone-200 bg-white p-6">
+                                <span className="font-medium text-stone-900">{discovery.label}</span> {discovery.body}
+                                <sup><a href={to(`/etudes-scientifiques#etude-${index + 1}`)} aria-label={referenceAriaLabels[index]} className="no-underline font-semibold text-stone-700"> {index + 1}</a></sup>.
+                            </li>
+                        ))}
                     </ul>
                 </div>
             </section>
@@ -682,12 +483,11 @@ export default function Home() {
                 <section className="py-24 md:py-32 bg-stone-100/50">
                     <div className="container max-w-3xl mx-auto text-center">
                         <h2 className="text-4xl md:text-5xl font-headline mb-6">
-                            C'est comment, une tête en bazar ?
+                            {t('problem.title')}
                         </h2>
                         <div className="prose prose-lg lg:prose-xl mx-auto text-foreground/80 font-light">
                             <p>
-                                C'est quand les pensées tournent en rond sans s'arrêter. Ça peut empêcher de dormir, rendre triste
-                                ou énervé. On a parfois l'impression d'être coincé.
+                                {t('problem.body')}
                             </p>
                         </div>
                     </div>
@@ -697,11 +497,10 @@ export default function Home() {
                 <section className="py-24 md:py-32 bg-white">
                     <div className="container max-w-3xl mx-auto text-center">
                         <h2 className="text-4xl md:text-5xl font-headline mb-6">
-                            Le super-pouvoir de l'écriture.
+                            {t('solution.title')}
                         </h2>
                         <p className="text-stone-600 font-light text-lg leading-relaxed">
-                            Écrire tes pensées, même les plus secrètes, c'est comme leur dire "Stop !". Ça les calme.
-                            Aurum est ton outil pour faire ça, en toute sécurité.
+                            {t('solution.body')}
                         </p>
                     </div>
                 </section>
@@ -710,56 +509,37 @@ export default function Home() {
                 <section className="py-24 md:py-40 bg-white">
                     <div className="container">
                         <div className="text-center max-w-3xl mx-auto mb-20">
-                            <span className="text-primary/60 text-[10px] uppercase tracking-[0.3em] font-bold mb-4 block">Ton Intégrité, Notre Priorité</span>
-                            <h2 className="text-4xl md:text-6xl font-headline mb-6">Un sanctuaire où tu es le seul maître.</h2>
-                            <p className="text-stone-500 font-light text-lg">Nous avons conçu Aurum autour d'une idée simple : ton monde intérieur ne regarde que toi. Pas même nous.</p>
+                            <span className="text-primary/60 text-[10px] uppercase tracking-[0.3em] font-bold mb-4 block">{t('trust.eyebrow')}</span>
+                            <h2 className="text-4xl md:text-6xl font-headline mb-6">{t('trust.title')}</h2>
+                            <p className="text-stone-500 font-light text-lg">{t('trust.subtitle')}</p>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-20">
-                            <div className="flex flex-col items-center text-center p-8 rounded-3xl bg-stone-50 border border-stone-100 transition-all hover:shadow-lg">
-                                <div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center mb-6 text-primary">
-                                    <Lock className="w-6 h-6" />
+                            {trustCards.map((card, index) => (
+                                <div key={card.title} className="flex flex-col items-center text-center p-8 rounded-3xl bg-stone-50 border border-stone-100 transition-all hover:shadow-lg">
+                                    <div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center mb-6 text-primary">
+                                        {index === 0 && <Lock className="w-6 h-6" />}
+                                        {index === 1 && <Fingerprint className="w-6 h-6" />}
+                                        {index === 2 && <ShieldCheck className="w-6 h-6" />}
+                                    </div>
+                                    <h3 className="text-xl font-headline mb-3 text-primary">{card.title}</h3>
+                                    <p className="text-sm text-stone-500 font-light leading-relaxed mb-4">{card.body}</p>
                                 </div>
-                                <h3 className="text-xl font-headline mb-3 text-primary">Confidentialité Absolue</h3>
-                                <p className="text-sm text-stone-500 font-light leading-relaxed mb-4">
-                                    Tes pensées sont chiffrées (AES-256) directement sur ton appareil. Même nous ne pouvons pas lire tes secrets.
-                                </p>
-                                {/* Security page removed - TABULA RASA */}
-                            </div>
-
-                            <div className="flex flex-col items-center text-center p-8 rounded-3xl bg-stone-50 border border-stone-100 transition-all hover:shadow-lg">
-                                <div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center mb-6 text-primary">
-                                    <Fingerprint className="w-6 h-6" />
-                                </div>
-                                <h3 className="text-xl font-headline mb-3 text-primary">Anonymat Garanti</h3>
-                                <p className="text-sm text-stone-500 font-light leading-relaxed">
-                                    Aucune donnée personnelle n'est liée à tes écrits. Le moteur d'analyse Aurum opère en local sur ton appareil.
-                                </p>
-                            </div>
-
-                            <div className="flex flex-col items-center text-center p-8 rounded-3xl bg-stone-50 border border-stone-100 transition-all hover:shadow-lg">
-                                <div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center mb-6 text-primary">
-                                    <ShieldCheck className="w-6 h-6" />
-                                </div>
-                                <h3 className="text-xl font-headline mb-3 text-primary">Droit à l'Oubli</h3>
-                                <p className="text-sm text-stone-500 font-light leading-relaxed">
-                                    Tu restes propriétaire de tes données à 100%. Exporte tes journaux ou supprime ton compte en un clic, sans délai.
-                                </p>
-                            </div>
+                            ))}
                         </div>
 
                         <div className="bg-stone-900 rounded-[2rem] p-8 md:p-16 text-white relative overflow-hidden">
                             <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
                                 <div className="max-w-xl text-center md:text-left">
-                                    <h4 className="text-3xl font-headline mb-4">Notre Manifeste de Confiance</h4>
+                                    <h4 className="text-3xl font-headline mb-4">{t('trust.manifestoTitle')}</h4>
                                     <p className="text-stone-400 font-light leading-relaxed">
-                                        "Nous ne vendons pas de publicité. Nous ne vendons pas tes données. Nous vendons de la clarté et de la tranquillité d'esprit. Ton journal n'est pas un produit, c'est ton jardin sacré."
+                                        {t('trust.manifestoBody')}
                                     </p>
                                 </div>
                                 <div className="flex flex-col items-center gap-4">
                                     <div className="text-7xl font-headline text-primary/20 select-none">Aurum</div>
                                     <div className="w-20 h-px bg-white/20"></div>
-                                    <span className="text-[10px] uppercase tracking-[0.4em] font-medium opacity-50">Sceau de Protection</span>
+                                    <span className="text-[10px] uppercase tracking-[0.4em] font-medium opacity-50">{t('trust.seal')}</span>
                                 </div>
                             </div>
                             <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 blur-[100px] -translate-y-1/2 translate-x-1/2 rounded-full"></div>
@@ -773,32 +553,22 @@ export default function Home() {
                 {/* SECTION 7: CTA Final */}
                 <section className="container py-24 md:py-32 text-center border-t border-black/5">
                     <Button asChild size="lg" className="h-14 px-12 text-base">
-                        <Link href={to('/signup')}>Créer mon compte gratuitement</Link>
+                        <Link href={to('/signup')}>{t('finalCta.button')}</Link>
                     </Button>
                     <div className="mt-6">
-                        <span className="text-xs text-stone-400 font-light">Accès immédiat • 100% chiffré • Aucune carte requise</span>
+                        <span className="text-xs text-stone-400 font-light">{t('finalCta.note')}</span>
                     </div>
                     <div className="mt-10 max-w-5xl mx-auto">
                         <p className="text-stone-600 font-light text-lg mb-6">
-                            Dans ton espace Aurum, tu trouves un cadre clair pour avancer chaque jour.
+                            {t('finalCta.subtitle')}
                         </p>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-left">
-                            <div className="rounded-2xl border border-stone-200 bg-white p-5">
-                                <p className="text-[11px] uppercase tracking-[0.16em] text-stone-500 mb-2 font-semibold">Espace personnel</p>
-                                <p className="text-sm text-stone-600 font-light">Ton journal privé, structuré et facile à reprendre.</p>
-                            </div>
-                            <div className="rounded-2xl border border-stone-200 bg-white p-5">
-                                <p className="text-[11px] uppercase tracking-[0.16em] text-stone-500 mb-2 font-semibold">Statistiques utiles</p>
-                                <p className="text-sm text-stone-600 font-light">Des repères simples pour suivre ton évolution émotionnelle.</p>
-                            </div>
-                            <div className="rounded-2xl border border-stone-200 bg-white p-5">
-                                <p className="text-[11px] uppercase tracking-[0.16em] text-stone-500 mb-2 font-semibold">Tests guidés</p>
-                                <p className="text-sm text-stone-600 font-light">Des parcours rapides pour mieux te comprendre sans te perdre.</p>
-                            </div>
-                            <div className="rounded-2xl border border-stone-200 bg-white p-5">
-                                <p className="text-[11px] uppercase tracking-[0.16em] text-stone-500 mb-2 font-semibold">Échange avec Aurum</p>
-                                <p className="text-sm text-stone-600 font-light">Un dialogue intime pour clarifier ce que tu traverses.</p>
-                            </div>
+                            {featureCards.map((card) => (
+                                <div key={card.title} className="rounded-2xl border border-stone-200 bg-white p-5">
+                                    <p className="text-[11px] uppercase tracking-[0.16em] text-stone-500 mb-2 font-semibold">{card.eyebrow}</p>
+                                    <p className="text-sm text-stone-600 font-light">{card.body}</p>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </section>
@@ -810,7 +580,7 @@ export default function Home() {
 
                 <section className="container max-w-3xl pb-24 md:pb-32">
                     <h2 className="text-4xl font-headline text-center mb-12">
-                        Questions Fréquentes
+                        {t('faqTitle')}
                     </h2>
                     <Accordion type="single" collapsible className="w-full">
                         {faqs.map((faq, index) => (
@@ -826,7 +596,7 @@ export default function Home() {
 
                 <section className="container max-w-4xl pb-24 md:pb-28">
                     <div className="rounded-2xl border border-stone-200 bg-stone-50/60 p-6 md:p-8">
-                        <h3 className="text-sm font-semibold tracking-wider uppercase text-stone-500 mb-4">Références</h3>
+                        <h3 className="text-sm font-semibold tracking-wider uppercase text-stone-500 mb-4">{t('references.title')}</h3>
                         <ul className="space-y-3 text-xs text-stone-500 leading-relaxed">
                             <li id="ref1">
                                 <strong>1</strong> Pennebaker, J. W., & Beall, S. K. (1986). <em>Confronting a traumatic event: Toward an understanding of inhibition and disease.</em> Journal of Abnormal Psychology, 95, 274-281.
