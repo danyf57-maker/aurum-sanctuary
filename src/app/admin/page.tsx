@@ -1,15 +1,17 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useAuth, isAdminEmail } from '@/providers/auth-provider';
+import { useAuth } from '@/providers/auth-provider';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Users, BookOpen, MessageCircle, TrendingUp, Filter } from 'lucide-react';
+import { Users, BookOpen, MessageCircle, TrendingUp, Filter, Download } from 'lucide-react';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { CartesianGrid, XAxis, YAxis, Line, ResponsiveContainer, LineChart } from 'recharts';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
+import { useLocalizedHref } from '@/hooks/use-localized-href';
 
 export const dynamic = 'force-dynamic';
 
@@ -34,7 +36,16 @@ type AdminAnalyticsResponse = {
     checkoutStarts: number;
     purchases: number;
   };
+  quizFunnel: {
+    started: number;
+    completed: number;
+    resultViewed: number;
+    ctaClicked: number;
+    signupWithQuiz: number;
+  };
   chart: Array<{ date: string; users: number }>;
+  topEvents: Array<{ name: string; count: number }>;
+  topPaths: Array<{ path: string; count: number }>;
   recentEvents: Array<{ id: string; name: string; user: string; date: string; details: string }>;
   topLeads: Array<{
     leadId: string;
@@ -70,15 +81,55 @@ function pct(numerator: number, denominator: number) {
   return Math.round((numerator / denominator) * 100);
 }
 
+function escapeCsvValue(value: unknown) {
+  const text = String(value ?? '');
+  const escaped = text.replace(/"/g, '""');
+  return `"${escaped}"`;
+}
+
+function toCsv<T extends Record<string, unknown>>(rows: T[]) {
+  if (!rows.length) return '';
+  const headers = Object.keys(rows[0]);
+  const headerLine = headers.map(escapeCsvValue).join(',');
+  const bodyLines = rows.map((row) =>
+    headers.map((header) => escapeCsvValue(row[header])).join(',')
+  );
+  return [headerLine, ...bodyLines].join('\n');
+}
+
+function downloadCsv(filename: string, csv: string) {
+  if (!csv) return;
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', filename);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
+async function downloadCsvFromApi(url: string, filename: string) {
+  const response = await fetch(url, { method: "GET" });
+  if (!response.ok) {
+    throw new Error(`Export failed (${response.status})`);
+  }
+  const csv = await response.text();
+  downloadCsv(filename, csv);
+}
+
 export default function AdminDashboard() {
+  const to = useLocalizedHref();
   const { user, loading } = useAuth();
   const router = useRouter();
   const [data, setData] = useState<AdminAnalyticsResponse | null>(null);
   const [loadingData, setLoadingData] = useState(true);
+  const [isRunningOnboarding, setIsRunningOnboarding] = useState(false);
 
   useEffect(() => {
-    if (!loading && (!user || !isAdminEmail(user.email))) {
-      router.push('/');
+    if (!loading && !user) {
+      router.push(to('/'));
       return;
     }
     if (loading || !user) return;
@@ -89,6 +140,10 @@ export default function AdminDashboard() {
       try {
         const response = await fetch('/api/admin/analytics', { method: 'GET' });
         if (!response.ok) {
+          if (response.status === 401 || response.status === 403) {
+            router.push(to('/'));
+            return;
+          }
           throw new Error('Failed to fetch admin analytics');
         }
         const json = (await response.json()) as AdminAnalyticsResponse;
@@ -103,9 +158,9 @@ export default function AdminDashboard() {
     return () => {
       cancelled = true;
     };
-  }, [user, loading, router]);
+  }, [user, loading, router, to]);
 
-  if (loading || !user || !isAdminEmail(user.email) || loadingData || !data) {
+  if (loading || !user || loadingData || !data) {
     return <DashboardSkeleton />;
   }
 
@@ -115,6 +170,123 @@ export default function AdminDashboard() {
         <header className="mb-8">
           <h1 className="text-3xl font-bold tracking-tight">Tableau de Bord Administrateur</h1>
           <p className="text-muted-foreground">Données réelles: acquisition, activation et conversion.</p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              disabled={isRunningOnboarding}
+              onClick={async () => {
+                setIsRunningOnboarding(true);
+                try {
+                  await fetch("/api/onboarding/run", { method: "POST" });
+                } finally {
+                  setIsRunningOnboarding(false);
+                }
+              }}
+            >
+              <Download className="mr-2 h-4 w-4" />
+              {isRunningOnboarding ? "Onboarding en cours..." : "Lancer onboarding maintenant"}
+            </Button>
+            <Button
+              variant="default"
+              size="sm"
+              onClick={() => {
+                void downloadCsvFromApi("/api/admin/exports?type=users_enriched", "users_enriched.csv");
+              }}
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Export users_enriched
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                void downloadCsvFromApi("/api/admin/exports?type=users", "users.csv");
+              }}
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Export users
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                void downloadCsvFromApi("/api/admin/exports?type=events", "events.csv");
+              }}
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Export events
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                const csv = toCsv(
+                  data.recentEvents.map((event) => ({
+                    event: event.name,
+                    user: event.user,
+                    date: event.date,
+                    details: event.details,
+                  }))
+                );
+                downloadCsv('aurum_recent_events.csv', csv);
+              }}
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Export événements
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                const csv = toCsv(
+                  data.topEvents.map((event) => ({
+                    event: event.name,
+                    count: event.count,
+                  }))
+                );
+                downloadCsv('aurum_top_events.csv', csv);
+              }}
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Export top événements
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                const csv = toCsv(
+                  data.topPaths.map((row) => ({
+                    path: row.path,
+                    views: row.count,
+                  }))
+                );
+                downloadCsv('aurum_top_pages.csv', csv);
+              }}
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Export top pages
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                const csv = toCsv(
+                  data.topLeads.map((lead) => ({
+                    lead_id: lead.leadId,
+                    email: lead.userEmail || '',
+                    score: lead.score,
+                    segment: lead.segment,
+                    last_activity_at: lead.lastActivityAt,
+                  }))
+                );
+                downloadCsv('aurum_top_leads.csv', csv);
+              }}
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Export leads
+            </Button>
+          </div>
         </header>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -191,6 +363,104 @@ export default function AdminDashboard() {
               <div className="flex justify-between text-sm"><span>1re écriture</span><span className="font-semibold">{data.funnel.firstEntries} ({pct(data.funnel.firstEntries, data.funnel.signups)}%)</span></div>
               <div className="flex justify-between text-sm"><span>Checkout start</span><span className="font-semibold">{data.funnel.checkoutStarts} ({pct(data.funnel.checkoutStarts, data.funnel.firstEntries)}%)</span></div>
               <div className="flex justify-between text-sm"><span>Paiements</span><span className="font-semibold">{data.funnel.purchases} ({pct(data.funnel.purchases, data.funnel.checkoutStarts)}%)</span></div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="grid grid-cols-1 gap-6 mt-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Filter className="h-4 w-4" />
+                Funnel Quiz (30 jours)
+              </CardTitle>
+              <CardDescription>
+                Départ quiz → résultat → clic CTA → inscription attribuée au quiz
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="flex justify-between text-sm">
+                <span>Quiz démarrés</span>
+                <span className="font-semibold">{data.quizFunnel.started}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span>Quiz complétés</span>
+                <span className="font-semibold">
+                  {data.quizFunnel.completed} ({pct(data.quizFunnel.completed, data.quizFunnel.started)}%)
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span>Résultat vu</span>
+                <span className="font-semibold">
+                  {data.quizFunnel.resultViewed} ({pct(data.quizFunnel.resultViewed, data.quizFunnel.completed)}%)
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span>CTA résultat cliqué</span>
+                <span className="font-semibold">
+                  {data.quizFunnel.ctaClicked} ({pct(data.quizFunnel.ctaClicked, data.quizFunnel.resultViewed)}%)
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span>Inscriptions après quiz</span>
+                <span className="font-semibold">
+                  {data.quizFunnel.signupWithQuiz} ({pct(data.quizFunnel.signupWithQuiz, data.quizFunnel.ctaClicked)}%)
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Top événements (30 jours)</CardTitle>
+              <CardDescription>Actions les plus fréquentes dans l&apos;app</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Événement</TableHead>
+                    <TableHead>Volume</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {data.topEvents.map((event) => (
+                    <TableRow key={event.name}>
+                      <TableCell>
+                        <Badge variant="secondary">{event.name}</Badge>
+                      </TableCell>
+                      <TableCell className="font-semibold">{event.count}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Top pages (30 jours)</CardTitle>
+              <CardDescription>Écrans les plus consultés</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Page</TableHead>
+                    <TableHead>Vues</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {data.topPaths.map((row) => (
+                    <TableRow key={row.path}>
+                      <TableCell className="font-mono text-xs">{row.path}</TableCell>
+                      <TableCell className="font-semibold">{row.count}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
         </div>

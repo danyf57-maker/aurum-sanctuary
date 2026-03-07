@@ -7,11 +7,13 @@ import { Editor } from './Editor';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Lock, Save } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export function EntryForm() {
     const { user } = useAuth();
     const { createEntry } = useJournal();
     const { toast } = useToast();
+    const t = useTranslations('entryForm');
 
     const [content, setContent] = useState('');
     const [isSaving, setIsSaving] = useState(false);
@@ -25,8 +27,8 @@ export function EntryForm() {
             await createEntry(content);
 
             toast({
-                title: "Entrée sauvegardée",
-                description: "Votre pensée a été chiffrée et enregistrée.",
+                title: t('savedTitle'),
+                description: t('savedDescription'),
             });
 
             setContent(''); // Clear after save
@@ -44,7 +46,7 @@ export function EntryForm() {
             <header className="flex items-center justify-between py-4 mb-6">
                 <div className="flex items-center text-sm text-muted-foreground">
                     <Lock className="h-4 w-4 mr-2 text-primary" />
-                    <span className="text-xs">Chiffrement de bout en bout actif</span>
+                    <span className="text-xs">{t('encryptionActive')}</span>
                 </div>
                 <Button
                     onClick={handleSave}
@@ -56,7 +58,7 @@ export function EntryForm() {
                     ) : (
                         <Save className="h-4 w-4 mr-2" />
                     )}
-                    Sauvegarder
+                    {t('save')}
                 </Button>
             </header>
 

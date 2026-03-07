@@ -6,7 +6,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/providers/auth-provider';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/web-client';
@@ -17,10 +17,13 @@ export interface SubscriptionStatus {
     subscriptionId?: string;
     subscriptionPriceId?: string;
     subscriptionCurrentPeriodEnd?: Date;
+    subscriptionTrialEndsAt?: Date;
+    billingPhase?: string;
 }
 
 export function useSubscription() {
     const { user } = useAuth();
+    const reconcileRequestedRef = useRef(false);
     const [subscription, setSubscription] = useState<SubscriptionStatus>({
         status: null,
     });
@@ -30,6 +33,7 @@ export function useSubscription() {
         if (!user) {
             setSubscription({ status: null });
             setLoading(false);
+            reconcileRequestedRef.current = false;
             return;
         }
 
@@ -38,12 +42,45 @@ export function useSubscription() {
         const unsubscribe = onSnapshot(userRef, (doc) => {
             if (doc.exists()) {
                 const data = doc.data();
+                const trialEndsAt = data.subscriptionTrialEndsAt?.toDate?.() || data.subscriptionCurrentPeriodEnd?.toDate?.() || null;
+
+                // Keep Firestore state consistent for no-card app trials once they expire.
+                if (
+                    data.subscriptionStatus === 'trialing' &&
+                    !data.subscriptionId &&
+                    trialEndsAt instanceof Date &&
+                    trialEndsAt.getTime() <= Date.now() &&
+                    !reconcileRequestedRef.current
+                ) {
+                    reconcileRequestedRef.current = true;
+                    void user.getIdToken()
+                        .then(async (token) => {
+                            const res = await fetch('/api/billing/reconcile-trial', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${token}`,
+                                },
+                            });
+                            if (!res.ok) {
+                                reconcileRequestedRef.current = false;
+                            }
+                        })
+                        .catch(() => {
+                            reconcileRequestedRef.current = false;
+                        });
+                } else if (data.subscriptionStatus !== 'trialing') {
+                    reconcileRequestedRef.current = false;
+                }
+
                 setSubscription({
                     status: data.subscriptionStatus || null,
                     stripeCustomerId: data.stripeCustomerId,
                     subscriptionId: data.subscriptionId,
                     subscriptionPriceId: data.subscriptionPriceId,
                     subscriptionCurrentPeriodEnd: data.subscriptionCurrentPeriodEnd?.toDate(),
+                    subscriptionTrialEndsAt: data.subscriptionTrialEndsAt?.toDate(),
+                    billingPhase: data.billingPhase || undefined,
                 });
             } else {
                 setSubscription({ status: null });
@@ -54,9 +91,13 @@ export function useSubscription() {
         return () => unsubscribe();
     }, [user]);
 
-    const isPremium = subscription.status === 'active' || subscription.status === 'trialing';
+    const trialEndsAt = subscription.subscriptionTrialEndsAt || subscription.subscriptionCurrentPeriodEnd || null;
+    const isTrialCurrentlyActive = subscription.status === 'trialing' && !!trialEndsAt && trialEndsAt.getTime() > Date.now();
+    const isPremium = subscription.status === 'active' || isTrialCurrentlyActive;
     const isPastDue = subscription.status === 'past_due';
     const isCanceled = subscription.status === 'canceled';
+    const isTrialing = isTrialCurrentlyActive;
+    const isTrialEndingSoon = !!trialEndsAt && trialEndsAt.getTime() - Date.now() <= 3 * 24 * 60 * 60 * 1000;
 
     return {
         subscription,
@@ -64,5 +105,8 @@ export function useSubscription() {
         isPremium,
         isPastDue,
         isCanceled,
+        isTrialing,
+        trialEndsAt,
+        isTrialEndingSoon,
     };
 }

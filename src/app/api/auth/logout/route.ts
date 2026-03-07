@@ -10,6 +10,7 @@ import { logger } from '@/lib/logger/safe';
 export async function POST(request: Request) {
     try {
         const cookieStore = await cookies();
+        const isProduction = process.env.NODE_ENV === 'production';
 
         // Clear the session cookie
         cookieStore.set({
@@ -17,6 +18,9 @@ export async function POST(request: Request) {
             value: '',
             maxAge: -1,
             path: '/',
+            httpOnly: true,
+            sameSite: 'strict',
+            secure: isProduction,
         });
 
         return NextResponse.json({ status: 'success' }, { status: 200 });

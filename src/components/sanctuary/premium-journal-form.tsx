@@ -11,6 +11,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { ImagePlus, Loader2, Eye, Lock, UploadCloud, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/providers/auth-provider';
 import { saveJournalEntry, type FormState } from '@/app/actions';
 import { Button } from '@/components/ui/button';
@@ -26,6 +27,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { app } from '@/lib/firebase/web-client';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useEncryption } from '@/hooks/useEncryption';
+import { useSearchParams } from 'next/navigation';
+import { useLocale } from '@/hooks/use-locale';
 
 type DraftImage = {
   id: string;
@@ -41,10 +44,32 @@ type ConversationTurn = {
   text: string;
 };
 
+type ActivePlan = {
+  version: number;
+  source: "wellbeing" | "personality" | "landing";
+  title: string;
+  steps: string[];
+  currentStep: number;
+  createdAt: string;
+};
+
+const ACTIVE_PLAN_STORAGE_KEY = "aurum-active-plan";
+
+function buildPlanPrompt(plan: ActivePlan, labels: { day: string; todayPrompt: string }) {
+  const total = plan.steps.length;
+  const currentIndex = Math.max(0, Math.min(plan.currentStep, total - 1));
+  const stepText = plan.steps[currentIndex];
+  return `${plan.title}\n${labels.day} ${currentIndex + 1}/${total}\n${stepText}\n\n${labels.todayPrompt}`;
+}
+
 export function PremiumJournalForm() {
+  const searchParams = useSearchParams();
   const { user } = useAuth();
   const { isReady: encryptionReady, encrypt } = useEncryption();
   const { toast } = useToast();
+  const locale = useLocale();
+  const isFr = locale === 'fr';
+  const t = useTranslations('sanctuary.premiumJournalForm');
   const formRef = useRef<HTMLFormElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -62,6 +87,8 @@ export function PremiumJournalForm() {
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
   const [isGeneratingReflection, setIsGeneratingReflection] = useState(false);
   const [isContinuingConversation, setIsContinuingConversation] = useState(false);
+  const [activePlan, setActivePlan] = useState<ActivePlan | null>(null);
+  const [isPlanDrivenDraft, setIsPlanDrivenDraft] = useState(false);
   const [conversationTurns, setConversationTurns] = useState<ConversationTurn[]>([]);
   const [conversationInput, setConversationInput] = useState('');
   const [reflection, setReflection] = useState<{
@@ -87,14 +114,59 @@ export function PremiumJournalForm() {
       localStorage.removeItem('aurum-landing-draft');
       // Afficher une notification
       toast({
-        title: "Votre texte a été récupéré",
-        description: "Continuez d'écrire où vous vous étiez arrêté.",
+        title: t('restoredTitle'),
+        description: t('restoredDescription'),
       });
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Pré-remplir depuis l'URL si "initial" est fourni et non vide.
+  useEffect(() => {
+    const initial = searchParams.get('initial');
+    if (!initial) return;
+    if (draftContent.trim().length > 0) return;
+    setDraftContent(initial);
+    setIsPlanDrivenDraft(false);
+    requestAnimationFrame(() => {
+      const ta = textareaRef.current;
+      if (!ta) return;
+      ta.style.height = 'auto';
+      ta.style.height = `${ta.scrollHeight}px`;
+    });
+  }, [draftContent, searchParams]);
+
+  // Pré-remplir automatiquement avec l'étape active d'un plan (Jour 1/2/3...).
+  useEffect(() => {
+    const initial = searchParams.get('initial');
+    if (initial) return;
+    if (draftContent.trim().length > 0) return;
+    if (typeof window === 'undefined') return;
+
+    try {
+      const rawPlan = localStorage.getItem(ACTIVE_PLAN_STORAGE_KEY);
+      if (!rawPlan) return;
+      const parsedPlan = JSON.parse(rawPlan) as ActivePlan;
+      if (!Array.isArray(parsedPlan.steps) || parsedPlan.steps.length === 0) return;
+      if (parsedPlan.currentStep >= parsedPlan.steps.length) {
+        localStorage.removeItem(ACTIVE_PLAN_STORAGE_KEY);
+        return;
+      }
+      setActivePlan(parsedPlan);
+      setDraftContent(buildPlanPrompt(parsedPlan, { day: t('dayLabel'), todayPrompt: t('todayPrompt') }));
+      setIsPlanDrivenDraft(true);
+      requestAnimationFrame(() => {
+        const ta = textareaRef.current;
+        if (!ta) return;
+        ta.style.height = 'auto';
+        ta.style.height = `${ta.scrollHeight}px`;
+      });
+    } catch {
+      // ignore invalid localStorage
+    }
+  }, [draftContent, searchParams, t]);
+
   const uploadImageToStorage = async (file: File): Promise<DraftImage> => {
-    if (!user) throw new Error('Connexion requise pour ajouter une image.');
+    if (!user) throw new Error(t('errors.signInToAddImage'));
     const storage = getStorage(app);
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
     const path = `journal_media/${user.uid}/${Date.now()}-${safeName}`;
@@ -120,8 +192,8 @@ export function PremiumJournalForm() {
     if (!files || files.length === 0) return;
     if (!user) {
       toast({
-        title: 'Connexion requise',
-        description: "Connecte-toi avec Google pour ajouter des images.",
+        title: t('toasts.signInRequiredTitle'),
+        description: t('toasts.signInRequiredDescription'),
         variant: 'destructive',
       });
       setIsAuthDialogOpen(true);
@@ -131,8 +203,8 @@ export function PremiumJournalForm() {
     const imageFiles = Array.from(files).filter((file) => file.type.startsWith('image/'));
     if (imageFiles.length === 0) {
       toast({
-        title: 'Format non supporte',
-        description: 'Depose une image (jpg, png, webp...).',
+        title: t('toasts.unsupportedFormatTitle'),
+        description: t('toasts.unsupportedFormatDescription'),
         variant: 'destructive',
       });
       return;
@@ -153,26 +225,28 @@ export function PremiumJournalForm() {
 
       setTypingActivity();
       toast({
-        title: 'Image ajoutee',
-        description: imageFiles.length > 1 ? `${imageFiles.length} images ajoutees.` : 'Image ajoutee a ton entree.',
+        title: t('toasts.imageAddedTitle'),
+        description: imageFiles.length > 1
+          ? t('toasts.imagesAddedCount', { count: imageFiles.length })
+          : t('toasts.imageAddedDescription'),
       });
     } catch (error) {
       const storageCode =
         typeof error === "object" && error !== null && "code" in error
           ? String((error as { code?: string }).code)
           : "";
-      let message = error instanceof Error ? error.message : 'Upload image impossible.';
+      let message = error instanceof Error ? error.message : t('errors.uploadFailed');
       if (storageCode.includes("storage/unauthorized")) {
-        message = "Tu es connecté, mais l'envoi d'image est refusé par les règles Storage (permission).";
+        message = t('errors.storageUnauthorized');
       } else if (storageCode.includes("storage/unauthenticated")) {
-        message = "Ta session n'est pas active pour l'upload. Reconnecte-toi puis réessaie.";
+        message = t('errors.storageUnauthenticated');
       } else if (storageCode.includes("storage/quota-exceeded")) {
-        message = "Le quota Firebase Storage est dépassé. Réessaie plus tard ou augmente le quota.";
+        message = t('errors.storageQuotaExceeded');
       } else if (storageCode.includes("storage/retry-limit-exceeded")) {
-        message = "Le réseau a coupé pendant l'upload. Vérifie ta connexion et réessaie.";
+        message = t('errors.storageRetryLimitExceeded');
       }
       toast({
-        title: 'Erreur image',
+        title: t('toasts.imageErrorTitle'),
         description: message,
         variant: 'destructive',
       });
@@ -191,8 +265,8 @@ export function PremiumJournalForm() {
     if (!(form instanceof HTMLFormElement)) {
       console.error('[PremiumJournalForm] event.currentTarget is not a form:', form);
       toast({
-        title: 'Erreur',
-        description: 'Erreur de formulaire. Veuillez recharger la page.',
+        title: t('toasts.errorTitle'),
+        description: t('errors.formErrorReload'),
         variant: 'destructive',
       });
       return;
@@ -200,8 +274,8 @@ export function PremiumJournalForm() {
 
     if (!user) {
       toast({
-        title: 'Erreur',
-        description: 'Impossible de sauvegarder sans authentification',
+        title: t('toasts.errorTitle'),
+        description: t('errors.unableToSaveWithoutAuth'),
         variant: 'destructive',
       });
       return;
@@ -217,8 +291,8 @@ export function PremiumJournalForm() {
     } catch (error) {
       console.error('[PremiumJournalForm] Token invalid or expired', error);
       toast({
-        title: 'Session expirée',
-        description: 'Veuillez vous reconnecter.',
+        title: t('toasts.sessionExpiredTitle'),
+        description: t('toasts.sessionExpiredDescription'),
         variant: 'destructive',
       });
       return;
@@ -231,15 +305,15 @@ export function PremiumJournalForm() {
       const tags = String(rawFormData.get('tags') || '');
 
       if (!content) {
-        throw new Error('Le contenu ne peut pas être vide.');
+        throw new Error(t('errors.contentCannotBeEmpty'));
       }
       if (isUploadingImage) {
-        throw new Error("Attends la fin de l'upload des images.");
+        throw new Error(t('errors.waitImageUpload'));
       }
 
       // Encrypt content before saving (AES-256-GCM client-side)
       if (!encryptionReady) {
-        throw new Error("Chiffrement pas encore prêt. Attends quelques secondes et réessaie.");
+        throw new Error(t('errors.encryptionNotReady'));
       }
 
       const encryptedData = await encrypt(content);
@@ -284,7 +358,7 @@ export function PremiumJournalForm() {
       // Check if result exists and has no errors
       if (!result) {
         console.error('[PremiumJournalForm] Result is undefined or null');
-        throw new Error('Aucune réponse du serveur. Veuillez réessayer.');
+        throw new Error(t('errors.noServerResponse'));
       }
 
       if (!result.errors && !result.message) {
@@ -295,13 +369,34 @@ export function PremiumJournalForm() {
         setReflection(null); // Reset reflection
         setIsActivelyTyping(false);
 
+        if (isPlanDrivenDraft && activePlan) {
+          const nextStep = activePlan.currentStep + 1;
+          if (typeof window !== 'undefined') {
+            if (nextStep >= activePlan.steps.length) {
+              localStorage.removeItem(ACTIVE_PLAN_STORAGE_KEY);
+              setActivePlan(null);
+              toast({
+                title: t('toasts.planCompletedTitle'),
+                description: t('toasts.planCompletedDescription'),
+              });
+            } else {
+              const updatedPlan: ActivePlan = {
+                ...activePlan,
+                currentStep: nextStep,
+              };
+              localStorage.setItem(ACTIVE_PLAN_STORAGE_KEY, JSON.stringify(updatedPlan));
+              setActivePlan(updatedPlan);
+            }
+          }
+        }
+
         toast({
-          title: 'Entrée préservée',
-          description: 'Ton écriture est en sécurité.',
+          title: t('toasts.entrySavedTitle'),
+          description: t('toasts.entrySavedDescription'),
         });
       } else {
         // Extract all validation errors
-        let errorMsg = result.message || 'Une erreur est survenue.';
+        let errorMsg = result.message || t('errors.generic');
         if (result.errors) {
           const allErrors = Object.values(result.errors).flat().filter(Boolean);
           if (allErrors.length > 0) {
@@ -309,7 +404,7 @@ export function PremiumJournalForm() {
           }
         }
         toast({
-          title: 'Erreur de validation',
+          title: t('toasts.validationErrorTitle'),
           description: errorMsg,
           variant: 'destructive',
         });
@@ -322,9 +417,9 @@ export function PremiumJournalForm() {
         errorMessage: error instanceof Error ? error.message : undefined,
         errorStack: error instanceof Error ? error.stack : undefined,
       });
-      const message = error instanceof Error ? error.message : 'Une erreur est survenue.';
+      const message = error instanceof Error ? error.message : t('errors.generic');
       toast({
-        title: 'Erreur',
+        title: t('toasts.errorTitle'),
         description: message,
         variant: 'destructive',
       });
@@ -343,7 +438,7 @@ export function PremiumJournalForm() {
     onToken: (partial: string) => void,
     options?: { entryId?: string | null; userMessage?: string },
   ): Promise<string> => {
-    if (!user) throw new Error('Connexion requise.');
+    if (!user) throw new Error(t('errors.signInRequired'));
 
     const callReflect = (idToken: string) =>
       fetch('/api/reflect', {
@@ -368,12 +463,12 @@ export function PremiumJournalForm() {
     if (!response.ok) {
       const error = await response.json().catch(() => ({}));
       if (response.status === 401) {
-        throw new Error("Session expirée. Recharge la page puis reconnecte-toi si nécessaire.");
+        throw new Error(t('errors.sessionExpiredReload'));
       }
-      throw new Error(error?.error || 'Erreur lors de la génération du reflet');
+      throw new Error(error?.error || t('errors.generatingReflection'));
     }
 
-    if (!response.body) throw new Error('Réponse vide');
+    if (!response.body) throw new Error(t('errors.emptyResponse'));
 
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
@@ -429,8 +524,8 @@ export function PremiumJournalForm() {
         { id: `aurum-${Date.now()}`, role: 'aurum', text },
       ]);
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Une erreur est survenue.';
-      toast({ title: 'Erreur', description: message, variant: 'destructive' });
+      const message = error instanceof Error ? error.message : t('errors.generic');
+      toast({ title: t('toasts.errorTitle'), description: message, variant: 'destructive' });
     } finally {
       setIsGeneratingReflection(false);
     }
@@ -453,7 +548,7 @@ export function PremiumJournalForm() {
     try {
       const context = nextTurns
         .slice(-8)
-        .map((turn) => `${turn.role === 'user' ? 'Utilisateur' : 'Aurum'}: ${turn.text}`)
+        .map((turn) => `${turn.role === 'user' ? t('conversation.userLabel') : t('conversation.aurumLabel')}: ${turn.text}`)
         .join('\n');
 
       const conversationalInput = [
@@ -463,7 +558,7 @@ export function PremiumJournalForm() {
         `Conversation en cours:`,
         context,
         ``,
-        `Réponds à l'utilisateur dans la continuité de l'échange.`,
+        t('conversation.replyInstruction'),
       ].join('\n');
 
       const aurumTurnId = `aurum-${Date.now()}`;
@@ -485,8 +580,8 @@ export function PremiumJournalForm() {
         prev.map((t) => t.id === aurumTurnId ? { ...t, text } : t)
       );
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Une erreur est survenue.';
-      toast({ title: 'Erreur', description: message, variant: 'destructive' });
+      const message = error instanceof Error ? error.message : t('errors.generic');
+      toast({ title: t('toasts.errorTitle'), description: message, variant: 'destructive' });
     } finally {
       setIsContinuingConversation(false);
     }
@@ -502,7 +597,14 @@ export function PremiumJournalForm() {
     setConversationTurns([]);
     setConversationInput('');
     setIsActivelyTyping(false);
+    setIsPlanDrivenDraft(false);
     if (formRef.current) formRef.current.reset();
+
+    if (activePlan && activePlan.currentStep < activePlan.steps.length) {
+      setDraftContent(buildPlanPrompt(activePlan, { day: t('dayLabel'), todayPrompt: t('todayPrompt') }));
+      setIsPlanDrivenDraft(true);
+    }
+
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
       textareaRef.current.focus();
@@ -545,8 +647,8 @@ export function PremiumJournalForm() {
   const handlePickImageClick = () => {
     if (!user) {
       toast({
-        title: 'Connexion requise',
-        description: "Connecte-toi avec Google pour ajouter des images.",
+        title: t('toasts.signInRequiredTitle'),
+        description: t('toasts.signInRequiredDescription'),
         variant: 'destructive',
       });
       setIsAuthDialogOpen(true);
@@ -591,9 +693,9 @@ export function PremiumJournalForm() {
                   ref={textareaRef}
                   id="content"
                   name="content"
-                  placeholder="Écris ce qui demande à être posé..."
+                  placeholder={t('placeholders.write')}
                   value={draftContent}
-                  className="bg-transparent border-none shadow-none resize-none overflow-hidden min-h-[48vh] p-0 [font-family:var(--font-cormorant)] text-3xl leading-relaxed text-stone-800 placeholder:text-stone-300 focus:ring-0 focus:outline-none focus-visible:ring-0 caret-amber-400"
+                  className="bg-transparent border-none shadow-none resize-none overflow-hidden min-h-[48vh] p-0 [font-family:var(--font-cormorant)] text-3xl leading-relaxed text-stone-800 placeholder:text-stone-400 focus:ring-0 focus:outline-none focus-visible:ring-0 caret-amber-400"
                   required
                   onInput={handleInput}
                 />
@@ -601,7 +703,9 @@ export function PremiumJournalForm() {
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none bg-amber-50/70 rounded-2xl">
                     <div className="flex items-center gap-2 text-stone-700">
                       <UploadCloud className="h-5 w-5 text-amber-500" />
-                      <span className="[font-family:var(--font-cormorant)] text-2xl">Depose ton image ici</span>
+                      <span className="[font-family:var(--font-cormorant)] text-2xl">
+                        {t('dropImageHere')}
+                      </span>
                     </div>
                   </div>
                 )}
@@ -609,7 +713,7 @@ export function PremiumJournalForm() {
               <div className={`space-y-4 transition-opacity duration-400 ${isFocusMode ? 'opacity-10 hover:opacity-100' : 'opacity-80'}`}>
                 <p className="text-xs uppercase tracking-[0.18em] text-stone-500 flex items-center gap-2">
                   <ImagePlus className="h-4 w-4 text-amber-500" />
-                  Glisse-depose des images dans la page pour enrichir ton ecriture
+                  {t('dragAndDropHint')}
                 </p>
                 <div>
                   <input
@@ -631,7 +735,7 @@ export function PremiumJournalForm() {
                     className="h-8 rounded-full px-3 text-stone-600 hover:text-stone-900 hover:bg-stone-100"
                   >
                     <ImagePlus className="mr-2 h-4 w-4" />
-                    Ajouter une image
+                    {t('addImage')}
                   </Button>
                 </div>
                 {draftImages.length > 0 && (
@@ -653,7 +757,7 @@ export function PremiumJournalForm() {
                                   prev.map((item) => (item.id === image.id ? { ...item, caption } : item))
                                 );
                               }}
-                              placeholder="Ajoute une legende..."
+                              placeholder={t('placeholders.caption')}
                               className="h-8 p-0 bg-transparent border-0 shadow-none text-sm text-stone-600 placeholder:text-stone-400 focus-visible:ring-0"
                             />
                             <Button
@@ -664,7 +768,7 @@ export function PremiumJournalForm() {
                                 setDraftImages((prev) => prev.filter((item) => item.id !== image.id));
                               }}
                               className="h-8 w-8 rounded-full text-stone-500 hover:bg-stone-100 hover:text-stone-900"
-                              aria-label="Supprimer l'image"
+                              aria-label={t('removeImageAria')}
                             >
                               <X className="h-4 w-4" />
                             </Button>
@@ -676,12 +780,12 @@ export function PremiumJournalForm() {
                 )}
                 <div>
                   <Label htmlFor="tags" className="sr-only">
-                    Étiquettes
+                    {t('tagsLabel')}
                   </Label>
                   <Input
                     id="tags"
                     name="tags"
-                    placeholder="Étiquettes (optionnel)"
+                    placeholder={t('placeholders.tags')}
                     className="bg-transparent border-0 rounded-none px-0 [font-family:var(--font-cormorant)] text-2xl text-stone-500 placeholder:text-stone-300 shadow-none focus:ring-0 focus-visible:ring-0"
                   />
                 </div>
@@ -696,10 +800,10 @@ export function PremiumJournalForm() {
                   {isSubmitting || isUploadingImage ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      {isUploadingImage ? 'Upload image...' : 'Préservation en cours...'}
+                      {isUploadingImage ? t('uploadImage') : t('saving')}
                     </>
                   ) : (
-                    'Préserver cette pensée'
+                    t('saveThought')
                   )}
                 </Button>
               </div>
@@ -755,11 +859,11 @@ export function PremiumJournalForm() {
                   className="space-y-3"
                 >
                   <h2 className="font-headline text-3xl md:text-4xl text-stone-900 tracking-tight">
-                    Pensée préservée
+                    {t('savedThoughtTitle')}
                   </h2>
                   <div className="flex items-center justify-center gap-2 text-sm text-stone-500">
                     <Lock className="h-3.5 w-3.5 text-[#C5A059]" />
-                    <span>Chiffrée et en sécurité</span>
+                    <span>{t('savedThoughtSubtitle')}</span>
                   </div>
                 </motion.div>
 
@@ -792,10 +896,10 @@ export function PremiumJournalForm() {
                       </div>
                       <div className="space-y-2">
                         <h3 className="font-headline text-2xl md:text-3xl text-stone-900 tracking-tight">
-                          Recevoir un reflet
+                          {t('getReflection')}
                         </h3>
                         <p className="text-stone-500 max-w-sm mx-auto leading-relaxed">
-                          Aurum te renvoie ce qu&apos;il perçoit dans tes mots, sans juger ni diriger.
+                          {t('getReflectionDescription')}
                         </p>
                       </div>
                       <Button
@@ -804,7 +908,7 @@ export function PremiumJournalForm() {
                         className="group h-12 px-8 bg-gradient-to-r from-[#D4AF37] to-[#C5A059] text-stone-900 hover:from-[#C5A059] hover:to-[#D4AF37] rounded-2xl shadow-[0_8px_24px_rgba(212,175,55,0.25)] font-semibold transition-all duration-300 hover:shadow-[0_12px_32px_rgba(212,175,55,0.35)] hover:scale-[1.02]"
                       >
                         <Eye className="mr-2 h-4.5 w-4.5 transition-transform group-hover:scale-110" />
-                        Découvrir mon reflet
+                        {t('revealReflection')}
                       </Button>
                     </div>
                   </motion.div>
@@ -843,7 +947,7 @@ export function PremiumJournalForm() {
                       <Eye className="h-3.5 w-3.5 text-[#C5A059]" />
                     </div>
                     <h4 className="font-headline text-lg text-stone-900">
-                      Continuer avec Aurum
+                      {t('continueWithAurum')}
                     </h4>
                   </div>
 
@@ -869,7 +973,7 @@ export function PremiumJournalForm() {
                     <Textarea
                       value={conversationInput}
                       onChange={(event) => setConversationInput(event.currentTarget.value)}
-                      placeholder="Écris ta réponse à Aurum..."
+                      placeholder={t('placeholders.replyToAurum')}
                       className="min-h-[88px] resize-y rounded-2xl border-stone-200 bg-white/60 [font-family:var(--font-cormorant)] text-lg text-stone-800 placeholder:text-stone-400 focus:border-[#C5A059]/30 focus:ring-[#C5A059]/10"
                     />
                     <div className="flex justify-end">
@@ -882,10 +986,10 @@ export function PremiumJournalForm() {
                         {isContinuingConversation ? (
                           <>
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Aurum réfléchit...
+                            {t('aurumThinking')}
                           </>
                         ) : (
-                          'Envoyer'
+                          t('send')
                         )}
                       </Button>
                     </div>
@@ -920,10 +1024,10 @@ export function PremiumJournalForm() {
               >
                 <div className="space-y-3">
                   <p className="font-headline text-xl md:text-2xl text-stone-400 group-hover:text-stone-600 transition-colors duration-500 tracking-tight">
-                    Autre chose à poser&nbsp;?
+                    {t('anythingElse')}
                   </p>
                   <p className="text-sm text-stone-300 group-hover:text-stone-500 transition-colors duration-500">
-                    Ouvre un nouvel espace d&apos;écriture
+                    {t('openNewWritingSpace')}
                   </p>
                 </div>
               </button>

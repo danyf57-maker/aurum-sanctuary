@@ -32,12 +32,6 @@ const requiredConfigKeys = [
     'appId',
 ] as const;
 
-for (const key of requiredConfigKeys) {
-    if (!firebaseConfig[key]) {
-        throw new Error(`Missing Firebase config: NEXT_PUBLIC_FIREBASE_${key.toUpperCase()}`);
-    }
-}
-
 // Initialize Firebase (singleton pattern)
 let app: FirebaseApp;
 let auth: Auth;
@@ -45,11 +39,22 @@ let firestore: Firestore;
 let functions: Functions;
 
 if (typeof window !== 'undefined') {
+    for (const key of requiredConfigKeys) {
+        if (!firebaseConfig[key]) {
+            throw new Error(`Missing Firebase config: NEXT_PUBLIC_FIREBASE_${key.toUpperCase()}`);
+        }
+    }
     // Client-side only
     app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
     auth = getAuth(app);
     firestore = getFirestore(app);
     functions = getFunctions(app, 'us-central1'); // Region is important
+} else {
+    // Avoid server-side build crashes when client env vars are not injected at build time.
+    app = undefined as unknown as FirebaseApp;
+    auth = undefined as unknown as Auth;
+    firestore = undefined as unknown as Firestore;
+    functions = undefined as unknown as Functions;
 }
 
 export { app, auth, firestore, functions };

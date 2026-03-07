@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Download, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useLocale } from "@/hooks/use-locale";
 
 // Analytics stub - module not yet implemented
 type TrackEventParams = { name: string; params: Record<string, unknown> };
@@ -34,6 +35,9 @@ function isStandaloneMode() {
 }
 
 export function DesktopInstallPrompt() {
+  const locale = useLocale();
+  const isFr = locale === "fr";
+
   const [deferredPrompt, setDeferredPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState(false);
@@ -123,23 +127,27 @@ export function DesktopInstallPrompt() {
   }
 
   return (
-    <div className="fixed left-6 bottom-6 z-[110] hidden lg:flex items-center gap-3 rounded-2xl border border-stone-200 bg-white/95 p-3 shadow-xl backdrop-blur-md max-w-sm">
+    <div className="fixed left-6 bottom-6 z-[110] hidden max-w-sm items-center gap-3 rounded-2xl border border-stone-200 bg-white/95 p-3 shadow-xl backdrop-blur-md lg:flex">
       <div className="rounded-xl bg-stone-100 p-2 text-stone-700">
         <Download className="h-4 w-4" />
       </div>
 
       <div className="min-w-0">
         <p className="text-sm font-medium text-stone-900">
-          Installer Aurum sur ton bureau
+          {isFr
+            ? "Installer Aurum sur ton bureau"
+            : "Install Aurum on your desktop"}
         </p>
         <p className="text-xs text-stone-500">
-          Accès rapide en un clic, comme une app native.
+          {isFr
+            ? "Accès rapide en un clic, comme une app native."
+            : "One-click access, like a native app."}
         </p>
       </div>
 
       <div className="flex items-center gap-2">
         <Button size="sm" onClick={handleInstall} disabled={loading}>
-          {loading ? "..." : "Installer"}
+          {loading ? "..." : isFr ? "Installer" : "Install"}
         </Button>
         <Button
           size="icon"
@@ -148,7 +156,7 @@ export function DesktopInstallPrompt() {
           onClick={handleDismiss}
         >
           <X className="h-4 w-4" />
-          <span className="sr-only">Fermer</span>
+          <span className="sr-only">{isFr ? "Fermer" : "Close"}</span>
         </Button>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { rateLimit, RateLimitPresets } from '@/lib/rate-limit';
 import { logger } from '@/lib/logger/safe';
+import { requireUserIdFromRequest, UserGuardError } from '@/lib/api/require-user-id';
 
 type InputEntry = {
   id: string;
@@ -118,11 +119,9 @@ function fallbackAnalysis(entries: InputEntry[]): WritingPatterns {
 
 export async function POST(request: NextRequest) {
   try {
-    const { entries, userId } = (await request.json()) as { entries?: InputEntry[]; userId?: string };
-
-    if (!userId) {
-      return NextResponse.json({ error: 'userId requis' }, { status: 400 });
-    }
+    const body = (await request.json()) as { entries?: InputEntry[]; userId?: string; idToken?: string };
+    const userId = await requireUserIdFromRequest(request, body);
+    const { entries } = body;
 
     const rate = await rateLimit(RateLimitPresets.analyzePatterns(userId));
     if (!rate.success) {
@@ -189,6 +188,9 @@ ${JSON.stringify(safeEntries)}`;
     const parsed = JSON.parse(content) as WritingPatterns;
     return NextResponse.json(parsed);
   } catch (error) {
+    if (error instanceof UserGuardError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     logger.errorSafe('analyze-patterns failed', error);
     return NextResponse.json({ error: 'Erreur interne analyse patterns' }, { status: 500 });
   }

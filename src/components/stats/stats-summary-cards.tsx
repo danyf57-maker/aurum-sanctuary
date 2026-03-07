@@ -20,18 +20,29 @@ type StatsSummaryCardsProps = {
   layout?: "grid" | "stack";
 };
 
+function localizeMoodValue(value: string | undefined, isFr: boolean): string {
+  const normalized = (value ?? "").trim().toLowerCase();
+
+  if (!normalized || normalized === "inconnu" || normalized === "unknown") {
+    return isFr ? "Inconnu" : "Unknown";
+  }
+
+  return value ?? (isFr ? "Inconnu" : "Unknown");
+}
+
 export function StatsSummaryCards({
   entries,
   layout = "grid",
 }: StatsSummaryCardsProps) {
   const locale = useLocale();
   const isFr = locale === "fr";
+
   const stats = useMemo(() => calculateSummaryStats(entries), [entries]);
   const streaks = useMemo(() => calculateStreaks(entries), [entries]);
 
   const cards = [
     {
-      title: isFr ? "Cette semaine" : "This week",
+      title: isFr ? "Cette semaine" : "This Week",
       value: stats.entriesThisWeek,
       subtitle: isFr
         ? `${stats.entriesThisMonth} ce mois`
@@ -41,17 +52,17 @@ export function StatsSummaryCards({
       bgColor: "bg-blue-500/10",
     },
     {
-      title: isFr ? "Série actuelle" : "Current streak",
+      title: isFr ? "Série actuelle" : "Current Streak",
       value: streaks.currentStreak,
       subtitle: isFr
         ? `Record : ${streaks.longestStreak} jours`
-        : `Best: ${streaks.longestStreak} days`,
+        : `Record: ${streaks.longestStreak} days`,
       icon: Flame,
       color: "text-orange-500",
       bgColor: "bg-orange-500/10",
     },
     {
-      title: isFr ? "Moyenne quotidienne" : "Daily average",
+      title: isFr ? "Moyenne quotidienne" : "Daily Average",
       value: stats.averagePerDay.toFixed(1),
       subtitle: isFr ? "Sur 30 jours" : "Over 30 days",
       icon: BarChart3,
@@ -59,8 +70,8 @@ export function StatsSummaryCards({
       bgColor: "bg-purple-500/10",
     },
     {
-      title: isFr ? "Humeur dominante" : "Top mood",
-      value: stats.mostCommonMood,
+      title: isFr ? "Humeur dominante" : "Dominant Mood",
+      value: localizeMoodValue(stats.mostCommonMood, isFr),
       subtitle: getTrendText(stats.sentimentTrend, isFr),
       icon: Smile,
       color: "text-green-500",

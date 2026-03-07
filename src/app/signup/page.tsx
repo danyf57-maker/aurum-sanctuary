@@ -6,7 +6,7 @@
 
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, Suspense, useRef, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/providers/auth-provider";
@@ -26,6 +26,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff, Shield, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { trackEvent } from "@/lib/analytics/client";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { firestore as db } from "@/lib/firebase/web-client";
+import { localizeHref } from "@/lib/i18n/path";
+import { useLocale } from "@/hooks/use-locale";
+import { useTranslations } from "next-intl";
 
 interface QuizData {
   answers: string[];
@@ -34,28 +39,43 @@ interface QuizData {
 }
 
 const QUIZ_STORAGE_KEY = "aurum-quiz-data";
+const QUIZ_SYNC_KEY = "aurum-quiz-synced-at";
 
-const signupSchema = z
-  .object({
-    email: z.string().email("Email invalide"),
-    password: z
-      .string()
-      .min(8, "Le mot de passe doit contenir au moins 8 caractères")
-      .regex(/[A-Z]/, "Le mot de passe doit contenir au moins une majuscule")
-      .regex(/[a-z]/, "Le mot de passe doit contenir au moins une minuscule")
-      .regex(/[0-9]/, "Le mot de passe doit contenir au moins un chiffre"),
-    confirmPassword: z.string(),
-    acceptTerms: z.boolean().refine((val) => val === true, {
-      message: "Vous devez accepter les conditions d'utilisation",
-    }),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Les mots de passe ne correspondent pas",
-    path: ["confirmPassword"],
-  });
+function makeSignupSchema(v: Record<string, string>) {
+  return z
+    .object({
+      email: z.string().email(v.invalidEmail),
+      password: z
+        .string()
+        .min(8, v.passwordMinLength)
+        .regex(/[A-Z]/, v.passwordUppercase)
+        .regex(/[a-z]/, v.passwordLowercase)
+        .regex(/[0-9]/, v.passwordDigit),
+      confirmPassword: z.string(),
+      acceptTerms: z.boolean().refine((val) => val === true, {
+        message: v.termsRequired,
+      }),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: v.passwordsMismatch,
+      path: ["confirmPassword"],
+    });
+}
 
 function SignupPage() {
-  const { signUpWithEmail, signInWithGoogle, loading: authLoading } = useAuth();
+  const { user, signUpWithEmail, signInWithGoogle, loading: authLoading } = useAuth();
+  const locale = useLocale();
+  const to = (href: string) => localizeHref(href, locale);
+  const tSign = useTranslations("signup");
+  const signupSchema = makeSignupSchema({
+    invalidEmail: tSign("validation.invalidEmail"),
+    passwordMinLength: tSign("validation.passwordMinLength"),
+    passwordUppercase: tSign("validation.passwordUppercase"),
+    passwordLowercase: tSign("validation.passwordLowercase"),
+    passwordDigit: tSign("validation.passwordDigit"),
+    termsRequired: tSign("validation.termsRequired"),
+    passwordsMismatch: tSign("validation.passwordsMismatch"),
+  });
   const router = useRouter();
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
@@ -70,10 +90,60 @@ function SignupPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [quizData, setQuizData] = useState<QuizData | null>(null);
   const [showQuizTeaser, setShowQuizTeaser] = useState(false);
+  const isInAppBrowser = useMemo(() => {
+    if (typeof navigator === "undefined") return false;
+    const ua = navigator.userAgent || "";
+    return /FBAN|FBAV|Instagram|Line|LinkedInApp|Snapchat|Twitter|GSA|WebView|wv/i.test(
+      ua
+    );
+  }, []);
+  const quizSyncInProgressRef = useRef(false);
+  const quizComplete = searchParams.get("quiz") === "complete";
+  const redirectAfterGoogle = quizComplete ? "/sanctuary/magazine" : "/dashboard";
+
+  useEffect(() => {
+    if (!user || !quizComplete || !quizData?.profile || quizSyncInProgressRef.current) return;
+
+    const syncedAt = localStorage.getItem(QUIZ_SYNC_KEY);
+    if (syncedAt && syncedAt === quizData.completedAt) return;
+
+    quizSyncInProgressRef.current = true;
+    const profileTitleMap: Record<string, string> = {
+      D: "Le Pionnier",
+      I: "Le Connecteur",
+      S: "L'Ancre",
+      C: "L'Architecte",
+      MIXTE: "Profil mixte • L'Équilibriste",
+    };
+
+    void addDoc(collection(db, "users", user.uid, "assessments"), {
+      source: "landing-quiz",
+      profile: quizData.profile,
+      profileTitle: profileTitleMap[quizData.profile] || "Profil personnel",
+      answers: quizData.answers || [],
+      completedAt: quizData.completedAt,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    })
+      .then(() => {
+        localStorage.setItem(QUIZ_SYNC_KEY, quizData.completedAt);
+      })
+      .catch((error) => {
+        console.error("Failed to sync quiz data after signup:", error);
+      })
+      .finally(() => {
+        quizSyncInProgressRef.current = false;
+      });
+  }, [quizComplete, quizData, user]);
+
+  useEffect(() => {
+    if (!authLoading && user) {
+      router.replace(redirectAfterGoogle);
+    }
+  }, [authLoading, redirectAfterGoogle, router, user]);
 
   // Check for quiz completion
   useEffect(() => {
-    const quizComplete = searchParams.get("quiz") === "complete";
     if (quizComplete) {
       const saved = localStorage.getItem(QUIZ_STORAGE_KEY);
       if (saved) {
@@ -86,7 +156,7 @@ function SignupPage() {
         }
       }
     }
-  }, [searchParams]);
+  }, [quizComplete, searchParams]);
 
   const handleEmailSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -129,10 +199,16 @@ function SignupPage() {
         name: "signup",
         params: { method: "email", source: "signup_page" },
       });
-      router.push("/login?check_email=1");
+      if (showQuizTeaser && quizData?.profile) {
+        void trackEvent({
+          name: "signup_with_quiz",
+          params: { method: "email", profile_result: quizData.profile },
+        });
+      }
+      router.push(to("/login?check_email=1"));
     } catch (error) {
       if ((error as Error)?.message === "EMAIL_NOT_VERIFIED") {
-        setInfo("Vérifiez votre boîte de réception pour activer votre compte.");
+        setInfo(tSign("checkEmail"));
       }
       // Other error toasts shown by AuthProvider
     } finally {
@@ -148,7 +224,13 @@ function SignupPage() {
         name: "signup",
         params: { method: "google", source: "signup_page" },
       });
-      // Redirect handled by auth state change
+      if (showQuizTeaser && quizData?.profile) {
+        void trackEvent({
+          name: "signup_with_quiz",
+          params: { method: "google", profile_result: quizData.profile },
+        });
+      }
+      router.push(redirectAfterGoogle);
     } catch (error) {
       // Error toast shown by AuthProvider
     } finally {
@@ -161,7 +243,7 @@ function SignupPage() {
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">Chargement...</p>
+          <p className="mt-4 text-muted-foreground">{tSign("loading")}</p>
         </div>
       </div>
     );
@@ -171,10 +253,8 @@ function SignupPage() {
     <div className="flex min-h-screen items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Créer un compte</CardTitle>
-          <CardDescription>
-            Rejoignez Aurum Sanctuary et commencez votre voyage
-          </CardDescription>
+          <CardTitle>{tSign("title")}</CardTitle>
+          <CardDescription>{tSign("description")}</CardDescription>
 
           {/* Quiz Teaser */}
           {showQuizTeaser && quizData?.profile && (
@@ -186,13 +266,11 @@ function SignupPage() {
               <div className="flex items-center gap-2 mb-2">
                 <Sparkles className="h-4 w-4 text-amber-600 dark:text-amber-400" />
                 <span className="text-xs font-semibold uppercase tracking-wider text-amber-700 dark:text-amber-300">
-                  Votre profil vous attend
+                  {tSign("quizBadge")}
                 </span>
               </div>
               <p className="text-sm text-amber-800 dark:text-amber-200">
-                Votre profil de réflexion est prêt ! Créez votre compte pour
-                découvrir votre résultat personnalisé et commencer votre
-                expérience.
+                {tSign("quizText")}
               </p>
             </motion.div>
           )}
@@ -200,7 +278,7 @@ function SignupPage() {
           <div className="flex items-center gap-2 mt-3 px-3 py-2 bg-emerald-50 dark:bg-emerald-950/30 rounded-lg border border-emerald-200 dark:border-emerald-800">
             <Shield className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
             <p className="text-sm text-emerald-700 dark:text-emerald-300 font-medium">
-              Vos données sont chiffrées de bout en bout
+              {tSign("encrypted")}
             </p>
           </div>
         </CardHeader>
@@ -210,13 +288,18 @@ function SignupPage() {
               {info}
             </div>
           )}
+          {isInAppBrowser && (
+            <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+              {tSign("inAppBrowser")}
+            </div>
+          )}
           {/* Google OAuth Button */}
           <Button
             type="button"
             variant="outline"
             className="w-full"
             onClick={handleGoogleSignup}
-            disabled={loading}
+            disabled={loading || isInAppBrowser}
           >
             <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
               <path
@@ -236,7 +319,7 @@ function SignupPage() {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
               />
             </svg>
-            Continuer avec Google
+            {tSign("google")}
           </Button>
 
           <div className="relative">
@@ -245,7 +328,7 @@ function SignupPage() {
             </div>
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-background px-2 text-muted-foreground">
-                Ou continuer avec
+                {tSign("or")}
               </span>
             </div>
           </div>
@@ -258,7 +341,7 @@ function SignupPage() {
                 id="email"
                 name="email"
                 type="email"
-                placeholder="vous@exemple.com"
+                placeholder={tSign("emailPlaceholder")}
                 required
                 disabled={loading}
               />
@@ -268,7 +351,7 @@ function SignupPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Mot de passe</Label>
+              <Label htmlFor="password">{tSign("password")}</Label>
               <div className="relative">
                 <Input
                   id="password"
@@ -296,12 +379,12 @@ function SignupPage() {
                 <p className="text-sm text-destructive">{errors.password}</p>
               )}
               <p className="text-xs text-muted-foreground">
-                Au moins 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre
+                {tSign("passwordHint")}
               </p>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirmer le mot de passe</Label>
+              <Label htmlFor="confirmPassword">{tSign("confirmPassword")}</Label>
               <div className="relative">
                 <Input
                   id="confirmPassword"
@@ -342,21 +425,21 @@ function SignupPage() {
                 htmlFor="acceptTerms"
                 className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
-                J'accepte les{" "}
+                {tSign("acceptTerms")}{" "}
                 <Link
-                  href="/terms"
+                  href={to("/terms")}
                   className="text-primary hover:underline"
                   target="_blank"
                 >
-                  conditions d'utilisation
+                  {tSign("terms")}
                 </Link>{" "}
-                et la{" "}
+                {tSign("and")}{" "}
                 <Link
-                  href="/privacy"
+                  href={to("/privacy")}
                   className="text-primary hover:underline"
                   target="_blank"
                 >
-                  politique de confidentialité
+                  {tSign("privacy")}
                 </Link>
               </label>
             </div>
@@ -365,19 +448,18 @@ function SignupPage() {
             )}
 
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Création..." : "Créer un compte"}
+              {loading ? tSign("creating") : tSign("create")}
             </Button>
             <p className="text-xs text-muted-foreground text-center">
-              Un email de vérification vous sera envoyé pour activer votre
-              compte.
+              {tSign("emailNote")}
             </p>
           </form>
         </CardContent>
         <CardFooter className="flex justify-center">
           <p className="text-sm text-muted-foreground">
-            Vous avez déjà un compte ?{" "}
-            <Link href="/login" className="text-primary hover:underline">
-              Se connecter
+            {tSign("alreadyAccount")}{" "}
+            <Link href={to("/login")} className="text-primary hover:underline">
+              {tSign("signIn")}
             </Link>
           </p>
         </CardFooter>
@@ -394,7 +476,6 @@ export default function SignupPageWrapper() {
         <div className="flex min-h-screen items-center justify-center">
           <div className="text-center">
             <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto"></div>
-            <p className="mt-4 text-muted-foreground">Chargement...</p>
           </div>
         </div>
       }

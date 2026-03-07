@@ -1,6 +1,8 @@
 'use client';
 
+import Link from 'next/link';
 import { Loader2, Users } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import {
   RadarChart,
   Radar,
@@ -12,6 +14,7 @@ import {
   Legend,
 } from 'recharts';
 import type { PersonalityScores } from '@/lib/types';
+import { useLocale } from '@/hooks/use-locale';
 
 type PersonalityRadarProps = {
   aiScores: PersonalityScores | null;
@@ -25,14 +28,7 @@ type PersonalityRadarProps = {
   canAnalyze: boolean;
 };
 
-const DIMENSION_LABELS: Record<keyof PersonalityScores, string> = {
-  determination: 'Détermination',
-  influence: 'Influence',
-  stabilite: 'Stabilité',
-  rigueur: 'Rigueur',
-};
-
-const DIMENSION_KEYS = Object.keys(DIMENSION_LABELS) as (keyof PersonalityScores)[];
+const DIMENSION_KEYS: (keyof PersonalityScores)[] = ['determination', 'influence', 'stabilite', 'rigueur'];
 
 const DIMENSION_COLORS: Record<keyof PersonalityScores, string> = {
   determination: '#EF4444',
@@ -41,12 +37,15 @@ const DIMENSION_COLORS: Record<keyof PersonalityScores, string> = {
   rigueur: '#3B82F6',
 };
 
+const ACTIVE_PLAN_STORAGE_KEY = "aurum-active-plan";
+
 function buildChartData(
   aiScores: PersonalityScores | null,
-  questionnaireScores: PersonalityScores | null
+  questionnaireScores: PersonalityScores | null,
+  labels: Record<keyof PersonalityScores, string>
 ) {
   return DIMENSION_KEYS.map((key) => ({
-    dimension: DIMENSION_LABELS[key],
+    dimension: labels[key],
     ai: aiScores?.[key] ?? 0,
     questionnaire: questionnaireScores?.[key] ?? 0,
   }));
@@ -63,8 +62,47 @@ export function PersonalityRadar({
   onOpenQuestionnaire,
   canAnalyze,
 }: PersonalityRadarProps) {
+  const locale = useLocale();
+  const isFr = locale === 'fr';
+  const t = useTranslations('sanctuary.personalityRadar');
+  const labels = t.raw('labels') as Record<keyof PersonalityScores, string>;
+  const hints = t.raw('hints') as Record<keyof PersonalityScores, string>;
+  const writingBenefits = t.raw('writingBenefits') as Record<keyof PersonalityScores, string>;
+  const starters = t.raw('starters') as Record<keyof PersonalityScores, string>;
+  const plans = t.raw('plans') as Record<keyof PersonalityScores, string[]>;
+
   const hasAny = aiScores || questionnaireScores;
-  const data = buildChartData(aiScores, questionnaireScores);
+  const data = buildChartData(aiScores, questionnaireScores, labels);
+  const activeScores = aiScores ?? questionnaireScores;
+  const sortedDimensions = activeScores
+    ? (Object.entries(activeScores) as [keyof PersonalityScores, number][]).sort(
+        (a, b) => b[1] - a[1]
+      )
+    : [];
+  const strongestDimension = sortedDimensions[0]?.[0] ?? null;
+  const growthDimension = sortedDimensions[sortedDimensions.length - 1]?.[0] ?? null;
+  const journalHref =
+    growthDimension != null
+      ? `/sanctuary/write?initial=${encodeURIComponent(
+          `${t('planTitle')}\n${plans[growthDimension][0]}\n\n${t('actionPrompt')}`
+        )}`
+      : '/sanctuary/write';
+
+  const handleApplyPlan = () => {
+    if (typeof window === "undefined" || !growthDimension) return;
+    const steps = plans[growthDimension];
+    localStorage.setItem(
+      ACTIVE_PLAN_STORAGE_KEY,
+      JSON.stringify({
+        version: 1,
+        source: "personality",
+        title: t('planTitle'),
+        steps,
+        currentStep: 0,
+        createdAt: new Date().toISOString(),
+      })
+    );
+  };
 
   return (
     <section className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
@@ -75,10 +113,12 @@ export function PersonalityRadar({
             <div className="flex h-7 w-7 items-center justify-center rounded-full bg-stone-100">
               <Users className="h-3.5 w-3.5 text-stone-600" />
             </div>
-            <h2 className="font-headline text-xl text-stone-900">Profil de personnalité</h2>
+            <h2 className="font-headline text-xl text-stone-900">
+              {t('title')}
+            </h2>
           </div>
           <p className="mt-1 text-xs text-stone-500">
-            4 dimensions &middot; Style de communication
+            {t('subtitle')}
             {archetype && (
               <span className="ml-2 rounded-full bg-stone-100 px-2 py-0.5 text-[10px] font-medium text-stone-700">
                 {archetype}
@@ -93,14 +133,14 @@ export function PersonalityRadar({
             disabled={isLoading || !canAnalyze}
             className="rounded-xl border border-stone-300 bg-stone-50 px-3 py-1.5 text-xs text-stone-700 transition-colors hover:border-stone-500 disabled:opacity-50"
           >
-            {isLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : 'Analyser'}
+            {isLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : t('analyzePages')}
           </button>
           <button
             type="button"
             onClick={onOpenQuestionnaire}
             className="rounded-xl border border-stone-400/50 bg-stone-100 px-3 py-1.5 text-xs text-stone-700 transition-colors hover:bg-stone-200"
           >
-            Questionnaire
+            {t('guidedPath')}
           </button>
         </div>
       </div>
@@ -109,12 +149,18 @@ export function PersonalityRadar({
       {!hasAny && !isLoading && (
         <div className="mt-6 rounded-xl border border-dashed border-stone-300 bg-stone-50/70 p-6 text-center">
           <Users className="mx-auto h-8 w-8 text-stone-400" />
+          <div className="mt-3 inline-flex rounded-full bg-stone-200 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-stone-700">
+            {t('recommended')}
+          </div>
           <p className="mt-3 text-sm text-stone-600">
-            Lance une analyse ou complète le questionnaire pour découvrir ton profil.
+            {t('emptyQuickOption')}
+          </p>
+          <p className="mt-1 text-xs text-stone-500">
+            {t('emptyOutcome')}
           </p>
           {!canAnalyze && (
             <p className="mt-1 text-xs text-stone-400">
-              Au moins 5 entrées non chiffrées sont nécessaires pour l&apos;analyse.
+              {t('emptyAnalyzeRequirement')}
             </p>
           )}
         </div>
@@ -124,7 +170,9 @@ export function PersonalityRadar({
       {isLoading && !hasAny && (
         <div className="mt-6 flex items-center justify-center py-12">
           <Loader2 className="h-6 w-6 animate-spin text-stone-500" />
-          <span className="ml-3 text-sm text-stone-500">Analyse en cours...</span>
+          <span className="ml-3 text-sm text-stone-500">
+            {t('analysisInProgress')}
+          </span>
         </div>
       )}
 
@@ -146,7 +194,7 @@ export function PersonalityRadar({
               />
               {aiScores && (
                 <Radar
-                  name="Analyse"
+                  name={t('analysisLegend')}
                   dataKey="ai"
                   stroke="#57534E"
                   fill="#78716C"
@@ -156,7 +204,7 @@ export function PersonalityRadar({
               )}
               {questionnaireScores && (
                 <Radar
-                  name="Questionnaire"
+                  name={t('questionnaireLegend')}
                   dataKey="questionnaire"
                   stroke="#A8A29E"
                   fill="transparent"
@@ -176,11 +224,66 @@ export function PersonalityRadar({
             </RadarChart>
           </ResponsiveContainer>
 
-          {/* Narrative */}
-          {narrative && (
-            <p className="mt-2 rounded-xl bg-stone-50 px-4 py-3 text-sm italic text-stone-600">
-              {narrative}
-            </p>
+          {(narrative || (strongestDimension && growthDimension)) && (
+            <div className="mt-2 rounded-2xl border border-stone-200 bg-stone-50 px-4 py-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-600">
+                {t('premiumReading')}
+              </p>
+              {narrative && (
+                <p className="mt-2 text-sm leading-relaxed text-stone-700">{narrative}</p>
+              )}
+              {strongestDimension && (
+                <p className="mt-2 text-xs text-stone-600">
+                  <span className="font-medium text-stone-700">
+                    {t('currentStrength')}
+                  </span>{" "}
+                  {labels[strongestDimension]}.
+                </p>
+              )}
+              {growthDimension && (
+                <p className="mt-1 text-xs text-stone-600">
+                  <span className="font-medium text-stone-700">
+                    {t('suggestedMicroAction')}
+                  </span>{" "}
+                  {hints[growthDimension]}
+                </p>
+              )}
+              {growthDimension && (
+                <div className="mt-2 rounded-xl border border-stone-200 bg-white px-3 py-2">
+                  <p className="text-xs text-stone-700">
+                    <span className="font-medium">
+                      {t('whyWriteAfterProfile')}
+                    </span>{" "}
+                    {writingBenefits[growthDimension]}
+                  </p>
+                  <p className="mt-1 text-xs text-stone-600">
+                    <span className="font-medium">
+                      {t('helpfulFirstSentence')}
+                    </span>{" "}
+                    {starters[growthDimension]}
+                  </p>
+                </div>
+              )}
+              {growthDimension && (
+                <div className="mt-3 rounded-xl border border-stone-200 bg-white px-3 py-3">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-stone-600">
+                    {t('planTitle')}
+                  </p>
+                  <ul className="mt-2 space-y-1 text-xs text-stone-700">
+                    {plans[growthDimension].map((step) => (
+                      <li key={step}>{step}</li>
+                    ))}
+                  </ul>
+                  <Link
+                    href={journalHref}
+                    onClick={handleApplyPlan}
+                    className="mt-3 inline-flex rounded-lg bg-stone-900 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-stone-800"
+                  >
+                    {t('applyPlan')}
+                  </Link>
+                </div>
+              )}
+            </div>
           )}
 
           {/* Micro-bars breakdown */}
@@ -190,7 +293,7 @@ export function PersonalityRadar({
               return (
                 <div key={key} className="flex items-center gap-3">
                   <span className="w-28 truncate text-xs text-stone-600">
-                    {DIMENSION_LABELS[key]}
+                    {labels[key]}
                   </span>
                   <div className="flex-1 h-1.5 rounded-full bg-stone-100">
                     <div
@@ -212,8 +315,8 @@ export function PersonalityRadar({
           {/* Footer */}
           {computedAt && (
             <p className="mt-4 text-[10px] text-stone-400">
-              Dernière analyse :{' '}
-              {computedAt.toLocaleDateString('fr-FR', {
+              {t('lastAnalysis')}{' '}
+              {computedAt.toLocaleDateString(isFr ? 'fr-FR' : 'en-US', {
                 day: 'numeric',
                 month: 'long',
                 year: 'numeric',

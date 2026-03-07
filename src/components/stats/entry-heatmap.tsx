@@ -18,7 +18,7 @@ type EntryHeatmapProps = {
 
 const CELL_SIZE = 12;
 const CELL_GAP = 3;
-const DAY_LABELS = {
+const DAYS = {
   fr: ["Lun", "Mer", "Ven"],
   en: ["Mon", "Wed", "Fri"],
 } as const;
@@ -26,7 +26,7 @@ const DAY_LABELS = {
 export function EntryHeatmap({ entries }: EntryHeatmapProps) {
   const locale = useLocale();
   const isFr = locale === "fr";
-  const days = DAY_LABELS[isFr ? "fr" : "en"];
+  const labels = DAYS[isFr ? "fr" : "en"];
   const heatmapData = useMemo(() => generateHeatmapData(entries), [entries]);
 
   const weeks = useMemo(() => {
@@ -68,17 +68,17 @@ export function EntryHeatmap({ entries }: EntryHeatmapProps) {
       <Card>
         <CardHeader>
           <CardTitle className="font-headline">
-            {isFr ? "Fréquence d'écriture" : "Writing frequency"}
+            {isFr ? "Fréquence d'écriture" : "Writing Frequency"}
           </CardTitle>
           <CardDescription>
             {isFr
-              ? "Écrivez régulièrement pour voir votre activité."
-              : "Write regularly to reveal your activity."}
+              ? "Écrivez régulièrement pour visualiser votre activité."
+              : "Write regularly to visualize your activity."}
           </CardDescription>
         </CardHeader>
-        <CardContent className="flex h-[200px] w-full items-center justify-center">
-          <p className="text-sm text-muted-foreground">
-            {isFr ? "Pas de données disponibles." : "No data available."}
+        <CardContent className="h-[200px] w-full flex items-center justify-center">
+          <p className="text-muted-foreground text-sm">
+            {isFr ? "Aucune donnée disponible pour le moment." : "No data available yet."}
           </p>
         </CardContent>
       </Card>
@@ -89,7 +89,7 @@ export function EntryHeatmap({ entries }: EntryHeatmapProps) {
     <Card>
       <CardHeader>
         <CardTitle className="font-headline">
-          {isFr ? "Fréquence d'écriture" : "Writing frequency"}
+          {isFr ? "Fréquence d'écriture" : "Writing Frequency"}
         </CardTitle>
         <CardDescription>
           {isFr
@@ -99,20 +99,17 @@ export function EntryHeatmap({ entries }: EntryHeatmapProps) {
       </CardHeader>
       <CardContent>
         <div className="overflow-x-auto">
-          <div className="inline-flex min-w-full flex-col gap-1">
+          <div className="inline-flex flex-col gap-1 min-w-full">
             <div className="flex gap-1">
-              <div
-                style={{ width: `${CELL_SIZE * 2}px` }}
-                className="text-xs text-muted-foreground"
-              />
-              {days.map((day, i) => (
+              <div style={{ width: `${CELL_SIZE * 2}px` }} className="text-xs text-muted-foreground" />
+              {labels.map((day, i) => (
                 <div
                   key={day}
                   style={{
                     height: `${CELL_SIZE}px`,
                     width: `${weeks.length * (CELL_SIZE + CELL_GAP)}px`,
                   }}
-                  className="flex items-center text-xs text-muted-foreground"
+                  className="text-xs text-muted-foreground flex items-center"
                 >
                   {i === 0 && day}
                 </div>
@@ -124,13 +121,10 @@ export function EntryHeatmap({ entries }: EntryHeatmapProps) {
                 {[0, 1, 2, 3, 4, 5, 6].map((day) => (
                   <div
                     key={day}
-                    style={{
-                      width: `${CELL_SIZE * 2}px`,
-                      height: `${CELL_SIZE}px`,
-                    }}
-                    className="flex items-center justify-end pr-2 text-xs text-muted-foreground"
+                    style={{ width: `${CELL_SIZE * 2}px`, height: `${CELL_SIZE}px` }}
+                    className="text-xs text-muted-foreground flex items-center justify-end pr-2"
                   >
-                    {day % 2 === 0 && days[day / 2]}
+                    {day % 2 === 0 && labels[day / 2]}
                   </div>
                 ))}
               </div>
@@ -148,37 +142,28 @@ export function EntryHeatmap({ entries }: EntryHeatmapProps) {
                         return (
                           <div
                             key={dayIndex}
-                            style={{
-                              width: `${CELL_SIZE}px`,
-                              height: `${CELL_SIZE}px`,
-                            }}
+                            style={{ width: `${CELL_SIZE}px`, height: `${CELL_SIZE}px` }}
                             className="rounded-sm bg-transparent"
                           />
                         );
                       }
 
                       const date = new Date(dayData.date);
-                      const formattedDate = date.toLocaleDateString(
-                        isFr ? "fr-FR" : "en-US",
-                        {
-                          day: "numeric",
-                          month: "long",
-                          year: "numeric",
-                        }
-                      );
+                      const formattedDate = date.toLocaleDateString(isFr ? "fr-FR" : "en-US", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      });
 
                       return (
                         <div
                           key={dayIndex}
-                          style={{
-                            width: `${CELL_SIZE}px`,
-                            height: `${CELL_SIZE}px`,
-                          }}
-                          className={`cursor-pointer rounded-sm ${getColor(dayData.level)} transition-all hover:ring-2 hover:ring-primary`}
+                          style={{ width: `${CELL_SIZE}px`, height: `${CELL_SIZE}px` }}
+                          className={`rounded-sm ${getColor(dayData.level)} cursor-pointer hover:ring-2 hover:ring-primary transition-all`}
                           title={`${formattedDate}: ${dayData.count} ${
                             isFr
                               ? `entrée${dayData.count > 1 ? "s" : ""}`
-                              : `entr${dayData.count === 1 ? "y" : "ies"}`
+                              : `entr${dayData.count > 1 ? "ies" : "y"}`
                           }`}
                         />
                       );
@@ -188,16 +173,13 @@ export function EntryHeatmap({ entries }: EntryHeatmapProps) {
               </div>
             </div>
 
-            <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
+            <div className="flex items-center gap-2 mt-4 text-xs text-muted-foreground">
               <span>{isFr ? "Moins" : "Less"}</span>
               <div className="flex gap-1">
                 {[0, 1, 2, 3, 4].map((level) => (
                   <div
                     key={level}
-                    style={{
-                      width: `${CELL_SIZE}px`,
-                      height: `${CELL_SIZE}px`,
-                    }}
+                    style={{ width: `${CELL_SIZE}px`, height: `${CELL_SIZE}px` }}
                     className={`rounded-sm ${getColor(level)}`}
                   />
                 ))}

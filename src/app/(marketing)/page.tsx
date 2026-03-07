@@ -1,16 +1,57 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import HeroIntegrated from '@/components/landing/HeroIntegrated';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Compass, ArrowRight, ShieldCheck, Lock, Fingerprint, X } from 'lucide-react';
+import { Compass, ArrowRight, ShieldCheck, Lock, Fingerprint, X, Brain, Moon, Flame, CircleHelp, Wind, ListChecks } from 'lucide-react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuth } from '@/providers/auth-provider';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { firestore as db } from '@/lib/firebase/web-client';
+import { trackEvent } from '@/lib/analytics/client';
+import { useLocalizedHref } from '@/hooks/use-localized-href';
+import { useTranslations } from 'next-intl';
+
+type MarketingFaq = {
+    question: string;
+    answer: string;
+};
+
+type MarketingCard = {
+    eyebrow?: string;
+    title: string;
+    body: string;
+    example?: string;
+    badge?: string;
+    cta?: string;
+};
+
+type MarketingStudyCard = {
+    eyebrow: string;
+    title: string;
+    body: string;
+    example: string;
+};
+
+type MarketingQuizQuestion = {
+    q: string;
+    options: Array<{
+        label: string;
+        text: string;
+    }>;
+};
+
+type MarketingProfile = {
+    title: string;
+    description: string;
+};
 
 const ExitIntent = () => {
     const [show, setShow] = useState(false);
     const [dismissed, setDismissed] = useState(false);
+    const t = useTranslations('marketingPage.exitIntent');
 
     useEffect(() => {
         const handleMouseLeave = (e: MouseEvent) => {
@@ -43,9 +84,9 @@ const ExitIntent = () => {
                     <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-8 text-primary">
                         <Compass className="w-8 h-8" />
                     </div>
-                    <h3 className="text-3xl md:text-4xl font-headline mb-6 text-stone-900">Une dernière chose avant de partir...</h3>
+                    <h3 className="text-3xl md:text-4xl font-headline mb-6 text-stone-900">{t('title')}</h3>
                     <p className="text-stone-500 text-lg mb-10 leading-relaxed font-light">
-                        Tu ne sais pas par où commencer ? Fais notre évaluation de bien-être en 30 secondes pour obtenir ton profil personnalisé.
+                        {t('description')}
                     </p>
                     <div className="flex flex-col gap-4 items-center">
                         <Button
@@ -57,13 +98,13 @@ const ExitIntent = () => {
                             size="lg"
                             className="h-16 px-12 text-lg rounded-2xl w-full sm:w-auto"
                         >
-                            Faire le Test (30s)
+                            {t('cta')}
                         </Button>
                         <button
                             onClick={() => { setShow(false); setDismissed(true); }}
                             className="text-stone-400 text-sm hover:underline font-light"
                         >
-                            Non merci, je souhaite continuer à naviguer
+                            {t('dismiss')}
                         </button>
                     </div>
                 </div>
@@ -73,72 +114,23 @@ const ExitIntent = () => {
 };
 
 const QuizSection = () => {
+    const { user } = useAuth();
+    const to = useLocalizedHref();
+    const t = useTranslations('marketingPage.quiz');
     const [step, setStep] = useState(0);
     const [answers, setAnswers] = useState<string[]>([]);
+    const quizStartedAtRef = useRef<number | null>(null);
+    const stepStartedAtRef = useRef<number>(Date.now());
+    const hasTrackedStartRef = useRef(false);
+    const hasTrackedResultRef = useRef(false);
 
-    const questions = [
-        {
-            q: "Quand tu penses à ta journée, qu'est-ce qui ressort le plus ?",
-            options: [
-                { label: "D", text: "J'ai beaucoup de choses à faire et je veux avancer vite" },
-                { label: "I", text: "J'ai besoin de connecter avec les autres et partager" },
-                { label: "S", text: "Je cherche la tranquillité et l'harmonie" },
-                { label: "C", text: "J'analyse les situations avant d'agir" },
-            ],
-        },
-        {
-            q: "Face à une situation difficile, ta première réaction est de :",
-            options: [
-                { label: "D", text: "Prendre le problème en main et trouver une solution" },
-                { label: "I", text: "En parler pour voir différentes perspectives" },
-                { label: "S", text: "Retrouver mon calme avant de réagir" },
-                { label: "C", text: "Comprendre tous les détails avant de décider" },
-            ],
-        },
-        {
-            q: "Si tu ouvrais ton journal maintenant, tu écrirais sur :",
-            options: [
-                { label: "D", text: "Tes objectifs et ce que tu veux accomplir" },
-                { label: "I", text: "Tes interactions et ce qui t'a touché émotionnellement" },
-                { label: "S", text: "Ton besoin de paix et de stabilité" },
-                { label: "C", text: "Tes réflexions profondes et analyses" },
-            ],
-        },
-        {
-            q: "Ce que tu cherches avant tout en ce moment :",
-            options: [
-                { label: "D", text: "Du momentum et de l'action" },
-                { label: "I", text: "De la connexion et de l'inspiration" },
-                { label: "S", text: "De la sécurité et du réconfort" },
-                { label: "C", text: "De la clarté et de la structure" },
-            ],
-        },
-    ];
+    const questions = t.raw('questions') as MarketingQuizQuestion[];
 
-    const profileMap: Record<string, { title: string; description: string }> = {
-        D: {
-            title: "Dominance (D) • Le Pionnier",
-            description: "Tu aimes avancer vite et décider. Ton journal t'aide à canaliser cette énergie.",
-        },
-        I: {
-            title: "Influence (I) • Le Connecteur",
-            description: "Tu es guidé par les relations et les émotions. Ton journal devient un espace d'expression.",
-        },
-        S: {
-            title: "Stabilité (S) • L'Ancre",
-            description: "Tu cherches la paix et la constance. Ton journal t'offre un refuge stable.",
-        },
-        C: {
-            title: "Conformité (C) • L'Architecte",
-            description: "Tu aimes comprendre avant d'agir. Ton journal devient ton laboratoire d'idées.",
-        },
-        MIXTE: {
-            title: "Profil mixte • L'Équilibriste",
-            description: "Tu combines plusieurs forces. Ton journal s'adapte à ta complexité.",
-        },
-    };
+    type ProfileKey = "D" | "I" | "S" | "C" | "MIXTE";
 
-    const getProfile = (currentAnswers: string[]) => {
+    const profileMap = t.raw('profiles') as Record<ProfileKey, MarketingProfile>;
+
+    const getProfile = (currentAnswers: string[]): ProfileKey => {
         const counts = { D: 0, I: 0, S: 0, C: 0 };
         currentAnswers.forEach((a) => {
             if (a in counts) counts[a as keyof typeof counts] += 1;
@@ -150,13 +142,79 @@ const QuizSection = () => {
         return winners.length === 1 ? winners[0] : "MIXTE";
     };
 
+    const persistQuizResult = async (profile: string, profileTitle: string, currentAnswers: string[]) => {
+        if (!user) return;
+        try {
+            await addDoc(collection(db, "users", user.uid, "assessments"), {
+                source: "landing-quiz",
+                profile,
+                profileTitle,
+                answers: currentAnswers,
+                completedAt: new Date().toISOString(),
+                createdAt: serverTimestamp(),
+                updatedAt: serverTimestamp(),
+            });
+        } catch (error) {
+            console.error("Failed to save landing quiz result:", error);
+        }
+    };
+
+    useEffect(() => {
+        if (step === questions.length && !hasTrackedResultRef.current) {
+            hasTrackedResultRef.current = true;
+            void trackEvent({
+                name: "quiz_result_viewed",
+                params: {
+                    profile_result: getProfile(answers),
+                    total_steps: questions.length,
+                },
+            });
+        }
+    }, [answers, questions.length, step]);
+
     const handleAnswer = (option: string) => {
+        const now = Date.now();
+        if (!hasTrackedStartRef.current) {
+            hasTrackedStartRef.current = true;
+            quizStartedAtRef.current = now;
+            stepStartedAtRef.current = now;
+            void trackEvent({
+                name: "quiz_started",
+                params: {
+                    source_page: "landing",
+                },
+            });
+        }
+
+        const timeSpentMs = Math.max(0, now - stepStartedAtRef.current);
+        void trackEvent({
+            name: "quiz_step_completed",
+            params: {
+                step_number: step + 1,
+                answer_letter: option,
+                time_spent_ms: timeSpentMs,
+            },
+        });
+
         const nextAnswers = [...answers, option];
         setAnswers(nextAnswers);
 
         const nextStep = step + 1;
         if (nextStep === questions.length) {
             const profile = getProfile(nextAnswers);
+            const profileTitle = profileMap[profile].title;
+            const totalTimeMs =
+                quizStartedAtRef.current != null
+                    ? Math.max(0, now - quizStartedAtRef.current)
+                    : null;
+            void trackEvent({
+                name: "quiz_complete",
+                params: {
+                    profile_result: profile,
+                    total_time_ms: totalTimeMs,
+                    total_steps: questions.length,
+                },
+            });
             const quizData = {
                 answers: nextAnswers,
                 completedAt: new Date().toISOString(),
@@ -167,7 +225,9 @@ const QuizSection = () => {
             } catch {
                 // No-op if storage is unavailable
             }
+            void persistQuizResult(profile, profileTitle, nextAnswers);
         }
+        stepStartedAtRef.current = Date.now();
         setStep(nextStep);
     };
 
@@ -188,7 +248,9 @@ const QuizSection = () => {
                                 transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                                 className="text-center"
                             >
-                                <span className="text-primary/60 text-[10px] uppercase tracking-widest mb-6 block font-bold">Test de personnalité • {step + 1}/{questions.length}</span>
+                                <span className="text-primary/60 text-[10px] uppercase tracking-widest mb-6 block font-bold">
+                                    {t('stepBadge', { current: step + 1, total: questions.length })}
+                                </span>
                                 <h3 className="text-3xl md:text-5xl font-headline mb-12 text-stone-900">{questions[step].q}</h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     {questions[step].options.map((option) => (
@@ -216,14 +278,28 @@ const QuizSection = () => {
                                 <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-8 text-primary">
                                     <ShieldCheck className="w-10 h-10" />
                                 </div>
-                                <h3 className="text-3xl md:text-5xl font-headline mb-6 text-stone-900">Ton profil est prêt.</h3>
+                                <h3 className="text-3xl md:text-5xl font-headline mb-6 text-stone-900">{t('resultTitle')}</h3>
                                 <p className="text-stone-500 text-lg mb-12 max-w-xl mx-auto leading-relaxed">
                                     <span className="font-medium text-stone-700">{profile.title}</span>
                                     <br />
                                     {profile.description}
                                 </p>
                                 <Button size="lg" className="h-16 px-16 text-lg rounded-2xl shadow-xl hover:shadow-2xl transition-all" asChild>
-                                    <Link href={`/signup?quiz=complete&profile=${finalProfile}`}>Créer mon compte pour voir mon résultat</Link>
+                                    <Link
+                                        href={user ? to('/sanctuary/magazine') : to(`/signup?quiz=complete&profile=${finalProfile}`)}
+                                        onClick={() =>
+                                            void trackEvent({
+                                                name: "quiz_cta_clicked",
+                                                params: {
+                                                    profile_result: finalProfile,
+                                                    cta_location: "quiz_result",
+                                                    destination: user ? "magazine" : "signup",
+                                                },
+                                            })
+                                        }
+                                    >
+                                        {user ? t('resultCtaLoggedIn') : t('resultCtaGuest')}
+                                    </Link>
                                 </Button>
                             </motion.div>
                         )}
@@ -237,30 +313,36 @@ const QuizSection = () => {
     );
 };
 
-const FloatingCTA = ({ visible }: { visible: boolean }) => (
-    <AnimatePresence>
-        {visible && (
-            <motion.div
+const FloatingCTA = ({ visible }: { visible: boolean }) => {
+    const to = useLocalizedHref();
+    const t = useTranslations('marketingPage.floatingCta');
+    return (
+        <AnimatePresence>
+            {visible && (
+                <motion.div
                 initial={{ opacity: 0, y: 100 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 100 }}
                 className="fixed bottom-8 right-8 z-[100]"
             >
                 <Button asChild size="lg" className="rounded-full shadow-2xl bg-primary hover:bg-primary/90 px-8 h-14 group border-4 border-white/20 backdrop-blur-sm">
-                    <Link href="/sanctuary/write" className="flex items-center gap-3">
-                        <span className="font-headline font-semibold">Commencer mon Sanctuaire</span>
+                    <Link href={to('/signup')} className="flex items-center gap-3">
+                        <span className="font-headline font-semibold">{t('cta')}</span>
                         <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                     </Link>
                 </Button>
                 <div className="mt-2 text-center pointer-events-none">
-                    <span className="text-[9px] text-white bg-black/40 backdrop-blur-sm px-3 py-1 rounded-full uppercase tracking-tighter font-bold">Sans engagement • Privé</span>
+                    <span className="text-[9px] text-white bg-black/40 backdrop-blur-sm px-3 py-1 rounded-full uppercase tracking-tighter font-bold">{t('label')}</span>
                 </div>
             </motion.div>
-        )}
-    </AnimatePresence>
-);
+            )}
+        </AnimatePresence>
+    );
+};
 export default function Home() {
     const [showCTA, setShowCTA] = useState(false);
+    const to = useLocalizedHref();
+    const t = useTranslations('marketingPage');
 
     useEffect(() => {
         const handleScroll = () => {
@@ -275,36 +357,137 @@ export default function Home() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const faqs = [
-        {
-            question: "Qui peut lire mes données ?",
-            answer: "Personne. Nous utilisons une architecture 'Admin-Blind' avec chiffrement AES-256 côté client. Tes entrées sont chiffrées avec ta clé privée avant d'être envoyées. Techniquement, même avec un accès total à nos serveurs, il est impossible de déchiffrer tes écrits sans ton mot de passe."
-        },
-        {
-            question: "Comment Aurum aide à la santé mentale ?",
-            answer: "Aurum est un outil d'introspection, pas un substitut à une thérapie. Il t'offre un espace sécurisé pour extérioriser tes pensées et t'aide à identifier des schémas émotionnels. Cet acte d'écriture et de réflexion peut être une composante bénéfique d'une bonne hygiène mentale."
-        },
-        {
-            question: "Est-ce gratuit ?",
-            answer: "Oui, Aurum propose une offre gratuite généreuse pour te permettre de commencer ton voyage. Des plans payants sont disponibles pour celles et ceux qui souhaitent un usage plus intensif et des fonctionnalités avancées, ce qui nous permet de maintenir et d'améliorer le service en toute indépendance."
-        }
+    const faqs = t.raw('faqs') as MarketingFaq[];
+    const studyCards = t.raw('studyCards') as MarketingStudyCard[];
+    const useCaseCards = t.raw('useCases.cards') as MarketingCard[];
+    const trustCards = t.raw('trust.cards') as MarketingCard[];
+    const featureCards = t.raw('finalCta.cards') as MarketingCard[];
+    const discoveries = t.raw('scientificProof.discoveries') as Array<{ label: string; body: string }>;
+    const referenceAriaLabels = [
+        t('references.aria1'),
+        t('references.aria2'),
+        t('references.aria3'),
+        t('references.aria4'),
     ];
-
     return (
         <main>
             <HeroIntegrated />
+            <section className="py-14 md:py-16 bg-white border-y border-stone-200/70">
+                <div className="container">
+                    <div className="max-w-4xl mx-auto text-center mb-8">
+                        <h2 className="text-3xl md:text-4xl font-headline text-stone-900 mb-4">
+                            {t('studySection.title')}
+                        </h2>
+                        <p className="text-stone-600 font-light text-lg">
+                            {t('studySection.subtitle')}
+                        </p>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-6xl mx-auto">
+                        {studyCards.map((card, index) => (
+                            <article key={card.title} className="rounded-2xl border border-stone-200 bg-stone-50/70 p-6">
+                                <p className="text-[11px] uppercase tracking-[0.14em] text-stone-500 mb-3 font-semibold">{card.eyebrow}</p>
+                                <h3 className="text-xl font-headline text-stone-900 mb-2">{card.title}</h3>
+                                <p className="text-sm text-stone-600 font-light leading-relaxed mb-3">{card.body}</p>
+                                <p className="text-xs text-stone-500 font-light">
+                                    {card.example}
+                                    {index === 0 && (
+                                        <sup><a href={to('/etudes-scientifiques#etude-1')} aria-label={t('references.aria1')} className="no-underline font-semibold text-stone-700"> 1</a></sup>
+                                    )}
+                                    {index === 1 && (
+                                        <sup><a href={to('/etudes-scientifiques#etude-2')} aria-label={t('references.aria2')} className="no-underline font-semibold text-stone-700"> 2</a></sup>
+                                    )}
+                                    {index === 2 && (
+                                        <>
+                                            <sup><a href={to('/etudes-scientifiques#etude-3')} aria-label={t('references.aria3')} className="no-underline font-semibold text-stone-700"> 3</a></sup>
+                                            <sup><a href={to('/etudes-scientifiques#etude-4')} aria-label={t('references.aria4')} className="no-underline font-semibold text-stone-700"> 4</a></sup>
+                                        </>
+                                    )}
+                                </p>
+                            </article>
+                        ))}
+                    </div>
+                    <div className="mt-8 text-center">
+                        <Button asChild size="lg" className="h-12 px-8 rounded-xl">
+                            <Link href={to('/signup')}>{t('studySection.cta')}</Link>
+                        </Button>
+                    </div>
+                </div>
+            </section>
+            <section id="use-cases-seo" className="py-20 md:py-24 bg-white border-y border-stone-200/70">
+                <div className="container">
+                    <div className="max-w-3xl mx-auto text-center mb-12">
+                        <h2 className="text-3xl md:text-5xl font-headline text-stone-900 mb-4">
+                            {t('useCases.title')}
+                        </h2>
+                        <p className="text-stone-600 font-light text-lg">
+                            {t('useCases.subtitle')}
+                        </p>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {useCaseCards.map((card, index) => (
+                            <article key={card.title} className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm h-full flex flex-col">
+                                <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-stone-100 px-3 py-1 text-[11px] uppercase tracking-[0.12em] text-stone-600 font-medium w-fit">
+                                    {index === 0 && <Moon className="h-3.5 w-3.5" />}
+                                    {index === 1 && <Brain className="h-3.5 w-3.5" />}
+                                    {index === 2 && <Wind className="h-3.5 w-3.5" />}
+                                    {index === 3 && <Flame className="h-3.5 w-3.5" />}
+                                    {index === 4 && <CircleHelp className="h-3.5 w-3.5" />}
+                                    {(index === 5 || index === 8) && <ListChecks className="h-3.5 w-3.5" />}
+                                    {index === 6 && <Compass className="h-3.5 w-3.5" />}
+                                    {index === 7 && <Moon className="h-3.5 w-3.5" />}
+                                    {card.badge}
+                                </div>
+                                <h3 className="text-2xl font-headline text-stone-900 mb-3">{card.title}</h3>
+                                <p className="text-stone-600 font-light leading-relaxed mb-6">{card.body}</p>
+                                <Link href={to('/signup')} className="mt-auto text-primary font-medium hover:underline">
+                                    {card.cta}
+                                </Link>
+                            </article>
+                        ))}
+                    </div>
+                    <p className="mt-8 text-xs text-stone-500 text-center font-light">
+                        {t('useCases.note')}
+                        <sup>
+                            <a href={to('/etudes-scientifiques#etude-3')} aria-label={t('references.aria3')} className="no-underline font-semibold text-stone-700"> 3</a>
+                        </sup>
+                        <sup>
+                            <a href={to('/etudes-scientifiques#etude-4')} aria-label={t('references.aria4')} className="no-underline font-semibold text-stone-700"> 4</a>
+                        </sup>
+                        .
+                    </p>
+                </div>
+            </section>
+
+            {/* SECTION 3: Scientific social proof */}
+            <section className="py-24 md:py-32 bg-stone-100/50">
+                <div className="container max-w-4xl mx-auto">
+                    <div className="text-center max-w-3xl mx-auto mb-14">
+                        <h2 className="text-4xl md:text-5xl font-headline mb-6">{t('scientificProof.title')}</h2>
+                        <p className="text-stone-600 font-light text-lg leading-relaxed">
+                            {t('scientificProof.subtitle')}
+                        </p>
+                    </div>
+                    <ul className="space-y-5 text-stone-700 font-light leading-relaxed text-lg max-w-3xl mx-auto">
+                        {discoveries.map((discovery, index) => (
+                            <li key={discovery.label} className="rounded-2xl border border-stone-200 bg-white p-6">
+                                <span className="font-medium text-stone-900">{discovery.label}</span> {discovery.body}
+                                <sup><a href={to(`/etudes-scientifiques#etude-${index + 1}`)} aria-label={referenceAriaLabels[index]} className="no-underline font-semibold text-stone-700"> {index + 1}</a></sup>.
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </section>
 
             <div id="sanctuary-content" className="bg-background text-foreground">
                 {/* SECTION 1: Problem */}
                 <section className="py-24 md:py-32 bg-stone-100/50">
                     <div className="container max-w-3xl mx-auto text-center">
                         <h2 className="text-4xl md:text-5xl font-headline mb-6">
-                            C'est comment, une tête en bazar ?
+                            {t('problem.title')}
                         </h2>
                         <div className="prose prose-lg lg:prose-xl mx-auto text-foreground/80 font-light">
                             <p>
-                                C'est quand les pensées tournent en rond sans s'arrêter. Ça peut empêcher de dormir, rendre triste
-                                ou énervé. On a parfois l'impression d'être coincé.
+                                {t('problem.body')}
                             </p>
                         </div>
                     </div>
@@ -314,37 +497,11 @@ export default function Home() {
                 <section className="py-24 md:py-32 bg-white">
                     <div className="container max-w-3xl mx-auto text-center">
                         <h2 className="text-4xl md:text-5xl font-headline mb-6">
-                            Le super-pouvoir de l'écriture.
+                            {t('solution.title')}
                         </h2>
                         <p className="text-stone-600 font-light text-lg leading-relaxed">
-                            Écrire tes pensées, même les plus secrètes, c'est comme leur dire "Stop !". Ça les calme.
-                            Aurum est ton outil pour faire ça, en toute sécurité.
+                            {t('solution.body')}
                         </p>
-                    </div>
-                </section>
-
-                {/* SECTION 3: Scientific social proof */}
-                <section className="py-24 md:py-32 bg-stone-100/50">
-                    <div className="container max-w-4xl mx-auto">
-                        <div className="text-center max-w-3xl mx-auto mb-14">
-                            <h2 className="text-4xl md:text-5xl font-headline mb-6">Ce n'est pas de la magie, c'est un phénomène observé.</h2>
-                            <p className="text-stone-600 font-light text-lg leading-relaxed">
-                                Des chercheurs se sont penchés sur le pouvoir de l'écriture. Dans leurs études, ils ont fait des découvertes surprenantes :
-                            </p>
-                        </div>
-                        <ul className="space-y-5 text-stone-700 font-light leading-relaxed text-lg max-w-3xl mx-auto">
-                            <li className="rounded-2xl border border-stone-200 bg-white p-6">
-                                <span className="font-medium text-stone-900">Découverte n°1 :</span> Les participants qui prenaient le temps
-                                d'écrire sur leurs soucis ont vu leurs visites chez le médecin diminuer de moitié
-                                <sup><a href="#ref1" aria-label="Voir référence 1" className="no-underline"> *</a></sup>.
-                            </li>
-                            <li className="rounded-2xl border border-stone-200 bg-white p-6">
-                                <span className="font-medium text-stone-900">Découverte n°2 :</span> Dans une autre étude sur des personnes
-                                ayant perdu leur emploi, celles qui écrivaient sur leurs émotions avaient deux fois plus de chances de retrouver
-                                un travail que les autres
-                                <sup><a href="#ref2" aria-label="Voir référence 2" className="no-underline"> **</a></sup>.
-                            </li>
-                        </ul>
                     </div>
                 </section>
 
@@ -352,56 +509,37 @@ export default function Home() {
                 <section className="py-24 md:py-40 bg-white">
                     <div className="container">
                         <div className="text-center max-w-3xl mx-auto mb-20">
-                            <span className="text-primary/60 text-[10px] uppercase tracking-[0.3em] font-bold mb-4 block">Ton Intégrité, Notre Priorité</span>
-                            <h2 className="text-4xl md:text-6xl font-headline mb-6">Un sanctuaire où tu es le seul maître.</h2>
-                            <p className="text-stone-500 font-light text-lg">Nous avons conçu Aurum autour d'une idée simple : ton monde intérieur ne regarde que toi. Pas même nous.</p>
+                            <span className="text-primary/60 text-[10px] uppercase tracking-[0.3em] font-bold mb-4 block">{t('trust.eyebrow')}</span>
+                            <h2 className="text-4xl md:text-6xl font-headline mb-6">{t('trust.title')}</h2>
+                            <p className="text-stone-500 font-light text-lg">{t('trust.subtitle')}</p>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-20">
-                            <div className="flex flex-col items-center text-center p-8 rounded-3xl bg-stone-50 border border-stone-100 transition-all hover:shadow-lg">
-                                <div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center mb-6 text-primary">
-                                    <Lock className="w-6 h-6" />
+                            {trustCards.map((card, index) => (
+                                <div key={card.title} className="flex flex-col items-center text-center p-8 rounded-3xl bg-stone-50 border border-stone-100 transition-all hover:shadow-lg">
+                                    <div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center mb-6 text-primary">
+                                        {index === 0 && <Lock className="w-6 h-6" />}
+                                        {index === 1 && <Fingerprint className="w-6 h-6" />}
+                                        {index === 2 && <ShieldCheck className="w-6 h-6" />}
+                                    </div>
+                                    <h3 className="text-xl font-headline mb-3 text-primary">{card.title}</h3>
+                                    <p className="text-sm text-stone-500 font-light leading-relaxed mb-4">{card.body}</p>
                                 </div>
-                                <h3 className="text-xl font-headline mb-3 text-primary">Confidentialité Absolue</h3>
-                                <p className="text-sm text-stone-500 font-light leading-relaxed mb-4">
-                                    Tes pensées sont chiffrées (AES-256) directement sur ton appareil. Même nous ne pouvons pas lire tes secrets.
-                                </p>
-                                {/* Security page removed - TABULA RASA */}
-                            </div>
-
-                            <div className="flex flex-col items-center text-center p-8 rounded-3xl bg-stone-50 border border-stone-100 transition-all hover:shadow-lg">
-                                <div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center mb-6 text-primary">
-                                    <Fingerprint className="w-6 h-6" />
-                                </div>
-                                <h3 className="text-xl font-headline mb-3 text-primary">Anonymat Garanti</h3>
-                                <p className="text-sm text-stone-500 font-light leading-relaxed">
-                                    Aucune donnée personnelle n'est liée à tes écrits. Le moteur d'analyse Aurum opère en local sur ton appareil.
-                                </p>
-                            </div>
-
-                            <div className="flex flex-col items-center text-center p-8 rounded-3xl bg-stone-50 border border-stone-100 transition-all hover:shadow-lg">
-                                <div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center mb-6 text-primary">
-                                    <ShieldCheck className="w-6 h-6" />
-                                </div>
-                                <h3 className="text-xl font-headline mb-3 text-primary">Droit à l'Oubli</h3>
-                                <p className="text-sm text-stone-500 font-light leading-relaxed">
-                                    Tu restes propriétaire de tes données à 100%. Exporte tes journaux ou supprime ton compte en un clic, sans délai.
-                                </p>
-                            </div>
+                            ))}
                         </div>
 
                         <div className="bg-stone-900 rounded-[2rem] p-8 md:p-16 text-white relative overflow-hidden">
                             <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
                                 <div className="max-w-xl text-center md:text-left">
-                                    <h4 className="text-3xl font-headline mb-4">Notre Manifeste de Confiance</h4>
+                                    <h4 className="text-3xl font-headline mb-4">{t('trust.manifestoTitle')}</h4>
                                     <p className="text-stone-400 font-light leading-relaxed">
-                                        "Nous ne vendons pas de publicité. Nous ne vendons pas tes données. Nous vendons de la clarté et de la tranquillité d'esprit. Ton journal n'est pas un produit, c'est ton jardin sacré."
+                                        {t('trust.manifestoBody')}
                                     </p>
                                 </div>
                                 <div className="flex flex-col items-center gap-4">
                                     <div className="text-7xl font-headline text-primary/20 select-none">Aurum</div>
                                     <div className="w-20 h-px bg-white/20"></div>
-                                    <span className="text-[10px] uppercase tracking-[0.4em] font-medium opacity-50">Sceau de Protection</span>
+                                    <span className="text-[10px] uppercase tracking-[0.4em] font-medium opacity-50">{t('trust.seal')}</span>
                                 </div>
                             </div>
                             <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 blur-[100px] -translate-y-1/2 translate-x-1/2 rounded-full"></div>
@@ -415,10 +553,23 @@ export default function Home() {
                 {/* SECTION 7: CTA Final */}
                 <section className="container py-24 md:py-32 text-center border-t border-black/5">
                     <Button asChild size="lg" className="h-14 px-12 text-base">
-                        <Link href="/sanctuary/write">Découvrir mon premier reflet</Link>
+                        <Link href={to('/signup')}>{t('finalCta.button')}</Link>
                     </Button>
                     <div className="mt-6">
-                        <span className="text-xs text-stone-400 font-light">Accès immédiat • 100% Chiffré • Utilisation illimitée en version Beta</span>
+                        <span className="text-xs text-stone-400 font-light">{t('finalCta.note')}</span>
+                    </div>
+                    <div className="mt-10 max-w-5xl mx-auto">
+                        <p className="text-stone-600 font-light text-lg mb-6">
+                            {t('finalCta.subtitle')}
+                        </p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-left">
+                            {featureCards.map((card) => (
+                                <div key={card.title} className="rounded-2xl border border-stone-200 bg-white p-5">
+                                    <p className="text-[11px] uppercase tracking-[0.16em] text-stone-500 mb-2 font-semibold">{card.eyebrow}</p>
+                                    <p className="text-sm text-stone-600 font-light">{card.body}</p>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </section>
 
@@ -429,7 +580,7 @@ export default function Home() {
 
                 <section className="container max-w-3xl pb-24 md:pb-32">
                     <h2 className="text-4xl font-headline text-center mb-12">
-                        Questions Fréquentes
+                        {t('faqTitle')}
                     </h2>
                     <Accordion type="single" collapsible className="w-full">
                         {faqs.map((faq, index) => (
@@ -445,13 +596,19 @@ export default function Home() {
 
                 <section className="container max-w-4xl pb-24 md:pb-28">
                     <div className="rounded-2xl border border-stone-200 bg-stone-50/60 p-6 md:p-8">
-                        <h3 className="text-sm font-semibold tracking-wider uppercase text-stone-500 mb-4">Références</h3>
+                        <h3 className="text-sm font-semibold tracking-wider uppercase text-stone-500 mb-4">{t('references.title')}</h3>
                         <ul className="space-y-3 text-xs text-stone-500 leading-relaxed">
                             <li id="ref1">
-                                <strong>*</strong> Pennebaker, J. W., & Beall, S. K. (1986). <em>Confronting a traumatic event: Toward an understanding of inhibition and disease.</em> Journal of Abnormal Psychology, 95, 274-281.
+                                <strong>1</strong> Pennebaker, J. W., & Beall, S. K. (1986). <em>Confronting a traumatic event: Toward an understanding of inhibition and disease.</em> Journal of Abnormal Psychology, 95, 274-281.
                             </li>
                             <li id="ref2">
-                                <strong>**</strong> Spera, S. P., Buhrfeind, E. D., & Pennebaker, J. W. (1994). <em>Expressive writing and coping with job loss.</em> Academy of Management Journal, 37, 722-733.
+                                <strong>2</strong> Spera, S. P., Buhrfeind, E. D., & Pennebaker, J. W. (1994). <em>Expressive writing and coping with job loss.</em> Academy of Management Journal, 37, 722-733.
+                            </li>
+                            <li id="ref3">
+                                <strong>3</strong> Sohal, M., Singh, P., Dhillon, B. S., & Gill, H. S. (2022). <em>Efficacy of journaling in the management of mental illness: a systematic review and meta-analysis.</em> Family Medicine and Community Health.
+                            </li>
+                            <li id="ref4">
+                                <strong>4</strong> Yosep, I., et al. (2025). <em>Positive self talk journaling intervention to improve psychological well-being among child and adolescents in juvenile.</em> Child and Adolescent Psychiatry and Mental Health.
                             </li>
                         </ul>
                     </div>

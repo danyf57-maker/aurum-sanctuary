@@ -1,5 +1,9 @@
 
+'use client';
+
 import Link from 'next/link';
+import { useLocale } from '@/hooks/use-locale';
+import { useLocalizedHref } from '@/hooks/use-localized-href';
 
 const Logo = (props: React.SVGProps<SVGSVGElement>) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props}>
@@ -9,6 +13,10 @@ const Logo = (props: React.SVGProps<SVGSVGElement>) => (
 )
 
 export function Footer() {
+  const locale = useLocale();
+  const isFr = locale === 'fr';
+  const to = useLocalizedHref();
+
   return (
     <footer className="bg-stone-100 dark:bg-stone-900 border-t border-stone-200 dark:border-stone-800 pb-[env(safe-area-inset-bottom)]">
       <div className="container max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
@@ -18,43 +26,47 @@ export function Footer() {
               <Logo className="h-8 w-8 text-amber-600" />
               <span className="font-bold text-xl font-headline">Aurum</span>
             </div>
-            <p className="text-muted-foreground text-sm">Le silence qui t'écoute.</p>
+            <p className="text-muted-foreground text-sm">
+              {isFr ? "Le silence qui vous écoute." : "The silence that listens."}
+            </p>
           </div>
           <div className="md:col-span-3 grid grid-cols-2 sm:grid-cols-4 gap-8">
             <div>
-              <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Ressources</h3>
+              <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">
+                {isFr ? "Ressources" : "Resources"}
+              </h3>
               <ul className="mt-4 space-y-2">
-                <li><Link href="/blog" className="text-sm text-muted-foreground hover:text-foreground">Le Journal d'Alma</Link></li>
-                <li><Link href="/sanctuary/chat" className="text-sm text-muted-foreground hover:text-foreground">Discuter avec Aurum</Link></li>
-                <li><Link href="/#manifesto" className="text-sm text-muted-foreground hover:text-foreground">Notre Manifeste</Link></li>
-                <li><Link href="/sources-citations" className="text-sm text-muted-foreground hover:text-foreground">Sources des citations</Link></li>
+                <li><Link href={to('/sanctuary/chat')} className="text-sm text-muted-foreground hover:text-foreground">{isFr ? "Discuter avec Aurum" : "Chat with Aurum"}</Link></li>
+                <li><Link href={to('/sources-citations')} className="text-sm text-muted-foreground hover:text-foreground">{isFr ? "Sources des citations" : "Quote sources"}</Link></li>
               </ul>
             </div>
             <div>
-              <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Offres</h3>
+              <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">{isFr ? "Offres" : "Plans"}</h3>
               <ul className="mt-4 space-y-2">
-                <li><Link href="/pricing" className="text-sm text-muted-foreground hover:text-foreground">Abonnements</Link></li>
+                <li><Link href={to('/pricing')} className="text-sm text-muted-foreground hover:text-foreground">{isFr ? "Abonnements" : "Pricing"}</Link></li>
               </ul>
             </div>
             <div>
-              <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Légal</h3>
+              <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">{isFr ? "Légal" : "Legal"}</h3>
               <ul className="mt-4 space-y-2">
-                <li><Link href="/terms" className="text-sm text-muted-foreground hover:text-foreground">Conditions d'Utilisation</Link></li>
-                <li><Link href="/privacy" className="text-sm text-muted-foreground hover:text-foreground">Politique de Confidentialité</Link></li>
+                <li><Link href={to('/terms')} className="text-sm text-muted-foreground hover:text-foreground">{isFr ? "Conditions d'Utilisation" : "Terms of Use"}</Link></li>
+                <li><Link href={to('/privacy')} className="text-sm text-muted-foreground hover:text-foreground">{isFr ? "Politique de Confidentialité" : "Privacy Policy"}</Link></li>
+                <li><a href="mailto:contact@aurumdiary.com" className="text-sm text-muted-foreground hover:text-foreground">contact@aurumdiary.com</a></li>
               </ul>
             </div>
             <div>
-              <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">Compte</h3>
+              <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">{isFr ? "Compte" : "Account"}</h3>
               <ul className="mt-4 space-y-2">
-                <li><Link href="/dashboard" className="text-sm text-muted-foreground hover:text-foreground">Tableau de Bord</Link></li>
-                <li><Link href="/settings" className="text-sm text-muted-foreground hover:text-foreground">Paramètres & Données</Link></li>
+                <li><Link href={to('/dashboard')} className="text-sm text-muted-foreground hover:text-foreground">{isFr ? "Tableau de Bord" : "Dashboard"}</Link></li>
+                <li><Link href={to('/settings')} className="text-sm text-muted-foreground hover:text-foreground">{isFr ? "Paramètres & Données" : "Settings & Data"}</Link></li>
               </ul>
             </div>
           </div>
         </div>
         <div className="mt-12 border-t border-stone-200 dark:border-stone-800 pt-8 flex flex-col sm:flex-row justify-between items-center">
-          <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} Aurum. Un espace pour toi.</p>
-          <p className="text-xs text-muted-foreground/50 mt-4 sm:mt-0">Application fictive à but de démonstration.</p>
+          <p className="text-sm text-muted-foreground">
+            &copy; {new Date().getFullYear()} Aurum. {isFr ? "Un espace pour vous." : "A space for you."}
+          </p>
         </div>
       </div>
     </footer>

@@ -8,6 +8,7 @@
  */
 
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 
 interface ReflectionResponseProps {
@@ -21,6 +22,7 @@ export function ReflectionResponse({
   patternsUsed = 0,
   className,
 }: ReflectionResponseProps) {
+  const t = useTranslations("sanctuary.reflectionResponse");
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -45,7 +47,7 @@ export function ReflectionResponse({
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">
           <h3 className="font-headline text-lg text-amber-800 tracking-wide uppercase">
-            Réflexion d&apos;Aurum
+            {t("title")}
           </h3>
         </div>
 
@@ -60,9 +62,7 @@ export function ReflectionResponse({
         {patternsUsed > 0 && (
           <div className="mt-6 pt-6 border-t border-amber-200/50">
             <p className="text-xs text-amber-600/70 italic">
-              Ce reflet s&apos;appuie sur {patternsUsed} thème
-              {patternsUsed > 1 ? "s" : ""} que tu as déjà exploré
-              {patternsUsed > 1 ? "s" : ""}.
+              {t("patternsUsed", { count: patternsUsed })}
             </p>
           </div>
         )}

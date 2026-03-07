@@ -9,7 +9,9 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe/server';
-import { auth } from '@/lib/firebase/admin';
+import { auth, firestore as db } from '@/lib/firebase/admin';
+import { logger } from '@/lib/logger/safe';
+import { rateLimit, RateLimitPresets } from '@/lib/rate-limit';
 
 export async function POST(req: NextRequest) {
     try {
@@ -29,7 +31,7 @@ export async function POST(req: NextRequest) {
         try {
             decodedToken = await auth.verifyIdToken(token);
         } catch (error) {
-            console.error('Token verification failed:', error);
+            logger.errorSafe('Token verification failed', error);
             return NextResponse.json(
                 { error: 'Unauthorized - Invalid token' },
                 { status: 401 }
@@ -46,30 +48,75 @@ export async function POST(req: NextRequest) {
             );
         }
 
+        // 1b. Rate limit checkout-session creation to reduce abuse/fraud attempts
+        const checkoutRateLimit = await rateLimit(RateLimitPresets.auth(`checkout:${userId}`));
+        if (!checkoutRateLimit.success) {
+            return NextResponse.json(
+                { error: 'Too many checkout attempts. Please try again in a minute.' },
+                { status: 429 }
+            );
+        }
+
+        const body = await req.json().catch(() => ({}));
+        const requestedPriceId = typeof body?.priceId === 'string' ? body.priceId.trim() : '';
+
         // 2. Validate environment variables
-        if (!process.env.STRIPE_PRICE_ID) {
-            console.error('STRIPE_PRICE_ID not configured');
+        const monthlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY || process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO;
+        const yearlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_YEARLY || process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PREMIUM;
+        const allowedPriceIds = [
+            process.env.STRIPE_PRICE_ID, // legacy single-price fallback
+            monthlyPriceId,
+            yearlyPriceId,
+        ].filter((value): value is string => !!value && !value.includes('xxx'));
+
+        if (allowedPriceIds.length === 0) {
+            logger.errorSafe('No Stripe price IDs configured');
             return NextResponse.json(
                 { error: 'Stripe configuration error' },
                 { status: 500 }
             );
         }
 
+        const selectedPriceId = requestedPriceId || allowedPriceIds[0];
+        if (!allowedPriceIds.includes(selectedPriceId)) {
+            return NextResponse.json(
+                { error: 'Invalid price ID' },
+                { status: 400 }
+            );
+        }
+
         if (!process.env.NEXT_PUBLIC_APP_URL) {
-            console.error('NEXT_PUBLIC_APP_URL not configured');
+            logger.errorSafe('NEXT_PUBLIC_APP_URL not configured');
             return NextResponse.json(
                 { error: 'App configuration error' },
                 { status: 500 }
             );
         }
 
-        // 3. Create Checkout Session
+        // 3. Read billing state before creating checkout
+        const userRef = db.doc(`users/${userId}`);
+        const userSnap = await userRef.get();
+        const userData = (userSnap.data() || {}) as {
+            subscriptionStatus?: string;
+            subscriptionId?: string;
+        };
+
+        const hasStripeSubscription = typeof userData.subscriptionId === 'string' && userData.subscriptionId.length > 0;
+        const stripeManagedStatuses = new Set(['active', 'trialing', 'past_due']);
+        if (hasStripeSubscription && stripeManagedStatuses.has(userData.subscriptionStatus || '')) {
+            return NextResponse.json(
+                { error: 'Subscription already active' },
+                { status: 409 }
+            );
+        }
+
+        // 4. Create Checkout Session
         const session = await stripe.checkout.sessions.create({
             customer_email: email,
             payment_method_types: ['card'],
             line_items: [
                 {
-                    price: process.env.STRIPE_PRICE_ID,
+                    price: selectedPriceId,
                     quantity: 1,
                 },
             ],
@@ -80,19 +127,36 @@ export async function POST(req: NextRequest) {
                 userId,
                 firebaseUid: userId,
             },
+            subscription_data: {
+                metadata: {
+                    firebaseUid: userId,
+                },
+            },
             allow_promotion_codes: true, // Allow discount codes
             billing_address_collection: 'auto',
         });
 
-        console.log(`✅ Checkout session created for user ${userId}: ${session.id}`);
+        await userRef.set({
+            billingPhase: 'checkout_started',
+            trialConfiguredDays: 0,
+            updatedAt: new Date(),
+        }, { merge: true });
+
+        logger.infoSafe('Checkout session created', {
+            userId,
+            checkoutSessionId: session.id,
+        });
 
         return NextResponse.json({
             sessionId: session.id,
             url: session.url,
+            trialApplied: false,
+            trialDays: 0,
+            priceId: selectedPriceId,
         });
 
     } catch (error: any) {
-        console.error('Error creating checkout session:', error);
+        logger.errorSafe('Error creating checkout session', error);
 
         // Handle Stripe-specific errors
         if (error.type === 'StripeCardError') {

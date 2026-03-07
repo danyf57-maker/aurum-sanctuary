@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { rateLimit, RateLimitPresets } from '@/lib/rate-limit';
 import { logger } from '@/lib/logger/safe';
+import { requireUserIdFromRequest, UserGuardError } from '@/lib/api/require-user-id';
 
 type InputEntry = {
   id: string;
@@ -35,11 +36,9 @@ function fallbackDigest(entries: InputEntry[]): string {
 
 export async function POST(request: NextRequest) {
   try {
-    const { entries, userId } = (await request.json()) as { entries?: InputEntry[]; userId?: string };
-
-    if (!userId) {
-      return NextResponse.json({ error: 'userId requis' }, { status: 400 });
-    }
+    const body = (await request.json()) as { entries?: InputEntry[]; userId?: string; idToken?: string };
+    const userId = await requireUserIdFromRequest(request, body);
+    const { entries } = body;
 
     const rate = await rateLimit(RateLimitPresets.generateDigest(userId));
     if (!rate.success) {
@@ -89,6 +88,9 @@ export async function POST(request: NextRequest) {
     const digest = data?.choices?.[0]?.message?.content;
     return NextResponse.json({ digest: digest || fallbackDigest(safeEntries) });
   } catch (error) {
+    if (error instanceof UserGuardError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     logger.errorSafe('generate-digest failed', error);
     return NextResponse.json({ error: 'Erreur interne digest' }, { status: 500 });
   }

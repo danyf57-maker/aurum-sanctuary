@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Sparkles, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useLocalizedHref } from "@/hooks/use-localized-href";
 import { useLocale } from "@/hooks/use-locale";
 
 interface QuizData {
@@ -74,6 +75,7 @@ const QUIZ_STORAGE_KEY = "aurum-quiz-data";
 const QUIZ_SHOWN_KEY = "aurum-quiz-shown";
 
 export default function QuizResultModal() {
+  const to = useLocalizedHref();
   const locale = useLocale();
   const isFr = locale === "fr";
   const [isOpen, setIsOpen] = useState(false);
@@ -122,7 +124,7 @@ export default function QuizResultModal() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-stone-900/60 p-4 backdrop-blur-md"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-md"
           onClick={handleClose}
         >
           <motion.div
@@ -130,22 +132,22 @@ export default function QuizResultModal() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="relative w-full max-w-lg overflow-hidden rounded-[2.5rem] border border-stone-200 bg-white p-8 shadow-2xl md:p-12"
+            className="bg-white rounded-[2.5rem] p-8 md:p-12 max-w-lg w-full relative shadow-2xl border border-stone-200 overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             <button
               onClick={handleDismiss}
-              className="absolute right-6 top-6 z-10 p-2 text-stone-400 transition-colors hover:text-stone-900"
+              className="absolute top-6 right-6 p-2 text-stone-400 hover:text-stone-900 transition-colors z-10"
             >
-              <X className="h-5 w-5" />
+              <X className="w-5 h-5" />
             </button>
 
-            <div className="relative z-10 text-center">
+            <div className="text-center relative z-10">
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-                className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10"
+                className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6"
               >
                 <span className="text-4xl">{profile.icon}</span>
               </motion.div>
@@ -154,9 +156,9 @@ export default function QuizResultModal() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="mb-6 inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full mb-6"
               >
-                <Sparkles className="h-4 w-4 text-primary" />
+                <Sparkles className="w-4 h-4 text-primary" />
                 <span className="text-xs font-semibold uppercase tracking-wider text-primary">
                   {isFr ? "Votre profil de réflexion" : "Your reflection profile"}
                 </span>
@@ -166,7 +168,7 @@ export default function QuizResultModal() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
-                className="mb-3 font-headline text-4xl text-stone-900 md:text-5xl"
+                className="text-4xl md:text-5xl font-headline mb-3 text-stone-900"
               >
                 {profile.name}
               </motion.h2>
@@ -175,7 +177,7 @@ export default function QuizResultModal() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
-                className="mb-6 text-lg font-medium text-primary"
+                className="text-primary text-lg font-medium mb-6"
               >
                 {profile.tagline}
               </motion.p>
@@ -184,7 +186,7 @@ export default function QuizResultModal() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6 }}
-                className="mb-10 text-lg font-light leading-relaxed text-stone-600"
+                className="text-stone-600 text-lg mb-10 leading-relaxed font-light"
               >
                 {profile.description}
               </motion.p>
@@ -198,16 +200,16 @@ export default function QuizResultModal() {
                 <Button
                   asChild
                   size="lg"
-                  className="h-14 rounded-2xl px-8 text-lg shadow-lg transition-all hover:shadow-xl"
+                  className="h-14 px-8 text-lg rounded-2xl shadow-lg hover:shadow-xl transition-all"
                 >
-                  <Link href="/sanctuary/write">
+                  <Link href={to("/sanctuary/write")}>
                     {isFr ? "Commencer mon premier journal" : "Start my first journal"}
-                    <ArrowRight className="ml-2 h-5 w-5" />
+                    <ArrowRight className="w-5 h-5 ml-2" />
                   </Link>
                 </Button>
                 <button
                   onClick={handleDismiss}
-                  className="text-sm text-stone-400 transition-colors hover:text-stone-600"
+                  className="text-stone-400 text-sm hover:text-stone-600 transition-colors"
                 >
                   {isFr ? "Plus tard" : "Maybe later"}
                 </button>
@@ -215,7 +217,7 @@ export default function QuizResultModal() {
             </div>
 
             <div
-              className={`pointer-events-none absolute left-1/2 top-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br ${profile.color} opacity-40 blur-[100px]`}
+              className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-br ${profile.color} blur-[100px] rounded-full opacity-40 pointer-events-none`}
             />
           </motion.div>
         </motion.div>

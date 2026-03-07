@@ -1,90 +1,126 @@
-/**
- * Privacy Policy Page
- * 
- * Explains how data is handled, encrypted, and processed according to GDPR requirements.
- */
+import Link from "next/link";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { getRequestLocale } from "@/lib/locale-server";
+import type { Metadata } from "next";
 
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+const copy = {
+  fr: {
+    title: "Politique de Confidentialité",
+    updated: "Dernière mise à jour : 29 janvier 2026",
+    back: "Retour à aurumdiary.com",
+    i1t: "1. Introduction",
+    i1b:
+      "Cette politique décrit comment Aurum collecte, utilise et protège vos données dans une logique privacy-by-design.",
+    i2t: "2. Données collectées",
+    i2a: "Données de compte: email et informations de profil.",
+    i2b: "Entrées de journal: stockées de façon sécurisée.",
+    i2c: "Métadonnées d'usage: fréquence, durée, navigation produit.",
+    i3t: "3. Utilisation des données",
+    i3b:
+      "Les données servent à fournir le service, sécuriser votre compte, et améliorer la qualité des fonctionnalités.",
+    i4t: "4. Sécurité",
+    i4b:
+      "Nous appliquons chiffrement en transit, contrôles d'accès stricts et journalisation de sécurité.",
+    i5t: "5. Vos droits",
+    i5b:
+      "Vous pouvez accéder, corriger, exporter et supprimer vos données conformément au RGPD.",
+  },
+  en: {
+    title: "Privacy Policy",
+    updated: "Last updated: January 29, 2026",
+    back: "Back to aurumdiary.com",
+    i1t: "1. Introduction",
+    i1b:
+      "This policy explains how Aurum collects, uses, and protects your data under a privacy-by-design model.",
+    i2t: "2. Data We Collect",
+    i2a: "Account data: email and profile information.",
+    i2b: "Journal entries: stored securely.",
+    i2c: "Usage metadata: frequency, session duration, product navigation.",
+    i3t: "3. How We Use Data",
+    i3b:
+      "Data is used to provide the service, secure your account, and improve feature quality.",
+    i4t: "4. Security",
+    i4b:
+      "We apply encryption in transit, strict access controls, and security logging.",
+    i5t: "5. Your Rights",
+    i5b:
+      "You can access, correct, export, and delete your data in line with GDPR requirements.",
+  },
+} as const;
 
-export default function PrivacyPage() {
-    const lastUpdated = "29 Janvier 2026";
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getRequestLocale();
+  const isFr = locale === "fr";
+  const title = isFr ? "Politique de Confidentialité | Aurum" : "Privacy Policy | Aurum";
+  const description = isFr
+    ? "Comment Aurum collecte, protège et traite vos données selon une approche privacy-by-design."
+    : "How Aurum collects, protects, and processes your data with a privacy-by-design approach.";
+  const canonical = "https://aurumdiary.com/privacy";
 
-    return (
-        <div className="container mx-auto py-12 px-4 max-w-4xl">
-            <Card className="border-none shadow-none bg-transparent">
-                <CardHeader className="text-center">
-                    <CardTitle className="text-4xl font-serif">Politique de Confidentialité</CardTitle>
-                    <p className="text-muted-foreground mt-2">Dernière mise à jour : {lastUpdated}</p>
-                </CardHeader>
-                <CardContent className="prose prose-slate dark:prose-invert max-w-none mt-8">
-                    <section>
-                        <h2 className="text-2xl font-serif mt-6">1. Introduction</h2>
-                        <p>
-                            Chez Aurum Sanctuary, nous pensons que la santé mentale nécessite une confidentialité absolue. Cette politique explique comment nous protégeons vos données grâce à une architecture "Privacy-by-Design".
-                        </p>
-                    </section>
+  return {
+    title,
+    description,
+    alternates: { canonical },
+    openGraph: {
+      title,
+      description,
+      url: canonical,
+      type: "article",
+      locale: isFr ? "fr_FR" : "en_US",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/og-image.png"],
+    },
+  };
+}
 
-                    <section>
-                        <h2 className="text-2xl font-serif mt-6">2. Données Collectées</h2>
-                        <ul>
-                            <li><strong>Données de Compte :</strong> Email et informations de profil (stockées de manière sécurisée via Firebase).</li>
-                            <li><strong>Entrées de Journal :</strong> Chiffrées sur votre appareil (Client-side Encryption). Nous n'avons pas accès au contenu en clair de manière persistante.</li>
-                            <li><strong>Métadonnées :</strong> Fréquence des entrées, durée des sessions (utilisées pour les statistiques "Lite").</li>
-                        </ul>
-                    </section>
+export default async function PrivacyPage() {
+  const locale = await getRequestLocale();
+  const t = copy[locale];
 
-                    <section>
-                        <h2 className="text-2xl font-serif mt-6">3. Comment nous utilisons vos données</h2>
-                        <p>
-                            Vos données sont utilisées exclusivement pour :
-                        </p>
-                        <ul>
-                            <li>Fournir et améliorer les fonctionnalités de l'Application.</li>
-                            <li>Générer des réflexions personnalisées via le moteur Aurum (traitement éphémère).</li>
-                            <li>Gérer votre abonnement et vos préférences.</li>
-                        </ul>
-                    </section>
-
-                    <section>
-                        <h2 className="text-2xl font-serif mt-6">4. Architecture de Sécurité</h2>
-                        <p>
-                            Notre système repose sur trois piliers :
-                        </p>
-                        <ol>
-                            <li><strong>Chiffrement Fort :</strong> Utilisation d'algorithmes standard de l'industrie (AES-256).</li>
-                            <li><strong>Admin-Blind :</strong> Les administrateurs système ne peuvent pas déchiffrer votre contenu. Les clés de déchiffrement sont gérées par des services de gestion de clés (KMS) avec des politiques d'accès strictes.</li>
-                            <li><strong>Traitement Éphémère :</strong> Lors de l'analyse par le moteur Aurum, le texte est déchiffré uniquement en mémoire vive (RAM) et n'est jamais écrit sur disque en clair.</li>
-                        </ol>
-                    </section>
-
-                    <section>
-                        <h2 className="text-2xl font-serif mt-6">5. Vos Droits (RGPD)</h2>
-                        <p>
-                            Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez des droits suivants :
-                        </p>
-                        <ul>
-                            <li><strong>Droit d'accès :</strong> Vous pouvez consulter vos données à tout moment.</li>
-                            <li><strong>Droit de rectification :</strong> Vous pouvez modifier vos informations.</li>
-                            <li><strong>Droit à l'effacement :</strong> Vous pouvez supprimer votre compte et toutes les données associées instantanément.</li>
-                            <li><strong>Portabilité :</strong> Vous pouvez exporter vos données dans un format structuré (Epic 7).</li>
-                        </ul>
-                    </section>
-
-                    <section>
-                        <h2 className="text-2xl font-serif mt-6">6. Conservation des données</h2>
-                        <p>
-                            Nous conservons vos données tant que votre compte est actif. En cas de suppression de compte, toutes les données chiffrées et métadonnées associées sont définitivement supprimées de nos bases de données actives sous 30 jours (sauvegardes comprises).
-                        </p>
-                    </section>
-
-                    <section className="mt-12 p-6 bg-slate-100 dark:bg-slate-900 rounded-lg">
-                        <p className="text-sm italic">
-                            Nous ne vendons JAMAIS vos données personnelles à des tiers. Aurum Sanctuary est financé exclusivement par les abonnements des utilisateurs.
-                        </p>
-                    </section>
-                </CardContent>
-            </Card>
-        </div>
-    );
+  return (
+    <div className="container mx-auto py-12 px-4 max-w-4xl">
+      <Card className="border-none shadow-none bg-transparent">
+        <CardHeader className="text-center">
+          <CardTitle className="text-4xl font-serif">{t.title}</CardTitle>
+          <p className="text-muted-foreground mt-2">{t.updated}</p>
+          <div className="mt-6">
+            <Button asChild variant="outline">
+              <Link href="https://aurumdiary.com">{t.back}</Link>
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="prose prose-slate dark:prose-invert max-w-none mt-8">
+          <section>
+            <h2 className="text-2xl font-serif mt-6">{t.i1t}</h2>
+            <p>{t.i1b}</p>
+          </section>
+          <section>
+            <h2 className="text-2xl font-serif mt-6">{t.i2t}</h2>
+            <ul>
+              <li>{t.i2a}</li>
+              <li>{t.i2b}</li>
+              <li>{t.i2c}</li>
+            </ul>
+          </section>
+          <section>
+            <h2 className="text-2xl font-serif mt-6">{t.i3t}</h2>
+            <p>{t.i3b}</p>
+          </section>
+          <section>
+            <h2 className="text-2xl font-serif mt-6">{t.i4t}</h2>
+            <p>{t.i4b}</p>
+          </section>
+          <section>
+            <h2 className="text-2xl font-serif mt-6">{t.i5t}</h2>
+            <p>{t.i5b}</p>
+          </section>
+        </CardContent>
+      </Card>
+    </div>
+  );
 }

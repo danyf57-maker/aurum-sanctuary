@@ -8,10 +8,9 @@ import { db } from '@/lib/firebase/admin';
 import Stripe from 'stripe';
 import { logger } from '@/lib/logger/safe';
 
-// Les ID de prix sont maintenant chargés depuis les variables d'environnement.
-// Assurez-vous qu'elles sont définies dans votre fichier .env
-const PRICE_ID_PRO = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO;
-const PRICE_ID_PREMIUM = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PREMIUM;
+// Preferred naming; fallback keeps backward compatibility with existing env vars.
+const PRICE_ID_MONTHLY = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY || process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO;
+const PRICE_ID_YEARLY = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_YEARLY || process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PREMIUM;
 
 // Use mock key for build time, real key for runtime
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || 'sk_test_mock';
@@ -70,11 +69,11 @@ export async function createCheckoutSession(formData: FormData) {
     const priceId = formData.get('priceId') as string;
     
     // Vérification que les ID de prix sont bien configurés
-    if (!PRICE_ID_PRO || !PRICE_ID_PREMIUM || PRICE_ID_PRO.includes('xxx') || PRICE_ID_PREMIUM.includes('xxx')) {
+    if (!PRICE_ID_MONTHLY || !PRICE_ID_YEARLY || PRICE_ID_MONTHLY.includes('xxx') || PRICE_ID_YEARLY.includes('xxx')) {
         throw new Error("Les ID de prix Stripe ne sont pas correctement configurés dans les variables d'environnement. Veuillez vérifier votre fichier .env.");
     }
     
-    if (!priceId || ![PRICE_ID_PRO, PRICE_ID_PREMIUM].includes(priceId)) {
+    if (!priceId || ![PRICE_ID_MONTHLY, PRICE_ID_YEARLY].includes(priceId)) {
         throw new Error("ID de plan invalide.");
     }
     

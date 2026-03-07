@@ -252,12 +252,12 @@ const LandingV2 = () => {
 
       <footer className="flex flex-col items-center gap-6 px-6 py-20 text-xs uppercase tracking-[0.4em] text-stone-500 bg-[#F5F5DC]">
         <div className="flex gap-12 items-center">
-            <a href="#" className="hover:text-stone-900 transition">Terms</a>
+            <a href="#" className="hover:text-stone-900 transition">Conditions</a>
             <a href="#" className="hover:text-stone-900 transition font-bold">AURUM</a>
-            <a href="#" className="hover:text-stone-900 transition">Privacy</a>
+            <a href="#" className="hover:text-stone-900 transition">Confidentialité</a>
         </div>
         <span className="flex items-center gap-2 text-stone-400 opacity-50">
-          Crafted with absolute calm.
+          Conçu avec un calme absolu.
         </span>
       </footer>
     </div>

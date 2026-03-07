@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { rateLimit, RateLimitPresets } from '@/lib/rate-limit';
 import { logger } from '@/lib/logger/safe';
-import { db } from '@/lib/firebase/admin';
-import { FieldValue } from 'firebase-admin/firestore';
+import { requireUserIdFromRequest, UserGuardError } from '@/lib/api/require-user-id';
+
+export const runtime = 'nodejs';
 
 type InputEntry = {
   id: string;
@@ -85,14 +86,13 @@ function fallbackAnalysis(entries: InputEntry[]): RyffScores {
 
 export async function POST(request: NextRequest) {
   try {
-    const { entries, userId } = (await request.json()) as {
+    const body = (await request.json()) as {
       entries?: InputEntry[];
       userId?: string;
+      idToken?: string;
     };
-
-    if (!userId) {
-      return NextResponse.json({ error: 'userId requis' }, { status: 400 });
-    }
+    const userId = await requireUserIdFromRequest(request, body);
+    const { entries } = body;
 
     const rate = await rateLimit(RateLimitPresets.analyzeWellbeing(userId));
     if (!rate.success) {
@@ -198,6 +198,9 @@ ${JSON.stringify(safeEntries)}`;
     await writeScore(userId, clamped, safeEntries.length);
     return NextResponse.json(formatResponse(clamped, safeEntries.length));
   } catch (error) {
+    if (error instanceof UserGuardError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     logger.errorSafe('analyze-wellbeing failed', error);
     return NextResponse.json({ error: 'Erreur interne analyse bien-être' }, { status: 500 });
   }
@@ -205,6 +208,11 @@ ${JSON.stringify(safeEntries)}`;
 
 async function writeScore(userId: string, scores: RyffScores, entryCount: number) {
   try {
+    const [{ db }, { FieldValue }] = await Promise.all([
+      import('@/lib/firebase/admin-db'),
+      import('firebase-admin/firestore'),
+    ]);
+
     await db
       .collection('users')
       .doc(userId)

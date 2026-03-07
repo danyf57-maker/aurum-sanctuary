@@ -1,9 +1,9 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { Timestamp } from 'firebase-admin/firestore';
 import { auth, db } from '@/lib/firebase/admin';
 import { TRACKED_EVENTS, type TrackedEventName } from '@/lib/analytics/types';
+import { logger } from '@/lib/logger/safe';
 
 const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_ID;
 const GA_API_SECRET = process.env.GA_MEASUREMENT_PROTOCOL_API_SECRET;
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
       userAgent: request.headers.get('user-agent') ?? null,
       referer: request.headers.get('referer') ?? null,
       source: 'client',
-      occurredAt: Timestamp.now(),
+      occurredAt: new Date(),
     });
 
     if (!GA_TRACKING_ID || !GA_API_SECRET || GA_API_SECRET === 'your_secret_here') {
@@ -75,8 +75,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true });
 
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    console.error('Error in /api/track:', message);
-    return NextResponse.json({ message: 'Error tracking event', error: message }, { status: 500 });
+    logger.errorSafe('Error in /api/track', error);
+    return NextResponse.json({ message: 'Error tracking event' }, { status: 500 });
   }
 }

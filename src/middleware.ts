@@ -1,53 +1,143 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import {
+  LOCALE_COOKIE_NAME,
+  type Locale,
+  normalizeLocale,
+  resolveLocaleFromAcceptLanguage,
+  resolveLocaleFromCountry,
+} from '@/lib/locale';
+import {
+  detectPathLocale,
+  stripLocalePrefix,
+  toLocalePath,
+} from '@/i18n/routing';
 
-/**
- * Middleware for Route Protection
- * 
- * Handles redirects based on authentication state stored in 'session-token' cookie.
- */
-
-// Define routes that require authentication
-// Note: /dashboard uses client-side auth (useAuth hook), so it's not in this list
-const protectedRoutes = ['/settings', '/profile', '/journal'];
-
-// Define routes that should redirect to dashboard if already authenticated
+const protectedRoutes = ['/admin'];
 const authRoutes = ['/login', '/signup', '/forgot-password'];
 
 export function middleware(request: NextRequest) {
-    const { nextUrl, cookies } = request;
-    const sessionToken = cookies.get('__session')?.value;
+  const { nextUrl, cookies } = request;
+  const pathname = nextUrl.pathname;
+  const pathLocale = detectPathLocale(pathname);
+  const normalizedPath = stripLocalePrefix(pathname);
 
-    const isProtectedRoute = protectedRoutes.some(route => nextUrl.pathname.startsWith(route));
-    const isAuthRoute = authRoutes.some(route => nextUrl.pathname.startsWith(route));
+  const forcedLang = normalizeLocale(nextUrl.searchParams.get('lang'));
+  const localeFromCookie = normalizeLocale(cookies.get(LOCALE_COOKIE_NAME)?.value);
+  const country =
+    request.headers.get('x-vercel-ip-country') ||
+    request.headers.get('cf-ipcountry') ||
+    request.headers.get('x-country-code');
+  const localeFromCountry = resolveLocaleFromCountry(country);
+  const localeFromAccept = resolveLocaleFromAcceptLanguage(
+    request.headers.get('accept-language')
+  );
 
-    // 1. Redirect unauthenticated users from protected routes to login
-    if (isProtectedRoute && !sessionToken) {
-        const loginUrl = new URL('/login', request.url);
-        // Remember the intended destination for after login
-        loginUrl.searchParams.set('callbackUrl', nextUrl.pathname);
-        return NextResponse.redirect(loginUrl);
-    }
+  const resolvedLocale: Locale =
+    forcedLang || pathLocale || localeFromCookie || localeFromCountry || localeFromAccept;
 
-    // 2. Redirect authenticated users from auth routes (login/signup) to dashboard
-    if (isAuthRoute && sessionToken) {
-        return NextResponse.redirect(new URL('/dashboard', request.url));
-    }
+  // Canonical EN routing: /en/* -> /*
+  if (pathLocale === 'en') {
+    const url = nextUrl.clone();
+    url.pathname = normalizedPath;
+    const response = NextResponse.redirect(url);
+    setLocaleCookie(response, 'en');
+    return response;
+  }
 
-    return NextResponse.next();
+  // Explicit language overrides via ?lang=
+  if (forcedLang === 'fr' && pathLocale !== 'fr') {
+    const url = nextUrl.clone();
+    url.pathname = toLocalePath(normalizedPath, 'fr');
+    const response = NextResponse.redirect(url);
+    setLocaleCookie(response, 'fr');
+    return response;
+  }
+
+  if (forcedLang === 'en' && pathLocale === 'fr') {
+    const url = nextUrl.clone();
+    url.pathname = normalizedPath;
+    const response = NextResponse.redirect(url);
+    setLocaleCookie(response, 'en');
+    return response;
+  }
+
+  // Final routing rule:
+  // - EN => /
+  // - FR => /fr/*
+  if (!pathLocale && resolvedLocale === 'fr') {
+    const url = nextUrl.clone();
+    url.pathname = toLocalePath(normalizedPath, 'fr');
+    const response = NextResponse.redirect(url);
+    setLocaleCookie(response, 'fr');
+    return response;
+  }
+
+  const sessionToken = cookies.get('__session')?.value;
+  const hasLikelySession = isLikelyFirebaseSessionCookie(sessionToken);
+  const localeForPath: Locale = pathLocale || resolvedLocale;
+  const localePrefix = localeForPath === 'fr' ? '/fr' : '';
+
+  const isProtectedRoute = protectedRoutes.some((route) => normalizedPath.startsWith(route));
+  const isAuthRoute = authRoutes.some((route) => normalizedPath.startsWith(route));
+
+  if (isProtectedRoute && !hasLikelySession) {
+    const loginUrl = new URL(`${localePrefix}/login`, request.url);
+    loginUrl.searchParams.set('callbackUrl', pathname);
+    const response = NextResponse.redirect(loginUrl);
+    setLocaleCookie(response, localeForPath);
+    return response;
+  }
+
+  if (isAuthRoute && hasLikelySession) {
+    const dashboardUrl = new URL(`${localePrefix}/dashboard`, request.url);
+    const response = NextResponse.redirect(dashboardUrl);
+    setLocaleCookie(response, localeForPath);
+    return response;
+  }
+
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set('x-aurum-locale', localeForPath);
+
+  const response =
+    pathLocale === 'fr'
+      ? (() => {
+          const rewriteUrl = nextUrl.clone();
+          rewriteUrl.pathname = normalizedPath;
+          return NextResponse.rewrite(rewriteUrl, {
+            request: {
+              headers: requestHeaders,
+            },
+          });
+        })()
+      : NextResponse.next({
+          request: {
+            headers: requestHeaders,
+          },
+        });
+  setLocaleCookie(response, localeForPath);
+  return response;
 }
 
-// See "Matching Paths" below to learn more
+function setLocaleCookie(response: NextResponse, locale: Locale) {
+  response.cookies.set(LOCALE_COOKIE_NAME, locale, {
+    path: '/',
+    sameSite: 'lax',
+    maxAge: 60 * 60 * 24 * 365,
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: false,
+  });
+}
+
+function isLikelyFirebaseSessionCookie(cookieValue?: string): boolean {
+  if (!cookieValue) return false;
+  const segments = cookieValue.split('.');
+  if (segments.length !== 3) return false;
+  return segments.every((segment) => segment.length > 0);
+}
+
 export const config = {
-    matcher: [
-        /*
-         * Match all request paths except for the ones starting with:
-         * - api (API routes)
-         * - _next/static (static files)
-         * - _next/image (image optimization files)
-         * - favicon.ico (favicon file)
-         * - images (public images)
-         */
-        '/((?!api|_next/static|_next/image|favicon.ico|images|terms|privacy).*)',
-    ],
+  matcher: [
+    '/((?!api|_next/static|_next/image|favicon.ico|images).*)',
+  ],
 };

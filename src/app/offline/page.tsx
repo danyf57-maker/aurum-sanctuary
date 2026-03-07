@@ -3,10 +3,15 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { WifiOff } from 'lucide-react';
+import { useLocale } from '@/hooks/use-locale';
+import { localizeHref } from '@/lib/i18n/path';
 
 // Metadata removed for Client Component compatibility
 
 export default function OfflinePage() {
+    const locale = useLocale();
+    const to = (href: string) => localizeHref(href, locale);
+
     return (
         <div className="flex h-[calc(100vh-4rem)] flex-col items-center justify-center space-y-4 px-4 text-center">
             <div className="rounded-full bg-stone-100 p-4 dark:bg-stone-900">
@@ -19,8 +24,8 @@ export default function OfflinePage() {
             </p>
             <div className="flex items-center justify-center space-x-4">
                 <Button asChild>
-                    <Link href="/dashboard">
-                        Retour au Dashboard (Version Cache)
+                    <Link href={to('/dashboard')}>
+                        Retour au tableau de bord (version cache)
                     </Link>
                 </Button>
                 <Button variant="outline" onClick={() => window.location.reload()}>

@@ -1,10 +1,11 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getPublicPostBySlug } from "@/lib/firebase/firestore";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Compass } from "lucide-react";
+import { getRequestLocale } from "@/lib/locale-server";
+import { toLocalePath } from "@/i18n/routing";
 
 export const revalidate = 3600; // Revalidate every hour
 
@@ -21,10 +22,30 @@ function calculateReadingTime(text: string): number {
   return Math.ceil(wordCount / wordsPerMinute);
 }
 
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+async function getPost(slug: string) {
+  const hasFirebaseWebConfig = Boolean(
+    process.env.NEXT_PUBLIC_FIREBASE_API_KEY &&
+    process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN &&
+    process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID
+  );
+  if (!hasFirebaseWebConfig) return null;
+  const { getPublicPostBySlug } = await import("@/lib/firebase/firestore");
+  return getPublicPostBySlug(slug);
+}
+
 export async function generateMetadata({
   params,
 }: BlogArticlePageProps): Promise<Metadata> {
-  const post = await getPublicPostBySlug(params.slug);
+  const post = await getPost(params.slug);
 
   if (!post) {
     return {
@@ -71,7 +92,10 @@ export async function generateMetadata({
 export default async function BlogArticlePage({
   params,
 }: BlogArticlePageProps) {
-  const post = await getPublicPostBySlug(params.slug);
+  const locale = await getRequestLocale();
+  const blogHref = toLocalePath("/blog", locale);
+  const homeHref = toLocalePath("/", locale);
+  const post = await getPost(params.slug);
 
   if (!post) {
     notFound();
@@ -122,7 +146,7 @@ export default async function BlogArticlePage({
       <div className="container max-w-4xl mx-auto py-20 md:py-28 animate-fade-in">
         <header className="mb-12">
           <Button asChild variant="ghost" className="mb-8">
-            <Link href="/blog">
+            <Link href={blogHref}>
               <ArrowLeft className="mr-2 h-4 w-4" />
               Retour au blog
             </Link>
@@ -140,7 +164,7 @@ export default async function BlogArticlePage({
         <div
           className="prose prose-lg prose-stone lg:prose-xl font-body leading-relaxed prose-headings:font-headline"
           dangerouslySetInnerHTML={{
-            __html: post.content.replace(/\n/g, "<br />"),
+            __html: escapeHtml(post.content).replace(/\n/g, "<br />"),
           }}
         />
 
@@ -163,7 +187,7 @@ export default async function BlogArticlePage({
               intérieur.
             </p>
             <Button asChild className="mt-6">
-              <Link href="/">Créez votre sanctuaire privé</Link>
+              <Link href={homeHref}>Créez votre sanctuaire privé</Link>
             </Button>
           </div>
         </footer>

@@ -28,10 +28,12 @@ import {
 import { createPortalSession } from "@/app/actions/stripe";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import Link from "next/link";
+import { useLocalizedHref } from "@/hooks/use-localized-href";
 
 export const dynamic = "force-dynamic";
 
 export default function ProfilePage() {
+  const to = useLocalizedHref();
   const { user, loading } = useAuth();
 
   if (loading) {
@@ -60,7 +62,7 @@ export default function ProfilePage() {
           </AlertDescription>
         </Alert>
         <Button asChild className="mt-6">
-          <Link href="/sanctuary/write">Retourner à l'écriture</Link>
+          <Link href={to("/sanctuary/write")}>Retourner à l'écriture</Link>
         </Button>
       </div>
     );

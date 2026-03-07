@@ -20,19 +20,14 @@ import { AuthDialog } from "@/components/auth/auth-dialog";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { Feather, Sparkles, Shield, Lock, ChevronRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export default function WritePage() {
   const { user, loading } = useAuth();
+  const t = useTranslations("writePage");
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const writingQuotes = [
-    { text: "Écrire, c'est te donner de l'air.", author: "Aurum" },
-    { text: "Un paragraphe suffit pour commencer.", author: "Aurum" },
-    {
-      text: "Quand tu écris, tes idées se rangent.",
-      author: "Aurum",
-    },
-  ];
+  const writingQuotes = t.raw("quotes") as { text: string; author: string }[];
   const [quoteIndex, setQuoteIndex] = useState(0);
 
   useEffect(() => {
@@ -119,7 +114,7 @@ export default function WritePage() {
                         >
                           <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#D4AF37]/10 text-[#B8941F] text-xs font-medium tracking-[0.15em] uppercase">
                             <Lock className="h-3 w-3" />
-                            Espace Privé
+                            {t("anonymous.privateBadge")}
                           </span>
                         </motion.div>
 
@@ -131,9 +126,11 @@ export default function WritePage() {
                           className="space-y-4"
                         >
                           <h1 className="font-headline text-4xl md:text-6xl text-stone-900 tracking-tight leading-[1.1]">
-                            Ton sanctuaire
+                            {t("anonymous.titleLine1")}
                             <br />
-                            <span className="text-[#C5A059]">t'attend</span>
+                            <span className="text-[#C5A059]">
+                              {t("anonymous.titleLine2")}
+                            </span>
                           </h1>
                         </motion.div>
 
@@ -145,23 +142,22 @@ export default function WritePage() {
                           className="max-w-md mx-auto space-y-6"
                         >
                           <p className="text-stone-600 text-lg md:text-xl font-light leading-relaxed">
-                            Un espace chiffré où tes pensées trouvent leur
-                            place, sans jugement ni interruption.
+                            {t("anonymous.description")}
                           </p>
 
                           {/* Features */}
                           <div className="flex flex-wrap justify-center gap-4 text-sm text-stone-500">
                             <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-stone-100/80">
                               <Shield className="h-3.5 w-3.5 text-[#C5A059]" />
-                              <span>100% Privé</span>
+                              <span>{t("anonymous.featurePrivate")}</span>
                             </div>
                             <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-stone-100/80">
                               <Lock className="h-3.5 w-3.5 text-[#C5A059]" />
-                              <span>Chiffré</span>
+                              <span>{t("anonymous.featureEncrypted")}</span>
                             </div>
                             <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-stone-100/80">
                               <Sparkles className="h-3.5 w-3.5 text-[#C5A059]" />
-                              <span>IA Bienveillante</span>
+                              <span>{t("anonymous.featureAi")}</span>
                             </div>
                           </div>
                         </motion.div>
@@ -178,11 +174,11 @@ export default function WritePage() {
                             size="lg"
                             className="group h-14 px-10 bg-gradient-to-r from-[#D4AF37] to-[#C5A059] text-stone-900 hover:from-[#C5A059] hover:to-[#D4AF37] rounded-2xl shadow-[0_12px_28px_rgba(212,175,55,0.3)] text-lg font-semibold transition-all duration-300 hover:shadow-[0_16px_36px_rgba(212,175,55,0.4)] hover:scale-[1.02]"
                           >
-                            Entrer dans le Sanctuaire
+                            {t("anonymous.cta")}
                             <ChevronRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                           </Button>
                           <p className="mt-4 text-stone-400 text-sm">
-                            Connexion sécurisée via Google ou Email
+                            {t("anonymous.signInNote")}
                           </p>
                         </motion.div>
                       </div>
@@ -199,8 +195,7 @@ export default function WritePage() {
                 className="py-8 text-center"
               >
                 <p className="text-stone-400 text-sm">
-                  &ldquo;Écris ce qui demande à être posé. Le reste
-                  viendra.&rdquo;
+                  {t("anonymous.footerQuote")}
                 </p>
               </motion.footer>
             </motion.div>
@@ -239,10 +234,10 @@ export default function WritePage() {
                 <Feather className="h-5 w-5 text-[#C5A059]" />
               </div>
               <h1 className="font-headline text-3xl md:text-4xl text-stone-900 tracking-tight mb-2">
-                Ton espace d'écriture
+                {t("authenticated.title")}
               </h1>
               <p className="text-stone-500 text-lg">
-                Pose ici ce qui traverse ton esprit.
+                {t("authenticated.subtitle")}
               </p>
             </motion.header>
 

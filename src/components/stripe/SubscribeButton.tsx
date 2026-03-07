@@ -20,7 +20,7 @@ interface SubscribeButtonProps {
 
 export function SubscribeButton({
     className,
-    children = 'Subscribe Now'
+    children = 'S’abonner'
 }: SubscribeButtonProps) {
     const { user } = useAuth();
     const [loading, setLoading] = useState(false);
@@ -28,7 +28,7 @@ export function SubscribeButton({
 
     const handleSubscribe = async () => {
         if (!user) {
-            setError('Please sign in to subscribe');
+            setError('Veuillez vous connecter pour vous abonner.');
             return;
         }
 
@@ -50,13 +50,13 @@ export function SubscribeButton({
 
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.error || 'Failed to create checkout session');
+                throw new Error(errorData.error || 'Impossible de créer la session de paiement.');
             }
 
             const { url } = await response.json();
 
             if (!url) {
-                throw new Error('No checkout URL received');
+                throw new Error('Aucune URL de paiement reçue.');
             }
 
             // Redirect to Stripe Checkout
@@ -64,7 +64,7 @@ export function SubscribeButton({
 
         } catch (err: any) {
             console.error('Error creating checkout session:', err);
-            setError(err.message || 'Something went wrong');
+            setError(err.message || 'Une erreur est survenue.');
         } finally {
             setLoading(false);
         }
@@ -80,7 +80,7 @@ export function SubscribeButton({
                 {loading ? (
                     <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Loading...
+                        Chargement...
                     </>
                 ) : (
                     children

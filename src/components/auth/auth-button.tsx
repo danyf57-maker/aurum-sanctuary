@@ -19,19 +19,22 @@ import { signOut } from "@/lib/firebase/auth";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { useLocale } from "@/hooks/use-locale";
+import { localizeHref } from "@/lib/i18n/path";
+import { useTranslations } from "next-intl";
 
 export function AuthButton() {
-  const locale = useLocale();
-  const isFr = locale === "fr";
   const { user } = useAuth();
   const { toast } = useToast();
   const router = useRouter();
+  const locale = useLocale();
+  const t = useTranslations("authButton");
+  const to = (href: string) => localizeHref(href, locale);
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
 
   const handleSignOut = async () => {
     await signOut();
-    toast({ title: isFr ? "Vous avez été déconnecté." : "You have been signed out." });
-    router.push("/");
+    toast({ title: t("signedOut") });
+    router.push(to("/"));
   };
 
   if (user) {
@@ -48,7 +51,7 @@ export function AuthButton() {
             <Avatar className="h-8 w-8">
               <AvatarImage
                 src={user.photoURL ?? ""}
-                alt={(user.displayName ?? "") || "User"}
+                alt={(user.displayName ?? "") || t("userAlt")}
               />
               <AvatarFallback>{userInitial}</AvatarFallback>
             </Avatar>
@@ -67,15 +70,15 @@ export function AuthButton() {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
-            <Link href="/settings">
-              <Settings className="mr-2 h-4 w-4" />
-              <span>{isFr ? "Paramètres" : "Settings"}</span>
+            <Link href={to("/settings")}>
+                <Settings className="mr-2 h-4 w-4" />
+              <span>{t("settings")}</span>
             </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleSignOut}>
             <LogOut className="mr-2 h-4 w-4" />
-            <span>{isFr ? "Déconnexion" : "Sign out"}</span>
+            <span>{t("signOut")}</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -88,7 +91,7 @@ export function AuthButton() {
         onClick={() => setIsAuthDialogOpen(true)}
         className="bg-stone-600 text-white hover:bg-stone-700"
       >
-        {isFr ? "Connexion" : "Sign in"}
+        {t("signIn")}
       </Button>
       <AuthDialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen} />
     </>

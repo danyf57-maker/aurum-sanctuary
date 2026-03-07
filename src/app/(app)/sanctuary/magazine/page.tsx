@@ -19,6 +19,7 @@ import {
 } from "firebase/firestore";
 import { useAuth } from "@/providers/auth-provider";
 import { firestore as db } from "@/lib/firebase/web-client";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -31,6 +32,7 @@ import { WellbeingRadar } from "@/components/sanctuary/wellbeing-radar";
 import { RyffQuestionnaire } from "@/components/sanctuary/ryff-questionnaire";
 import { PersonalityRadar } from "@/components/sanctuary/personality-radar";
 import { PersonalityQuestionnaire } from "@/components/sanctuary/personality-questionnaire";
+import { useLocalizedHref } from "@/hooks/use-localized-href";
 import type {
   RyffDimensionScores,
   WellbeingScore,
@@ -48,10 +50,92 @@ type MagazineIssue = {
   mood: string | null;
 };
 
+type LandingAssessment = {
+  id: string;
+  profile: string;
+  profileTitle: string;
+  answers: string[];
+  completedAt: Date | null;
+};
+
+type LandingInsight = {
+  narrative: string;
+  actionPlan: string[];
+};
+
+const PROFILE_TITLES: Record<string, string> = {
+  D: "The Pioneer",
+  I: "The Connector",
+  S: "The Anchor",
+  C: "The Architect",
+  MIXTE: "Balanced profile • The Equilibrist",
+};
+const ACTIVE_PLAN_STORAGE_KEY = "aurum-active-plan";
+
+const RYFF_DIMENSION_LABELS: Record<keyof RyffDimensionScores, string> = {
+  acceptationDeSoi: "self-acceptance",
+  developpementPersonnel: "personal growth",
+  sensDeLaVie: "purpose in life",
+  maitriseEnvironnement: "daily mastery",
+  autonomie: "autonomy",
+  relationsPositives: "positive relationships",
+};
+
+function buildWellbeingNarrative(scores: RyffDimensionScores): string {
+  const entries = Object.entries(scores) as [keyof RyffDimensionScores, number][];
+  if (entries.length === 0) return "Your profile is ready. Take a moment to observe it gently.";
+
+  const sorted = [...entries].sort((a, b) => b[1] - a[1]);
+  const [topKey, topValue] = sorted[0];
+  const [lowKey, lowValue] = sorted[sorted.length - 1];
+  const average = entries.reduce((sum, [, value]) => sum + value, 0) / entries.length;
+
+  const tone =
+    average >= 4.3
+      ? "You are going through a fairly steady period."
+      : average >= 3.3
+      ? "You are in a phase of building balance."
+      : "You seem to be in a more demanding period.";
+
+  return `${tone} Your strongest area right now: ${RYFF_DIMENSION_LABELS[topKey]} (${topValue.toFixed(
+    1
+  )}/6). The top area to support first: ${RYFF_DIMENSION_LABELS[lowKey]} (${lowValue.toFixed(
+    1
+  )}/6). Writing a few lines in Aurum will help you clarify this weaker area and track concrete progress.`;
+}
+
+const PERSONALITY_DIMENSION_LABELS: Record<keyof PersonalityScores, string> = {
+  determination: "determination",
+  influence: "influence",
+  stabilite: "stability",
+  rigueur: "discipline",
+};
+
+function buildPersonalityNarrative(scores: PersonalityScores, archetype: string): string {
+  const entries = Object.entries(scores) as [keyof PersonalityScores, number][];
+  if (entries.length === 0) return "Your profile is ready. Focus on what helps you move forward with more clarity.";
+  const sorted = [...entries].sort((a, b) => b[1] - a[1]);
+  const [topKey, topValue] = sorted[0];
+  const [lowKey, lowValue] = sorted[sorted.length - 1];
+  return `You show a clear ${archetype} style. Your dominant strength today: ${PERSONALITY_DIMENSION_LABELS[topKey]} (${topValue.toFixed(
+    1
+  )}/6). To progress with more fluidity, gently work on ${PERSONALITY_DIMENSION_LABELS[
+    lowKey
+  ]} (${lowValue.toFixed(1)}/6) through one simple repeated action this week. Writing in Aurum helps you prepare that action, keep it visible, and measure its real effect.`;
+}
+
 
 function parseCreatedAt(value: unknown): Date | null {
   if (!value) return null;
   if (value instanceof Date) return value;
+  if (typeof value === "string") {
+    const parsed = new Date(value);
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
+  }
+  if (typeof value === "number") {
+    const parsed = new Date(value);
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
+  }
   try {
     if (typeof value === "object" && value !== null && "toDate" in value) {
       return (value as { toDate: () => Date }).toDate();
@@ -70,7 +154,7 @@ function toIssue(docSnap: QueryDocumentSnapshot<DocumentData>): MagazineIssue {
   const data = docSnap.data() as Record<string, unknown>;
   return {
     id: docSnap.id,
-    title: String(data.title || "Entrée"),
+    title: String(data.title || "Entry"),
     excerpt: String(data.excerpt || ""),
     coverImageUrl: data.coverImageUrl ? String(data.coverImageUrl) : null,
     tags: Array.isArray(data.tags) ? data.tags.map((tag) => String(tag)) : [],
@@ -88,7 +172,7 @@ function stripImageMarkdown(content: string) {
 
 function generateIssueTitle(content: string) {
   const words = (content ?? "").split(/\s+/).filter(Boolean);
-  if (words.length === 0) return "Entrée";
+  if (words.length === 0) return "Entry";
   return words.slice(0, 8).join(" ") + (words.length > 8 ? "..." : "");
 }
 
@@ -100,7 +184,9 @@ function generateIssueExcerpt(content: string, maxLength = 170) {
 }
 
 export default function MagazinePage() {
+  const to = useLocalizedHref();
   const { user, loading } = useAuth();
+  const { toast } = useToast();
   const [issues, setIssues] = useState<MagazineIssue[]>([]);
   const [isLoadingIssues, setIsLoadingIssues] = useState(true);
   const [collections, setCollections] = useState<MagazineCollection[]>([]);
@@ -128,6 +214,10 @@ export default function MagazinePage() {
   const [personalityQuestionnaireOpen, setPersonalityQuestionnaireOpen] =
     useState(false);
   const [isPersonalitySubmitting, setIsPersonalitySubmitting] = useState(false);
+  const [landingAssessment, setLandingAssessment] =
+    useState<LandingAssessment | null>(null);
+  const [landingInsight, setLandingInsight] = useState<LandingInsight | null>(null);
+  const [isLandingInsightLoading, setIsLandingInsightLoading] = useState(false);
 
   const fetchIssues = useCallback(async () => {
     if (!user) return;
@@ -176,13 +266,29 @@ export default function MagazinePage() {
         user.uid,
         "wellbeingScores"
       );
-      const q = query(scoresRef, orderBy("computedAt", "desc"), limit(1));
-      const snap = await getDocs(q);
-      if (!snap.empty) {
-        const d = snap.docs[0].data() as Record<string, unknown>;
+      let latestDoc: QueryDocumentSnapshot<DocumentData> | null = null;
+      try {
+        const q = query(scoresRef, orderBy("computedAt", "desc"), limit(1));
+        const snap = await getDocs(q);
+        latestDoc = snap.empty ? null : snap.docs[0];
+      } catch {
+        // Fallback for heterogeneous historical data (timestamp/string)
+        const snap = await getDocs(scoresRef);
+        latestDoc =
+          snap.docs
+            .map((docSnap) => ({
+              docSnap,
+              when: parseCreatedAt((docSnap.data() as Record<string, unknown>).computedAt),
+            }))
+            .sort((a, b) => (b.when?.getTime() ?? 0) - (a.when?.getTime() ?? 0))[0]?.docSnap ??
+          null;
+      }
+
+      if (latestDoc) {
+        const d = latestDoc.data() as Record<string, unknown>;
         const computedAt = parseCreatedAt(d.computedAt);
         setWellbeingScore({
-          id: snap.docs[0].id,
+          id: latestDoc.id,
           source: (d.source as WellbeingScore["source"]) || "ai",
           computedAt: computedAt || new Date(),
           entryCount: typeof d.entryCount === "number" ? d.entryCount : 0,
@@ -214,13 +320,29 @@ export default function MagazinePage() {
         user.uid,
         "personalityScores"
       );
-      const q = query(scoresRef, orderBy("computedAt", "desc"), limit(1));
-      const snap = await getDocs(q);
-      if (!snap.empty) {
-        const d = snap.docs[0].data() as Record<string, unknown>;
+      let latestDoc: QueryDocumentSnapshot<DocumentData> | null = null;
+      try {
+        const q = query(scoresRef, orderBy("computedAt", "desc"), limit(1));
+        const snap = await getDocs(q);
+        latestDoc = snap.empty ? null : snap.docs[0];
+      } catch {
+        // Fallback for heterogeneous historical data (timestamp/string)
+        const snap = await getDocs(scoresRef);
+        latestDoc =
+          snap.docs
+            .map((docSnap) => ({
+              docSnap,
+              when: parseCreatedAt((docSnap.data() as Record<string, unknown>).computedAt),
+            }))
+            .sort((a, b) => (b.when?.getTime() ?? 0) - (a.when?.getTime() ?? 0))[0]?.docSnap ??
+          null;
+      }
+
+      if (latestDoc) {
+        const d = latestDoc.data() as Record<string, unknown>;
         const computedAt = parseCreatedAt(d.computedAt);
         setPersonalityResult({
-          id: snap.docs[0].id,
+          id: latestDoc.id,
           source: (d.source as PersonalityResult["source"]) || "ai",
           computedAt: computedAt || new Date(),
           entryCount: typeof d.entryCount === "number" ? d.entryCount : 0,
@@ -240,6 +362,89 @@ export default function MagazinePage() {
       }
     } catch (err) {
       console.error("[Magazine] fetchPersonalityScore error:", err);
+    }
+  }, [user]);
+
+  const fetchLatestLandingAssessment = useCallback(async () => {
+    if (!user) return;
+    try {
+      const assessmentsRef = collection(db, "users", user.uid, "assessments");
+      const snap = await getDocs(assessmentsRef);
+      const landingDocs = snap.docs
+        .filter((item) => String(item.data().source || "").startsWith("landing-quiz"))
+        .map((item) => {
+          const d = item.data() as Record<string, unknown>;
+          const completedAt =
+            parseCreatedAt(d.createdAt) ?? parseCreatedAt(d.completedAt) ?? new Date(0);
+          return { item, d, completedAt };
+        })
+        .sort((a, b) => b.completedAt.getTime() - a.completedAt.getTime());
+
+      if (landingDocs.length > 0) {
+        const latest = landingDocs[0];
+        setLandingAssessment({
+          id: latest.item.id,
+          profile: String(latest.d.profile || "MIXTE"),
+          profileTitle:
+            PROFILE_TITLES[String(latest.d.profile || "MIXTE")] ||
+            String(latest.d.profileTitle || "Personal profile"),
+          answers: Array.isArray(latest.d.answers)
+            ? latest.d.answers.map((entry) => String(entry))
+            : [],
+          completedAt: latest.completedAt,
+        });
+        return;
+      }
+
+      // Fallback: sync quiz data from local storage when no result exists yet in Firestore.
+      if (typeof window !== "undefined") {
+        try {
+          const raw = localStorage.getItem("aurum-quiz-data");
+          if (!raw) {
+            setLandingAssessment(null);
+            return;
+          }
+
+          const localQuiz = JSON.parse(raw) as {
+            answers?: unknown;
+            profile?: unknown;
+            completedAt?: unknown;
+          };
+          const profile = String(localQuiz.profile || "MIXTE");
+          const answers = Array.isArray(localQuiz.answers)
+            ? localQuiz.answers.map((entry) => String(entry))
+            : [];
+          const completedAt = (() => {
+            const parsed = parseCreatedAt(localQuiz.completedAt);
+            return parsed ?? new Date();
+          })();
+          const profileTitle = PROFILE_TITLES[profile] || "Personal profile";
+
+          const created = await addDoc(assessmentsRef, {
+            source: "landing-quiz",
+            profile,
+            profileTitle,
+            answers,
+            completedAt: completedAt.toISOString(),
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+          });
+
+          setLandingAssessment({
+            id: created.id,
+            profile,
+            profileTitle,
+            answers,
+            completedAt,
+          });
+        } catch (error) {
+          console.error("[Magazine] local quiz sync error:", error);
+          setLandingAssessment(null);
+        }
+      }
+    } catch (err) {
+      console.error("[Magazine] fetchLatestLandingAssessment error:", err);
+      setLandingAssessment(null);
     }
   }, [user]);
 
@@ -351,13 +556,22 @@ export default function MagazinePage() {
       await fetchLatestWellbeingScore();
       if (cancelled) return;
       await fetchLatestPersonalityScore();
+      if (cancelled) return;
+      await fetchLatestLandingAssessment();
     };
 
     void bootstrap();
     return () => {
       cancelled = true;
     };
-  }, [fetchCollections, fetchIssues, fetchLatestWellbeingScore, fetchLatestPersonalityScore, user]);
+  }, [
+    fetchCollections,
+    fetchIssues,
+    fetchLatestLandingAssessment,
+    fetchLatestWellbeingScore,
+    fetchLatestPersonalityScore,
+    user,
+  ]);
 
   // Fetch Aurum stats after issues are loaded
   useEffect(() => {
@@ -366,9 +580,72 @@ export default function MagazinePage() {
     }
   }, [issues.length, fetchAurumStats]);
 
+  useEffect(() => {
+    if (!landingAssessment) {
+      setLandingInsight(null);
+      setIsLandingInsightLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+    setIsLandingInsightLoading(true);
+
+    const loadLandingInsight = async () => {
+      try {
+        const response = await fetch("/api/analyze-questionnaire", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            kind: "landing",
+            locale: "en",
+            profile: landingAssessment.profile,
+            profileTitle: landingAssessment.profileTitle,
+            answers: landingAssessment.answers,
+          }),
+        });
+
+        if (!response.ok) return;
+        const data = (await response.json()) as {
+          narrative?: unknown;
+          actionPlan?: unknown;
+        };
+
+        const narrative =
+          typeof data.narrative === "string" && data.narrative.trim()
+            ? data.narrative.trim()
+            : "Your entry profile is ready. Move forward with simple, steady steps.";
+        const actionPlan = Array.isArray(data.actionPlan)
+          ? data.actionPlan
+              .map((entry) => (typeof entry === "string" ? entry.trim() : ""))
+              .filter(Boolean)
+              .slice(0, 7)
+          : [];
+
+        if (!cancelled) {
+          setLandingInsight({ narrative, actionPlan });
+        }
+      } catch {
+        // silent fallback
+      } finally {
+        if (!cancelled) {
+          setIsLandingInsightLoading(false);
+        }
+      }
+    };
+
+    void loadLandingInsight();
+    return () => {
+      cancelled = true;
+    };
+  }, [landingAssessment]);
+
   const nonEncryptedCount = useMemo(
     () =>
-      issues.filter((i) => !i.excerpt?.includes("Contenu chiffré")).length,
+      issues.filter(
+        (i) =>
+          !i.excerpt?.includes("Contenu chiffré") &&
+          !i.excerpt?.includes("Encrypted content")
+      ).length,
     [issues]
   );
 
@@ -396,7 +673,11 @@ export default function MagazinePage() {
     setIsWellbeingLoading(true);
     try {
       const payload = issues
-        .filter((i) => !i.excerpt?.includes("Contenu chiffré"))
+        .filter(
+          (i) =>
+            !i.excerpt?.includes("Contenu chiffré") &&
+            !i.excerpt?.includes("Encrypted content")
+        )
         .slice(0, 30)
         .map((issue) => ({
           id: issue.id,
@@ -406,11 +687,15 @@ export default function MagazinePage() {
           mood: issue.mood,
           createdAt: issue.createdAt ? issue.createdAt.toISOString() : null,
         }));
+      const idToken = await user.getIdToken();
 
       const response = await fetch("/api/analyze-wellbeing", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ entries: payload, userId: user.uid }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${idToken}`,
+        },
+        body: JSON.stringify({ entries: payload }),
       });
 
       if (response.ok) {
@@ -441,6 +726,37 @@ export default function MagazinePage() {
   const handleQuestionnaireComplete = async (scores: RyffDimensionScores) => {
     if (!user) return;
     setIsQuestionnaireSubmitting(true);
+    const optimisticComputedAt = new Date();
+    let narrative = buildWellbeingNarrative(scores);
+
+    try {
+      const explainResponse = await fetch("/api/analyze-questionnaire", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          kind: "wellbeing",
+          locale: "en",
+          scores,
+        }),
+      });
+      if (explainResponse.ok) {
+        const explainData = (await explainResponse.json()) as { narrative?: unknown };
+        if (typeof explainData.narrative === "string" && explainData.narrative.trim()) {
+          narrative = explainData.narrative.trim();
+        }
+      }
+    } catch {
+      // fallback narrative already set
+    }
+
+    setWellbeingScore({
+      source: "questionnaire",
+      computedAt: optimisticComputedAt,
+      scores,
+      narrative,
+    });
+    setQuestionnaireOpen(false);
+
     try {
       const scoresRef = collection(db, "users", user.uid, "wellbeingScores");
       await addDoc(scoresRef, {
@@ -453,16 +769,34 @@ export default function MagazinePage() {
         maitriseEnvironnement: scores.maitriseEnvironnement,
         autonomie: scores.autonomie,
         relationsPositives: scores.relationsPositives,
+        narrative,
       });
-
-      setWellbeingScore({
-        source: "questionnaire",
-        computedAt: new Date(),
-        scores,
+    } catch (error) {
+      console.error("[Magazine] wellbeing questionnaire save error:", error);
+      // Retry once in background to absorb transient mobile/network issues.
+      setTimeout(async () => {
+        try {
+          await addDoc(collection(db, "users", user.uid, "wellbeingScores"), {
+            source: "questionnaire",
+            computedAt: serverTimestamp(),
+            entryCount: 0,
+            acceptationDeSoi: scores.acceptationDeSoi,
+            developpementPersonnel: scores.developpementPersonnel,
+            sensDeLaVie: scores.sensDeLaVie,
+            maitriseEnvironnement: scores.maitriseEnvironnement,
+            autonomie: scores.autonomie,
+            relationsPositives: scores.relationsPositives,
+            narrative,
+          });
+        } catch (retryError) {
+          console.error("[Magazine] wellbeing questionnaire retry save error:", retryError);
+        }
+      }, 1200);
+      toast({
+        title: "Profile ready",
+        description:
+          "Your result is visible. We are finalizing the save in the background.",
       });
-      setQuestionnaireOpen(false);
-    } catch {
-      // silent
     } finally {
       setIsQuestionnaireSubmitting(false);
     }
@@ -473,7 +807,11 @@ export default function MagazinePage() {
     setIsPersonalityLoading(true);
     try {
       const payload = issues
-        .filter((i) => !i.excerpt?.includes("Contenu chiffré"))
+        .filter(
+          (i) =>
+            !i.excerpt?.includes("Contenu chiffré") &&
+            !i.excerpt?.includes("Encrypted content")
+        )
         .slice(0, 30)
         .map((issue) => ({
           id: issue.id,
@@ -483,11 +821,15 @@ export default function MagazinePage() {
           mood: issue.mood,
           createdAt: issue.createdAt ? issue.createdAt.toISOString() : null,
         }));
+      const idToken = await user.getIdToken();
 
       const response = await fetch("/api/analyze-personality", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ entries: payload, userId: user.uid }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${idToken}`,
+        },
+        body: JSON.stringify({ entries: payload }),
       });
 
       if (response.ok) {
@@ -523,6 +865,39 @@ export default function MagazinePage() {
   ) => {
     if (!user) return;
     setIsPersonalitySubmitting(true);
+    let narrative = buildPersonalityNarrative(scores, archetype);
+
+    try {
+      const explainResponse = await fetch("/api/analyze-questionnaire", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          kind: "personality",
+          locale: "en",
+          scores,
+          archetype,
+        }),
+      });
+      if (explainResponse.ok) {
+        const explainData = (await explainResponse.json()) as { narrative?: unknown };
+        if (typeof explainData.narrative === "string" && explainData.narrative.trim()) {
+          narrative = explainData.narrative.trim();
+        }
+      }
+    } catch {
+      // fallback narrative already set
+    }
+
+    const optimisticComputedAt = new Date();
+    setPersonalityResult({
+      source: "questionnaire",
+      computedAt: optimisticComputedAt,
+      scores,
+      archetype,
+      narrative,
+    });
+    setPersonalityQuestionnaireOpen(false);
+
     try {
       const scoresRef = collection(
         db,
@@ -539,17 +914,31 @@ export default function MagazinePage() {
         stabilite: scores.stabilite,
         rigueur: scores.rigueur,
         archetype,
+        narrative,
       });
-
-      setPersonalityResult({
-        source: "questionnaire",
-        computedAt: new Date(),
-        scores,
-        archetype,
+    } catch (error) {
+      console.error("[Magazine] personality questionnaire save error:", error);
+      setTimeout(async () => {
+        try {
+          await addDoc(collection(db, "users", user.uid, "personalityScores"), {
+            source: "questionnaire",
+            computedAt: serverTimestamp(),
+            entryCount: 0,
+            determination: scores.determination,
+            influence: scores.influence,
+            stabilite: scores.stabilite,
+            rigueur: scores.rigueur,
+            archetype,
+            narrative,
+          });
+        } catch (retryError) {
+          console.error("[Magazine] personality questionnaire retry save error:", retryError);
+        }
+      }, 1200);
+      toast({
+        title: "Profile ready",
+        description: "Your result is visible. We are finalizing the save in the background.",
       });
-      setPersonalityQuestionnaireOpen(false);
-    } catch {
-      // silent
     } finally {
       setIsPersonalitySubmitting(false);
     }
@@ -581,7 +970,7 @@ export default function MagazinePage() {
                 ? data.createdAt
                 : (data.createdAt as { toDate?: () => Date }).toDate?.() ||
                   new Date();
-            dateTitle = `Réflexion du ${entryDate.toLocaleDateString("fr-FR", {
+            dateTitle = `Reflection from ${entryDate.toLocaleDateString("en-US", {
               day: "numeric",
               month: "long",
             })}`;
@@ -589,7 +978,7 @@ export default function MagazinePage() {
 
           const title = isEncrypted ? dateTitle : generateIssueTitle(content);
           const excerpt = isEncrypted
-            ? "Contenu chiffré"
+            ? "Encrypted content"
             : generateIssueExcerpt(content);
           const images = Array.isArray(data.images) ? data.images : [];
           const firstImage = images[0] as { url?: string } | undefined;
@@ -647,53 +1036,185 @@ export default function MagazinePage() {
           Magazine
         </h1>
         <p className="mt-2 max-w-xl text-stone-500">
-          La lecture éditoriale et analytique de ton parcours. Aurum y assemble tes pages pour faire émerger les thèmes, les extraits marquants et ton évolution.
+          Your editorial and analytical reading space. Aurum assembles your pages to surface key themes, standout excerpts, and your evolution.
         </p>
       </header>
 
+      {landingAssessment && (
+        <div className="mb-6 rounded-2xl border border-amber-200/70 bg-amber-50/40 p-5 md:p-6">
+          <p className="text-[11px] uppercase tracking-[0.2em] text-amber-700/80">
+            Entry profile
+          </p>
+          <h2 className="mt-2 text-xl font-semibold text-stone-900">
+            {landingAssessment.profileTitle}
+          </h2>
+          <p className="mt-2 text-sm text-stone-600">
+            Result saved in Magazine{landingAssessment.completedAt
+              ? ` on ${landingAssessment.completedAt.toLocaleDateString("en-US")}`
+              : ""}.
+          </p>
+          <p className="mt-1 text-xs text-stone-500">
+            Answers captured: {landingAssessment.answers.length}
+          </p>
+
+          {isLandingInsightLoading && (
+            <p className="mt-4 text-sm text-stone-600">
+              Aurum is deepening your profile for a more precise reading...
+            </p>
+          )}
+
+          {landingInsight && (
+            <div className="mt-4 rounded-2xl border border-amber-200/70 bg-white/80 p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-amber-700/80">
+                Premium Aurum reading
+              </p>
+              <p className="mt-2 text-sm leading-relaxed text-stone-700">
+                {landingInsight.narrative}
+              </p>
+              {landingInsight.actionPlan.length > 0 && (
+                <div className="mt-4">
+                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-600">
+                    7-day action plan
+                  </p>
+                  <ul className="mt-2 space-y-1.5 text-sm text-stone-700">
+                    {landingInsight.actionPlan.map((step) => (
+                      <li key={step} className="flex gap-2">
+                        <span className="mt-1 h-1.5 w-1.5 rounded-full bg-amber-500/70" />
+                        <span>{step}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <Link
+                    href={`/sanctuary/write?initial=${encodeURIComponent(
+                      `7-day action plan\n${landingInsight.actionPlan[0]}\n\nToday's intention:`
+                    )}`}
+                    onClick={() => {
+                      if (typeof window === "undefined") return;
+                      localStorage.setItem(
+                        ACTIVE_PLAN_STORAGE_KEY,
+                        JSON.stringify({
+                          version: 1,
+                          source: "landing",
+                          title: "7-day action plan",
+                          steps: landingInsight.actionPlan,
+                          currentStep: 0,
+                          createdAt: new Date().toISOString(),
+                        })
+                      );
+                    }}
+                    className="mt-3 inline-flex rounded-lg bg-[#C5A059] px-3 py-1.5 text-xs font-medium text-stone-900 transition-colors hover:bg-[#b8924e]"
+                  >
+                    Apply this plan in my journal
+                  </Link>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="mb-6 space-y-6">
+        {/* Psychological wellbeing — Ryff model */}
+        <WellbeingRadar
+          aiScores={
+            wellbeingScore?.source !== "questionnaire"
+              ? wellbeingScore?.scores ?? null
+              : null
+          }
+          questionnaireScores={
+            wellbeingScore?.source === "questionnaire" ||
+            wellbeingScore?.source === "combined"
+              ? wellbeingScore.scores
+              : null
+          }
+          narrative={wellbeingScore?.narrative ?? null}
+          computedAt={wellbeingScore?.computedAt ?? null}
+          isLoading={isWellbeingLoading}
+          onRequestAnalysis={() => void handleAnalyzeWellbeing()}
+          onOpenQuestionnaire={() => setQuestionnaireOpen(true)}
+          canAnalyze={nonEncryptedCount >= 5}
+        />
+
+        <RyffQuestionnaire
+          open={questionnaireOpen}
+          onOpenChange={setQuestionnaireOpen}
+          onComplete={handleQuestionnaireComplete}
+          isSubmitting={isQuestionnaireSubmitting}
+        />
+
+        {/* Personality profile — 4 dimensions */}
+        <PersonalityRadar
+          aiScores={
+            personalityResult?.source !== "questionnaire"
+              ? personalityResult?.scores ?? null
+              : null
+          }
+          questionnaireScores={
+            personalityResult?.source === "questionnaire" ||
+            personalityResult?.source === "combined"
+              ? personalityResult.scores
+              : null
+          }
+          archetype={personalityResult?.archetype ?? null}
+          narrative={personalityResult?.narrative ?? null}
+          computedAt={personalityResult?.computedAt ?? null}
+          isLoading={isPersonalityLoading}
+          onRequestAnalysis={() => void handleAnalyzePersonality()}
+          onOpenQuestionnaire={() => setPersonalityQuestionnaireOpen(true)}
+          canAnalyze={nonEncryptedCount >= 5}
+        />
+
+        <PersonalityQuestionnaire
+          open={personalityQuestionnaireOpen}
+          onOpenChange={setPersonalityQuestionnaireOpen}
+          onComplete={handlePersonalityQuestionnaireComplete}
+          isSubmitting={isPersonalitySubmitting}
+        />
+      </div>
+
       {issues.length === 0 ? (
         <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
-          {/* Zone héro */}
+          {/* Hero section */}
           <div className="border-b border-stone-100 bg-gradient-to-b from-stone-50 to-white px-10 py-12 text-center">
             <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-50 ring-1 ring-amber-200/70">
               <BookImage className="h-7 w-7 text-amber-700" />
             </div>
             <h2 className="text-lg font-semibold text-stone-900">
-              Ton parcours, révélé par Aurum
+              Your path, revealed by Aurum
             </h2>
             <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-stone-500">
-              Aurum assemble tes pages enregistrées et tes tests pour faire émerger
-              les thèmes récurrents, les extraits marquants et ton évolution dans le temps.
+              Aurum combines your saved pages and guided paths to highlight recurring themes,
+              standout excerpts, and your growth over time.
             </p>
           </div>
 
-          {/* Piliers — ce que fait le Magazine */}
+          {/* Pillars — what Magazine does */}
           <div className="grid divide-x divide-stone-100 sm:grid-cols-3">
             <div className="flex flex-col items-center p-7 text-center">
               <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">
                 <ImageIcon className="h-4 w-4 text-stone-600" />
               </div>
-              <p className="text-sm font-medium text-stone-900">Thèmes & extraits</p>
+              <p className="text-sm font-medium text-stone-900">Themes & excerpts</p>
               <p className="mt-1.5 text-xs leading-relaxed text-stone-500">
-                Les fils conducteurs de tes écrits, mis en lumière automatiquement par Aurum.
+                The common threads in your writing, surfaced automatically by Aurum.
               </p>
             </div>
             <div className="flex flex-col items-center p-7 text-center">
               <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">
                 <AlignLeft className="h-4 w-4 text-stone-600" />
               </div>
-              <p className="text-sm font-medium text-stone-900">Évolution</p>
+              <p className="text-sm font-medium text-stone-900">Growth over time</p>
               <p className="mt-1.5 text-xs leading-relaxed text-stone-500">
-                Ton profil de bien-être et de personnalité tracé dans le temps, page après page.
+                Your wellbeing and personality profile tracked across time, page by page.
               </p>
             </div>
             <div className="flex flex-col items-center p-7 text-center">
               <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">
                 <Archive className="h-4 w-4 text-stone-600" />
               </div>
-              <p className="text-sm font-medium text-stone-900">Vue éditoriale</p>
+              <p className="text-sm font-medium text-stone-900">Editorial view</p>
               <p className="mt-1.5 text-xs leading-relaxed text-stone-500">
-                Chaque page devient une édition avec image, extrait et date. Ton journal, magnifié.
+                Each page becomes an edition with image, excerpt, and date. Your journal, elevated.
               </p>
             </div>
           </div>
@@ -704,9 +1225,9 @@ export default function MagazinePage() {
               asChild
               className="bg-stone-900 text-stone-50 hover:bg-stone-800"
             >
-              <Link href="/sanctuary/write">
+              <Link href={to("/sanctuary/write")}>
                 <PenSquare className="mr-2 h-4 w-4" />
-                Écrire une entrée
+                Write an entry
               </Link>
             </Button>
             <Button
@@ -717,70 +1238,13 @@ export default function MagazinePage() {
               className="border-stone-200 text-stone-600 hover:bg-stone-100"
             >
               <RefreshCw className={`mr-2 h-4 w-4 ${isBackfilling ? "animate-spin" : ""}`} />
-              {isBackfilling ? "Reconstruction..." : "Reconstruire depuis le journal"}
+              {isBackfilling ? "Rebuilding..." : "Rebuild from journal"}
             </Button>
           </div>
         </div>
       ) : (
         <div className="space-y-6">
-          {/* Bien-être psychologique — Modèle de Ryff */}
-          <WellbeingRadar
-            aiScores={
-              wellbeingScore?.source !== "questionnaire"
-                ? wellbeingScore?.scores ?? null
-                : null
-            }
-            questionnaireScores={
-              wellbeingScore?.source === "questionnaire" ||
-              wellbeingScore?.source === "combined"
-                ? wellbeingScore.scores
-                : null
-            }
-            narrative={wellbeingScore?.narrative ?? null}
-            computedAt={wellbeingScore?.computedAt ?? null}
-            isLoading={isWellbeingLoading}
-            onRequestAnalysis={() => void handleAnalyzeWellbeing()}
-            onOpenQuestionnaire={() => setQuestionnaireOpen(true)}
-            canAnalyze={nonEncryptedCount >= 5}
-          />
-
-          <RyffQuestionnaire
-            open={questionnaireOpen}
-            onOpenChange={setQuestionnaireOpen}
-            onComplete={handleQuestionnaireComplete}
-            isSubmitting={isQuestionnaireSubmitting}
-          />
-
-          {/* Profil de personnalité — 4 dimensions */}
-          <PersonalityRadar
-            aiScores={
-              personalityResult?.source !== "questionnaire"
-                ? personalityResult?.scores ?? null
-                : null
-            }
-            questionnaireScores={
-              personalityResult?.source === "questionnaire" ||
-              personalityResult?.source === "combined"
-                ? personalityResult.scores
-                : null
-            }
-            archetype={personalityResult?.archetype ?? null}
-            narrative={personalityResult?.narrative ?? null}
-            computedAt={personalityResult?.computedAt ?? null}
-            isLoading={isPersonalityLoading}
-            onRequestAnalysis={() => void handleAnalyzePersonality()}
-            onOpenQuestionnaire={() => setPersonalityQuestionnaireOpen(true)}
-            canAnalyze={nonEncryptedCount >= 5}
-          />
-
-          <PersonalityQuestionnaire
-            open={personalityQuestionnaireOpen}
-            onOpenChange={setPersonalityQuestionnaireOpen}
-            onComplete={handlePersonalityQuestionnaireComplete}
-            isSubmitting={isPersonalitySubmitting}
-          />
-
-          {/* Dashboard Statistiques */}
+          {/* Dashboard stats */}
           <DashboardStats
             issues={issues}
             aurumStats={aurumStats}

@@ -7,16 +7,18 @@ import {
   sendPasswordResetEmail,
   sendEmailVerification,
   signInWithPopup,
+  signInWithRedirect,
   GoogleAuthProvider,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   updateProfile,
   signOut
 } from 'firebase/auth';
-import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { addDoc, collection, doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth as firebaseAuth, firestore as db } from '@/lib/firebase/web-client';
 import { logger } from '@/lib/logger/safe';
 import { useToast } from '@/hooks/use-toast';
+import { useLocale } from '@/hooks/use-locale';
 
 
 interface AuthContextType {
@@ -33,21 +35,59 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
-// Client-side constants for UI gating only.
-// ⚠️ DO NOT import in server actions - use @/lib/firebase/admin instead.
-export const ADMIN_EMAILS = ['danyf57@gmail.com'] as const;
-export const ALMA_EMAIL = 'alma.lawson@aurum.inc';
-
-export function isAdminEmail(email?: string | null) {
-  if (!email) return false;
-  return ADMIN_EMAILS.includes(email.toLowerCase() as typeof ADMIN_EMAILS[number]);
-}
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [termsAccepted, setTermsAccepted] = useState<boolean | null>(null);
   const { toast } = useToast();
+  const locale = useLocale();
+  const isFr = locale === 'fr';
+  const txt = (fr: string, en: string) => (isFr ? fr : en);
+  const QUIZ_STORAGE_KEY = 'aurum-quiz-data';
+  const QUIZ_SYNC_KEY = 'aurum-quiz-synced-at';
+
+  const syncLandingQuizAssessment = async (uid: string) => {
+    try {
+      const raw = localStorage.getItem(QUIZ_STORAGE_KEY);
+      if (!raw) return;
+
+      const quiz = JSON.parse(raw) as {
+        answers?: unknown;
+        profile?: unknown;
+        completedAt?: unknown;
+      };
+
+      const profile = String(quiz.profile || 'MIXTE');
+      const answers = Array.isArray(quiz.answers) ? quiz.answers.map((entry) => String(entry)) : [];
+      const completedAt = typeof quiz.completedAt === 'string' ? quiz.completedAt : new Date().toISOString();
+
+      const alreadySyncedAt = localStorage.getItem(QUIZ_SYNC_KEY);
+      if (alreadySyncedAt === completedAt) return;
+
+      const profileTitleMap: Record<string, string> = {
+        D: 'Le Pionnier',
+        I: 'Le Connecteur',
+        S: "L'Ancre",
+        C: "L'Architecte",
+        MIXTE: "Profil mixte • L'Équilibriste",
+      };
+
+      await addDoc(collection(db, 'users', uid, 'assessments'), {
+        source: 'landing-quiz',
+        profile,
+        profileTitle: profileTitleMap[profile] || 'Profil personnel',
+        answers,
+        completedAt,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
+
+      localStorage.setItem(QUIZ_SYNC_KEY, completedAt);
+      logger.infoSafe('Landing quiz assessment synced after auth', { uid });
+    } catch (error) {
+      logger.errorSafe('Failed to sync landing quiz assessment after auth', error);
+    }
+  };
 
   const resolveAppUrl = () => {
     const fallbackOrigin = window.location.origin;
@@ -80,11 +120,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const getEmailVerificationSettings = () => {
     const appUrl = resolveAppUrl();
+    const lang = isFr ? "fr" : "en";
     return {
-      url: `${appUrl}/auth/action`,
+      url: `${appUrl}/auth/action?lang=${lang}`,
       handleCodeInApp: false, // False to use the custom action handler page
     };
   };
+
+  const getResetPasswordSettings = () => {
+    const appUrl = resolveAppUrl();
+    const lang = isFr ? "fr" : "en";
+    return {
+      url: `${appUrl}/login?lang=${lang}`,
+      handleCodeInApp: false,
+    };
+  };
+
+  useEffect(() => {
+    firebaseAuth.languageCode = isFr ? "fr" : "en";
+  }, [isFr]);
 
   useEffect(() => {
     logger.infoSafe('AuthProvider mounted');
@@ -119,66 +173,61 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         };
         await syncCookie();
 
-        const isAlma = firebaseUser.email === ALMA_EMAIL;
-        const isAdmin = isAdminEmail(firebaseUser.email);
-
         // Use a type assertion or helper if needed, but for now just pass firebaseUser
         const finalUser = firebaseUser;
         setUser(finalUser);
+        await syncLandingQuizAssessment(finalUser.uid);
 
-        if (!isAdmin) {
-          // Listen to user document (created by server-side trigger)
-          const userRef = doc(db, "users", finalUser.uid);
+        // Listen to user document (created by server-side trigger)
+        const userRef = doc(db, "users", finalUser.uid);
 
-          let userSnap = await getDoc(userRef);
+        let userSnap = await getDoc(userRef);
 
-          // FALLBACK: If trigger didn't run, create doc client-side
-          // This ensures users can still use the app even if Cloud Functions aren't deployed yet
-          if (!userSnap.exists()) {
-            logger.warnSafe("Creating user doc client-side because Cloud Trigger is missing.", { userId: finalUser.uid });
-            try {
-              await setDoc(userRef, {
-                uid: finalUser.uid,
-                email: finalUser.email,
-                displayName: finalUser.displayName,
-                photoURL: finalUser.photoURL,
-                createdAt: serverTimestamp(),
-                stripeCustomerId: null,
-                subscriptionStatus: 'free',
-                entryCount: 0,
-              }, { merge: true });
+        // FALLBACK: If trigger didn't run, create doc client-side
+        // This ensures users can still use the app even if Cloud Functions aren't deployed yet
+        if (!userSnap.exists()) {
+          logger.warnSafe("Creating user doc client-side because Cloud Trigger is missing.", { userId: finalUser.uid });
+          try {
+            // Security hardening: client fallback creates profile metadata only.
+            // Billing/subscription state is server-managed.
+            await setDoc(userRef, {
+              uid: finalUser.uid,
+              email: finalUser.email,
+              displayName: finalUser.displayName,
+              photoURL: finalUser.photoURL,
+              createdAt: serverTimestamp(),
+              updatedAt: serverTimestamp(),
+              entryCount: 0,
+            }, { merge: true });
 
-              await setDoc(doc(db, "users", finalUser.uid, "settings", "legal"), {
-                termsAccepted: false,
-                termsAcceptedAt: null,
-                updatedAt: serverTimestamp(),
-              });
+            await setDoc(doc(db, "users", finalUser.uid, "settings", "legal"), {
+              termsAccepted: false,
+              termsAcceptedAt: null,
+              updatedAt: serverTimestamp(),
+            });
 
-              logger.infoSafe("User doc created client-side", { userId: finalUser.uid });
-              setTermsAccepted(false);
-              userSnap = await getDoc(userRef);
-            } catch (e) {
-              logger.errorSafe("Failed to create user doc client-side", e, { userId: finalUser.uid });
-            }
-          }
-
-          if (userSnap.exists()) {
-            // User exists, check terms in settings/legal
-            const legalRef = doc(db, "users", finalUser.uid, "settings", "legal");
-            const legalSnap = await getDoc(legalRef);
-
-            if (legalSnap.exists()) {
-              setTermsAccepted(legalSnap.data().termsAccepted);
-            } else {
-              setTermsAccepted(false);
-            }
-          } else {
-            // User doc doesn't exist yet (Cloud Function might be slow)
+            logger.infoSafe("User doc created client-side", { userId: finalUser.uid });
             setTermsAccepted(false);
-            logger.warnSafe('User document not found (waiting for trigger)', { userId: finalUser.uid });
+            userSnap = await getDoc(userRef);
+          } catch (e) {
+            logger.errorSafe("Failed to create user doc client-side", e, { userId: finalUser.uid });
+          }
+        }
+
+        if (userSnap.exists()) {
+          // User exists, check terms in settings/legal
+          const legalRef = doc(db, "users", finalUser.uid, "settings", "legal");
+          const legalSnap = await getDoc(legalRef);
+
+          if (legalSnap.exists()) {
+            setTermsAccepted(legalSnap.data().termsAccepted);
+          } else {
+            setTermsAccepted(false);
           }
         } else {
-          setTermsAccepted(true); // Admin user always accepted
+          // User doc doesn't exist yet (Cloud Function might be slow)
+          setTermsAccepted(false);
+          logger.warnSafe('User document not found (waiting for trigger)', { userId: finalUser.uid });
         }
       } else {
         setUser(null);
@@ -203,23 +252,63 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       logger.infoSafe('Google Client ID check', { present: !!googleClientId });
       if (!googleClientId) {
         const message =
-          "NEXT_PUBLIC_GOOGLE_CLIENT_ID est manquant. Ajoutez-le pour activer la connexion Google.";
+          txt(
+            "NEXT_PUBLIC_GOOGLE_CLIENT_ID est manquant. Ajoutez-le pour activer la connexion Google.",
+            "NEXT_PUBLIC_GOOGLE_CLIENT_ID is missing. Add it to enable Google sign-in."
+          );
         logger.warnSafe(message);
         toast({
-          title: "Connexion Google indisponible",
+          title: txt("Connexion Google indisponible", "Google sign-in unavailable"),
           description: message,
           variant: "destructive",
         });
         throw new Error(message);
       }
       const provider = new GoogleAuthProvider();
-      await signInWithPopup(firebaseAuth, provider);
+      try {
+        await signInWithPopup(firebaseAuth, provider);
+      } catch (popupError: unknown) {
+        const code =
+          typeof popupError === "object" &&
+          popupError !== null &&
+          "code" in popupError
+            ? String((popupError as { code?: unknown }).code)
+            : "";
+        const message =
+          typeof popupError === "object" &&
+          popupError !== null &&
+          "message" in popupError
+            ? String((popupError as { message?: unknown }).message)
+            : "";
+
+        // Known cases where popup fails on mobile / strict browsers.
+        if (
+          code === "auth/popup-blocked" ||
+          code === "auth/operation-not-supported-in-this-environment" ||
+          code === "auth/cancelled-popup-request" ||
+          message.includes("disallowed_useragent")
+        ) {
+          await signInWithRedirect(firebaseAuth, provider);
+          return;
+        }
+        throw popupError;
+      }
       // Redirect logic handled by component or useEffect
     } catch (error) {
       logger.errorSafe('Google Sign In Failed', error);
+      const message =
+        typeof error === "object" && error !== null && "message" in error
+          ? String((error as { message?: unknown }).message)
+          : "";
+      const isDisallowedUserAgent = message.includes("disallowed_useragent");
       toast({
-        title: "Erreur de connexion",
-        description: "Impossible de se connecter avec Google.",
+        title: txt("Erreur de connexion", "Sign-in error"),
+        description: isDisallowedUserAgent
+          ? txt(
+              "Google bloque ce navigateur intégré. Ouvre Aurum dans Safari ou Chrome, puis réessaie.",
+              "Google blocks this in-app browser. Open Aurum in Safari or Chrome and try again."
+            )
+          : txt("Impossible de se connecter avec Google.", "Unable to sign in with Google."),
         variant: "destructive",
       });
       throw error;
@@ -233,8 +322,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         await sendEmailVerification(cred.user, getEmailVerificationSettings());
         await signOut(firebaseAuth);
         toast({
-          title: "Email non vérifié",
-          description: "Nous venons de renvoyer un email de vérification. Vérifiez votre boîte de réception.",
+          title: txt("Email non vérifié", "Email not verified"),
+          description: txt(
+            "Nous venons de renvoyer un email de vérification. Vérifiez votre boîte de réception.",
+            "We sent a new verification email. Please check your inbox."
+          ),
           variant: "destructive",
         });
         throw new Error("EMAIL_NOT_VERIFIED");
@@ -243,8 +335,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       logger.errorSafe('Email Sign In Failed', error);
       if ((error as Error)?.message !== "EMAIL_NOT_VERIFIED") {
         toast({
-          title: "Erreur de connexion",
-          description: "Email ou mot de passe incorrect.",
+          title: txt("Erreur de connexion", "Sign-in error"),
+          description: txt("Email ou mot de passe incorrect.", "Invalid email or password."),
           variant: "destructive",
         });
       }
@@ -259,14 +351,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await sendEmailVerification(cred.user, getEmailVerificationSettings());
       await signOut(firebaseAuth);
       toast({
-        title: "Vérifiez votre email",
-        description: "Un message de vérification vient d'être envoyé.",
+        title: txt("Vérifiez votre email", "Check your email"),
+        description: txt(
+          "Un message de vérification vient d'être envoyé.",
+          "A verification email has just been sent."
+        ),
       });
     } catch (error) {
       logger.errorSafe('Sign Up Failed', error);
       toast({
-        title: "Erreur d'inscription",
-        description: "Impossible de créer le compte.",
+        title: txt("Erreur d'inscription", "Sign-up error"),
+        description: txt("Impossible de créer le compte.", "Unable to create your account."),
         variant: "destructive",
       });
       throw error;
@@ -305,9 +400,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const resetPassword = async (email: string) => {
     try {
-      await sendPasswordResetEmail(firebaseAuth, email);
+      await sendPasswordResetEmail(firebaseAuth, email, getResetPasswordSettings());
+      toast({
+        title: txt("Email envoyé", "Email sent"),
+        description: txt(
+          "Vérifiez vos mails et vos spams pour réinitialiser votre mot de passe.",
+          "Check your inbox and spam folder to reset your password."
+        ),
+      });
     } catch (error) {
       logger.errorSafe('Password Reset Failed', error);
+      toast({
+        title: txt("Erreur de réinitialisation", "Reset error"),
+        description: txt(
+          "Impossible d'envoyer l'email de réinitialisation.",
+          "Unable to send the password reset email."
+        ),
+        variant: "destructive",
+      });
       throw error;
     }
   };

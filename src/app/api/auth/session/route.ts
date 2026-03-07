@@ -11,6 +11,18 @@ import { logger } from '@/lib/logger/safe';
  */
 export async function POST(request: Request) {
     try {
+        // Basic CSRF hardening: reject cross-site origins.
+        const requestOrigin = request.headers.get('origin');
+        const runtimeOrigin = new URL(request.url).origin;
+        const configuredAppOrigin = process.env.NEXT_PUBLIC_APP_URL
+            ? new URL(process.env.NEXT_PUBLIC_APP_URL).origin
+            : runtimeOrigin;
+        const allowedOrigins = new Set([runtimeOrigin, configuredAppOrigin]);
+
+        if (requestOrigin && !allowedOrigins.has(requestOrigin)) {
+            return NextResponse.json({ error: 'Forbidden origin' }, { status: 403 });
+        }
+
         const { idToken } = await request.json();
 
         if (!idToken) {
@@ -26,6 +38,11 @@ export async function POST(request: Request) {
             console.warn("Firebase Admin Auth not initialized or mocked. Skipping session cookie creation.");
             return NextResponse.json({ status: 'skipped', message: 'Admin Auth missing' }, { status: 200 });
         }
+
+        // Verify ID token before exchanging to session cookie.
+        // Do not require "recent sign-in" here: this endpoint is also used to silently
+        // refresh the cookie on normal navigation/page reload.
+        await auth.verifyIdToken(idToken, true);
 
         // Create the session cookie using Firebase Admin
         const sessionCookie = await auth.createSessionCookie(idToken, { expiresIn });
@@ -44,7 +61,7 @@ export async function POST(request: Request) {
             httpOnly: true,
             secure: isProduction,
             path: '/',
-            sameSite: 'lax' as const
+            sameSite: 'strict' as const
         };
 
         // Set the cookie

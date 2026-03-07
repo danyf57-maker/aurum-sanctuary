@@ -6,6 +6,10 @@ import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { AuthButton } from '@/components/auth/auth-button';
 import { MobileNav } from './mobile-nav';
+import { LanguageSwitch } from './language-switch';
+import { stripLocalePrefix } from '@/i18n/routing';
+import { useLocalizedHref } from '@/hooks/use-localized-href';
+import { useTranslations } from 'next-intl';
 
 const Logo = (props: React.SVGProps<SVGSVGElement>) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props}>
@@ -15,31 +19,49 @@ const Logo = (props: React.SVGProps<SVGSVGElement>) => (
 
 export function Header() {
   const pathname = usePathname();
-  const isHomepage = pathname === '/';
+  const tNav = useTranslations('nav');
+  const tHeader = useTranslations('header');
+  const to = useLocalizedHref();
+  const normalizedPath = stripLocalePrefix(pathname || '/');
+  const isHomepage = normalizedPath === '/';
 
   // Do not render the header on the homepage to allow for a custom hero header
   if (isHomepage) {
     return null;
   }
 
-  const isAdminPage = pathname.startsWith('/admin');
-  const isAppPage = pathname.startsWith('/dashboard') || pathname.startsWith('/sanctuary') || pathname.startsWith('/insights') || pathname.startsWith('/settings');
+  const isAdminPage = normalizedPath.startsWith('/admin');
+  const isAppPage = normalizedPath.startsWith('/dashboard') || normalizedPath.startsWith('/sanctuary') || normalizedPath.startsWith('/insights') || normalizedPath.startsWith('/settings');
+  const currentSection = normalizedPath.startsWith('/sanctuary/write')
+    ? tNav('write')
+    : normalizedPath.startsWith('/sanctuary/magazine')
+    ? tNav('magazine')
+    : normalizedPath.startsWith('/sanctuary')
+    ? tNav('journal')
+    : normalizedPath.startsWith('/dashboard')
+    ? tNav('dashboard')
+    : normalizedPath.startsWith('/insights')
+    ? tNav('insights')
+    : normalizedPath.startsWith('/settings')
+    ? tNav('settings')
+    : null;
 
   if (isAdminPage) {
     return (
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 pt-[env(safe-area-inset-top)]">
         <div className="container flex h-14 max-w-screen-2xl items-center">
           <div className="mr-4 hidden md:flex">
-            <Link href="/" className="mr-6 flex items-center space-x-2">
+            <Link href={to('/')} className="mr-6 flex items-center space-x-2">
               <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
                 <Logo className="h-6 w-6 text-amber-600" />
               </motion.div>
               <span className="font-bold font-headline sm:inline-block">
-                Aurum <span className="text-muted-foreground font-normal text-sm">/ Admin</span>
+                Aurum <span className="text-muted-foreground font-normal text-sm">/ {tHeader('admin')}</span>
               </span>
             </Link>
           </div>
           <div className="flex flex-1 items-center justify-end space-x-2">
+            <LanguageSwitch className="hidden sm:inline-flex" compact />
             <AuthButton />
           </div>
         </div>
@@ -52,7 +74,7 @@ export function Header() {
       <div className="container flex h-14 max-w-screen-2xl items-center">
         {!isAppPage && (
           <div className="mr-4 hidden md:flex">
-            <Link href="/" className="mr-6 flex items-center space-x-2">
+            <Link href={to('/')} className="mr-6 flex items-center space-x-2">
               <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
                 <Logo className="h-6 w-6 text-amber-600" />
               </motion.div>
@@ -62,16 +84,22 @@ export function Header() {
             </Link>
             <nav className="flex items-center gap-6 text-sm">
               <Link
-                href="/sanctuary/write"
+                href={to('/sanctuary/write')}
                 className="transition-colors hover:text-foreground/80 text-foreground/60"
               >
-                Écrire
+                {tHeader('quickWrite')}
               </Link>
               <Link
-                href="/sanctuary/magazine"
+                href={to('/sanctuary')}
                 className="transition-colors hover:text-foreground/80 text-foreground/60"
               >
-                Journal
+                {tHeader('journal')}
+              </Link>
+              <Link
+                href={to('/sanctuary/magazine')}
+                className="transition-colors hover:text-foreground/80 text-foreground/60"
+              >
+                {tHeader('magazine')}
               </Link>
             </nav>
           </div>
@@ -80,9 +108,14 @@ export function Header() {
         <MobileNav />
 
         <div className="flex flex-1 items-center justify-end space-x-2">
+          <LanguageSwitch className="hidden sm:inline-flex" compact />
           {isAppPage && (
             <div className="hidden lg:flex items-center gap-4 mr-4">
-               {/* Any specific app header items can go here */}
+              {currentSection && (
+                <div className="rounded-full border border-stone-200 bg-stone-100/70 px-3 py-1 text-xs font-medium text-stone-700">
+                  {tHeader('activeSection', { section: currentSection })}
+                </div>
+              )}
             </div>
           )}
           <AuthButton />

@@ -11,10 +11,14 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Download, Trash2, Loader2, ShieldAlert } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import Link from 'next/link';
+import { useLocalizedHref } from '@/hooks/use-localized-href';
+import { useTranslations } from 'next-intl';
 
 export const dynamic = 'force-dynamic';
 
 export default function AccountDataPage() {
+    const to = useLocalizedHref();
+    const t = useTranslations('accountData');
     const { user, loading: authLoading } = useAuth();
     const { toast } = useToast();
     const [isDownloading, setIsDownloading] = useState(false);
@@ -42,7 +46,7 @@ export default function AccountDataPage() {
                     </AlertDescription>
                 </Alert>
                 <Button asChild className="mt-6">
-                    <Link href="/sanctuary/write">Retourner à l'écriture</Link>
+                    <Link href={to("/sanctuary/write")}>Retourner à l'écriture</Link>
                 </Button>
             </div>
         );
@@ -54,7 +58,7 @@ export default function AccountDataPage() {
         setIsDownloading(false);
 
         if (error) {
-            toast({ title: "Erreur lors de l'exportation", description: error, variant: "destructive" });
+            toast({ title: t('exportErrorTitle'), description: error, variant: "destructive" });
         } else if (data) {
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
@@ -65,7 +69,7 @@ export default function AccountDataPage() {
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            toast({ title: "Exportation réussie", description: "Vos données ont été téléchargées." });
+            toast({ title: t('exportSuccessTitle'), description: t('exportSuccessDescription') });
         }
     };
 
@@ -75,10 +79,10 @@ export default function AccountDataPage() {
         setIsDeleting(false);
 
         if (error) {
-            toast({ title: "Erreur lors de la suppression", description: error, variant: "destructive" });
+            toast({ title: t('deleteErrorTitle'), description: error, variant: "destructive" });
         } else {
             // The user will be signed out and redirected by the auth hook.
-            toast({ title: "Compte supprimé", description: "Nous sommes tristes de vous voir partir." });
+            toast({ title: t('accountDeletedTitle'), description: t('accountDeletedDescription') });
         }
     };
 

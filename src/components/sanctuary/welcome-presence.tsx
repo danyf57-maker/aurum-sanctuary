@@ -10,6 +10,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 
 interface WelcomePresenceProps {
@@ -19,6 +20,7 @@ interface WelcomePresenceProps {
 export function WelcomePresence({ userName }: WelcomePresenceProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [hasBeenShown, setHasBeenShown] = useState(false);
+  const t = useTranslations("sanctuary.welcomePresence");
 
   useEffect(() => {
     // Check if already shown this session
@@ -46,7 +48,8 @@ export function WelcomePresence({ userName }: WelcomePresenceProps) {
     return null;
   }
 
-  const firstName = (userName ?? "").split(" ")[0] || "cher explorateur";
+  const firstName =
+    (userName ?? "").split(" ")[0] || t("defaultFirstName");
 
   return (
     <AnimatePresence>
@@ -81,10 +84,10 @@ export function WelcomePresence({ userName }: WelcomePresenceProps) {
               )}
             >
               {/* Close button */}
-              <button
-                onClick={handleDismiss}
-                className="absolute top-4 right-4 text-stone-400 hover:text-stone-600 transition-colors"
-                aria-label="Fermer"
+                <button
+                  onClick={handleDismiss}
+                  className="absolute top-4 right-4 text-stone-400 hover:text-stone-600 transition-colors"
+                aria-label={t("close")}
               >
                 <X className="h-5 w-5" />
               </button>
@@ -94,27 +97,28 @@ export function WelcomePresence({ userName }: WelcomePresenceProps) {
                 {/* Greeting */}
                 <div className="space-y-2">
                   <h2 className="font-headline text-3xl text-stone-900">
-                    Bienvenue, {firstName}
+                    {t("welcome")}, {firstName}
                   </h2>
                   <div className="h-px w-16 mx-auto bg-gradient-to-r from-transparent via-amber-300 to-transparent" />
                 </div>
 
                 {/* Message */}
                 <div className="space-y-4 text-stone-700 leading-relaxed">
-                  <p className="text-lg">Cet espace est le tien.</p>
+                  <p className="text-lg">
+                    {t("line1")}
+                  </p>
                   <p className="text-base">
-                    Ici, rien ne presse. Rien ne mesure. Aurum t'accompagne,
-                    sans te diriger.
+                    {t("line2")}
                   </p>
                   <p className="text-sm text-stone-500 italic">
-                    Écris ce qui demande à être posé. Le reste viendra.
+                    {t("line3")}
                   </p>
                 </div>
 
                 {/* Subtle decoration */}
                 <div className="pt-4">
                   <div className="inline-block px-4 py-2 rounded-full bg-amber-100/50 text-amber-800 text-xs font-medium tracking-wide">
-                    Présence Premium
+                    {t("badge")}
                   </div>
                 </div>
               </div>
