@@ -450,6 +450,16 @@
       "history": "Full history",
       "export": "Data export",
       "reflections": "In-depth reflections"
+    },
+    "trial": {
+      "badge": "FREE TRIAL",
+      "title": "7 days free before the first charge",
+      "body": "Your trial starts when you confirm Stripe Checkout. It lasts exactly 7 days, meaning 7 x 24 hours.",
+      "bullet1": "Full Aurum access during the trial",
+      "bullet2": "The timer starts when checkout is confirmed",
+      "bullet3": "Access stays active until the exact end time",
+      "bullet4": "If you do not cancel before the end, the paid subscription starts automatically",
+      "note": "Example: if you activate your trial on March 7 at 2:32 PM, it ends on March 14 at 2:32 PM."
     }
   },
   "hero": {
@@ -1046,5 +1056,34 @@
     "subtitle": "An encrypted sanctuary for your most intimate thoughts.",
     "placeholder": "Write here...",
     "cta": "Enter your sanctuary"
+  },
+  "trialOffer": {
+    "badge": "7 DAYS FREE",
+    "title": "Start with 7 days free.",
+    "body": "Try Aurum with full access for 7 days, then decide whether you want to continue.",
+    "cta": "View pricing"
+  },
+  "paywall": {
+    "close": "Close",
+    "title": "Your weekly analysis is ready",
+    "intro": "Unlock it with the free trial:",
+    "benefit1": "View your full analysis",
+    "benefit2": "Access all your past analyses",
+    "benefit3": "Keep building your emotional clarity map",
+    "reassurance": "No pressure. Your writing stays private and secure.",
+    "subscribe": "Start my 7 free days",
+    "loading": "Loading...",
+    "later": "Maybe later",
+    "signinRequired": "Please sign in to start your trial.",
+    "checkoutError": "Unable to create the checkout session.",
+    "checkoutNoUrl": "No payment URL received.",
+    "unknownError": "Something went wrong.",
+    "trialBadge": "FREE TRIAL",
+    "trialTitle": "How do the 7 days work?",
+    "trialBody": "The trial starts when you confirm Stripe Checkout and lasts exactly 7 days, which means 7 x 24 hours.",
+    "trialBullet1": "Premium access starts immediately",
+    "trialBullet2": "The timer starts at the exact checkout confirmation time",
+    "trialBullet3": "You can cancel before the end to avoid being charged",
+    "trialNote": "Example: activation on March 7 at 2:32 PM = end on March 14 at 2:32 PM."
   }
 }

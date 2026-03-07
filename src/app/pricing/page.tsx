@@ -14,7 +14,9 @@ import { useLocale } from '@/hooks/use-locale';
 import { localizeHref } from '@/lib/i18n/path';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
+import { PricingOfferBlock } from '@/components/marketing/pricing-offer-block';
 import { useToast } from '@/hooks/use-toast';
+import { TrialExplainerCard } from '@/components/marketing/trial-explainer-card';
 
 export const dynamic = 'force-dynamic';
 
@@ -175,7 +177,13 @@ export default function PricingPage() {
 
             <section className="pb-24 md:pb-32">
                 <div className="container max-w-7xl mx-auto">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start max-w-4xl mx-auto">
+                    <div className="mb-12 flex justify-center">
+                        <PricingOfferBlock ctaHref="/pricing#plans" ctaLabel={locale === 'fr' ? 'Voir les formules' : 'See plans'} className="w-full" pagePath="/pricing" />
+                    </div>
+                    <div className="mx-auto mb-10 max-w-4xl">
+                        <TrialExplainerCard namespace="pricing" />
+                    </div>
+                    <div id="plans" className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start max-w-4xl mx-auto">
                         {plans.map((plan) => (
                             <Card key={plan.name} className={cn(
                                 "flex flex-col h-full",
