@@ -1,5 +1,7 @@
 'use client';
 
+import { useLocale } from '@/hooks/use-locale';
+
 type ThemeTemplate = 'minimal' | 'elegant' | 'magazine' | 'zen';
 
 type MagazineThemePickerProps = {
@@ -15,9 +17,12 @@ const options: Array<{ id: ThemeTemplate; label: string }> = [
 ];
 
 export function MagazineThemePicker({ value, onChange }: MagazineThemePickerProps) {
+  const locale = useLocale();
+  const isFr = locale === 'fr';
+
   return (
     <section className="rounded-2xl border border-stone-200 bg-white p-4 shadow-sm">
-      <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-stone-600">Theme</p>
+      <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-stone-600">{isFr ? 'Thème' : 'Theme'}</p>
       <div className="mt-3 flex flex-wrap gap-2">
         {options.map((option) => (
           <button

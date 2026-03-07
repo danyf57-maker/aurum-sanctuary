@@ -6,6 +6,7 @@ import { X, Sparkles, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useLocalizedHref } from "@/hooks/use-localized-href";
+import { useLocale } from "@/hooks/use-locale";
 
 interface QuizData {
   answers: string[];
@@ -75,6 +76,8 @@ const QUIZ_SHOWN_KEY = "aurum-quiz-shown";
 
 export default function QuizResultModal() {
   const to = useLocalizedHref();
+  const locale = useLocale();
+  const isFr = locale === "fr";
   const [isOpen, setIsOpen] = useState(false);
   const [profile, setProfile] = useState<ProfileResult | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -90,18 +93,15 @@ export default function QuizResultModal() {
           if (data.profile && PROFILES[data.profile]) {
             setProfile(PROFILES[data.profile]);
             setIsOpen(true);
-            // Mark as shown so it doesn't appear again
             localStorage.setItem(QUIZ_SHOWN_KEY, "true");
           }
         } catch {
-          // Invalid data, clean up
           localStorage.removeItem(QUIZ_STORAGE_KEY);
         }
       }
       setIsLoading(false);
     };
 
-    // Small delay to ensure smooth page load first
     const timer = setTimeout(checkQuizData, 500);
     return () => clearTimeout(timer);
   }, []);
@@ -112,7 +112,6 @@ export default function QuizResultModal() {
 
   const handleDismiss = () => {
     setIsOpen(false);
-    // Keep the data but don't show again
     localStorage.setItem(QUIZ_SHOWN_KEY, "true");
   };
 
@@ -136,7 +135,6 @@ export default function QuizResultModal() {
             className="bg-white rounded-[2.5rem] p-8 md:p-12 max-w-lg w-full relative shadow-2xl border border-stone-200 overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Close button */}
             <button
               onClick={handleDismiss}
               className="absolute top-6 right-6 p-2 text-stone-400 hover:text-stone-900 transition-colors z-10"
@@ -144,9 +142,7 @@ export default function QuizResultModal() {
               <X className="w-5 h-5" />
             </button>
 
-            {/* Content */}
             <div className="text-center relative z-10">
-              {/* Icon */}
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
@@ -156,7 +152,6 @@ export default function QuizResultModal() {
                 <span className="text-4xl">{profile.icon}</span>
               </motion.div>
 
-              {/* Badge */}
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -165,11 +160,10 @@ export default function QuizResultModal() {
               >
                 <Sparkles className="w-4 h-4 text-primary" />
                 <span className="text-xs font-semibold uppercase tracking-wider text-primary">
-                  Votre profil de réflexion
+                  {isFr ? "Votre profil de réflexion" : "Your reflection profile"}
                 </span>
               </motion.div>
 
-              {/* Title */}
               <motion.h2
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -179,7 +173,6 @@ export default function QuizResultModal() {
                 {profile.name}
               </motion.h2>
 
-              {/* Tagline */}
               <motion.p
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -189,7 +182,6 @@ export default function QuizResultModal() {
                 {profile.tagline}
               </motion.p>
 
-              {/* Description */}
               <motion.p
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -199,7 +191,6 @@ export default function QuizResultModal() {
                 {profile.description}
               </motion.p>
 
-              {/* CTA */}
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -212,7 +203,7 @@ export default function QuizResultModal() {
                   className="h-14 px-8 text-lg rounded-2xl shadow-lg hover:shadow-xl transition-all"
                 >
                   <Link href={to("/sanctuary/write")}>
-                    Commencer mon premier journal
+                    {isFr ? "Commencer mon premier journal" : "Start my first journal"}
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Link>
                 </Button>
@@ -220,12 +211,11 @@ export default function QuizResultModal() {
                   onClick={handleDismiss}
                   className="text-stone-400 text-sm hover:text-stone-600 transition-colors"
                 >
-                  Plus tard
+                  {isFr ? "Plus tard" : "Maybe later"}
                 </button>
               </motion.div>
             </div>
 
-            {/* Background gradient */}
             <div
               className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-br ${profile.color} blur-[100px] rounded-full opacity-40 pointer-events-none`}
             />

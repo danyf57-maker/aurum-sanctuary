@@ -42,33 +42,37 @@ export function StatsSummaryCards({
 
   const cards = [
     {
-      title: "This Week",
+      title: isFr ? "Cette semaine" : "This Week",
       value: stats.entriesThisWeek,
-      subtitle: `${stats.entriesThisMonth} this month`,
+      subtitle: isFr
+        ? `${stats.entriesThisMonth} ce mois`
+        : `${stats.entriesThisMonth} this month`,
       icon: Calendar,
       color: "text-blue-500",
       bgColor: "bg-blue-500/10",
     },
     {
-      title: "Current Streak",
+      title: isFr ? "Série actuelle" : "Current Streak",
       value: streaks.currentStreak,
-      subtitle: `Record: ${streaks.longestStreak} days`,
+      subtitle: isFr
+        ? `Record : ${streaks.longestStreak} jours`
+        : `Record: ${streaks.longestStreak} days`,
       icon: Flame,
       color: "text-orange-500",
       bgColor: "bg-orange-500/10",
     },
     {
-      title: "Daily Average",
+      title: isFr ? "Moyenne quotidienne" : "Daily Average",
       value: stats.averagePerDay.toFixed(1),
-      subtitle: "Over 30 days",
+      subtitle: isFr ? "Sur 30 jours" : "Over 30 days",
       icon: BarChart3,
       color: "text-purple-500",
       bgColor: "bg-purple-500/10",
     },
     {
-      title: "Dominant Mood",
+      title: isFr ? "Humeur dominante" : "Dominant Mood",
       value: localizeMoodValue(stats.mostCommonMood, isFr),
-      subtitle: getTrendText(stats.sentimentTrend),
+      subtitle: getTrendText(stats.sentimentTrend, isFr),
       icon: Smile,
       color: "text-green-500",
       bgColor: "bg-green-500/10",
@@ -118,14 +122,14 @@ export function StatsSummaryCards({
   );
 }
 
-function getTrendText(trend: "up" | "down" | "stable"): string {
+function getTrendText(trend: "up" | "down" | "stable", isFr: boolean): string {
   switch (trend) {
     case "up":
-      return "Positive trend";
+      return isFr ? "Tendance positive" : "Positive trend";
     case "down":
-      return "Negative trend";
+      return isFr ? "Tendance négative" : "Negative trend";
     case "stable":
-      return "Stable trend";
+      return isFr ? "Tendance stable" : "Stable trend";
   }
 }
 
