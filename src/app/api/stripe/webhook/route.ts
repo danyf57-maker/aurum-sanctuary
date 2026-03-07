@@ -8,7 +8,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { stripe } from '@/lib/stripe/server';
+import { getStripe } from '@/lib/stripe/server';
 import { firestore as db } from '@/lib/firebase/admin';
 import Stripe from 'stripe';
 import { trackServerEvent } from '@/lib/analytics/server';
@@ -60,6 +60,7 @@ async function notifyTrialWillEnd(params: {
 }
 
 export async function POST(req: NextRequest) {
+    const stripe = getStripe();
     const body = await req.text();
     const signature = req.headers.get('stripe-signature');
 

@@ -8,7 +8,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { stripe } from '@/lib/stripe/server';
+import { getStripe } from '@/lib/stripe/server';
 import { auth, firestore as db } from '@/lib/firebase/admin';
 import { logger } from '@/lib/logger/safe';
 import { rateLimit, RateLimitPresets } from '@/lib/rate-limit';
@@ -16,6 +16,8 @@ import { STRIPE_TRIAL_DAYS } from '@/lib/billing/config';
 
 export async function POST(req: NextRequest) {
     try {
+        const stripe = getStripe();
+
         // 1. Verify authentication
         const authHeader = req.headers.get('authorization');
 

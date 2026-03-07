@@ -9,39 +9,31 @@
 
 import Stripe from 'stripe';
 
-// Use mock key for build time, real key for runtime
-const stripeKey = process.env.STRIPE_SECRET_KEY || 'sk_test_mock';
-
-if (stripeKey === 'sk_test_mock') {
-    console.warn('STRIPE_SECRET_KEY is not set. Using mock for build.');
-}
-
 /**
  * Configured Stripe instance for server-side operations
  * 
  * @example
- * import { stripe } from '@/lib/stripe/server';
+ * import { getStripe } from '@/lib/stripe/server';
  * 
+ * const stripe = getStripe();
  * const products = await stripe.products.list();
  */
-export const stripe = stripeKey
-    ? new Stripe(stripeKey, {
+export function getStripe(): Stripe {
+    const stripeKey = process.env.STRIPE_SECRET_KEY?.trim();
+
+    if (!stripeKey) {
+        throw new Error('STRIPE_SECRET_KEY is not configured at runtime.');
+    }
+
+    return new Stripe(stripeKey, {
         apiVersion: '2024-06-20',
         typescript: true,
         appInfo: {
             name: 'Aurum Sanctuary',
             version: '1.0.0',
         },
-    })
-    : new Proxy({} as Stripe, {
-        get: (target, prop) => {
-            if (prop === 'then') return undefined;
-            return () => {
-                console.warn(`Stripe.${String(prop)} called without API key. Returning empty object.`);
-                return { data: [] };
-            };
-        },
     });
+}
 
 /**
  * Helper function to get or create a Stripe customer
@@ -54,6 +46,8 @@ export async function getOrCreateCustomer(
     email: string,
     userId: string
 ): Promise<Stripe.Customer> {
+    const stripe = getStripe();
+
     // Search for existing customer by email
     const existingCustomers = await stripe.customers.list({
         email,
@@ -82,6 +76,8 @@ export async function getOrCreateCustomer(
 export async function getSubscriptionStatus(
     customerId: string
 ): Promise<Stripe.Subscription.Status | null> {
+    const stripe = getStripe();
+
     const subscriptions = await stripe.subscriptions.list({
         customer: customerId,
         status: 'active',
