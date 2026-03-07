@@ -1,6 +1,7 @@
 'use client';
 
 import { Trash2 } from 'lucide-react';
+import { useLocale } from '@/hooks/use-locale';
 
 export type MagazineCollection = {
   id: string;
@@ -24,10 +25,15 @@ export function CollectionManager({
   onCreateCollection,
   onDeleteCollection,
 }: CollectionManagerProps) {
+  const locale = useLocale();
+  const isFr = locale === 'fr';
+
   return (
     <section className="rounded-2xl border border-stone-200 bg-white p-4 shadow-sm">
       <div className="flex items-center justify-between">
-        <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-stone-600">Collections</p>
+        <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-stone-600">
+          Collections
+        </p>
         <span className="text-xs text-stone-500">{collections.length}</span>
       </div>
 
@@ -46,12 +52,12 @@ export function CollectionManager({
       >
         <input
           name="name"
-          placeholder="Nouvelle collection"
+          placeholder={isFr ? 'Nouvelle collection' : 'New collection'}
           className="h-9 min-w-[180px] rounded-xl border border-stone-300 bg-stone-50 px-3 text-sm outline-none focus:border-[#C5A059]"
         />
         <input name="color" type="color" defaultValue="#C5A059" className="h-9 w-11 rounded border border-stone-300 bg-white p-1" />
         <button type="submit" className="h-9 rounded-xl bg-stone-900 px-3 text-xs font-medium text-white hover:bg-stone-800">
-          Creer
+          {isFr ? 'Créer' : 'Create'}
         </button>
       </form>
 
@@ -65,7 +71,7 @@ export function CollectionManager({
               : 'border-stone-300 bg-stone-50 text-stone-600'
           }`}
         >
-          Toutes
+          {isFr ? 'Toutes' : 'All'}
         </button>
 
         {collections.map((collection) => (
@@ -85,7 +91,7 @@ export function CollectionManager({
               type="button"
               onClick={() => onDeleteCollection(collection.id)}
               className="rounded-full p-1 text-stone-500 hover:text-red-600"
-              aria-label={`Supprimer ${collection.name}`}
+              aria-label={isFr ? `Supprimer ${collection.name}` : `Delete ${collection.name}`}
             >
               <Trash2 className="h-3 w-3" />
             </button>

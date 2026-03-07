@@ -56,6 +56,7 @@ export default function SettingsPage() {
     loading: settingsLoading,
     updatePreferences,
   } = useSettings();
+  const isFr = preferences.language === "fr";
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
@@ -73,14 +74,18 @@ export default function SettingsPage() {
       await logout();
       router.push("/");
       toast({
-        title: "Account Deleted",
-        description: "Your account has been permanently deleted.",
+        title: isFr ? "Compte supprimé" : "Account deleted",
+        description: isFr
+          ? "Votre compte a été supprimé définitivement."
+          : "Your account has been permanently deleted.",
       });
     } catch (error) {
       console.error("Account deletion failed:", error);
       toast({
-        title: "Error",
-        description: "Failed to delete account. Please try again.",
+        title: isFr ? "Erreur" : "Error",
+        description: isFr
+          ? "La suppression du compte a échoué. Réessayez."
+          : "Failed to delete account. Please try again.",
         variant: "destructive",
       });
       setIsDeleting(false);
@@ -104,7 +109,7 @@ export default function SettingsPage() {
             data.date instanceof Timestamp
               ? data.date.toDate().toISOString()
               : data.date,
-          content: data.content || "[No content]",
+          content: data.content || (isFr ? "[Aucun contenu]" : "[No content]"),
           mood: data.mood,
           tags: data.tags,
           createdAt:
@@ -166,14 +171,18 @@ export default function SettingsPage() {
       URL.revokeObjectURL(url);
 
       toast({
-        title: "Export Complete",
-        description: "Your data has been downloaded successfully.",
+        title: isFr ? "Export terminé" : "Export complete",
+        description: isFr
+          ? "Vos données ont bien été téléchargées."
+          : "Your data has been downloaded successfully.",
       });
     } catch (error) {
       console.error("Export failed:", error);
       toast({
-        title: "Export Failed",
-        description: "Failed to export data. Please try again.",
+        title: isFr ? "Échec de l'export" : "Export failed",
+        description: isFr
+          ? "L'export des données a échoué. Réessayez."
+          : "Failed to export data. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -192,17 +201,21 @@ export default function SettingsPage() {
   return (
     <div className="container max-w-4xl mx-auto py-8 px-4 space-y-8">
       <div className="space-y-2">
-        <h1 className="text-3xl font-serif text-primary">Settings</h1>
+        <h1 className="text-3xl font-serif text-primary">
+          {isFr ? "Paramètres" : "Settings"}
+        </h1>
         <p className="text-muted-foreground">
-          Manage your account settings and preferences.
+          {isFr
+            ? "Gérez les paramètres et préférences de votre compte."
+            : "Manage your account settings and preferences."}
         </p>
       </div>
 
       <Tabs defaultValue="general" className="w-full">
         <TabsList className="grid w-full grid-cols-3 mb-8">
-          <TabsTrigger value="general">General</TabsTrigger>
-          <TabsTrigger value="account">Account</TabsTrigger>
-          <TabsTrigger value="privacy">Privacy</TabsTrigger>
+          <TabsTrigger value="general">{isFr ? "Général" : "General"}</TabsTrigger>
+          <TabsTrigger value="account">{isFr ? "Compte" : "Account"}</TabsTrigger>
+          <TabsTrigger value="privacy">{isFr ? "Confidentialité" : "Privacy"}</TabsTrigger>
         </TabsList>
 
         {/* General Tab */}
@@ -211,15 +224,17 @@ export default function SettingsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Globe className="w-5 h-5 text-primary" />
-                Language & Region
+                {isFr ? "Langue et région" : "Language & Region"}
               </CardTitle>
               <CardDescription>
-                Customize your language and time settings.
+                {isFr
+                  ? "Personnalisez vos paramètres de langue et d'heure."
+                  : "Customize your language and time settings."}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="language">Language</Label>
+                <Label htmlFor="language">{isFr ? "Langue" : "Language"}</Label>
                 <Select
                   value={preferences.language}
                   onValueChange={(val: any) =>
@@ -227,7 +242,7 @@ export default function SettingsPage() {
                   }
                 >
                   <SelectTrigger id="language">
-                    <SelectValue placeholder="Select language" />
+                    <SelectValue placeholder={isFr ? "Choisir une langue" : "Select language"} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="en">English (US)</SelectItem>
@@ -237,20 +252,20 @@ export default function SettingsPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="timezone">Timezone</Label>
+                <Label htmlFor="timezone">{isFr ? "Fuseau horaire" : "Timezone"}</Label>
                 <Select
                   value={preferences.timezone}
                   onValueChange={(val) => updatePreferences({ timezone: val })}
                 >
                   <SelectTrigger id="timezone">
-                    <SelectValue placeholder="Select timezone" />
+                    <SelectValue placeholder={isFr ? "Choisir un fuseau horaire" : "Select timezone"} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="UTC">UTC</SelectItem>
                     <SelectItem
                       value={Intl.DateTimeFormat().resolvedOptions().timeZone}
                     >
-                      Local ({Intl.DateTimeFormat().resolvedOptions().timeZone})
+                      {isFr ? "Local" : "Local"} ({Intl.DateTimeFormat().resolvedOptions().timeZone})
                     </SelectItem>
                     {/* Add more timezones as needed */}
                   </SelectContent>
@@ -263,18 +278,22 @@ export default function SettingsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Sun className="w-5 h-5 text-primary" />
-                Appearance
+                {isFr ? "Apparence" : "Appearance"}
               </CardTitle>
               <CardDescription>
-                Customize how Aurum looks on your device.
+                {isFr
+                  ? "Personnalisez l'apparence d'Aurum sur votre appareil."
+                  : "Customize how Aurum looks on your device."}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label className="text-base">Theme</Label>
+                  <Label className="text-base">{isFr ? "Thème" : "Theme"}</Label>
                   <p className="text-sm text-muted-foreground">
-                    Select your preferred visual theme.
+                    {isFr
+                      ? "Choisissez votre thème visuel préféré."
+                      : "Select your preferred visual theme."}
                   </p>
                 </div>
                 <Select
@@ -284,12 +303,12 @@ export default function SettingsPage() {
                   }
                 >
                   <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Select theme" />
+                    <SelectValue placeholder={isFr ? "Choisir un thème" : "Select theme"} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="light">Light</SelectItem>
-                    <SelectItem value="dark">Dark</SelectItem>
-                    <SelectItem value="system">System</SelectItem>
+                    <SelectItem value="light">{isFr ? "Clair" : "Light"}</SelectItem>
+                    <SelectItem value="dark">{isFr ? "Sombre" : "Dark"}</SelectItem>
+                    <SelectItem value="system">{isFr ? "Système" : "System"}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -303,15 +322,19 @@ export default function SettingsPage() {
                 Notifications
               </CardTitle>
               <CardDescription>
-                Manage how we communicate with you.
+                {isFr
+                  ? "Choisissez comment nous communiquons avec vous."
+                  : "Manage how we communicate with you."}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label className="text-base">Insight Alerts</Label>
+                  <Label className="text-base">{isFr ? "Alertes d'insights" : "Insight alerts"}</Label>
                   <p className="text-sm text-muted-foreground">
-                    Receive notifications when your weekly insights are ready.
+                    {isFr
+                      ? "Recevez une notification quand vos insights hebdomadaires sont prêts."
+                      : "Receive notifications when your weekly insights are ready."}
                   </p>
                 </div>
                 <Switch
@@ -331,10 +354,12 @@ export default function SettingsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <User className="w-5 h-5 text-primary" />
-                Profile Info
+                {isFr ? "Profil" : "Profile info"}
               </CardTitle>
               <CardDescription>
-                Your personal account information.
+                {isFr
+                  ? "Vos informations personnelles de compte."
+                  : "Your personal account information."}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -344,7 +369,7 @@ export default function SettingsPage() {
                   <Input value={user?.email || ""} readOnly disabled />
                 </div>
                 <div className="space-y-2">
-                  <Label>Display Name</Label>
+                  <Label>{isFr ? "Nom affiché" : "Display name"}</Label>
                   <Input value={user?.displayName || ""} readOnly disabled />
                 </div>
               </div>
@@ -355,45 +380,52 @@ export default function SettingsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Lock className="w-5 h-5 text-primary" />
-                Subscription
+                {isFr ? "Abonnement" : "Subscription"}
               </CardTitle>
               <CardDescription>
-                Manage your Aurum subscription plan.
+                {isFr
+                  ? "Gérez votre formule Aurum."
+                  : "Manage your Aurum subscription plan."}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between p-4 border rounded-lg bg-secondary/50">
                 <div>
-                  <p className="font-medium">Current Plan</p>
-                  <p className="text-sm text-muted-foreground">Free Tier</p>
+                  <p className="font-medium">{isFr ? "Offre actuelle" : "Current plan"}</p>
+                  <p className="text-sm text-muted-foreground">{isFr ? "Gratuit" : "Free tier"}</p>
                 </div>
-                <Button variant="outline">Upgrade to Pro</Button>
+                <Button variant="outline">{isFr ? "Passer à Pro" : "Upgrade to Pro"}</Button>
               </div>
             </CardContent>
           </Card>
 
           <Card className="border-destructive/20">
             <CardHeader>
-              <CardTitle className="text-destructive">Danger Zone</CardTitle>
-              <CardDescription>Irreversible account actions.</CardDescription>
+              <CardTitle className="text-destructive">
+                {isFr ? "Zone sensible" : "Danger zone"}
+              </CardTitle>
+              <CardDescription>
+                {isFr ? "Actions de compte irréversibles." : "Irreversible account actions."}
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="destructive">Delete Account</Button>
+                  <Button variant="destructive">{isFr ? "Supprimer le compte" : "Delete account"}</Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Are you absolutely sure?</DialogTitle>
+                    <DialogTitle>{isFr ? "Voulez-vous vraiment continuer ?" : "Are you absolutely sure?"}</DialogTitle>
                     <DialogDescription>
-                      This action cannot be undone. This will permanently delete
-                      your account and remove your data from our servers.
+                      {isFr
+                        ? "Cette action est irréversible. Votre compte et vos données seront supprimés définitivement de nos serveurs."
+                        : "This action cannot be undone. This will permanently delete your account and remove your data from our servers."}
                     </DialogDescription>
                   </DialogHeader>
                   <div className="space-y-4 py-4">
                     <div className="space-y-2">
                       <Label htmlFor="confirm-delete">
-                        Type "DELETE" to confirm
+                        {isFr ? 'Tapez "DELETE" pour confirmer' : 'Type "DELETE" to confirm'}
                       </Label>
                       <Input
                         id="confirm-delete"
@@ -408,7 +440,7 @@ export default function SettingsPage() {
                       variant="outline"
                       onClick={() => setDeleteConfirmation("")}
                     >
-                      Cancel
+                      {isFr ? "Annuler" : "Cancel"}
                     </Button>
                     <Button
                       variant="destructive"
@@ -418,7 +450,7 @@ export default function SettingsPage() {
                       {isDeleting ? (
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       ) : null}
-                      Delete Account
+                      {isFr ? "Supprimer le compte" : "Delete account"}
                     </Button>
                   </DialogFooter>
                 </DialogContent>
@@ -431,18 +463,21 @@ export default function SettingsPage() {
         <TabsContent value="privacy" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Your Data</CardTitle>
+              <CardTitle>{isFr ? "Vos données" : "Your data"}</CardTitle>
               <CardDescription>
-                Control your personal data and exports.
+                {isFr
+                  ? "Contrôlez vos données personnelles et vos exports."
+                  : "Control your personal data and exports."}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label className="text-base">Export Data</Label>
+                  <Label className="text-base">{isFr ? "Exporter les données" : "Export data"}</Label>
                   <p className="text-sm text-muted-foreground">
-                    Download a copy of all your journal entries and insights
-                    (JSON).
+                    {isFr
+                      ? "Téléchargez une copie de toutes vos entrées et insights au format JSON."
+                      : "Download a copy of all your journal entries and insights (JSON)."}
                   </p>
                 </div>
                 <Button
@@ -453,7 +488,7 @@ export default function SettingsPage() {
                   {isExporting ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   ) : null}
-                  Download JSON
+                  {isFr ? "Télécharger le JSON" : "Download JSON"}
                 </Button>
               </div>
             </CardContent>
@@ -461,7 +496,7 @@ export default function SettingsPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Legal</CardTitle>
+              <CardTitle>{isFr ? "Mentions légales" : "Legal"}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               <Button
@@ -470,7 +505,7 @@ export default function SettingsPage() {
                 asChild
               >
                 <a href="/privacy" target="_blank" rel="noopener noreferrer">
-                  Privacy Policy <ExternalLink className="w-3 h-3" />
+                  {isFr ? "Politique de confidentialité" : "Privacy Policy"} <ExternalLink className="w-3 h-3" />
                 </a>
               </Button>
               <Separator />
@@ -480,7 +515,7 @@ export default function SettingsPage() {
                 asChild
               >
                 <a href="/terms" target="_blank" rel="noopener noreferrer">
-                  Terms of Service <ExternalLink className="w-3 h-3" />
+                  {isFr ? "Conditions d'utilisation" : "Terms of Service"} <ExternalLink className="w-3 h-3" />
                 </a>
               </Button>
             </CardContent>

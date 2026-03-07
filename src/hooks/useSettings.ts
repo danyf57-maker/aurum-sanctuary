@@ -75,8 +75,10 @@ export function useSettings() {
         } catch (error) {
             logger.errorSafe('Failed to update preferences', error);
             toast({
-                title: "Error",
-                description: "Failed to save settings. Please try again.",
+                title: preferences.language === "fr" ? "Erreur" : "Error",
+                description: preferences.language === "fr"
+                    ? "Impossible d'enregistrer les paramètres. Réessayez."
+                    : "Failed to save settings. Please try again.",
                 variant: "destructive",
             });
             // Revert optimistic update (simple reload or fetch would be better, but for now this is okay as snapshot listener will likely correct it if it failed on server only, though if local write fails we might need revert)

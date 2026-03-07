@@ -2,6 +2,7 @@
 
 import type { ComponentType } from 'react';
 import { BookImage, Calendar, Flame, Type } from 'lucide-react';
+import { useLocale } from '@/hooks/use-locale';
 
 type MagazineStatsProps = {
   totalEntries: number;
@@ -29,12 +30,15 @@ function StatCard({ icon: Icon, label, value }: StatCardProps) {
 }
 
 export function MagazineStats({ totalEntries, streakDays, thisMonthCount, avgWords }: MagazineStatsProps) {
+  const locale = useLocale();
+  const isFr = locale === 'fr';
+
   return (
     <section className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
-      <StatCard icon={BookImage} label="Entrées" value={String(totalEntries)} />
-      <StatCard icon={Flame} label="Streak" value={`${streakDays} j`} />
-      <StatCard icon={Calendar} label="Ce mois" value={String(thisMonthCount)} />
-      <StatCard icon={Type} label="Moy. mots" value={String(avgWords)} />
+      <StatCard icon={BookImage} label={isFr ? 'Entrées' : 'Entries'} value={String(totalEntries)} />
+      <StatCard icon={Flame} label={isFr ? 'Série' : 'Streak'} value={`${streakDays} ${isFr ? 'j' : 'd'}`} />
+      <StatCard icon={Calendar} label={isFr ? 'Ce mois' : 'This month'} value={String(thisMonthCount)} />
+      <StatCard icon={Type} label={isFr ? 'Moy. mots' : 'Avg. words'} value={String(avgWords)} />
     </section>
   );
 }

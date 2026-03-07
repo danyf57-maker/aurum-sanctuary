@@ -25,6 +25,7 @@ import {
 import { Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { trackEvent } from "@/lib/analytics/client";
+import { useLocale } from "@/hooks/use-locale";
 
 interface QuizData {
   answers: string[];
@@ -42,6 +43,8 @@ const loginSchema = z.object({
 });
 
 function LoginForm() {
+  const locale = useLocale();
+  const isFr = locale === "fr";
   const { signInWithEmail, signInWithGoogle, loading: authLoading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -53,8 +56,6 @@ function LoginForm() {
   const [quizData, setQuizData] = useState<QuizData | null>(null);
   const [showQuizTeaser, setShowQuizTeaser] = useState(false);
 
-  // Get redirect URL from query params, default to /dashboard.
-  // Security: only allow internal relative paths.
   const rawRedirectUrl = searchParams.get("redirect");
   const redirectUrl =
     rawRedirectUrl &&
@@ -65,7 +66,6 @@ function LoginForm() {
   const verified = searchParams.get("verified");
   const checkEmail = searchParams.get("check_email");
 
-  // Check for quiz completion
   useEffect(() => {
     const quizComplete = searchParams.get("quiz") === "complete";
     if (quizComplete) {
@@ -92,7 +92,6 @@ function LoginForm() {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
 
-    // Validate
     const result = loginSchema.safeParse({ email, password });
     if (!result.success) {
       const fieldErrors: { email?: string; password?: string } = {};
@@ -113,10 +112,11 @@ function LoginForm() {
       });
       router.push(redirectUrl);
     } catch (error) {
-      // Error toast shown by AuthProvider
       if ((error as Error)?.message === "EMAIL_NOT_VERIFIED") {
         setInfo(
-          "Votre email n'est pas encore vérifié. Nous venons de renvoyer un message."
+          isFr
+            ? "Votre email n'est pas encore vérifié. Nous venons de renvoyer un message."
+            : "Your email is not verified yet. We just sent a new verification message."
         );
       }
     } finally {
@@ -132,10 +132,8 @@ function LoginForm() {
         name: "login",
         params: { method: "google", source: "login_page" },
       });
-      // Popup-based OAuth, no page reload - redirect directly
       router.push(redirectUrl);
-    } catch (error) {
-      // Error toast shown by AuthProvider
+    } catch {
       setLoading(false);
     }
   };
@@ -144,8 +142,10 @@ function LoginForm() {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">Chargement...</p>
+          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+          <p className="mt-4 text-muted-foreground">
+            {isFr ? "Chargement..." : "Loading..."}
+          </p>
         </div>
       </div>
     );
@@ -155,27 +155,29 @@ function LoginForm() {
     <div className="flex min-h-screen items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Connexion</CardTitle>
+          <CardTitle>{isFr ? "Connexion" : "Sign in"}</CardTitle>
           <CardDescription>
-            Connectez-vous à votre compte Aurum Sanctuary
+            {isFr
+              ? "Connectez-vous à votre compte Aurum Sanctuary"
+              : "Sign in to your Aurum Sanctuary account"}
           </CardDescription>
 
-          {/* Quiz Teaser */}
           {showQuizTeaser && quizData?.profile && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mt-4 p-4 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 rounded-xl border border-amber-200 dark:border-amber-800"
+              className="mt-4 rounded-xl border border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 p-4 dark:border-amber-800 dark:from-amber-950/30 dark:to-orange-950/30"
             >
-              <div className="flex items-center gap-2 mb-2">
+              <div className="mb-2 flex items-center gap-2">
                 <Sparkles className="h-4 w-4 text-amber-600 dark:text-amber-400" />
                 <span className="text-xs font-semibold uppercase tracking-wider text-amber-700 dark:text-amber-300">
-                  Votre profil vous attend
+                  {isFr ? "Votre profil vous attend" : "Your profile is waiting"}
                 </span>
               </div>
               <p className="text-sm text-amber-800 dark:text-amber-200">
-                Votre profil de réflexion est prêt ! Connectez-vous pour
-                découvrir votre résultat personnalisé.
+                {isFr
+                  ? "Votre profil de réflexion est prêt ! Connectez-vous pour découvrir votre résultat personnalisé."
+                  : "Your reflection profile is ready. Sign in to discover your personalized result."}
               </p>
             </motion.div>
           )}
@@ -183,13 +185,16 @@ function LoginForm() {
         <CardContent className="space-y-4">
           {verified && (
             <div className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
-              Email vérifié. Vous pouvez vous connecter.
+              {isFr
+                ? "Email vérifié. Vous pouvez vous connecter."
+                : "Email verified. You can now sign in."}
             </div>
           )}
           {checkEmail && (
             <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
-              Un email de vérification vient d'être envoyé. Merci de vérifier
-              votre boîte de réception.
+              {isFr
+                ? "Un email de vérification vient d'être envoyé. Merci de vérifier votre boîte de réception."
+                : "A verification email has been sent. Please check your inbox."}
             </div>
           )}
           {info && (
@@ -197,7 +202,6 @@ function LoginForm() {
               {info}
             </div>
           )}
-          {/* Google OAuth Button */}
           <Button
             type="button"
             variant="outline"
@@ -223,7 +227,7 @@ function LoginForm() {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
               />
             </svg>
-            Continuer avec Google
+            {isFr ? "Continuer avec Google" : "Continue with Google"}
           </Button>
 
           <div className="relative">
@@ -232,12 +236,11 @@ function LoginForm() {
             </div>
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-background px-2 text-muted-foreground">
-                Ou continuer avec
+                {isFr ? "Ou continuer avec" : "Or continue with"}
               </span>
             </div>
           </div>
 
-          {/* Email/Password Form */}
           <form onSubmit={handleEmailLogin} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
@@ -255,7 +258,7 @@ function LoginForm() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Mot de passe</Label>
+              <Label htmlFor="password">{isFr ? "Mot de passe" : "Password"}</Label>
               <Input
                 id="password"
                 name="password"
@@ -274,20 +277,26 @@ function LoginForm() {
                 href="/forgot-password"
                 className="text-sm text-primary hover:underline"
               >
-                Mot de passe oublié ?
+                {isFr ? "Mot de passe oublié ?" : "Forgot password?"}
               </Link>
             </div>
 
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Connexion..." : "Se connecter"}
+              {loading
+                ? isFr
+                  ? "Connexion..."
+                  : "Signing in..."
+                : isFr
+                  ? "Se connecter"
+                  : "Sign in"}
             </Button>
           </form>
         </CardContent>
         <CardFooter className="flex justify-center">
           <p className="text-sm text-muted-foreground">
-            Pas encore de compte ?{" "}
+            {isFr ? "Pas encore de compte ?" : "Don't have an account yet?"}{" "}
             <Link href="/signup" className="text-primary hover:underline">
-              S'inscrire
+              {isFr ? "S'inscrire" : "Sign up"}
             </Link>
           </p>
         </CardFooter>
@@ -302,8 +311,8 @@ export default function LoginPage() {
       fallback={
         <div className="flex min-h-screen items-center justify-center">
           <div className="text-center">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto"></div>
-            <p className="mt-4 text-muted-foreground">Chargement...</p>
+            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+            <p className="mt-4 text-muted-foreground">Loading...</p>
           </div>
         </div>
       }

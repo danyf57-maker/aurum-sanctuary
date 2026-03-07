@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { signInWithGoogle } from '@/lib/firebase/auth';
 import { useAuth } from '@/providers/auth-provider';
+import { useLocale } from '@/hooks/use-locale';
 
 interface AuthDialogProps {
   open: boolean;
@@ -32,6 +33,8 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
 }
 
 export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
+  const locale = useLocale();
+  const isFr = locale === 'fr';
   const { toast } = useToast();
   const { signUpWithEmail, signInWithEmail } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
@@ -46,13 +49,12 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
     const { error } = await signInWithGoogle();
     if (error) {
       toast({
-        title: 'Erreur de connexion',
+        title: isFr ? 'Erreur de connexion' : 'Sign-in error',
         description: error,
         variant: 'destructive',
       });
-       setIsLoading(false);
+      setIsLoading(false);
     }
-    // Avec signInWithRedirect, la page va recharger. Pas besoin de fermer le dialogue ici.
   };
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
@@ -63,8 +65,8 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
       if (mode === 'signup') {
         if (!name.trim()) {
           toast({
-            title: 'Nom requis',
-            description: 'Veuillez entrer votre nom.',
+            title: isFr ? 'Nom requis' : 'Name required',
+            description: isFr ? 'Veuillez entrer votre nom.' : 'Please enter your name.',
             variant: 'destructive',
           });
           setIsLoading(false);
@@ -76,8 +78,7 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
         await signInWithEmail(email, password);
         onOpenChange(false);
       }
-    } catch (error) {
-      // Les erreurs sont gérées par le provider
+    } catch {
       setIsLoading(false);
     }
   };
@@ -86,18 +87,27 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[450px]">
         <DialogHeader>
-          <DialogTitle className="font-headline text-2xl text-center">
-            {mode === 'signup' ? 'Créer mon compte' : 'Se connecter'}
+          <DialogTitle className="font-headline text-center text-2xl">
+            {mode === 'signup'
+              ? isFr
+                ? 'Créer mon compte'
+                : 'Create my account'
+              : isFr
+                ? 'Se connecter'
+                : 'Sign in'}
           </DialogTitle>
           <DialogDescription className="text-center">
             {mode === 'signup'
-              ? 'Commencez votre voyage vers la clarté'
-              : 'Retrouvez votre sanctuaire'}
+              ? isFr
+                ? 'Commencez votre voyage vers la clarté'
+                : 'Begin your journey toward clarity'
+              : isFr
+                ? 'Retrouvez votre sanctuaire'
+                : 'Return to your sanctuary'}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          {/* Google Button */}
           <Button
             variant="outline"
             onClick={handleGoogleSignIn}
@@ -105,7 +115,7 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
             className="w-full"
           >
             {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <GoogleIcon className="mr-2" />}
-            Continuer avec Google
+            {isFr ? 'Continuer avec Google' : 'Continue with Google'}
           </Button>
 
           <div className="relative">
@@ -113,16 +123,15 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
               <span className="w-full border-t" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">Ou</span>
+              <span className="bg-background px-2 text-muted-foreground">{isFr ? 'Ou' : 'Or'}</span>
             </div>
           </div>
 
-          {/* Email Form */}
           <form onSubmit={handleEmailSubmit} className="space-y-3">
             {mode === 'signup' && (
               <Input
                 type="text"
-                placeholder="Votre nom"
+                placeholder={isFr ? 'Votre nom' : 'Your name'}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
@@ -141,8 +150,8 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
 
             <div className="relative">
               <Input
-                type={showPassword ? "text" : "password"}
-                placeholder="Mot de passe"
+                type={showPassword ? 'text' : 'password'}
+                placeholder={isFr ? 'Mot de passe' : 'Password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -160,32 +169,37 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
 
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {mode === 'signup' ? 'Créer mon compte' : 'Me connecter'}
+              {mode === 'signup'
+                ? isFr
+                  ? 'Créer mon compte'
+                  : 'Create my account'
+                : isFr
+                  ? 'Me connecter'
+                  : 'Sign in'}
             </Button>
           </form>
 
-          {/* Toggle Mode */}
           <div className="text-center text-sm text-muted-foreground">
             {mode === 'signup' ? (
               <>
-                Déjà un compte ?{' '}
+                {isFr ? 'Déjà un compte ?' : 'Already have an account?'}{' '}
                 <button
                   type="button"
                   onClick={() => setMode('login')}
-                  className="text-primary hover:underline font-medium"
+                  className="font-medium text-primary hover:underline"
                 >
-                  Se connecter
+                  {isFr ? 'Se connecter' : 'Sign in'}
                 </button>
               </>
             ) : (
               <>
-                Pas encore de compte ?{' '}
+                {isFr ? 'Pas encore de compte ?' : "Don't have an account yet?"}{' '}
                 <button
                   type="button"
                   onClick={() => setMode('signup')}
-                  className="text-primary hover:underline font-medium"
+                  className="font-medium text-primary hover:underline"
                 >
-                  Créer un compte
+                  {isFr ? 'Créer un compte' : 'Create an account'}
                 </button>
               </>
             )}

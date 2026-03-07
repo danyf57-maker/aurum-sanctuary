@@ -18,8 +18,11 @@ import { AuthDialog } from "./auth-dialog";
 import { signOut } from "@/lib/firebase/auth";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import { useLocale } from "@/hooks/use-locale";
 
 export function AuthButton() {
+  const locale = useLocale();
+  const isFr = locale === "fr";
   const { user } = useAuth();
   const { toast } = useToast();
   const router = useRouter();
@@ -27,7 +30,7 @@ export function AuthButton() {
 
   const handleSignOut = async () => {
     await signOut();
-    toast({ title: "Vous avez été déconnecté." });
+    toast({ title: isFr ? "Vous avez été déconnecté." : "You have been signed out." });
     router.push("/");
   };
 
@@ -66,13 +69,13 @@ export function AuthButton() {
           <DropdownMenuItem asChild>
             <Link href="/settings">
               <Settings className="mr-2 h-4 w-4" />
-              <span>Paramètres</span>
+              <span>{isFr ? "Paramètres" : "Settings"}</span>
             </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleSignOut}>
             <LogOut className="mr-2 h-4 w-4" />
-            <span>Déconnexion</span>
+            <span>{isFr ? "Déconnexion" : "Sign out"}</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -85,7 +88,7 @@ export function AuthButton() {
         onClick={() => setIsAuthDialogOpen(true)}
         className="bg-stone-600 text-white hover:bg-stone-700"
       >
-        Connexion
+        {isFr ? "Connexion" : "Sign in"}
       </Button>
       <AuthDialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen} />
     </>
