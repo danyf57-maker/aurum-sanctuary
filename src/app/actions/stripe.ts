@@ -5,25 +5,18 @@ import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { auth as adminAuth } from 'firebase-admin';
 import { db } from '@/lib/firebase/admin';
-import Stripe from 'stripe';
 import { logger } from '@/lib/logger/safe';
+import { getStripe } from '@/lib/stripe/server';
 
 // Preferred naming; fallback keeps backward compatibility with existing env vars.
 const PRICE_ID_MONTHLY = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY || process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO;
 const PRICE_ID_YEARLY = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_YEARLY || process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PREMIUM;
 
-// Use mock key for build time, real key for runtime
-const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || 'sk_test_mock';
-
-const stripe = new Stripe(STRIPE_SECRET_KEY, {
-  apiVersion: '2024-06-20',
-});
-
 /**
  * Check if Stripe is properly configured for production use
  */
 function assertStripeConfigured() {
-    if (!process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY === 'sk_test_mock') {
+    if (!process.env.STRIPE_SECRET_KEY?.trim()) {
         throw new Error('Stripe is not configured. Please add STRIPE_SECRET_KEY to your environment variables.');
     }
 }
@@ -44,6 +37,7 @@ async function getUserIdFromToken(): Promise<string | null> {
 }
 
 async function getOrCreateStripeCustomer(userId: string, email: string | undefined): Promise<string> {
+    const stripe = getStripe();
     const userRef = db.collection('users').doc(userId);
     const userSnap = await userRef.get();
     const userData = userSnap.data();
@@ -66,6 +60,7 @@ async function getOrCreateStripeCustomer(userId: string, email: string | undefin
 
 export async function createCheckoutSession(formData: FormData) {
     assertStripeConfigured();
+    const stripe = getStripe();
     const priceId = formData.get('priceId') as string;
     
     // Vérification que les ID de prix sont bien configurés
@@ -108,6 +103,7 @@ export async function createCheckoutSession(formData: FormData) {
 
 export async function createPortalSession() {
     assertStripeConfigured();
+    const stripe = getStripe();
     const userId = await getUserIdFromToken();
     
     if (!userId) {
