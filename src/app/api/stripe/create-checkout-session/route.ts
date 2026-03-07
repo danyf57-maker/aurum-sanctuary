@@ -12,6 +12,7 @@ import { stripe } from '@/lib/stripe/server';
 import { auth, firestore as db } from '@/lib/firebase/admin';
 import { logger } from '@/lib/logger/safe';
 import { rateLimit, RateLimitPresets } from '@/lib/rate-limit';
+import { STRIPE_TRIAL_DAYS } from '@/lib/billing/config';
 
 export async function POST(req: NextRequest) {
     try {
@@ -99,6 +100,7 @@ export async function POST(req: NextRequest) {
         const userData = (userSnap.data() || {}) as {
             subscriptionStatus?: string;
             subscriptionId?: string;
+            trialConsumedAt?: Date;
         };
 
         const hasStripeSubscription = typeof userData.subscriptionId === 'string' && userData.subscriptionId.length > 0;
@@ -109,6 +111,9 @@ export async function POST(req: NextRequest) {
                 { status: 409 }
             );
         }
+
+        const hasConsumedTrial = !!userData.trialConsumedAt;
+        const shouldApplyTrial = STRIPE_TRIAL_DAYS > 0 && !hasConsumedTrial;
 
         // 4. Create Checkout Session
         const session = await stripe.checkout.sessions.create({
@@ -131,6 +136,7 @@ export async function POST(req: NextRequest) {
                 metadata: {
                     firebaseUid: userId,
                 },
+                ...(shouldApplyTrial ? { trial_period_days: STRIPE_TRIAL_DAYS } : {}),
             },
             allow_promotion_codes: true, // Allow discount codes
             billing_address_collection: 'auto',
@@ -138,7 +144,7 @@ export async function POST(req: NextRequest) {
 
         await userRef.set({
             billingPhase: 'checkout_started',
-            trialConfiguredDays: 0,
+            trialConfiguredDays: shouldApplyTrial ? STRIPE_TRIAL_DAYS : 0,
             updatedAt: new Date(),
         }, { merge: true });
 
@@ -150,8 +156,8 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({
             sessionId: session.id,
             url: session.url,
-            trialApplied: false,
-            trialDays: 0,
+            trialApplied: shouldApplyTrial,
+            trialDays: shouldApplyTrial ? STRIPE_TRIAL_DAYS : 0,
             priceId: selectedPriceId,
         });
 

@@ -450,6 +450,16 @@
       "history": "Historique complet",
       "export": "Export des données",
       "reflections": "Reflets approfondis"
+    },
+    "trial": {
+      "badge": "ESSAI OFFERT",
+      "title": "7 jours offerts avant la première facturation",
+      "body": "Ton essai commence au moment où tu confirmes Stripe Checkout. Il dure exactement 7 jours, soit 7 x 24 heures.",
+      "bullet1": "Accès complet à Aurum pendant l'essai",
+      "bullet2": "Le compteur démarre à la confirmation du checkout",
+      "bullet3": "L'accès reste actif jusqu'à l'heure exacte de fin",
+      "bullet4": "Si tu n'annules pas avant la fin, l'abonnement payant prend le relais automatiquement",
+      "note": "Exemple : si tu actives ton essai le 7 mars à 14:32, il se termine le 14 mars à 14:32."
     }
   },
   "hero": {
@@ -1046,5 +1056,34 @@
     "subtitle": "Un sanctuaire chiffré pour vos pensées les plus intimes.",
     "placeholder": "Écrivez ici...",
     "cta": "Entrer dans le Sanctuaire"
+  },
+  "trialOffer": {
+    "badge": "7 JOURS OFFERTS",
+    "title": "Commence avec 7 jours offerts.",
+    "body": "Teste Aurum en accès complet pendant 7 jours, puis décide si tu veux continuer.",
+    "cta": "Voir la page abonnement"
+  },
+  "paywall": {
+    "close": "Fermer",
+    "title": "Votre analyse hebdomadaire est prête",
+    "intro": "Débloquez-la avec l'essai offert :",
+    "benefit1": "Voir votre analyse complète",
+    "benefit2": "Accéder à toutes vos analyses passées",
+    "benefit3": "Continuer à construire votre carte de clarté émotionnelle",
+    "reassurance": "Sans pression. Vos écrits restent privés et sécurisés.",
+    "subscribe": "Activer mes 7 jours offerts",
+    "loading": "Chargement...",
+    "later": "Plus tard",
+    "signinRequired": "Veuillez vous connecter pour activer votre essai.",
+    "checkoutError": "Impossible de créer la session de paiement.",
+    "checkoutNoUrl": "Aucune URL de paiement reçue.",
+    "unknownError": "Une erreur est survenue.",
+    "trialBadge": "ESSAI OFFERT",
+    "trialTitle": "Comment fonctionnent les 7 jours ?",
+    "trialBody": "L'essai commence quand vous confirmez Stripe Checkout et dure exactement 7 jours, soit 7 x 24 heures.",
+    "trialBullet1": "L'accès premium est immédiat",
+    "trialBullet2": "Le compteur part de l'heure exacte de validation",
+    "trialBullet3": "Vous pouvez annuler avant la fin pour éviter la facturation",
+    "trialNote": "Exemple : activation le 7 mars à 14:32 = fin le 14 mars à 14:32."
   }
 }

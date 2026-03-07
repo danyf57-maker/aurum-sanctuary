@@ -1,6 +1,6 @@
 /**
  * Paywall Modal Component
- * 
+ *
  * Non-anxious, value-first paywall for free users.
  * Shows benefits of subscribing and redirects to Stripe Checkout.
  */
@@ -9,9 +9,10 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/providers/auth-provider';
-import { getStripe } from '@/lib/stripe/client';
 import { Button } from '@/components/ui/button';
 import { Compass, X, Loader2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { TrialExplainerCard } from '@/components/marketing/trial-explainer-card';
 
 interface PaywallModalProps {
     isOpen: boolean;
@@ -20,12 +21,13 @@ interface PaywallModalProps {
 
 export function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
     const { user } = useAuth();
+    const t = useTranslations('paywall');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const handleSubscribe = async () => {
         if (!user) {
-            setError('Veuillez vous connecter pour vous abonner.');
+            setError(t('signinRequired'));
             return;
         }
 
@@ -33,10 +35,7 @@ export function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
         setError(null);
 
         try {
-            // Get Firebase ID token
             const token = await user.getIdToken();
-
-            // Create checkout session
             const response = await fetch('/api/stripe/create-checkout-session', {
                 method: 'POST',
                 headers: {
@@ -47,21 +46,18 @@ export function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.error || 'Impossible de créer la session de paiement.');
+                throw new Error(errorData.error || t('checkoutError'));
             }
 
             const { url } = await response.json();
-
             if (!url) {
-                throw new Error('Aucune URL de paiement reçue.');
+                throw new Error(t('checkoutNoUrl'));
             }
 
-            // Redirect to Stripe Checkout
             window.location.href = url;
-
         } catch (err: any) {
             console.error('Error creating checkout session:', err);
-            setError(err.message || 'Une erreur est survenue.');
+            setError(err.message || t('unknownError'));
             setLoading(false);
         }
     };
@@ -69,76 +65,71 @@ export function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-[#F5F5DC] rounded-lg max-w-md w-full p-8 relative shadow-xl">
-                {/* Close button */}
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+            <div className="relative max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-lg bg-[#F5F5DC] p-8 shadow-xl">
                 <button
                     onClick={onClose}
-                    className="absolute top-4 right-4 text-[#8B4513] hover:opacity-70 transition-opacity"
-                    aria-label="Fermer"
+                    className="absolute right-4 top-4 text-[#8B4513] transition-opacity hover:opacity-70"
+                    aria-label={t('close')}
                 >
-                    <X className="w-5 h-5" />
+                    <X className="h-5 w-5" />
                 </button>
 
-                {/* Icon */}
-                <div className="flex justify-center mb-6">
-                    <div className="w-16 h-16 rounded-full bg-[#D4AF37]/10 flex items-center justify-center">
-                        <Compass className="w-8 h-8 text-[#D4AF37]" />
+                <div className="mb-6 flex justify-center">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#D4AF37]/10">
+                        <Compass className="h-8 w-8 text-[#D4AF37]" />
                     </div>
                 </div>
 
-                {/* Title */}
-                <h2 className="text-2xl font-serif text-[#8B4513] text-center mb-4">
-                    Votre analyse hebdomadaire est prête
+                <h2 className="mb-4 text-center font-serif text-2xl text-[#8B4513]">
+                    {t('title')}
                 </h2>
 
-                {/* Benefits */}
-                <div className="space-y-4 mb-6">
-                    <p className="text-[#8B4513] text-center opacity-80">
-                        Abonnez-vous pour&nbsp;:
-                    </p>
+                <div className="mb-6 space-y-4">
+                    <p className="text-center text-[#8B4513] opacity-80">{t('intro')}</p>
                     <ul className="space-y-3 text-[#8B4513]">
                         <li className="flex items-start">
-                            <span className="mr-3 text-[#D4AF37] font-bold">✓</span>
-                            <span>Voir votre analyse complète</span>
+                            <span className="mr-3 font-bold text-[#D4AF37]">✓</span>
+                            <span>{t('benefit1')}</span>
                         </li>
                         <li className="flex items-start">
-                            <span className="mr-3 text-[#D4AF37] font-bold">✓</span>
-                            <span>Accéder à toutes vos analyses passées</span>
+                            <span className="mr-3 font-bold text-[#D4AF37]">✓</span>
+                            <span>{t('benefit2')}</span>
                         </li>
                         <li className="flex items-start">
-                            <span className="mr-3 text-[#D4AF37] font-bold">✓</span>
-                            <span>Continuer à construire votre carte de clarté émotionnelle</span>
+                            <span className="mr-3 font-bold text-[#D4AF37]">✓</span>
+                            <span>{t('benefit3')}</span>
                         </li>
                     </ul>
                 </div>
 
-                {/* Reassurance */}
-                <p className="text-sm text-[#8B4513] opacity-70 text-center mb-6 italic">
-                    Sans pression. Vos écrits restent privés et sécurisés.
+                <div className="mb-6">
+                    <TrialExplainerCard namespace="paywall" compact />
+                </div>
+
+                <p className="mb-6 text-center text-sm italic text-[#8B4513] opacity-70">
+                    {t('reassurance')}
                 </p>
 
-                {/* Error message */}
                 {error && (
-                    <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-sm text-red-600">
+                    <div className="mb-4 rounded border border-red-200 bg-red-50 p-3 text-sm text-red-600">
                         {error}
                     </div>
                 )}
 
-                {/* Actions */}
                 <div className="flex flex-col gap-3">
                     <Button
                         onClick={handleSubscribe}
                         disabled={loading}
-                        className="w-full bg-[#D4AF37] hover:bg-[#D4AF37]/90 text-white font-medium py-6 text-base"
+                        className="w-full bg-[#D4AF37] py-6 text-base font-medium text-white hover:bg-[#D4AF37]/90"
                     >
                         {loading ? (
                             <>
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                Chargement...
+                                {t('loading')}
                             </>
                         ) : (
-                            'S’abonner'
+                            t('subscribe')
                         )}
                     </Button>
                     <Button
@@ -147,7 +138,7 @@ export function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
                         className="w-full text-[#8B4513] hover:bg-[#8B4513]/5"
                         disabled={loading}
                     >
-                        Plus tard
+                        {t('later')}
                     </Button>
                 </div>
             </div>

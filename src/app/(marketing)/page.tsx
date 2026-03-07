@@ -13,6 +13,7 @@ import { firestore as db } from '@/lib/firebase/web-client';
 import { trackEvent } from '@/lib/analytics/client';
 import { useLocalizedHref } from '@/hooks/use-localized-href';
 import { useTranslations } from 'next-intl';
+import { PricingOfferBlock } from '@/components/marketing/pricing-offer-block';
 
 type MarketingFaq = {
     question: string;
@@ -372,6 +373,11 @@ export default function Home() {
     return (
         <main>
             <HeroIntegrated />
+            <section className="bg-white py-14 md:py-16">
+                <div className="container">
+                    <PricingOfferBlock className="mx-auto" pagePath="/" />
+                </div>
+            </section>
             <section className="py-14 md:py-16 bg-white border-y border-stone-200/70">
                 <div className="container">
                     <div className="max-w-4xl mx-auto text-center mb-8">
