@@ -66,6 +66,7 @@ export function renderOnboardingEmail(input: TemplateInput): EmailTemplateResult
   const name = safeName(input.firstName);
   const writeUrl = trackedUrl(input.appBaseUrl, input.userId, input.emailId, `${input.appBaseUrl}/sanctuary/write`);
   const magazineUrl = trackedUrl(input.appBaseUrl, input.userId, input.emailId, `${input.appBaseUrl}/sanctuary/magazine`);
+  const pricingUrl = trackedUrl(input.appBaseUrl, input.userId, input.emailId, `${input.appBaseUrl}/pricing`);
   const unsubUrl = unsubscribeUrl(input.appBaseUrl, input.userId, input.emailId);
   const pixel = openPixelUrl(input.appBaseUrl, input.userId, input.emailId);
 
@@ -111,6 +112,41 @@ export function renderOnboardingEmail(input: TemplateInput): EmailTemplateResult
       body: `Salut ${name},<br/><br/>Quand on écrit un peu chaque semaine, on commence à voir des repères : ce qui te vide, ce qui te recharge, ce qui revient souvent.<br/><br/>Pas besoin de performance. Une phrase utile vaut mieux qu&apos;une page parfaite.<br/><br/>Si tu veux un prompt tout prêt aujourd&apos;hui :<br/><strong>&quot;Qu&apos;est-ce qui m&apos;a pris de l&apos;énergie, et qu&apos;est-ce qui m&apos;en a redonné ?&quot;</strong><br/><br/>Tu avances dans la bonne direction.<br/><br/>Daniel`,
       ctaLabel: "Écrire 3 minutes",
       ctaUrl: writeUrl,
+    },
+    free_limit_followup: {
+      subject: "Tu as atteint tes 5 entrées gratuites",
+      preheader: "Tu peux continuer avec 7 jours offerts, sans casser ton élan.",
+      body: `Salut ${name},<br/><br/>Tu as déjà posé 5 entrées dans Aurum.<br/><br/>C&apos;est plus qu&apos;un test. C&apos;est le début d&apos;un rythme.<br/><br/>Quand on écrit quelques lignes régulièrement, on commence souvent à mieux distinguer ce qui pèse, ce qui revient, et ce qui apaise.<br/><br/>Pour continuer sans t&apos;arrêter maintenant, tu peux activer tes 7 jours offerts et garder cet élan.<br/><br/>Daniel`,
+      ctaLabel: "Activer mes 7 jours offerts",
+      ctaUrl: pricingUrl,
+    },
+    trial_started: {
+      subject: "Tes 7 jours offerts ont commencé",
+      preheader: "Cette semaine, le plus important est de prendre un rythme simple.",
+      body: `Salut ${name},<br/><br/>Tes 7 jours offerts sont maintenant actifs.<br/><br/>Le plus utile pendant cette semaine n&apos;est pas d&apos;écrire longtemps. C&apos;est d&apos;écrire régulièrement, même peu.<br/><br/>Quelques lignes suffisent souvent à faire baisser le bruit intérieur et à remettre un peu d&apos;ordre dans ce qu&apos;on ressent.<br/><br/>Si tu ne sais pas quoi écrire aujourd&apos;hui, commence par cette question :<br/><br/><strong>&quot;Qu&apos;est-ce qui prend le plus de place dans ma tête aujourd&apos;hui ?&quot;</strong><br/><br/>Daniel`,
+      ctaLabel: "Écrire aujourd'hui",
+      ctaUrl: writeUrl,
+    },
+    trial_ending_soon: {
+      subject: "Ton essai se termine bientôt",
+      preheader: "Ce que tu as commencé à construire mérite peut-être de continuer.",
+      body: `Salut ${name},<br/><br/>Ton essai Aurum arrive bientôt à sa fin.<br/><br/>Depuis quelques jours, tu as commencé à créer un espace à toi. Et c&apos;est souvent là que la valeur du journaling apparaît : non pas dans une seule entrée, mais dans la continuité.<br/><br/>Quand on revient écrire plusieurs fois, on commence à voir ce qui se répète, ce qui fatigue, ce qui soulage, et ce qu&apos;on n&apos;arrivait pas encore à nommer.<br/><br/>Si Aurum t&apos;aide à garder ce lien avec toi-même, le plus simple est de continuer à ton rythme.<br/><br/>Daniel`,
+      ctaLabel: "Continuer avec Aurum",
+      ctaUrl: pricingUrl,
+    },
+    subscription_active: {
+      subject: "Bienvenue dans Aurum en continu",
+      preheader: "Ton espace reste ouvert, et tu peux continuer à ton rythme.",
+      body: `Salut ${name},<br/><br/>Ton abonnement Aurum est maintenant actif.<br/><br/>Tu as choisi de garder un espace à toi pour écrire, clarifier, et revenir quand tu en as besoin.<br/><br/>La valeur du journaling se construit rarement en un jour. Elle apparaît avec le temps, à mesure que les entrées s&apos;accumulent et que certains motifs deviennent plus visibles.<br/><br/>Tu peux continuer exactement comme il faut : quelques lignes quand c&apos;est utile, plus quand c&apos;est nécessaire.<br/><br/>Daniel`,
+      ctaLabel: "Retourner écrire",
+      ctaUrl: writeUrl,
+    },
+    trial_expired_no_conversion: {
+      subject: "Ton essai est terminé",
+      preheader: "Tu peux revenir quand tu veux, sans repartir de zéro.",
+      body: `Salut ${name},<br/><br/>Ton essai Aurum est maintenant terminé.<br/><br/>Peut-être que ce n&apos;était pas le bon moment. Peut-être aussi que tu as seulement manqué de temps pour vraiment installer ton rythme.<br/><br/>Dans tous les cas, il n&apos;y a rien à forcer.<br/><br/>Si tu veux revenir, Aurum est là pour t&apos;aider à reprendre un fil, poser ce qui t&apos;encombre, et retrouver un peu de clarté au milieu du bruit.<br/><br/>Daniel`,
+      ctaLabel: "Revenir à Aurum",
+      ctaUrl: pricingUrl,
     },
   };
 
