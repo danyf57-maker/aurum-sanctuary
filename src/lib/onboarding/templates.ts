@@ -206,8 +206,8 @@ export function renderOnboardingEmail(input: TemplateInput): EmailTemplateResult
     free_limit_followup: {
       fr: {
         subject: "Tu as atteint tes 5 entrées gratuites",
-        preheader: "Tu peux continuer avec 7 jours offerts, sans casser ton élan.",
-        body: `Salut ${name},<br/><br/>Tu as déjà posé 5 entrées dans Aurum.<br/><br/>C&apos;est plus qu&apos;un test. C&apos;est le début d&apos;un rythme.<br/><br/>Quand on écrit quelques lignes régulièrement, on commence souvent à mieux distinguer ce qui pèse, ce qui revient, et ce qui apaise.<br/><br/>Pour continuer sans t&apos;arrêter maintenant, tu peux activer tes 7 jours offerts et garder cet élan.<br/><br/>Daniel`,
+        preheader: "Tu peux continuer avec 7 jours offerts.",
+        body: `Salut ${name},<br/><br/>Tu as déjà commencé quelque chose d&apos;utile.<br/><br/>Mettre ses pensées en mots aide souvent à y voir plus clair, surtout quand elles tournent en boucle.<br/><br/>Pour continuer sans couper ton élan, tu peux activer tes 7 jours offerts.<br/><br/>Daniel`,
         ctaLabel: "Activer mes 7 jours offerts",
         ctaUrl: pricingUrl,
         footer: "Tu reçois cet email car tu as atteint la limite gratuite d'Aurum.",
@@ -215,8 +215,8 @@ export function renderOnboardingEmail(input: TemplateInput): EmailTemplateResult
       },
       en: {
         subject: "You reached your 5 free entries",
-        preheader: "You can keep going with 7 free days, without breaking your momentum.",
-        body: `Hi ${name},<br/><br/>You have already written 5 entries in Aurum.<br/><br/>That is more than a test. It is the start of a rhythm.<br/><br/>When you write a few lines regularly, you often begin to notice more clearly what weighs on you, what keeps returning, and what brings relief.<br/><br/>If you want to keep going without stopping now, you can activate your 7 free days and protect that momentum.<br/><br/>Daniel`,
+        preheader: "You can keep going with 7 free days.",
+        body: `Hi ${name},<br/><br/>You have already started something useful.<br/><br/>Putting thoughts into words often helps bring more clarity, especially when they keep looping in your mind.<br/><br/>To keep going without breaking your momentum, you can activate your 7 free days.<br/><br/>Daniel`,
         ctaLabel: "Start my 7 free days",
         ctaUrl: pricingUrl,
         footer: "You are receiving this email because you reached Aurum's free limit.",
@@ -226,8 +226,8 @@ export function renderOnboardingEmail(input: TemplateInput): EmailTemplateResult
     trial_started: {
       fr: {
         subject: "Tes 7 jours offerts ont commencé",
-        preheader: "Cette semaine, le plus important est de prendre un rythme simple.",
-        body: `Salut ${name},<br/><br/>Tes 7 jours offerts sont maintenant actifs.<br/><br/>Le plus utile pendant cette semaine n&apos;est pas d&apos;écrire longtemps. C&apos;est d&apos;écrire régulièrement, même peu.<br/><br/>Quelques lignes suffisent souvent à faire baisser le bruit intérieur et à remettre un peu d&apos;ordre dans ce qu&apos;on ressent.<br/><br/>Si tu ne sais pas quoi écrire aujourd&apos;hui, commence par cette question :<br/><br/><strong>&quot;Qu&apos;est-ce qui prend le plus de place dans ma tête aujourd&apos;hui ?&quot;</strong><br/><br/>Daniel`,
+        preheader: "Le plus important cette semaine : écrire un peu, pas écrire parfaitement.",
+        body: `Salut ${name},<br/><br/>Ton essai est actif.<br/><br/>Quelques lignes suffisent souvent à faire baisser le bruit intérieur et à remettre un peu d&apos;ordre dans ce que l&apos;on ressent.<br/><br/>Si tu ne sais pas par où commencer, essaie simplement :<br/><br/><strong>&quot;Qu&apos;est-ce qui prend le plus de place dans ma tête aujourd&apos;hui ?&quot;</strong><br/><br/>Daniel`,
         ctaLabel: "Écrire aujourd'hui",
         ctaUrl: writeUrl,
         footer: "Tu reçois cet email car ton essai Aurum est maintenant actif.",
@@ -235,8 +235,8 @@ export function renderOnboardingEmail(input: TemplateInput): EmailTemplateResult
       },
       en: {
         subject: "Your 7 free days have started",
-        preheader: "This week, the real goal is to build a simple writing rhythm.",
-        body: `Hi ${name},<br/><br/>Your 7 free days are now active.<br/><br/>The most useful thing this week is not to write for a long time. It is to write regularly, even if it is brief.<br/><br/>A few lines are often enough to lower the inner noise and bring a little more order to what you feel.<br/><br/>If you don&apos;t know what to write today, start with this question:<br/><br/><strong>&quot;What is taking up the most space in my mind today?&quot;</strong><br/><br/>Daniel`,
+        preheader: "The most important thing this week: write a little, not perfectly.",
+        body: `Hi ${name},<br/><br/>Your trial is active.<br/><br/>A few lines are often enough to lower the inner noise and bring a little more order to what you feel.<br/><br/>If you do not know where to start, try this simple question:<br/><br/><strong>&quot;What is taking up the most space in my mind today?&quot;</strong><br/><br/>Daniel`,
         ctaLabel: "Write today",
         ctaUrl: writeUrl,
         footer: "You are receiving this email because your Aurum trial is now active.",
@@ -246,8 +246,8 @@ export function renderOnboardingEmail(input: TemplateInput): EmailTemplateResult
     trial_ending_soon: {
       fr: {
         subject: "Ton essai se termine bientôt",
-        preheader: "Ce que tu as commencé à construire mérite peut-être de continuer.",
-        body: `Salut ${name},<br/><br/>Ton essai Aurum arrive bientôt à sa fin.<br/><br/>Depuis quelques jours, tu as commencé à créer un espace à toi. Et c&apos;est souvent là que la valeur du journaling apparaît : non pas dans une seule entrée, mais dans la continuité.<br/><br/>Si Aurum t&apos;aide à garder ce lien avec toi-même, le plus simple est de continuer à ton rythme.<br/><br/>Daniel`,
+        preheader: "Ce que tu as commencé peut encore devenir un vrai rythme.",
+        body: `Salut ${name},<br/><br/>Ton essai Aurum arrive bientôt à sa fin.<br/><br/>L&apos;écriture régulière aide souvent à mieux voir ce qui revient, ce qui fatigue, et ce qui apaise.<br/><br/>Si Aurum t&apos;aide à garder ce lien avec toi-même, tu peux simplement continuer.<br/><br/>Daniel`,
         ctaLabel: "Continuer avec Aurum",
         ctaUrl: pricingUrl,
         footer: "Tu reçois cet email car ton essai Aurum approche de sa fin.",
@@ -255,8 +255,8 @@ export function renderOnboardingEmail(input: TemplateInput): EmailTemplateResult
       },
       en: {
         subject: "Your trial is ending soon",
-        preheader: "What you started building may be worth continuing.",
-        body: `Hi ${name},<br/><br/>Your Aurum trial will end soon.<br/><br/>Over the past few days, you started building a space of your own. And this is often where the value of journaling appears: not in one single entry, but in continuity.<br/><br/>If Aurum helps you keep that connection with yourself, the simplest next step is to keep going at your own pace.<br/><br/>Daniel`,
+        preheader: "What you started can still become a real rhythm.",
+        body: `Hi ${name},<br/><br/>Your Aurum trial will end soon.<br/><br/>Regular writing often helps you see more clearly what keeps returning, what drains you, and what soothes you.<br/><br/>If Aurum helps you keep that connection with yourself, you can simply continue.<br/><br/>Daniel`,
         ctaLabel: "Continue with Aurum",
         ctaUrl: pricingUrl,
         footer: "You are receiving this email because your Aurum trial is approaching its end.",
@@ -265,18 +265,18 @@ export function renderOnboardingEmail(input: TemplateInput): EmailTemplateResult
     },
     subscription_active: {
       fr: {
-        subject: "Bienvenue dans Aurum en continu",
-        preheader: "Ton espace reste ouvert, et tu peux continuer à ton rythme.",
-        body: `Salut ${name},<br/><br/>Ton abonnement Aurum est maintenant actif.<br/><br/>Tu as choisi de garder un espace à toi pour écrire, clarifier, et revenir quand tu en as besoin.<br/><br/>La valeur du journaling se construit rarement en un jour. Elle apparaît avec le temps, à mesure que les entrées s&apos;accumulent et que certains motifs deviennent plus visibles.<br/><br/>Daniel`,
+        subject: "Ton abonnement Aurum est actif",
+        preheader: "Ton espace reste ouvert, à ton rythme.",
+        body: `Salut ${name},<br/><br/>Ton abonnement est maintenant actif.<br/><br/>La valeur du journaling apparaît rarement en un seul jour. Elle se construit dans la continuité.<br/><br/>Tu peux continuer simplement : quelques lignes quand c&apos;est utile, plus quand c&apos;est nécessaire.<br/><br/>Daniel`,
         ctaLabel: "Retourner écrire",
         ctaUrl: writeUrl,
         footer: "Tu reçois cet email car ton abonnement Aurum est maintenant actif.",
         unsubscribeLabel: "Se désinscrire",
       },
       en: {
-        subject: "Welcome to Aurum, without interruption",
-        preheader: "Your space stays open, and you can keep going at your own pace.",
-        body: `Hi ${name},<br/><br/>Your Aurum subscription is now active.<br/><br/>You chose to keep a space of your own to write, clarify, and come back whenever you need it.<br/><br/>The value of journaling rarely appears in a single day. It grows over time, as entries accumulate and certain patterns become more visible.<br/><br/>Daniel`,
+        subject: "Your Aurum subscription is active",
+        preheader: "Your space stays open, at your own pace.",
+        body: `Hi ${name},<br/><br/>Your subscription is now active.<br/><br/>The value of journaling rarely appears in a single day. It grows through continuity.<br/><br/>You can keep going simply: a few lines when it helps, more when you need it.<br/><br/>Daniel`,
         ctaLabel: "Go back to writing",
         ctaUrl: writeUrl,
         footer: "You are receiving this email because your Aurum subscription is now active.",
