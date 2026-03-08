@@ -15,6 +15,7 @@ import { LastInsightCard } from "@/components/dashboard/last-insight-card";
 import { motion } from "framer-motion";
 import { useLocale } from "@/hooks/use-locale";
 import { useLocalizedHref } from "@/hooks/use-localized-href";
+import { resolveFirstName } from "@/lib/profile/first-name";
 
 export default function DashboardPage() {
   const to = useLocalizedHref();
@@ -82,6 +83,11 @@ export default function DashboardPage() {
   }
 
   const lastEntryWithAnalysis = entries.find((e) => e.insight) || entries[0];
+  const firstName = resolveFirstName({
+    displayName: user?.displayName,
+    email: user?.email,
+    fallback: "Daniel",
+  });
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
@@ -96,7 +102,7 @@ export default function DashboardPage() {
           </h1>
           <p className="text-stone-500 font-medium">
             {isFr ? "Heureux de vous revoir, " : "Good to see you again, "}
-            {(user?.displayName ?? "").split(" ")[0] || "Daniel"}.
+            {firstName}.
           </p>
         </motion.div>
 

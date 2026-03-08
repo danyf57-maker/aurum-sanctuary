@@ -17,6 +17,7 @@ import {
 import { addDoc, collection, doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth as firebaseAuth, firestore as db } from '@/lib/firebase/web-client';
 import { logger } from '@/lib/logger/safe';
+import { resolveFirstName } from '@/lib/profile/first-name';
 import { useToast } from '@/hooks/use-toast';
 import { useLocale } from '@/hooks/use-locale';
 
@@ -182,6 +183,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const userRef = doc(db, "users", finalUser.uid);
 
         let userSnap = await getDoc(userRef);
+        const inferredFirstName = resolveFirstName({
+          displayName: finalUser.displayName,
+          email: finalUser.email,
+          fallback: '',
+        });
 
         // FALLBACK: If trigger didn't run, create doc client-side
         // This ensures users can still use the app even if Cloud Functions aren't deployed yet
@@ -194,6 +200,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               uid: finalUser.uid,
               email: finalUser.email,
               displayName: finalUser.displayName,
+              firstName: inferredFirstName || null,
               photoURL: finalUser.photoURL,
               createdAt: serverTimestamp(),
               updatedAt: serverTimestamp(),
@@ -215,6 +222,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
 
         if (userSnap.exists()) {
+          const userData = userSnap.data();
+
+          if (
+            inferredFirstName &&
+            (userData.firstName !== inferredFirstName || userData.displayName !== finalUser.displayName)
+          ) {
+            await setDoc(userRef, {
+              firstName: inferredFirstName,
+              displayName: finalUser.displayName,
+              updatedAt: serverTimestamp(),
+            }, { merge: true });
+          }
+
           // User exists, check terms in settings/legal
           const legalRef = doc(db, "users", finalUser.uid, "settings", "legal");
           const legalSnap = await getDoc(legalRef);

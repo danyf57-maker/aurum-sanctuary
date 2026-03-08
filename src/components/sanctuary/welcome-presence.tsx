@@ -12,6 +12,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
+import { resolveFirstName } from "@/lib/profile/first-name";
 
 interface WelcomePresenceProps {
   userName?: string;
@@ -48,8 +49,10 @@ export function WelcomePresence({ userName }: WelcomePresenceProps) {
     return null;
   }
 
-  const firstName =
-    (userName ?? "").split(" ")[0] || t("defaultFirstName");
+  const firstName = resolveFirstName({
+    displayName: userName,
+    fallback: t("defaultFirstName"),
+  });
 
   return (
     <AnimatePresence>

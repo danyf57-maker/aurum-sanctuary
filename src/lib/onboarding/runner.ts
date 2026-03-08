@@ -7,6 +7,7 @@ import { sendOnboardingEmail } from "@/lib/onboarding/sender";
 import type { OnboardingEmailId, OnboardingState } from "@/lib/onboarding/types";
 import { FREE_ENTRY_LIMIT, STRIPE_TRIAL_REMINDER_DAYS } from "@/lib/billing/config";
 import { normalizeLocale, type Locale } from "@/lib/locale";
+import { resolveFirstName } from "@/lib/profile/first-name";
 
 const PAID_STATUSES = new Set(["active", "trialing"]);
 
@@ -195,7 +196,11 @@ export async function runOnboardingSequence() {
     const subscriptionStatus = String(data.subscriptionStatus || "free");
     const entryCount = Number(data.entryCount || 0);
     const firstEntryAt = asDate(data.firstEntryAt);
-    const firstName = String(data.displayName || email.split("@")[0] || "toi");
+    const firstName = resolveFirstName({
+      firstName: typeof data.firstName === 'string' ? data.firstName : null,
+      displayName: typeof data.displayName === 'string' ? data.displayName : null,
+      email,
+    });
     const createdAt = asDate(data.createdAt);
     const freeLimitReachedAt = asDate(data.freeLimitReachedAt);
     const trialConsumedAt = asDate(data.trialConsumedAt);
