@@ -13,6 +13,7 @@ import { trackServerEvent } from "@/lib/analytics/server";
 import { getRequestLocale } from "@/lib/locale-server";
 import type { Locale } from "@/lib/locale";
 import { FREE_ENTRY_LIMIT } from "@/lib/billing/config";
+import { getActiveEmailAttribution, EMAIL_ATTRIBUTION_WINDOW_HOURS } from "@/lib/onboarding/email-attribution";
 
 const txt = (locale: Locale, fr: string, en: string) =>
   locale === "fr" ? fr : en;
@@ -414,6 +415,16 @@ export async function saveJournalEntry(
       params: {
         tagsCount: tags ? tags.split(",").filter(Boolean).length : 0,
         publishedAsPost: publishAsPost,
+        ...(await (async () => {
+          const attribution = await getActiveEmailAttribution(userId);
+          return attribution
+            ? {
+                attributed_email_id: attribution.emailId,
+                attributed_email_clicked_at: attribution.clickedAt.toISOString(),
+                attribution_window_hours: EMAIL_ATTRIBUTION_WINDOW_HOURS,
+              }
+            : {};
+        })()),
       },
     });
 

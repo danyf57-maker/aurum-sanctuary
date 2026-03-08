@@ -23,6 +23,7 @@ export const TRACKED_EVENTS = [
   "onboarding_email_sent",
   "onboarding_email_opened",
   "onboarding_email_link_clicked",
+  "email_returned_to_aurum",
   "onboarding_email_unsubscribed",
 ] as const;
 
@@ -59,5 +60,6 @@ export const LEAD_SCORE_WEIGHTS: Record<TrackedEventName, number> = {
   onboarding_email_sent: 0,
   onboarding_email_opened: 0,
   onboarding_email_link_clicked: 1,
+  email_returned_to_aurum: 5,
   onboarding_email_unsubscribed: -5,
 };

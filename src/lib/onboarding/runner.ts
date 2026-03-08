@@ -6,6 +6,7 @@ import { renderOnboardingEmail } from "@/lib/onboarding/templates";
 import { sendOnboardingEmail } from "@/lib/onboarding/sender";
 import type { OnboardingEmailId, OnboardingState } from "@/lib/onboarding/types";
 import { FREE_ENTRY_LIMIT, STRIPE_TRIAL_REMINDER_DAYS } from "@/lib/billing/config";
+import { normalizeLocale, type Locale } from "@/lib/locale";
 
 const PAID_STATUSES = new Set(["active", "trialing"]);
 
@@ -155,19 +156,17 @@ function pickLegacyOnboardingEmail(
   return null;
 }
 
-function analyticsEventForEmail(emailId: OnboardingEmailId) {
-  switch (emailId) {
-    case "trial_started":
-      return "trial_activated" as const;
-    case "trial_ending_soon":
-      return "trial_reminder_sent" as const;
-    case "subscription_active":
-      return "subscription_started" as const;
-    case "trial_expired_no_conversion":
-      return "trial_expired_no_conversion" as const;
-    default:
-      return null;
-  }
+function resolveUserLocale(
+  userData: Record<string, unknown>,
+  prefsData: Record<string, unknown>
+): Locale {
+  const fromPrefs = normalizeLocale(String(prefsData.language || prefsData.locale || ""));
+  if (fromPrefs) return fromPrefs;
+
+  const fromUser = normalizeLocale(String(userData.language || userData.locale || ""));
+  if (fromUser) return fromUser;
+
+  return "en";
 }
 
 export async function runOnboardingSequence() {
@@ -207,6 +206,7 @@ export async function runOnboardingSequence() {
     const [prefsSnap, stateSnap] = await Promise.all([prefsRef.get(), stateRef.get()]);
     const prefsData = (prefsSnap.data() || {}) as Record<string, unknown>;
     const stateData = (stateSnap.data() || {}) as OnboardingState;
+    const locale = resolveUserLocale(data, prefsData);
 
     if (prefsData.marketingUnsubscribedAt || stateData.unsubscribedAt || stateData.invalidEmailAt) {
       skipped += 1;
@@ -258,6 +258,7 @@ export async function runOnboardingSequence() {
       firstName,
       userId,
       appBaseUrl,
+      locale,
     });
 
     try {
@@ -297,20 +298,10 @@ export async function runOnboardingSequence() {
         params: {
           email_id: nextEmail,
           subject: content.subject,
+          locale,
         },
       });
 
-      const lifecycleEvent = analyticsEventForEmail(nextEmail);
-      if (lifecycleEvent) {
-        await trackServerEvent(lifecycleEvent, {
-          userId,
-          userEmail: email,
-          path: "/api/onboarding/run",
-          params: {
-            email_id: nextEmail,
-          },
-        });
-      }
       sentCount += 1;
     } catch (error) {
       await stateRef.set(

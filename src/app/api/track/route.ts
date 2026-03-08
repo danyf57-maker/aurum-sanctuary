@@ -4,6 +4,7 @@ import { cookies } from 'next/headers';
 import { auth, db } from '@/lib/firebase/admin';
 import { TRACKED_EVENTS, type TrackedEventName } from '@/lib/analytics/types';
 import { logger } from '@/lib/logger/safe';
+import { getActiveEmailAttribution, EMAIL_ATTRIBUTION_WINDOW_HOURS } from '@/lib/onboarding/email-attribution';
 
 const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_ID;
 const GA_API_SECRET = process.env.GA_MEASUREMENT_PROTOCOL_API_SECRET;
@@ -35,13 +36,28 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    const attributedParams = userId
+      ? await getActiveEmailAttribution(userId).then((attribution) =>
+          attribution
+            ? {
+                attributed_email_id: attribution.emailId,
+                attributed_email_clicked_at: attribution.clickedAt.toISOString(),
+                attribution_window_hours: EMAIL_ATTRIBUTION_WINDOW_HOURS,
+              }
+            : {}
+        )
+      : {};
+
     await db.collection('analyticsEvents').add({
       name: eventName,
       clientId: String(clientId),
       userId,
       userEmail,
       path: typeof path === 'string' ? path : request.nextUrl.pathname,
-      params: params && typeof params === 'object' ? params : {},
+      params: {
+        ...(params && typeof params === 'object' ? params : {}),
+        ...attributedParams,
+      },
       userAgent: request.headers.get('user-agent') ?? null,
       referer: request.headers.get('referer') ?? null,
       source: 'client',

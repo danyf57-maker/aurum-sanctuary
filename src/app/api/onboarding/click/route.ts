@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { trackServerEvent } from "@/lib/analytics/server";
 import { verifyOnboardingToken } from "@/lib/onboarding/token";
+import { recordEmailClickAttribution } from "@/lib/onboarding/email-attribution";
 
 export const runtime = "nodejs";
 
@@ -11,6 +12,16 @@ function safeTarget(target: string) {
     return url.toString();
   } catch {
     return null;
+  }
+}
+
+function isAurumTarget(target: string, fallback: string) {
+  try {
+    const targetUrl = new URL(target);
+    const appUrl = new URL(fallback);
+    return targetUrl.host === appUrl.host;
+  } catch {
+    return false;
   }
 }
 
@@ -40,6 +51,24 @@ export async function GET(request: NextRequest) {
           target_url: safe,
         },
       });
+
+      await recordEmailClickAttribution({
+        userId: uid,
+        emailId: eid,
+        targetUrl: safe,
+      });
+
+      if (isAurumTarget(safe, fallback)) {
+        await trackServerEvent("email_returned_to_aurum", {
+          userId: uid,
+          path: "/api/onboarding/click",
+          params: {
+            email_id: eid,
+            target_url: safe,
+          },
+        });
+      }
+
       return NextResponse.redirect(safe, 302);
     }
   } catch {

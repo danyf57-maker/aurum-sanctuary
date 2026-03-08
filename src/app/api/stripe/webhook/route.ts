@@ -14,6 +14,7 @@ import Stripe from 'stripe';
 import { trackServerEvent } from '@/lib/analytics/server';
 import { logger } from '@/lib/logger/safe';
 import { STRIPE_TRIAL_REMINDER_DAYS } from '@/lib/billing/config';
+import { getActiveEmailAttribution, EMAIL_ATTRIBUTION_WINDOW_HOURS } from '@/lib/onboarding/email-attribution';
 
 // Disable body parsing - Stripe needs raw body for signature verification
 export const runtime = 'nodejs';
@@ -57,6 +58,17 @@ async function notifyTrialWillEnd(params: {
         subscriptionId: subscription.id,
         trialEndsAt,
     }, { merge: true });
+}
+
+async function buildEmailAttributionParams(userId: string) {
+    const attribution = await getActiveEmailAttribution(userId);
+    if (!attribution) return {};
+
+    return {
+        attributed_email_id: attribution.emailId,
+        attributed_email_clicked_at: attribution.clickedAt.toISOString(),
+        attribution_window_hours: EMAIL_ATTRIBUTION_WINDOW_HOURS,
+    };
 }
 
 export async function POST(req: NextRequest) {
@@ -151,6 +163,18 @@ export async function POST(req: NextRequest) {
                     }, { merge: true });
                 }
 
+                if (subscription.status === 'trialing') {
+                    await trackServerEvent('trial_activated', {
+                        userId,
+                        path: '/api/stripe/webhook',
+                        params: {
+                            subscriptionId: subscription.id,
+                            trialEndsAt: fromUnix(subscription.trial_end)?.toISOString() || null,
+                            ...(await buildEmailAttributionParams(userId)),
+                        },
+                    });
+                }
+
                 logger.infoSafe('Subscription updated', {
                     subscriptionStatus: subscription.status,
                     userId,
@@ -218,6 +242,18 @@ export async function POST(req: NextRequest) {
                             updatedAt: new Date(),
                         }, { merge: true });
 
+                        await trackServerEvent('subscription_started', {
+                            userId,
+                            path: '/api/stripe/webhook',
+                            params: {
+                                subscriptionId: subscription.id,
+                                invoiceId: invoice.id,
+                                amount: invoice.amount_paid,
+                                currency: invoice.currency,
+                                ...(await buildEmailAttributionParams(userId)),
+                            },
+                        });
+
                         await db.collection(`users/${userId}/payments`).add({
                             invoiceId: invoice.id,
                             amount: invoice.amount_paid,
@@ -232,6 +268,7 @@ export async function POST(req: NextRequest) {
                                 amount: invoice.amount_paid,
                                 currency: invoice.currency,
                                 invoiceId: invoice.id,
+                                ...(await buildEmailAttributionParams(userId)),
                             },
                             path: '/pricing',
                         });
