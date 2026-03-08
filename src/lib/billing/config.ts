@@ -16,3 +16,5 @@ export const STRIPE_TRIAL_DAYS = readIntEnv('STRIPE_TRIAL_DAYS', 7);
 
 // Stripe envoie trial_will_end environ 3 jours avant la fin.
 export const STRIPE_TRIAL_REMINDER_DAYS = 3;
+
+export const FREE_ENTRY_LIMIT = 5;

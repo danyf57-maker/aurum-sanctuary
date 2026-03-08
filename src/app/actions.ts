@@ -12,6 +12,7 @@ import { logger } from "@/lib/logger/safe";
 import { trackServerEvent } from "@/lib/analytics/server";
 import { getRequestLocale } from "@/lib/locale-server";
 import type { Locale } from "@/lib/locale";
+import { FREE_ENTRY_LIMIT } from "@/lib/billing/config";
 
 const txt = (locale: Locale, fr: string, en: string) =>
   locale === "fr" ? fr : en;
@@ -80,6 +81,9 @@ export type FormState = {
   };
   isFirstEntry?: boolean;
   entryId?: string;
+  freeLimitReached?: boolean;
+  entriesUsed?: number;
+  entriesLimit?: number;
 };
 
 export type EntryMutationState = {
@@ -116,6 +120,20 @@ function generateExcerpt(content: string, maxLength = 170) {
   if (!plain) return "";
   if (plain.length <= maxLength) return plain;
   return `${plain.slice(0, maxLength).trim()}...`;
+}
+
+function toDate(value: unknown): Date | null {
+  if (!value) return null;
+  if (value instanceof Date) return value;
+  if (typeof value === "object" && value && "toDate" in value) {
+    try {
+      const parsed = (value as { toDate?: () => Date }).toDate?.();
+      return parsed instanceof Date ? parsed : null;
+    } catch {
+      return null;
+    }
+  }
+  return null;
 }
 
 // Accept encrypted (AES-256-GCM) OR plaintext (legacy)
@@ -277,6 +295,41 @@ export async function saveJournalEntry(
     userEmail = userData?.email || '';
     const entryCount = userData?.entryCount || 0;
     isFirstEntry = entryCount === 0;
+    const subscriptionStatus = String(userData?.subscriptionStatus || '');
+    const hasStripeSubscription =
+      typeof userData?.subscriptionId === 'string' && userData.subscriptionId.length > 0;
+    const trialEndsAt =
+      toDate(userData?.subscriptionTrialEndsAt) ||
+      toDate(userData?.subscriptionCurrentPeriodEnd);
+    const hasPremiumAccess =
+      subscriptionStatus === 'active' ||
+      (subscriptionStatus === 'trialing' &&
+        hasStripeSubscription &&
+        !!trialEndsAt &&
+        trialEndsAt.getTime() > Date.now());
+
+    if (!hasPremiumAccess && entryCount >= FREE_ENTRY_LIMIT) {
+      await trackServerEvent("free_limit_reached", {
+        userId,
+        userEmail,
+        path: "/sanctuary/write",
+        params: {
+          entriesUsed: entryCount,
+          entriesLimit: FREE_ENTRY_LIMIT,
+        },
+      });
+
+      return {
+        message: txt(
+          locale,
+          `Vous avez utilisé vos ${FREE_ENTRY_LIMIT} entrées gratuites. Activez 7 jours offerts pour continuer.`,
+          `You have used your ${FREE_ENTRY_LIMIT} free entries. Start your 7-day free trial to keep writing.`
+        ),
+        freeLimitReached: true,
+        entriesUsed: entryCount,
+        entriesLimit: FREE_ENTRY_LIMIT,
+      };
+    }
 
     // Pass encrypted data (AES-256-GCM) OR plaintext (legacy)
     const entryResult = await addEntryOnServer({
