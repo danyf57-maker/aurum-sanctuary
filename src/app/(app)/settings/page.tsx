@@ -55,6 +55,7 @@ import { useTranslations } from "next-intl";
 import { useLocale } from "@/hooks/use-locale";
 import { useSubscription } from "@/hooks/useSubscription";
 import { resolveFirstName } from "@/lib/profile/first-name";
+import { registerPushReminderDevice, unregisterPushReminderDevice } from "@/lib/reminders/push";
 
 const WEEKDAY_OPTIONS = [0, 1, 2, 3, 4, 5, 6] as const;
 
@@ -82,6 +83,8 @@ export default function SettingsPage() {
   const [isExporting, setIsExporting] = useState(false);
   const [isOpeningAnnualUpgrade, setIsOpeningAnnualUpgrade] = useState(false);
   const [notificationPermission, setNotificationPermission] = useState<NotificationPermission | "unsupported">("default");
+  const [isSyncingReminderDevice, setIsSyncingReminderDevice] = useState(false);
+  const [isSendingReminderTest, setIsSendingReminderTest] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
   const firstName = resolveFirstName({
@@ -173,6 +176,24 @@ export default function SettingsPage() {
         reminderPermissionErrorDescription: isFr
           ? "Impossible d'activer les notifications navigateur sur cet appareil pour le moment."
           : "We could not enable browser notifications on this device right now.",
+        reminderSavedTitle: isFr ? "Rappel active" : "Reminder enabled",
+        reminderSavedDescription: isFr
+          ? "Cet appareil recevra maintenant les rappels d'ecriture hors de l'app."
+          : "This device will now receive writing reminders outside the app.",
+        reminderDisabledTitle: isFr ? "Rappel desactive" : "Reminder disabled",
+        reminderDisabledDescription: isFr
+          ? "Les rappels hors app sont coupes pour cet appareil."
+          : "Outside-app reminders are now turned off for this device.",
+        reminderTest: isFr ? "Envoyer un test" : "Send a test",
+        reminderTestSending: isFr ? "Envoi..." : "Sending...",
+        reminderTestSuccessTitle: isFr ? "Test envoye" : "Test sent",
+        reminderTestSuccessDescription: isFr
+          ? "La notification de test est partie vers cet appareil."
+          : "The test notification was sent to this device.",
+        reminderTestErrorTitle: isFr ? "Test impossible" : "Test unavailable",
+        reminderTestErrorDescription: isFr
+          ? "Aucun appareil push actif n'est disponible pour ce compte."
+          : "No active push device is available for this account.",
         reminderPreviewLabel: isFr ? "Exemple" : "Preview",
         reminderPreviewBody: isFr
           ? "Ouvre Aurum et ecris quelques lignes, sans pression."
@@ -478,6 +499,9 @@ export default function SettingsPage() {
     try {
       const permission = await Notification.requestPermission();
       setNotificationPermission(permission);
+      if (permission === 'granted' && preferences.writingReminderEnabled) {
+        await handleSyncReminderDevice(true);
+      }
     } catch (error) {
       console.error("Notification permission request failed:", error);
       toast({
@@ -485,6 +509,91 @@ export default function SettingsPage() {
         description: copy.notifications.reminderPermissionErrorDescription,
         variant: "destructive",
       });
+    }
+  };
+
+  const handleSyncReminderDevice = async (enabled: boolean) => {
+    if (!user || notificationPermission === "unsupported") {
+      return;
+    }
+
+    setIsSyncingReminderDevice(true);
+    try {
+      const idToken = await user.getIdToken();
+      if (enabled) {
+        if (Notification.permission !== "granted") {
+          const permission = await Notification.requestPermission();
+          setNotificationPermission(permission);
+          if (permission !== "granted") {
+            throw new Error('Notification permission denied');
+          }
+        }
+
+        await registerPushReminderDevice({
+          userId: user.uid,
+          idToken,
+          language: preferences.language,
+          timezone: preferences.timezone,
+        });
+        toast({
+          title: copy.notifications.reminderSavedTitle,
+          description: copy.notifications.reminderSavedDescription,
+        });
+      } else {
+        await unregisterPushReminderDevice({
+          userId: user.uid,
+          idToken,
+        });
+        toast({
+          title: copy.notifications.reminderDisabledTitle,
+          description: copy.notifications.reminderDisabledDescription,
+        });
+      }
+    } catch (error) {
+      console.error('Reminder device sync failed:', error);
+      if (enabled) {
+        toast({
+          title: copy.notifications.reminderPermissionErrorTitle,
+          description: copy.notifications.reminderPermissionErrorDescription,
+          variant: 'destructive',
+        });
+      }
+    } finally {
+      setIsSyncingReminderDevice(false);
+    }
+  };
+
+  const handleSendReminderTest = async () => {
+    if (!user) return;
+
+    setIsSendingReminderTest(true);
+    try {
+      const token = await user.getIdToken();
+      const res = await fetch('/api/reminders/send-test', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const payload = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(payload?.error || 'Unable to send test reminder');
+      }
+
+      toast({
+        title: copy.notifications.reminderTestSuccessTitle,
+        description: copy.notifications.reminderTestSuccessDescription,
+      });
+    } catch (error) {
+      console.error('Reminder test failed:', error);
+      toast({
+        title: copy.notifications.reminderTestErrorTitle,
+        description: copy.notifications.reminderTestErrorDescription,
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSendingReminderTest(false);
     }
   };
 
@@ -631,9 +740,11 @@ export default function SettingsPage() {
                   </div>
                   <Switch
                     checked={preferences.writingReminderEnabled}
-                    onCheckedChange={(checked) =>
-                      updatePreferences({ writingReminderEnabled: checked })
-                    }
+                    disabled={isSyncingReminderDevice}
+                    onCheckedChange={async (checked) => {
+                      await updatePreferences({ writingReminderEnabled: checked });
+                      await handleSyncReminderDevice(checked);
+                    }}
                   />
                 </div>
 
@@ -711,6 +822,18 @@ export default function SettingsPage() {
                   </p>
                   <p className="mt-2 text-sm font-medium text-foreground">{reminderPreview}</p>
                   <p className="mt-1 text-sm text-muted-foreground">{copy.notifications.reminderPreviewBody}</p>
+                  <div className="mt-3 flex justify-start">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => void handleSendReminderTest()}
+                      disabled={isSendingReminderTest || !preferences.writingReminderEnabled || notificationPermission !== 'granted'}
+                    >
+                      {isSendingReminderTest ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                      {isSendingReminderTest ? copy.notifications.reminderTestSending : copy.notifications.reminderTest}
+                    </Button>
+                  </div>
                 </div>
               </div>
             </CardContent>

@@ -9,3 +9,4 @@ export { onEntryCreate } from './onEntryCreate';
 export { updateDerivedMemory } from './updateDerivedMemory';
 export { generateInsight } from './generateInsight';
 export { deleteUserAccount } from './deleteUserAccount';
+export { sendWritingReminders } from './sendWritingReminders';
