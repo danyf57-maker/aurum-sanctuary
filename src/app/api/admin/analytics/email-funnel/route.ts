@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import type { TrackedEventName } from "@/lib/analytics/types";
+import { toCsv } from "@/lib/analytics/export-csv";
+import { requireAnalyticsExportAccess } from "@/lib/analytics/export-auth";
 
 const WINDOW_DAYS = 30;
 
@@ -23,31 +24,14 @@ function toDate(value: unknown): Date {
   return new Date(0);
 }
 
-function toCsv(rows: Record<string, string | number>[]) {
-  if (rows.length === 0) return "email_id,sent,opened,clicked,returned,wrote,trial_started,subscribed,purchases\n";
-  const headers = Object.keys(rows[0]);
-  const escape = (value: string | number) => {
-    const str = String(value ?? "");
-    return /[",\n]/.test(str) ? `"${str.replace(/"/g, '""')}"` : str;
-  };
-  return [
-    headers.join(","),
-    ...rows.map((row) => headers.map((header) => escape(row[header] ?? "")).join(",")),
-  ].join("\n");
-}
-
 export async function GET(request: NextRequest) {
   try {
-    const { auth, db, isAdminEmail } = await import("@/lib/firebase/admin");
-    const sessionCookie = (await cookies()).get("__session")?.value;
-    if (!sessionCookie) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    const unauthorized = await requireAnalyticsExportAccess(request);
+    if (unauthorized) {
+      return unauthorized;
     }
 
-    const decoded = await auth.verifySessionCookie(sessionCookie, true);
-    if (!isAdminEmail(decoded.email)) {
-      return NextResponse.json({ message: "Forbidden" }, { status: 403 });
-    }
+    const { db } = await import("@/lib/firebase/admin");
 
     const since = new Date(Date.now() - WINDOW_DAYS * 24 * 60 * 60 * 1000);
     const snapshot = await db.collection("analyticsEvents").where("occurredAt", ">=", since).get();
