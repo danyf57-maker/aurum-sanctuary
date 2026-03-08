@@ -60,7 +60,6 @@ type LandingAssessment = {
 
 type LandingInsight = {
   narrative: string;
-  actionPlan: string[];
 };
 
 const PROFILE_TITLES: Record<string, string> = {
@@ -70,8 +69,6 @@ const PROFILE_TITLES: Record<string, string> = {
   C: "The Architect",
   MIXTE: "Balanced profile • The Equilibrist",
 };
-const ACTIVE_PLAN_STORAGE_KEY = "aurum-active-plan";
-
 const RYFF_DIMENSION_LABELS: Record<keyof RyffDimensionScores, string> = {
   acceptationDeSoi: "self-acceptance",
   developpementPersonnel: "personal growth",
@@ -607,22 +604,14 @@ export default function MagazinePage() {
         if (!response.ok) return;
         const data = (await response.json()) as {
           narrative?: unknown;
-          actionPlan?: unknown;
         };
 
         const narrative =
           typeof data.narrative === "string" && data.narrative.trim()
             ? data.narrative.trim()
             : "Your entry profile is ready. Move forward with simple, steady steps.";
-        const actionPlan = Array.isArray(data.actionPlan)
-          ? data.actionPlan
-              .map((entry) => (typeof entry === "string" ? entry.trim() : ""))
-              .filter(Boolean)
-              .slice(0, 7)
-          : [];
-
         if (!cancelled) {
-          setLandingInsight({ narrative, actionPlan });
+          setLandingInsight({ narrative });
         }
       } catch {
         // silent fallback
@@ -1071,43 +1060,6 @@ export default function MagazinePage() {
               <p className="mt-2 text-sm leading-relaxed text-stone-700">
                 {landingInsight.narrative}
               </p>
-              {landingInsight.actionPlan.length > 0 && (
-                <div className="mt-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-600">
-                    7-day action plan
-                  </p>
-                  <ul className="mt-2 space-y-1.5 text-sm text-stone-700">
-                    {landingInsight.actionPlan.map((step) => (
-                      <li key={step} className="flex gap-2">
-                        <span className="mt-1 h-1.5 w-1.5 rounded-full bg-amber-500/70" />
-                        <span>{step}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <Link
-                    href={`/sanctuary/write?initial=${encodeURIComponent(
-                      `7-day action plan\n${landingInsight.actionPlan[0]}\n\nToday's intention:`
-                    )}`}
-                    onClick={() => {
-                      if (typeof window === "undefined") return;
-                      localStorage.setItem(
-                        ACTIVE_PLAN_STORAGE_KEY,
-                        JSON.stringify({
-                          version: 1,
-                          source: "landing",
-                          title: "7-day action plan",
-                          steps: landingInsight.actionPlan,
-                          currentStep: 0,
-                          createdAt: new Date().toISOString(),
-                        })
-                      );
-                    }}
-                    className="mt-3 inline-flex rounded-lg bg-[#C5A059] px-3 py-1.5 text-xs font-medium text-stone-900 transition-colors hover:bg-[#b8924e]"
-                  >
-                    Apply this plan in my journal
-                  </Link>
-                </div>
-              )}
             </div>
           )}
         </div>

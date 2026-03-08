@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { Loader2, Activity } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import {
@@ -35,7 +34,6 @@ const DIMENSION_KEYS: (keyof RyffDimensionScores)[] = [
   'autonomie',
   'relationsPositives',
 ];
-const ACTIVE_PLAN_STORAGE_KEY = "aurum-active-plan";
 
 function buildChartData(
   aiScores: RyffDimensionScores | null,
@@ -67,7 +65,6 @@ export function WellbeingRadar({
   const hints = t.raw('hints') as Record<keyof RyffDimensionScores, string>;
   const writingBenefits = t.raw('writingBenefits') as Record<keyof RyffDimensionScores, string>;
   const starters = t.raw('starters') as Record<keyof RyffDimensionScores, string>;
-  const plans = t.raw('plans') as Record<keyof RyffDimensionScores, string[]>;
 
   const hasAny = aiScores || questionnaireScores;
   const data = buildChartData(aiScores, questionnaireScores, labels);
@@ -79,28 +76,6 @@ export function WellbeingRadar({
     : [];
   const strongestDimension = sortedDimensions[0]?.[0] ?? null;
   const growthDimension = sortedDimensions[sortedDimensions.length - 1]?.[0] ?? null;
-  const journalHref =
-    growthDimension != null
-      ? `/sanctuary/write?initial=${encodeURIComponent(
-          `${t('planTitle')}\n${plans[growthDimension][0]}\n\n${t('actionPrompt')}`
-        )}`
-      : '/sanctuary/write';
-
-  const handleApplyPlan = () => {
-    if (typeof window === "undefined" || !growthDimension) return;
-    const steps = plans[growthDimension];
-    localStorage.setItem(
-      ACTIVE_PLAN_STORAGE_KEY,
-      JSON.stringify({
-        version: 1,
-        source: "wellbeing",
-        title: t('planTitle'),
-        steps,
-        currentStep: 0,
-        createdAt: new Date().toISOString(),
-      })
-    );
-  };
 
   return (
     <section className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
@@ -256,25 +231,6 @@ export function WellbeingRadar({
                     </span>{" "}
                     {starters[growthDimension]}
                   </p>
-                </div>
-              )}
-              {growthDimension && (
-                <div className="mt-3 rounded-xl border border-[#C5A059]/20 bg-white/70 px-3 py-3">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#7A5D24]/90">
-                    {t('planTitle')}
-                  </p>
-                  <ul className="mt-2 space-y-1 text-xs text-stone-700">
-                    {plans[growthDimension].map((step) => (
-                      <li key={step}>{step}</li>
-                    ))}
-                  </ul>
-                  <Link
-                    href={journalHref}
-                    onClick={handleApplyPlan}
-                    className="mt-3 inline-flex rounded-lg bg-[#C5A059] px-3 py-1.5 text-xs font-medium text-stone-900 transition-colors hover:bg-[#b8924e]"
-                  >
-                    {t('applyPlan')}
-                  </Link>
                 </div>
               )}
             </div>
