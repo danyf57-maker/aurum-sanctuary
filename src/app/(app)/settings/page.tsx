@@ -50,6 +50,7 @@ import Link from "next/link";
 import { useLocalizedHref } from "@/hooks/use-localized-href";
 import { useTranslations } from "next-intl";
 import { useLocale } from "@/hooks/use-locale";
+import { useSubscription } from "@/hooks/useSubscription";
 
 export default function SettingsPage() {
   const to = useLocalizedHref();
@@ -58,6 +59,14 @@ export default function SettingsPage() {
   const t = useTranslations("settings");
   const { user, loading: authLoading, logout } = useAuth();
   const {
+    subscription,
+    loading: subscriptionLoading,
+    isMonthlyPlan,
+    isYearlyPlan,
+    daysActive,
+    isAnnualUpgradeEligible,
+  } = useSubscription();
+  const {
     preferences,
     loading: settingsLoading,
     updatePreferences,
@@ -65,6 +74,7 @@ export default function SettingsPage() {
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const [isOpeningAnnualUpgrade, setIsOpeningAnnualUpgrade] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
 
@@ -132,6 +142,32 @@ export default function SettingsPage() {
         currentPlan: isFr ? "Formule actuelle" : "Current plan",
         noPlan: isFr ? "Aucune formule active" : "No active plan",
         pricing: isFr ? "Voir les tarifs" : "View pricing",
+        monthly: isFr ? "Mensuel" : "Monthly",
+        yearly: isFr ? "Annuel" : "Yearly",
+        trial: isFr ? "Essai en cours" : "Trial active",
+        paymentIssue: isFr ? "Paiement à mettre à jour" : "Payment issue",
+        canceled: isFr ? "Abonnement annulé" : "Subscription canceled",
+        active: isFr ? "Abonnement actif" : "Active subscription",
+        manage: isFr ? "Gérer la facturation" : "Manage billing",
+        annualOfferBadge: isFr ? "2 mois offerts" : "2 months free",
+        annualOfferTitle: isFr
+          ? "Passez à l'annuel, sans changer votre rythme"
+          : "Move to yearly, without changing your rhythm",
+        annualOfferBody: isFr
+          ? "Vous utilisez Aurum depuis déjà quelques mois. Si vous savez que vous souhaitez continuer, le forfait annuel vous offre 2 mois."
+          : "You have already been using Aurum for a few months. If you know you want to continue, the yearly plan gives you 2 months free.",
+        annualOfferMeta: isFr
+          ? "Proposé après 3 mois d'abonnement mensuel, directement dans votre espace de facturation Stripe."
+          : "Shown after 3 months on monthly billing, directly inside your Stripe billing space.",
+        annualOfferCta: isFr ? "Voir l'offre annuelle" : "See yearly offer",
+        annualOfferLoading: isFr ? "Ouverture..." : "Opening...",
+        annualOfferErrorTitle: isFr ? "Facturation indisponible" : "Billing unavailable",
+        annualOfferErrorDescription: isFr
+          ? "Impossible d'ouvrir votre espace de facturation pour le moment."
+          : "We could not open your billing space right now.",
+        monthlySince: isFr
+          ? `Abonné mensuel depuis ${daysActive ?? 0} jours`
+          : `Monthly subscriber for ${daysActive ?? 0} days`,
       },
       danger: {
         title: isFr ? "Zone sensible" : "Sensitive zone",
@@ -285,7 +321,52 @@ export default function SettingsPage() {
     }
   };
 
-  if (authLoading || settingsLoading) {
+  const handleAnnualUpgrade = async () => {
+    if (!user) return;
+    setIsOpeningAnnualUpgrade(true);
+    try {
+      const token = await user.getIdToken();
+      const res = await fetch('/api/stripe/create-annual-upgrade-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const payload = await res.json().catch(() => ({}));
+      if (!res.ok || !payload?.url) {
+        throw new Error(payload?.error || 'Unable to open annual offer');
+      }
+
+      window.location.assign(payload.url as string);
+    } catch (error) {
+      console.error('Annual upgrade launch failed:', error);
+      toast({
+        title: copy.subscription.annualOfferErrorTitle,
+        description: copy.subscription.annualOfferErrorDescription,
+        variant: 'destructive',
+      });
+      setIsOpeningAnnualUpgrade(false);
+    }
+  };
+
+  const currentPlanLabel =
+    subscription.status === 'active'
+      ? isYearlyPlan
+        ? copy.subscription.yearly
+        : isMonthlyPlan
+          ? copy.subscription.monthly
+          : copy.subscription.active
+      : subscription.status === 'trialing'
+        ? copy.subscription.trial
+        : subscription.status === 'past_due'
+          ? copy.subscription.paymentIssue
+          : subscription.status === 'canceled'
+            ? copy.subscription.canceled
+            : null;
+
+  if (authLoading || settingsLoading || subscriptionLoading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -448,12 +529,32 @@ export default function SettingsPage() {
               <div className="flex items-center justify-between p-4 border rounded-lg bg-secondary/50">
                 <div>
                   <p className="font-medium">{copy.subscription.currentPlan}</p>
-                  <p className="text-sm text-muted-foreground">{copy.subscription.noPlan}</p>
+                  <p className="text-sm text-muted-foreground">{currentPlanLabel || copy.subscription.noPlan}</p>
                 </div>
                 <Button asChild variant="outline">
                   <Link href={to("/pricing")}>{copy.subscription.pricing}</Link>
                 </Button>
               </div>
+
+              {isAnnualUpgradeEligible ? (
+                <div className="rounded-2xl border border-amber-200 bg-amber-50/70 p-5 text-foreground">
+                  <div className="mb-3 inline-flex rounded-full border border-amber-200 bg-background/70 px-3 py-1 text-xs font-medium uppercase tracking-[0.2em] text-amber-900">
+                    {copy.subscription.annualOfferBadge}
+                  </div>
+                  <div className="space-y-2">
+                    <p className="font-medium text-lg">{copy.subscription.annualOfferTitle}</p>
+                    <p className="text-sm text-muted-foreground">{copy.subscription.annualOfferBody}</p>
+                    <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">{copy.subscription.monthlySince}</p>
+                    <p className="text-xs text-muted-foreground">{copy.subscription.annualOfferMeta}</p>
+                  </div>
+                  <div className="mt-4 flex justify-start">
+                    <Button onClick={() => void handleAnnualUpgrade()} disabled={isOpeningAnnualUpgrade}>
+                      {isOpeningAnnualUpgrade ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                      {isOpeningAnnualUpgrade ? copy.subscription.annualOfferLoading : copy.subscription.annualOfferCta}
+                    </Button>
+                  </div>
+                </div>
+              ) : null}
             </CardContent>
           </Card>
 

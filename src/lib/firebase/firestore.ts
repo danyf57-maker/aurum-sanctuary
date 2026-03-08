@@ -33,6 +33,7 @@ export async function getUserProfile(
       uid: userId,
       email: data.email || null,
       displayName: data.displayName || null,
+      firstName: data.firstName || null,
       photoURL: data.photoURL || null,
       entryCount: data.entryCount || 0,
       createdAt: data.createdAt?.toDate?.() || new Date(),

@@ -148,6 +148,7 @@ export async function POST(req: NextRequest) {
                     stripeCustomerId: subscription.customer as string,
                     subscriptionId: subscription.id,
                     subscriptionPriceId: subscription.items.data[0]?.price.id,
+                    subscriptionStartedAt: fromUnix(subscription.start_date),
                     subscriptionCurrentPeriodEnd: new Date(subscription.current_period_end * 1000),
                     subscriptionTrialEndsAt: fromUnix(subscription.trial_end),
                     trialConsumedAt: subscription.status === 'trialing' ? new Date() : undefined,

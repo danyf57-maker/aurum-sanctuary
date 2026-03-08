@@ -7,6 +7,7 @@ import { sendOnboardingEmail } from "@/lib/onboarding/sender";
 import type { OnboardingEmailId, OnboardingState } from "@/lib/onboarding/types";
 import { FREE_ENTRY_LIMIT, STRIPE_TRIAL_REMINDER_DAYS } from "@/lib/billing/config";
 import { normalizeLocale, type Locale } from "@/lib/locale";
+import { resolveFirstName } from "@/lib/profile/first-name";
 
 const PAID_STATUSES = new Set(["active", "trialing"]);
 
@@ -85,74 +86,6 @@ function pickLifecycleEmail(
     return "free_limit_followup";
   }
 
-  if (
-    signals.trialConsumedAt &&
-    signals.trialEndsAt &&
-    !sent.trial_expired_no_conversion &&
-    !PAID_STATUSES.has(signals.subscriptionStatus) &&
-    hoursSince(signals.trialEndsAt) >= 24
-  ) {
-    return "trial_expired_no_conversion";
-  }
-
-  return null;
-}
-
-function pickLegacyOnboardingEmail(
-  state: OnboardingState,
-  createdAt: Date | null,
-  firstEntryAt: Date | null,
-  entryCount: number,
-  subscriptionStatus: string
-): OnboardingEmailId | null {
-  const sent = state.sent || {};
-  const hoursSinceSignup = createdAt
-    ? (Date.now() - createdAt.getTime()) / (1000 * 60 * 60)
-    : Number.POSITIVE_INFINITY;
-
-  if (!sent.email_1 && hoursSinceSignup >= 0.25) return "email_1";
-
-  if (entryCount === 0) {
-    if (sent.email_1 && !sent.email_2 && hoursSince(sent.email_1) >= 24) return "email_2";
-    if (
-      sent.email_2 &&
-      !sent.email_3 &&
-      hoursSince(sent.email_2) >= 48 &&
-      !PAID_STATUSES.has(subscriptionStatus)
-    ) {
-      return "email_3";
-    }
-    if (
-      sent.email_3 &&
-      !sent.email_4 &&
-      hoursSince(sent.email_3) >= 96 &&
-      !PAID_STATUSES.has(subscriptionStatus)
-    ) {
-      return "email_4";
-    }
-    return null;
-  }
-
-  const hoursSinceFirstEntry = firstEntryAt
-    ? (Date.now() - firstEntryAt.getTime()) / (1000 * 60 * 60)
-    : Number.POSITIVE_INFINITY;
-  if (
-    sent.email_1 &&
-    !sent.habit_email_1 &&
-    hoursSince(sent.email_1) >= 24 &&
-    hoursSinceFirstEntry >= 24
-  ) {
-    return "habit_email_1";
-  }
-  if (
-    sent.habit_email_1 &&
-    !sent.habit_email_2 &&
-    hoursSince(sent.habit_email_1) >= 72 &&
-    !PAID_STATUSES.has(subscriptionStatus)
-  ) {
-    return "habit_email_2";
-  }
-
   return null;
 }
 
@@ -194,9 +127,11 @@ export async function runOnboardingSequence() {
 
     const subscriptionStatus = String(data.subscriptionStatus || "free");
     const entryCount = Number(data.entryCount || 0);
-    const firstEntryAt = asDate(data.firstEntryAt);
-    const firstName = String(data.displayName || email.split("@")[0] || "toi");
-    const createdAt = asDate(data.createdAt);
+    const firstName = resolveFirstName({
+      firstName: typeof data.firstName === 'string' ? data.firstName : null,
+      displayName: typeof data.displayName === 'string' ? data.displayName : null,
+      email,
+    });
     const freeLimitReachedAt = asDate(data.freeLimitReachedAt);
     const trialConsumedAt = asDate(data.trialConsumedAt);
     const trialEndsAt = asDate(data.subscriptionTrialEndsAt) || asDate(data.subscriptionCurrentPeriodEnd);
@@ -221,11 +156,7 @@ export async function runOnboardingSequence() {
       trialEndsAt,
     });
 
-    const nextEmail =
-      nextLifecycleEmail ||
-      (entryCount >= FREE_ENTRY_LIMIT || PAID_STATUSES.has(subscriptionStatus)
-        ? null
-        : pickLegacyOnboardingEmail(stateData, createdAt, firstEntryAt, entryCount, subscriptionStatus));
+    const nextEmail = nextLifecycleEmail;
 
     if (!nextEmail) {
       skipped += 1;

@@ -70,6 +70,7 @@ export type UserProfile = {
   uid: string;
   email?: string | null;
   displayName?: string | null;
+  firstName?: string | null;
   photoURL?: string | null;
   createdAt: Date;
   insights?: UserInsights;
