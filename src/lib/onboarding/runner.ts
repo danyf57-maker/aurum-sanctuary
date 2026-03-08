@@ -156,21 +156,6 @@ function pickLegacyOnboardingEmail(
   return null;
 }
 
-function analyticsEventForEmail(emailId: OnboardingEmailId) {
-  switch (emailId) {
-    case "trial_started":
-      return "trial_activated" as const;
-    case "trial_ending_soon":
-      return "trial_reminder_sent" as const;
-    case "subscription_active":
-      return "subscription_started" as const;
-    case "trial_expired_no_conversion":
-      return "trial_expired_no_conversion" as const;
-    default:
-      return null;
-  }
-}
-
 function resolveUserLocale(
   userData: Record<string, unknown>,
   prefsData: Record<string, unknown>
@@ -317,18 +302,6 @@ export async function runOnboardingSequence() {
         },
       });
 
-      const lifecycleEvent = analyticsEventForEmail(nextEmail);
-      if (lifecycleEvent) {
-        await trackServerEvent(lifecycleEvent, {
-          userId,
-          userEmail: email,
-          path: "/api/onboarding/run",
-          params: {
-            email_id: nextEmail,
-            locale,
-          },
-        });
-      }
       sentCount += 1;
     } catch (error) {
       await stateRef.set(
