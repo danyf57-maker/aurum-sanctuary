@@ -65,8 +65,8 @@ export function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-            <div className="relative max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-lg bg-[#F5F5DC] p-8 shadow-xl">
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50 p-3 sm:p-4">
+            <div className="relative mx-auto my-4 w-full max-w-2xl rounded-lg bg-[#F5F5DC] p-5 shadow-xl sm:my-8 sm:p-8">
                 <button
                     onClick={onClose}
                     className="absolute right-4 top-4 text-[#8B4513] transition-opacity hover:opacity-70"
@@ -81,7 +81,7 @@ export function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
                     </div>
                 </div>
 
-                <h2 className="mb-4 text-center font-serif text-2xl text-[#8B4513]">
+                <h2 className="mb-4 text-center font-serif text-2xl leading-tight text-[#8B4513] sm:text-3xl">
                     {t('title')}
                 </h2>
 
@@ -103,7 +103,7 @@ export function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
                     </ul>
                 </div>
 
-                <div className="mb-6">
+                <div className="mb-6 min-w-0 overflow-hidden">
                     <TrialExplainerCard namespace="paywall" compact />
                 </div>
 

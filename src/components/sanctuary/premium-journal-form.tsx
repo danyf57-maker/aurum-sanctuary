@@ -401,6 +401,8 @@ export function PremiumJournalForm() {
       } else {
         if (result.freeLimitReached) {
           setIsPaywallOpen(true);
+          setIsSubmitting(false);
+          return;
         }
         // Extract all validation errors
         let errorMsg = result.message || t('errors.generic');
