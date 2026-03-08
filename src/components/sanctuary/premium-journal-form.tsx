@@ -23,12 +23,14 @@ import { ReflectionResponse } from './reflection-response';
 import { ReflectionPulse } from './reflection-pulse';
 import { NeuroBreadcrumbs } from './neuro-breadcrumbs';
 import { AuthDialog } from '@/components/auth/auth-dialog';
+import { PaywallModal } from '@/components/paywall/PaywallModal';
 import { motion, AnimatePresence } from 'framer-motion';
 import { app } from '@/lib/firebase/web-client';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useEncryption } from '@/hooks/useEncryption';
 import { useSearchParams } from 'next/navigation';
 import { useLocale } from '@/hooks/use-locale';
+import { useFreeEntryLimit } from '@/hooks/use-free-entry-limit';
 
 type DraftImage = {
   id: string;
@@ -70,6 +72,7 @@ export function PremiumJournalForm() {
   const locale = useLocale();
   const isFr = locale === 'fr';
   const t = useTranslations('sanctuary.premiumJournalForm');
+  const { entriesUsed, entriesLimit, remaining, isPremium, isLimitReached } = useFreeEntryLimit();
   const formRef = useRef<HTMLFormElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -87,6 +90,7 @@ export function PremiumJournalForm() {
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
   const [isGeneratingReflection, setIsGeneratingReflection] = useState(false);
   const [isContinuingConversation, setIsContinuingConversation] = useState(false);
+  const [isPaywallOpen, setIsPaywallOpen] = useState(false);
   const [activePlan, setActivePlan] = useState<ActivePlan | null>(null);
   const [isPlanDrivenDraft, setIsPlanDrivenDraft] = useState(false);
   const [conversationTurns, setConversationTurns] = useState<ConversationTurn[]>([]);
@@ -395,6 +399,9 @@ export function PremiumJournalForm() {
           description: t('toasts.entrySavedDescription'),
         });
       } else {
+        if (result.freeLimitReached) {
+          setIsPaywallOpen(true);
+        }
         // Extract all validation errors
         let errorMsg = result.message || t('errors.generic');
         if (result.errors) {
@@ -657,10 +664,28 @@ export function PremiumJournalForm() {
     fileInputRef.current?.click();
   };
 
+  const progressLabel = isFr
+    ? `${entriesUsed} / ${entriesLimit} entrées gratuites utilisées`
+    : `${entriesUsed} / ${entriesLimit} free entries used`;
+  const remainingLabel = isFr
+    ? remaining > 0
+      ? `Il vous reste ${remaining} entrée${remaining > 1 ? 's' : ''} gratuite${remaining > 1 ? 's' : ''}.`
+      : 'Passez au premium avec 7 jours offerts pour continuer.'
+    : remaining > 0
+      ? `${remaining} free entr${remaining > 1 ? 'ies' : 'y'} remaining.`
+      : 'Go premium with a 7-day free trial to keep writing.';
+
   return (
-    <div className="w-full max-w-[720px] mx-auto px-6 md:px-10 space-y-8">
-      {/* Writing form */}
-      <AnimatePresence mode="wait">
+    <>
+      <div className="w-full max-w-[720px] mx-auto px-6 md:px-10 space-y-8">
+        {!isPremium && (
+          <div className={`rounded-[24px] border px-5 py-4 ${isLimitReached ? 'border-amber-300 bg-amber-50' : 'border-stone-200 bg-white/70'}`}>
+            <p className="text-sm font-medium text-stone-800">{progressLabel}</p>
+            <p className="mt-1 text-sm text-stone-600">{remainingLabel}</p>
+          </div>
+        )}
+        {/* Writing form */}
+        <AnimatePresence mode="wait">
         {!isSaved ? (
           <motion.div
             key="form"
@@ -1034,8 +1059,10 @@ export function PremiumJournalForm() {
             </motion.div>
           </motion.div>
         )}
-      </AnimatePresence>
-      <AuthDialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen} />
-    </div>
+        </AnimatePresence>
+        <AuthDialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen} />
+      </div>
+      <PaywallModal isOpen={isPaywallOpen} onClose={() => setIsPaywallOpen(false)} />
+    </>
   );
 }

@@ -11,6 +11,9 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { AuthDialog } from "@/components/auth/auth-dialog";
+import { PaywallModal } from '@/components/paywall/PaywallModal';
+import { useFreeEntryLimit } from '@/hooks/use-free-entry-limit';
+import { useLocale } from '@/hooks/use-locale';
 
 
 function SubmitButton({ isSubmitting }: { isSubmitting: boolean }) {
@@ -82,11 +85,15 @@ function buildMirrorQuestions(sentiment?: string, mood?: string): {
 export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
   const { user } = useAuth();
   const { toast } = useToast();
+  const locale = useLocale();
+  const isFr = locale === 'fr';
   const formRef = useRef<HTMLFormElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const { entriesUsed, entriesLimit, remaining, isPremium, isLimitReached } = useFreeEntryLimit();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
+  const [isPaywallOpen, setIsPaywallOpen] = useState(false);
 
   useEffect(() => {
     console.log('[JournalEntryForm] Auth dialog state changed:', isAuthDialogOpen);
@@ -187,6 +194,9 @@ export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
             : "Votre pensée a été préservée en toute sécurité.",
         });
       } else {
+        if (result.freeLimitReached) {
+          setIsPaywallOpen(true);
+        }
         // Extract all validation errors
         let errorMsg = result.message || "Une erreur est survenue.";
         if (result.errors) {
@@ -231,9 +241,26 @@ export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
     .toLowerCase()
     .endsWith("@aurumdiary.com");
 
+  const progressLabel = isFr
+    ? `${entriesUsed} / ${entriesLimit} entrées gratuites utilisées`
+    : `${entriesUsed} / ${entriesLimit} free entries used`;
+  const remainingLabel = isFr
+    ? remaining > 0
+      ? `Il vous reste ${remaining} entrée${remaining > 1 ? 's' : ''} gratuite${remaining > 1 ? 's' : ''}.`
+      : 'Passez au premium avec 7 jours offerts pour continuer.'
+    : remaining > 0
+      ? `${remaining} free entr${remaining > 1 ? 'ies' : 'y'} remaining.`
+      : 'Go premium with a 7-day free trial to keep writing.';
+
   return (
     <>
       <form ref={formRef} onSubmit={handleFormSubmit} className="w-full max-w-2xl mx-auto space-y-8">
+        {!isPremium && (
+          <div className={`rounded-2xl border px-4 py-3 ${isLimitReached ? 'border-amber-300 bg-amber-50' : 'border-stone-200 bg-stone-50/80'}`}>
+            <p className="text-sm font-medium text-stone-800">{progressLabel}</p>
+            <p className="mt-1 text-sm text-stone-600">{remainingLabel}</p>
+          </div>
+        )}
         <div>
           <Textarea
             ref={textareaRef}
@@ -269,6 +296,7 @@ export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
         </div>
       </form>
       <AuthDialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen} />
+      <PaywallModal isOpen={isPaywallOpen} onClose={() => setIsPaywallOpen(false)} />
     </>
   );
 }
