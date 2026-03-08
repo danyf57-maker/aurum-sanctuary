@@ -196,6 +196,8 @@ export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
       } else {
         if (result.freeLimitReached) {
           setIsPaywallOpen(true);
+          setIsSubmitting(false);
+          return;
         }
         // Extract all validation errors
         let errorMsg = result.message || "Une erreur est survenue.";
