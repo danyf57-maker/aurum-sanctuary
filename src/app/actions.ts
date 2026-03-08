@@ -309,6 +309,16 @@ export async function saveJournalEntry(
         trialEndsAt.getTime() > Date.now());
 
     if (!hasPremiumAccess && entryCount >= FREE_ENTRY_LIMIT) {
+      if (!userData?.freeLimitReachedAt) {
+        await userDocRef.set(
+          {
+            freeLimitReachedAt: new Date(),
+            updatedAt: new Date(),
+          },
+          { merge: true }
+        );
+      }
+
       await trackServerEvent("free_limit_reached", {
         userId,
         userEmail,

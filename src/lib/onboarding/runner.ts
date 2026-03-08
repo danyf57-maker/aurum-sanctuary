@@ -5,6 +5,7 @@ import { trackServerEvent } from "@/lib/analytics/server";
 import { renderOnboardingEmail } from "@/lib/onboarding/templates";
 import { sendOnboardingEmail } from "@/lib/onboarding/sender";
 import type { OnboardingEmailId, OnboardingState } from "@/lib/onboarding/types";
+import { FREE_ENTRY_LIMIT, STRIPE_TRIAL_REMINDER_DAYS } from "@/lib/billing/config";
 
 const PAID_STATUSES = new Set(["active", "trialing"]);
 
@@ -31,7 +32,72 @@ function hoursSince(value?: unknown) {
   return (Date.now() - date.getTime()) / (1000 * 60 * 60);
 }
 
-function pickNextEmail(
+function hoursUntil(value?: unknown) {
+  const date = asDate(value ?? null);
+  if (!date) return Number.NEGATIVE_INFINITY;
+  return (date.getTime() - Date.now()) / (1000 * 60 * 60);
+}
+
+type LifecycleSignals = {
+  entryCount: number;
+  subscriptionStatus: string;
+  freeLimitReachedAt: Date | null;
+  trialConsumedAt: Date | null;
+  trialEndsAt: Date | null;
+};
+
+function pickLifecycleEmail(
+  state: OnboardingState,
+  signals: LifecycleSignals
+): OnboardingEmailId | null {
+  const sent = state.sent || {};
+
+  if (
+    signals.subscriptionStatus === "active" &&
+    !sent.subscription_active
+  ) {
+    return "subscription_active";
+  }
+
+  if (signals.subscriptionStatus === "trialing") {
+    if (!sent.trial_started) {
+      return "trial_started";
+    }
+
+    const remainingHours = hoursUntil(signals.trialEndsAt);
+    if (
+      !sent.trial_ending_soon &&
+      remainingHours > 0 &&
+      remainingHours <= STRIPE_TRIAL_REMINDER_DAYS * 24
+    ) {
+      return "trial_ending_soon";
+    }
+
+    return null;
+  }
+
+  if (
+    signals.entryCount >= FREE_ENTRY_LIMIT &&
+    !sent.free_limit_followup &&
+    hoursSince(signals.freeLimitReachedAt) >= 12
+  ) {
+    return "free_limit_followup";
+  }
+
+  if (
+    signals.trialConsumedAt &&
+    signals.trialEndsAt &&
+    !sent.trial_expired_no_conversion &&
+    !PAID_STATUSES.has(signals.subscriptionStatus) &&
+    hoursSince(signals.trialEndsAt) >= 24
+  ) {
+    return "trial_expired_no_conversion";
+  }
+
+  return null;
+}
+
+function pickLegacyOnboardingEmail(
   state: OnboardingState,
   createdAt: Date | null,
   firstEntryAt: Date | null,
@@ -43,31 +109,29 @@ function pickNextEmail(
     ? (Date.now() - createdAt.getTime()) / (1000 * 60 * 60)
     : Number.POSITIVE_INFINITY;
 
-  // Email #1: ~15 minutes after signup
   if (!sent.email_1 && hoursSinceSignup >= 0.25) return "email_1";
 
-  // Branche A: utilisateur n'a pas commence a ecrire
   if (entryCount === 0) {
-    // Enforce strict sequence: un email ne peut partir que si le precedent existe deja.
     if (sent.email_1 && !sent.email_2 && hoursSince(sent.email_1) >= 24) return "email_2";
     if (
       sent.email_2 &&
       !sent.email_3 &&
       hoursSince(sent.email_2) >= 48 &&
       !PAID_STATUSES.has(subscriptionStatus)
-    )
+    ) {
       return "email_3";
+    }
     if (
       sent.email_3 &&
       !sent.email_4 &&
       hoursSince(sent.email_3) >= 96 &&
       !PAID_STATUSES.has(subscriptionStatus)
-    )
+    ) {
       return "email_4";
+    }
     return null;
   }
 
-  // Branche B: utilisateur a deja commence a ecrire
   const hoursSinceFirstEntry = firstEntryAt
     ? (Date.now() - firstEntryAt.getTime()) / (1000 * 60 * 60)
     : Number.POSITIVE_INFINITY;
@@ -76,17 +140,34 @@ function pickNextEmail(
     !sent.habit_email_1 &&
     hoursSince(sent.email_1) >= 24 &&
     hoursSinceFirstEntry >= 24
-  )
+  ) {
     return "habit_email_1";
+  }
   if (
     sent.habit_email_1 &&
     !sent.habit_email_2 &&
     hoursSince(sent.habit_email_1) >= 72 &&
     !PAID_STATUSES.has(subscriptionStatus)
-  )
+  ) {
     return "habit_email_2";
+  }
 
   return null;
+}
+
+function analyticsEventForEmail(emailId: OnboardingEmailId) {
+  switch (emailId) {
+    case "trial_started":
+      return "trial_activated" as const;
+    case "trial_ending_soon":
+      return "trial_reminder_sent" as const;
+    case "subscription_active":
+      return "subscription_started" as const;
+    case "trial_expired_no_conversion":
+      return "trial_expired_no_conversion" as const;
+    default:
+      return null;
+  }
 }
 
 export async function runOnboardingSequence() {
@@ -117,6 +198,9 @@ export async function runOnboardingSequence() {
     const firstEntryAt = asDate(data.firstEntryAt);
     const firstName = String(data.displayName || email.split("@")[0] || "toi");
     const createdAt = asDate(data.createdAt);
+    const freeLimitReachedAt = asDate(data.freeLimitReachedAt);
+    const trialConsumedAt = asDate(data.trialConsumedAt);
+    const trialEndsAt = asDate(data.subscriptionTrialEndsAt) || asDate(data.subscriptionCurrentPeriodEnd);
 
     const prefsRef = db.collection("users").doc(userId).collection("settings").doc("preferences");
     const stateRef = db.collection("users").doc(userId).collection("onboarding").doc("state");
@@ -124,31 +208,25 @@ export async function runOnboardingSequence() {
     const prefsData = (prefsSnap.data() || {}) as Record<string, unknown>;
     const stateData = (stateSnap.data() || {}) as OnboardingState;
 
-    if (PAID_STATUSES.has(subscriptionStatus)) {
-      await stateRef.set(
-        {
-          stoppedAt: new Date().toISOString(),
-          stoppedReason: "subscription_started",
-          updatedAt: new Date().toISOString(),
-        },
-        { merge: true }
-      );
-      skipped += 1;
-      continue;
-    }
-
     if (prefsData.marketingUnsubscribedAt || stateData.unsubscribedAt || stateData.invalidEmailAt) {
       skipped += 1;
       continue;
     }
 
-    const nextEmail = pickNextEmail(
-      stateData,
-      createdAt,
-      firstEntryAt,
+    const nextLifecycleEmail = pickLifecycleEmail(stateData, {
       entryCount,
-      subscriptionStatus
-    );
+      subscriptionStatus,
+      freeLimitReachedAt,
+      trialConsumedAt,
+      trialEndsAt,
+    });
+
+    const nextEmail =
+      nextLifecycleEmail ||
+      (entryCount >= FREE_ENTRY_LIMIT || PAID_STATUSES.has(subscriptionStatus)
+        ? null
+        : pickLegacyOnboardingEmail(stateData, createdAt, firstEntryAt, entryCount, subscriptionStatus));
+
     if (!nextEmail) {
       skipped += 1;
       continue;
@@ -160,7 +238,6 @@ export async function runOnboardingSequence() {
       .collection("onboarding")
       .doc(`outbox_${nextEmail}`);
 
-    // Verrou atomique anti-doublon: une seule creation possible par user+emailId
     try {
       await outboxRef.create({
         emailId: nextEmail,
@@ -222,9 +299,20 @@ export async function runOnboardingSequence() {
           subject: content.subject,
         },
       });
+
+      const lifecycleEvent = analyticsEventForEmail(nextEmail);
+      if (lifecycleEvent) {
+        await trackServerEvent(lifecycleEvent, {
+          userId,
+          userEmail: email,
+          path: "/api/onboarding/run",
+          params: {
+            email_id: nextEmail,
+          },
+        });
+      }
       sentCount += 1;
     } catch (error) {
-      // Ne jamais re-envoyer en boucle: on enregistre l'erreur la plus recente.
       await stateRef.set(
         {
           lastErrorAt: new Date().toISOString(),
@@ -233,23 +321,10 @@ export async function runOnboardingSequence() {
         },
         { merge: true }
       );
-      // En cas d'echec d'envoi, on libere le verrou pour permettre une relance ulterieure.
       await outboxRef.delete().catch(() => null);
       skipped += 1;
     }
   }
 
-  await db.collection("onboardingJobs").add({
-    createdAt: new Date(),
-    scannedUsers: usersSnap.size,
-    sentCount,
-    skippedCount: skipped,
-  });
-
-  return {
-    enabled: true,
-    scanned: usersSnap.size,
-    sent: sentCount,
-    skipped,
-  };
+  return { enabled: true, scanned: usersSnap.size, sent: sentCount, skipped };
 }

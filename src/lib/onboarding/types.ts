@@ -6,7 +6,12 @@ export type OnboardingEmailId =
   | "email_3"
   | "email_4"
   | "habit_email_1"
-  | "habit_email_2";
+  | "habit_email_2"
+  | "free_limit_followup"
+  | "trial_started"
+  | "trial_ending_soon"
+  | "subscription_active"
+  | "trial_expired_no_conversion";
 
 export type OnboardingUser = {
   id: string;
