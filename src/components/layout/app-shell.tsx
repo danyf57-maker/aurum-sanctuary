@@ -4,6 +4,7 @@
 import { AppSidebar } from './app-sidebar';
 import { Header } from './header';
 import { MobileBottomNav } from './mobile-bottom-nav';
+import { WritingReminderScheduler } from '@/components/reminders/WritingReminderScheduler';
 import { usePathname } from 'next/navigation';
 
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -21,6 +22,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
+      <WritingReminderScheduler />
       {/* Sidebar for Desktop */}
       <AppSidebar />
 

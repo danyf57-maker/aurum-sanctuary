@@ -20,6 +20,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import {
   Loader2,
@@ -29,6 +31,7 @@ import {
   User,
   Lock,
   ExternalLink,
+  Clock3,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -43,7 +46,7 @@ import {
 import { httpsCallable } from "firebase/functions";
 import { functions, firestore } from "@/lib/firebase/web-client";
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { collection, getDocs, Timestamp } from "firebase/firestore";
 import Link from "next/link";
@@ -51,6 +54,9 @@ import { useLocalizedHref } from "@/hooks/use-localized-href";
 import { useTranslations } from "next-intl";
 import { useLocale } from "@/hooks/use-locale";
 import { useSubscription } from "@/hooks/useSubscription";
+import { resolveFirstName } from "@/lib/profile/first-name";
+
+const WEEKDAY_OPTIONS = [0, 1, 2, 3, 4, 5, 6] as const;
 
 export default function SettingsPage() {
   const to = useLocalizedHref();
@@ -75,8 +81,24 @@ export default function SettingsPage() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [isOpeningAnnualUpgrade, setIsOpeningAnnualUpgrade] = useState(false);
+  const [notificationPermission, setNotificationPermission] = useState<NotificationPermission | "unsupported">("default");
   const router = useRouter();
   const { toast } = useToast();
+  const firstName = resolveFirstName({
+    firstName: null,
+    displayName: user?.displayName,
+    email: user?.email,
+    fallback: isFr ? "toi" : "you",
+  });
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !("Notification" in window)) {
+      setNotificationPermission("unsupported");
+      return;
+    }
+
+    setNotificationPermission(Notification.permission);
+  }, []);
 
   const copy = useMemo(
     () => ({
@@ -127,6 +149,38 @@ export default function SettingsPage() {
         analysisDescription: isFr
           ? "Recevez une notification quand vos analyses hebdomadaires sont prêtes."
           : "Get notified when your weekly insights are ready.",
+        reminderTitle: isFr ? "Rappel d'ecriture" : "Writing reminder",
+        reminderDescription: isFr
+          ? "Programme une invitation douce a revenir ecrire, avec ton prenom et le ton qui te convient."
+          : "Schedule a gentle invitation to come back and write, with your first name and the tone that suits you.",
+        reminderToggle: isFr ? "Activer le rappel programme" : "Enable scheduled reminder",
+        reminderHelp: isFr
+          ? "Le rappel apparait sur cet appareil quand Aurum est ouvert et que les notifications navigateur sont autorisees."
+          : "The reminder appears on this device when Aurum is open and browser notifications are allowed.",
+        reminderTime: isFr ? "Heure" : "Time",
+        reminderDays: isFr ? "Jours" : "Days",
+        reminderTone: isFr ? "Ton" : "Tone",
+        reminderPermission: isFr ? "Notifications navigateur" : "Browser notifications",
+        reminderAllow: isFr ? "Autoriser les notifications" : "Allow notifications",
+        reminderGranted: isFr ? "Autorisees" : "Allowed",
+        reminderDenied: isFr ? "Bloquees" : "Blocked",
+        reminderDefault: isFr ? "A confirmer" : "To be confirmed",
+        reminderUnsupported: isFr ? "Non disponibles" : "Unavailable",
+        reminderPermissionHint: isFr
+          ? "Pour une alerte visible sur mobile ou ordinateur, autorise les notifications pour ce navigateur."
+          : "For a visible reminder on mobile or desktop, allow notifications for this browser.",
+        reminderPermissionErrorTitle: isFr ? "Notifications indisponibles" : "Notifications unavailable",
+        reminderPermissionErrorDescription: isFr
+          ? "Impossible d'activer les notifications navigateur sur cet appareil pour le moment."
+          : "We could not enable browser notifications on this device right now.",
+        reminderPreviewLabel: isFr ? "Exemple" : "Preview",
+        reminderPreviewBody: isFr
+          ? "Ouvre Aurum et ecris quelques lignes, sans pression."
+          : "Open Aurum and write a few lines, without pressure.",
+        toneGentle: isFr ? "Doux" : "Gentle",
+        toneClarity: isFr ? "Clarite" : "Clarity",
+        tonePressure: isFr ? "Relacher la pression" : "Pressure release",
+        toneRoutine: isFr ? "Routine" : "Routine",
       },
       profile: {
         title: isFr ? "Profil" : "Profile",
@@ -366,6 +420,74 @@ export default function SettingsPage() {
             ? copy.subscription.canceled
             : null;
 
+  const weekdayLabels = useMemo(
+    () =>
+      WEEKDAY_OPTIONS.map((day) => ({
+        day,
+        label: new Intl.DateTimeFormat(locale, { weekday: "short" }).format(
+          new Date(Date.UTC(2026, 2, 8 + day))
+        ),
+      })),
+    [locale]
+  );
+
+  const reminderPreview = useMemo(() => {
+    const previews = {
+      fr: {
+        gentle: `${firstName}, tu veux prendre trois minutes pour toi ?`,
+        clarity: `${firstName}, tu veux y voir un peu plus clair ?`,
+        pressure_release: `${firstName}, tu veux relacher un peu la pression ?`,
+        routine: `${firstName}, tu reprends ton fil aujourd'hui ?`,
+      },
+      en: {
+        gentle: `${firstName}, want to take three quiet minutes for yourself?`,
+        clarity: `${firstName}, want a little more clarity today?`,
+        pressure_release: `${firstName}, want to let some pressure out?`,
+        routine: `${firstName}, ready to pick up your thread today?`,
+      },
+    } as const;
+
+    return previews[locale][preferences.writingReminderTone];
+  }, [firstName, locale, preferences.writingReminderTone]);
+
+  const notificationPermissionLabel =
+    notificationPermission === "granted"
+      ? copy.notifications.reminderGranted
+      : notificationPermission === "denied"
+        ? copy.notifications.reminderDenied
+        : notificationPermission === "unsupported"
+          ? copy.notifications.reminderUnsupported
+          : copy.notifications.reminderDefault;
+
+  const toggleReminderDay = (day: number, checked: boolean) => {
+    const nextDays = checked
+      ? [...new Set([...preferences.writingReminderDays, day])].sort((a, b) => a - b)
+      : preferences.writingReminderDays.filter((entry) => entry !== day);
+
+    updatePreferences({
+      writingReminderDays: nextDays.length > 0 ? nextDays : [day],
+    });
+  };
+
+  const handleEnableBrowserNotifications = async () => {
+    if (typeof window === "undefined" || !("Notification" in window)) {
+      setNotificationPermission("unsupported");
+      return;
+    }
+
+    try {
+      const permission = await Notification.requestPermission();
+      setNotificationPermission(permission);
+    } catch (error) {
+      console.error("Notification permission request failed:", error);
+      toast({
+        title: copy.notifications.reminderPermissionErrorTitle,
+        description: copy.notifications.reminderPermissionErrorDescription,
+        variant: "destructive",
+      });
+    }
+  };
+
   if (authLoading || settingsLoading || subscriptionLoading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
@@ -489,6 +611,107 @@ export default function SettingsPage() {
                     updatePreferences({ notificationsEnabled: checked })
                   }
                 />
+              </div>
+
+              <Separator />
+
+              <div className="space-y-5 rounded-2xl border border-stone-200 bg-stone-50/70 p-5">
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-2">
+                    <Clock3 className="h-4 w-4 text-primary" />
+                    <Label className="text-base">{copy.notifications.reminderTitle}</Label>
+                  </div>
+                  <p className="text-sm text-muted-foreground">{copy.notifications.reminderDescription}</p>
+                </div>
+
+                <div className="flex items-center justify-between gap-4">
+                  <div className="space-y-0.5">
+                    <Label className="text-sm font-medium">{copy.notifications.reminderToggle}</Label>
+                    <p className="text-sm text-muted-foreground">{copy.notifications.reminderHelp}</p>
+                  </div>
+                  <Switch
+                    checked={preferences.writingReminderEnabled}
+                    onCheckedChange={(checked) =>
+                      updatePreferences({ writingReminderEnabled: checked })
+                    }
+                  />
+                </div>
+
+                <div className="flex flex-wrap items-center gap-3 rounded-xl border border-dashed border-stone-300 bg-white px-3 py-3">
+                  <div className="space-y-0.5">
+                    <p className="text-sm font-medium">{copy.notifications.reminderPermission}</p>
+                    <p className="text-xs text-muted-foreground">{copy.notifications.reminderPermissionHint}</p>
+                  </div>
+                  <Badge variant="outline" className="ml-auto text-xs">
+                    {notificationPermissionLabel}
+                  </Badge>
+                  {notificationPermission !== "granted" && notificationPermission !== "unsupported" ? (
+                    <Button type="button" variant="outline" size="sm" onClick={() => void handleEnableBrowserNotifications()}>
+                      {copy.notifications.reminderAllow}
+                    </Button>
+                  ) : null}
+                </div>
+
+                <div className="grid gap-5 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="writing-reminder-time">{copy.notifications.reminderTime}</Label>
+                    <Input
+                      id="writing-reminder-time"
+                      type="time"
+                      value={preferences.writingReminderTime}
+                      onChange={(event) =>
+                        updatePreferences({ writingReminderTime: event.target.value || "20:30" })
+                      }
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="writing-reminder-tone">{copy.notifications.reminderTone}</Label>
+                    <Select
+                      value={preferences.writingReminderTone}
+                      onValueChange={(value: any) => updatePreferences({ writingReminderTone: value })}
+                    >
+                      <SelectTrigger id="writing-reminder-tone">
+                        <SelectValue placeholder={copy.notifications.reminderTone} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="gentle">{copy.notifications.toneGentle}</SelectItem>
+                        <SelectItem value="clarity">{copy.notifications.toneClarity}</SelectItem>
+                        <SelectItem value="pressure_release">{copy.notifications.tonePressure}</SelectItem>
+                        <SelectItem value="routine">{copy.notifications.toneRoutine}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <Label>{copy.notifications.reminderDays}</Label>
+                  <div className="grid gap-2 sm:grid-cols-4 lg:grid-cols-7">
+                    {weekdayLabels.map(({ day, label }) => {
+                      const checked = preferences.writingReminderDays.includes(day);
+                      return (
+                        <label
+                          key={day}
+                          className="flex items-center gap-2 rounded-xl border border-stone-200 bg-white px-3 py-2 text-sm"
+                        >
+                          <Checkbox
+                            checked={checked}
+                            onCheckedChange={(value) => toggleReminderDay(day, value === true)}
+                          />
+                          <span className="capitalize">{label}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="rounded-xl border border-amber-200 bg-amber-50/80 px-4 py-3">
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-amber-900">
+                    {copy.notifications.reminderPreviewLabel}
+                  </p>
+                  <p className="mt-2 text-sm font-medium text-foreground">{reminderPreview}</p>
+                  <p className="mt-1 text-sm text-muted-foreground">{copy.notifications.reminderPreviewBody}</p>
+                </div>
               </div>
             </CardContent>
           </Card>

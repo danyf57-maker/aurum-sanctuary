@@ -9,6 +9,10 @@ import { useToast } from '@/hooks/use-toast';
 
 export interface UserPreferences {
     notificationsEnabled: boolean;
+    writingReminderEnabled: boolean;
+    writingReminderTime: string;
+    writingReminderDays: number[];
+    writingReminderTone: 'gentle' | 'clarity' | 'pressure_release' | 'routine';
     theme: 'light' | 'dark' | 'system';
     language: 'en' | 'fr';
     timezone: string;
@@ -16,6 +20,10 @@ export interface UserPreferences {
 
 const DEFAULT_PREFERENCES: UserPreferences = {
     notificationsEnabled: true,
+    writingReminderEnabled: false,
+    writingReminderTime: '20:30',
+    writingReminderDays: [1, 2, 3, 4, 5],
+    writingReminderTone: 'gentle',
     theme: 'system',
     language: 'en',
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
