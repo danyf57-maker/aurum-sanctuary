@@ -92,7 +92,11 @@ export function useSubscription() {
     }, [user]);
 
     const trialEndsAt = subscription.subscriptionTrialEndsAt || subscription.subscriptionCurrentPeriodEnd || null;
-    const isTrialCurrentlyActive = subscription.status === 'trialing' && !!trialEndsAt && trialEndsAt.getTime() > Date.now();
+    const isTrialCurrentlyActive =
+        subscription.status === 'trialing' &&
+        !!subscription.subscriptionId &&
+        !!trialEndsAt &&
+        trialEndsAt.getTime() > Date.now();
     const isPremium = subscription.status === 'active' || isTrialCurrentlyActive;
     const isPastDue = subscription.status === 'past_due';
     const isCanceled = subscription.status === 'canceled';
