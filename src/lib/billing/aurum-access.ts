@@ -42,8 +42,12 @@ export async function getAurumAccessState(userId: string): Promise<{
   const status = userData.subscriptionStatus || '';
   const trialEndsAt = toDate(userData.subscriptionTrialEndsAt);
   const hasStripeSubscription = typeof userData.subscriptionId === 'string' && userData.subscriptionId.length > 0;
-  const hasActiveTrial = status === 'trialing' && !!trialEndsAt && trialEndsAt.getTime() > Date.now();
-  const hasSubscription = status === 'active' || hasActiveTrial || (status === 'trialing' && hasStripeSubscription);
+  const hasActiveTrial =
+    status === 'trialing' &&
+    hasStripeSubscription &&
+    !!trialEndsAt &&
+    trialEndsAt.getTime() > Date.now();
+  const hasSubscription = status === 'active' || hasActiveTrial;
   const oneShotExpiresAt = toDate(userData.aurumAccessExpiresAt);
   const hasOneShotWindow = !!oneShotExpiresAt && oneShotExpiresAt.getTime() > Date.now();
 

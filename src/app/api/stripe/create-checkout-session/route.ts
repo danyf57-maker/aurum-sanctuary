@@ -103,6 +103,7 @@ export async function POST(req: NextRequest) {
             subscriptionStatus?: string;
             subscriptionId?: string;
             trialConsumedAt?: Date;
+            trialOrigin?: string;
         };
 
         const hasStripeSubscription = typeof userData.subscriptionId === 'string' && userData.subscriptionId.length > 0;
@@ -114,7 +115,10 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        const hasConsumedTrial = !!userData.trialConsumedAt;
+        const legacyNoCardTrial =
+            userData.trialOrigin === 'app_no_card' &&
+            !hasStripeSubscription;
+        const hasConsumedTrial = !!userData.trialConsumedAt && !legacyNoCardTrial;
         const shouldApplyTrial = STRIPE_TRIAL_DAYS > 0 && !hasConsumedTrial;
 
         // 4. Create Checkout Session
@@ -153,6 +157,10 @@ export async function POST(req: NextRequest) {
         logger.infoSafe('Checkout session created', {
             userId,
             checkoutSessionId: session.id,
+            priceId: selectedPriceId,
+            trialApplied: shouldApplyTrial,
+            trialDays: shouldApplyTrial ? STRIPE_TRIAL_DAYS : 0,
+            legacyNoCardTrial,
         });
 
         return NextResponse.json({
