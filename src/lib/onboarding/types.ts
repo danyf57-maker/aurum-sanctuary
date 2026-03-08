@@ -1,4 +1,5 @@
 import type { DocumentReference, Timestamp } from "firebase-admin/firestore";
+import type { Locale } from "@/lib/locale";
 
 export type OnboardingEmailId =
   | "email_1"
@@ -17,6 +18,7 @@ export type OnboardingUser = {
   id: string;
   email: string;
   firstName: string;
+  locale: Locale;
   createdAt: Date | null;
   entryCount: number;
   subscriptionStatus: string;

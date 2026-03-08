@@ -6,6 +6,7 @@ import { renderOnboardingEmail } from "@/lib/onboarding/templates";
 import { sendOnboardingEmail } from "@/lib/onboarding/sender";
 import type { OnboardingEmailId, OnboardingState } from "@/lib/onboarding/types";
 import { FREE_ENTRY_LIMIT, STRIPE_TRIAL_REMINDER_DAYS } from "@/lib/billing/config";
+import { normalizeLocale, type Locale } from "@/lib/locale";
 
 const PAID_STATUSES = new Set(["active", "trialing"]);
 
@@ -170,6 +171,19 @@ function analyticsEventForEmail(emailId: OnboardingEmailId) {
   }
 }
 
+function resolveUserLocale(
+  userData: Record<string, unknown>,
+  prefsData: Record<string, unknown>
+): Locale {
+  const fromPrefs = normalizeLocale(String(prefsData.language || prefsData.locale || ""));
+  if (fromPrefs) return fromPrefs;
+
+  const fromUser = normalizeLocale(String(userData.language || userData.locale || ""));
+  if (fromUser) return fromUser;
+
+  return "en";
+}
+
 export async function runOnboardingSequence() {
   const enabled = (process.env.ONBOARDING_EMAILS_ENABLED || "false").toLowerCase() === "true";
   if (!enabled) {
@@ -207,6 +221,7 @@ export async function runOnboardingSequence() {
     const [prefsSnap, stateSnap] = await Promise.all([prefsRef.get(), stateRef.get()]);
     const prefsData = (prefsSnap.data() || {}) as Record<string, unknown>;
     const stateData = (stateSnap.data() || {}) as OnboardingState;
+    const locale = resolveUserLocale(data, prefsData);
 
     if (prefsData.marketingUnsubscribedAt || stateData.unsubscribedAt || stateData.invalidEmailAt) {
       skipped += 1;
@@ -258,6 +273,7 @@ export async function runOnboardingSequence() {
       firstName,
       userId,
       appBaseUrl,
+      locale,
     });
 
     try {
@@ -297,6 +313,7 @@ export async function runOnboardingSequence() {
         params: {
           email_id: nextEmail,
           subject: content.subject,
+          locale,
         },
       });
 
@@ -308,6 +325,7 @@ export async function runOnboardingSequence() {
           path: "/api/onboarding/run",
           params: {
             email_id: nextEmail,
+            locale,
           },
         });
       }
