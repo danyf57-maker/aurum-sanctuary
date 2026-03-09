@@ -28,6 +28,7 @@ import {
 import { rateLimit, RateLimitPresets } from '@/lib/rate-limit';
 
 type AurumIntent = 'reflection' | 'conversation' | 'analysis' | 'action' | 'philosophy';
+type SupportedLocale = 'fr' | 'en';
 
 /**
  * System prompt for reflection (with implicit pattern awareness)
@@ -130,6 +131,11 @@ function getSkillIdForIntent(intent: AurumIntent): string | null {
   return null;
 }
 
+function normalizeRequestedLocale(value: unknown): SupportedLocale | null {
+  if (value === 'fr' || value === 'en') return value;
+  return null;
+}
+
 function detectUserLanguage(content: string): string {
   const text = (content || '').toLowerCase();
   if (/[¿¡]/.test(text) || /\b(que|para|porque|estoy|tengo|siento|quiero|puedo|gracias|hola)\b/.test(text)) {
@@ -144,13 +150,31 @@ function detectUserLanguage(content: string): string {
   return 'same-as-user';
 }
 
+function resolveReplyLanguage(content: string, requestedLocale?: SupportedLocale | null): string {
+  if (requestedLocale) return requestedLocale;
+  return detectUserLanguage(content);
+}
+
+function buildLanguageInstruction(replyLanguage: string, requestedLocale?: SupportedLocale | null): string {
+  if (replyLanguage === 'en') {
+    return `Language rule (strict): Your final answer must be entirely in English. App locale: ${requestedLocale ?? 'unknown'}. Never answer in French unless the user explicitly asks to switch to French.`;
+  }
+
+  if (replyLanguage === 'fr') {
+    return `Language rule (strict): Your final answer must be entirely in French. App locale: ${requestedLocale ?? 'unknown'}. Never answer in English unless the user explicitly asks to switch to English.`;
+  }
+
+  return `Language rule (strict): Reply in the user's language only. Detected user language: ${replyLanguage}. App locale: ${requestedLocale ?? 'unknown'}. Never switch language unless the user explicitly asks.`;
+}
+
 /**
  * POST /api/reflect
  * Body: { content: string, idToken: string }
  */
 export async function POST(request: NextRequest) {
   try {
-    const { content, idToken, entryId, userMessage } = await request.json();
+    const { content, idToken, entryId, userMessage, locale } = await request.json();
+    const requestedLocale = normalizeRequestedLocale(locale);
 
     if (!content) {
       return NextResponse.json({ error: 'Le contenu est requis' }, { status: 400 });
@@ -210,7 +234,7 @@ export async function POST(request: NextRequest) {
     // 1. Detect intent (instant, no API call)
     const intent = detectAurumIntent(content);
     const skillId = getSkillIdForIntent(intent);
-    const userLanguage = detectUserLanguage(content);
+    const userLanguage = resolveReplyLanguage(content, requestedLocale);
 
     // 2. Detect patterns + get existing patterns IN PARALLEL
     logger.infoSafe('Detecting patterns (parallel)', { userId });
@@ -238,7 +262,7 @@ export async function POST(request: NextRequest) {
       },
       {
         role: 'system',
-        content: `Language rule (strict): Reply in the user's language only. Detected user language: ${userLanguage}. Never switch language unless the user explicitly asks.`,
+        content: buildLanguageInstruction(userLanguage, requestedLocale),
       },
     ];
 

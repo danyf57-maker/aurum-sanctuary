@@ -21,6 +21,7 @@ import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { firestore as clientDb } from "@/lib/firebase/web-client";
 import { cn } from "@/lib/utils";
 import { useLocalizedHref } from "@/hooks/use-localized-href";
+import { useLocale } from '@/hooks/use-locale';
 
 type EntryImage = {
   id: string;
@@ -61,6 +62,7 @@ export function MagazineEntryEditor({
 }: MagazineEntryEditorProps) {
   const router = useRouter();
   const to = useLocalizedHref();
+  const locale = useLocale();
   const { user } = useAuth();
   const { toast } = useToast();
   const [content, setContent] = useState(initialContent);
@@ -186,6 +188,7 @@ export function MagazineEntryEditor({
         body: JSON.stringify({
           content: payload,
           idToken,
+          locale,
           entryId,
           userMessage: cleanQuestion,
         }),
