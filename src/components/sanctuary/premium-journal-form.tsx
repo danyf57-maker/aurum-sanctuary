@@ -46,6 +46,26 @@ type ConversationTurn = {
   text: string;
 };
 
+function stripPreviewMarkdown(content: string) {
+  return content
+    .replace(/!\[[^\]]*\]\([^)]+\)/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function buildPreviewTitle(content: string) {
+  const words = stripPreviewMarkdown(content).split(/\s+/).filter(Boolean);
+  if (words.length === 0) return '';
+  return words.slice(0, 8).join(' ') + (words.length > 8 ? '...' : '');
+}
+
+function buildPreviewExcerpt(content: string, maxLength = 170) {
+  const plain = stripPreviewMarkdown(content);
+  if (!plain) return '';
+  if (plain.length <= maxLength) return plain;
+  return `${plain.slice(0, maxLength).trim()}...`;
+}
+
 export function PremiumJournalForm() {
   const searchParams = useSearchParams();
   const { user } = useAuth();
@@ -270,6 +290,8 @@ export function PremiumJournalForm() {
       }
 
       const encryptedData = await encrypt(content);
+      const previewTitle = buildPreviewTitle(content);
+      const previewExcerpt = buildPreviewExcerpt(content);
 
       let analysis: any = null;
       // Build payload for server action (encrypted mode)
@@ -277,6 +299,8 @@ export function PremiumJournalForm() {
       payload.set('encryptedContent', encryptedData.ciphertext);
       payload.set('iv', encryptedData.iv);
       payload.set('version', encryptedData.version.toString());
+      if (previewTitle) payload.set('previewTitle', previewTitle);
+      if (previewExcerpt) payload.set('previewExcerpt', previewExcerpt);
       payload.set('idToken', idTokenForServer);
       payload.set(
         'images',
