@@ -5,6 +5,7 @@ import { DashboardEmotions } from '@/components/sanctuary/dashboard-emotions';
 import { DashboardThemes } from '@/components/sanctuary/dashboard-themes';
 import { DashboardAurum, type AurumConversationStats } from '@/components/sanctuary/dashboard-aurum';
 import { DashboardProgression } from '@/components/sanctuary/dashboard-progression';
+import { useLocale } from '@/hooks/use-locale';
 
 type MagazineIssue = {
   id: string;
@@ -23,6 +24,9 @@ type DashboardStatsProps = {
 };
 
 export function DashboardStats({ issues, aurumStats, isAurumLoading }: DashboardStatsProps) {
+  const locale = useLocale();
+  const isFr = locale === 'fr';
+
   return (
     <section className="rounded-2xl border border-stone-200 bg-white shadow-sm">
       <Tabs defaultValue="emotions">
@@ -31,13 +35,13 @@ export function DashboardStats({ issues, aurumStats, isAurumLoading }: Dashboard
             value="emotions"
             className="rounded-none border-b-2 border-transparent bg-transparent px-4 py-3 text-xs font-medium text-stone-500 shadow-none data-[state=active]:border-[#C5A059] data-[state=active]:bg-transparent data-[state=active]:text-[#7A5D24] data-[state=active]:shadow-none"
           >
-            Émotions
+            {isFr ? 'Émotions' : 'Emotions'}
           </TabsTrigger>
           <TabsTrigger
             value="themes"
             className="rounded-none border-b-2 border-transparent bg-transparent px-4 py-3 text-xs font-medium text-stone-500 shadow-none data-[state=active]:border-[#C5A059] data-[state=active]:bg-transparent data-[state=active]:text-[#7A5D24] data-[state=active]:shadow-none"
           >
-            Thèmes
+            {isFr ? 'Thèmes' : 'Themes'}
           </TabsTrigger>
           <TabsTrigger
             value="aurum"
@@ -49,7 +53,7 @@ export function DashboardStats({ issues, aurumStats, isAurumLoading }: Dashboard
             value="progression"
             className="rounded-none border-b-2 border-transparent bg-transparent px-4 py-3 text-xs font-medium text-stone-500 shadow-none data-[state=active]:border-[#C5A059] data-[state=active]:bg-transparent data-[state=active]:text-[#7A5D24] data-[state=active]:shadow-none"
           >
-            Progression
+            {isFr ? 'Évolution' : 'Evolution'}
           </TabsTrigger>
         </TabsList>
 
