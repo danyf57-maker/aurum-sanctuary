@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Link, { LinkProps } from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Menu, LayoutDashboard, PenSquare, BookOpenText, BarChart3, Settings } from 'lucide-react';
+import { Menu, PenSquare, BookOpenText, BarChart3, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
@@ -22,7 +22,6 @@ const mobileNavItems = [
   { href: '/sanctuary/write', key: 'write', helperKey: 'newPage', icon: PenSquare },
   { href: '/sanctuary', key: 'journal', helperKey: 'yourEntries', icon: BookOpenText },
   { href: '/sanctuary/magazine', key: 'magazine', helperKey: 'profilesProgress', icon: BarChart3 },
-  { href: '/dashboard', key: 'dashboard', helperKey: 'overview', icon: LayoutDashboard },
   { href: '/settings', key: 'settings', helperKey: 'accountData', icon: Settings },
 ] as const;
 
@@ -35,7 +34,6 @@ export function MobileNav() {
   const to = useLocalizedHref();
 
   const isItemActive = (href: string) => {
-    if (href === "/dashboard") return normalizedPath === "/dashboard";
     if (href === "/sanctuary") return normalizedPath === "/sanctuary";
     return normalizedPath === href || normalizedPath.startsWith(`${href}/`);
   };

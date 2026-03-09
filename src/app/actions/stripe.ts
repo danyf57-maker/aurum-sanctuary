@@ -90,7 +90,7 @@ export async function createCheckoutSession(formData: FormData) {
         mode: 'subscription',
         customer: stripeCustomerId,
         line_items: [{ price: priceId, quantity: 1 }],
-        success_url: `${host}/dashboard?success=true`,
+        success_url: `${host}/sanctuary/write?success=true`,
         cancel_url: `${host}/pricing?canceled=true`,
     });
 
