@@ -73,14 +73,22 @@ export async function getEntries(
     }
 
     const snapshot = await getDocs(q);
+    const issueSnapshots = await Promise.all(
+      snapshot.docs.map((entryDoc) =>
+        getDoc(doc(db, usersCollectionName, userId, "magazineIssues", entryDoc.id))
+      )
+    );
 
-    return snapshot.docs.map((doc) => {
+    return snapshot.docs.map((doc, index) => {
       const data = doc.data();
+      const issueData = issueSnapshots[index]?.data?.();
       return {
         id: doc.id,
         userId,
         content: data.content || null,
         encryptedContent: data.encryptedContent || null,
+        title: issueData?.title || null,
+        excerpt: issueData?.excerpt || null,
         iv: data.iv || null,
         version: data.version || null,
         images: data.images || [],

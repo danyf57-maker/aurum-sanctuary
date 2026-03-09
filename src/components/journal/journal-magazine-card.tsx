@@ -7,6 +7,7 @@ import { BookImage, Calendar, Clock } from "lucide-react";
 import { JournalEntry } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { useLocale } from "@/hooks/use-locale";
 
 interface JournalMagazineCardProps {
   entry: JournalEntry;
@@ -14,15 +15,30 @@ interface JournalMagazineCardProps {
   exchangePreview?: React.ReactNode;
 }
 
-function formatDate(date: Date): { day: string; time: string } {
+const LEGACY_ENCRYPTED_TITLES = new Set([
+  "Entrée chiffrée",
+  "Encrypted entry",
+  "Extrait privé",
+  "Private excerpt",
+]);
+
+const LEGACY_ENCRYPTED_EXCERPTS = new Set([
+  "Contenu chiffré",
+  "Encrypted content",
+  "Un aperçu privé de ton écriture apparaîtra ici.",
+  "A private glimpse of your writing will appear here.",
+]);
+
+function formatDate(date: Date, locale: "fr" | "en"): { day: string; time: string } {
   const d = new Date(date);
-  const day = d.toLocaleDateString("fr-FR", {
+  const culture = locale === "fr" ? "fr-FR" : "en-US";
+  const day = d.toLocaleDateString(culture, {
     weekday: "long",
     day: "numeric",
     month: "long",
     year: "numeric",
   });
-  const time = d.toLocaleTimeString("fr-FR", {
+  const time = d.toLocaleTimeString(culture, {
     hour: "2-digit",
     minute: "2-digit",
   });
@@ -31,26 +47,38 @@ function formatDate(date: Date): { day: string; time: string } {
 
 function generateTitle(
   content: string | null,
-  encryptedContent?: string | null
+  encryptedContent: string | null | undefined,
+  locale: "fr" | "en",
+  storedTitle?: string | null
 ): string {
+  if (storedTitle?.trim() && !LEGACY_ENCRYPTED_TITLES.has(storedTitle.trim())) {
+    return storedTitle.trim();
+  }
   // If content is null/empty but encryptedContent exists, show encrypted entry title
   const safeContent = content ?? "";
   if (!safeContent && encryptedContent) {
-    return "Entrée chiffrée";
+    return locale === "fr" ? "Extrait privé" : "Private excerpt";
   }
   const words = safeContent.split(/\s+/).filter(Boolean);
-  if (words.length === 0) return "Entrée";
+  if (words.length === 0) return locale === "fr" ? "Entrée" : "Entry";
   return words.slice(0, 8).join(" ") + (words.length > 8 ? "..." : "");
 }
 
 function generateExcerpt(
   content: string | null,
-  encryptedContent?: string | null
+  encryptedContent: string | null | undefined,
+  locale: "fr" | "en",
+  storedExcerpt?: string | null
 ): string {
+  if (storedExcerpt?.trim() && !LEGACY_ENCRYPTED_EXCERPTS.has(storedExcerpt.trim())) {
+    return storedExcerpt.trim();
+  }
   const safeContent = content ?? "";
   // If content is null/empty but encryptedContent exists, show placeholder
   if (!safeContent && encryptedContent) {
-    return "Contenu chiffré";
+    return locale === "fr"
+      ? "Un aperçu privé de ton écriture apparaîtra ici."
+      : "A private glimpse of your writing will appear here.";
   }
   const plain = safeContent.replace(/!\[[^\]]*\]\([^)]+\)/g, "").trim();
   if (!plain) return "";
@@ -82,9 +110,11 @@ export function JournalMagazineCard({
   index = 0,
   exchangePreview,
 }: JournalMagazineCardProps) {
-  const { day, time } = formatDate(entry.createdAt);
-  const title = generateTitle(entry.content, entry.encryptedContent);
-  const excerpt = generateExcerpt(entry.content, entry.encryptedContent);
+  const locale = useLocale();
+  const safeLocale = locale === "fr" ? "fr" : "en";
+  const { day, time } = formatDate(entry.createdAt, safeLocale);
+  const title = generateTitle(entry.content, entry.encryptedContent, safeLocale, entry.title);
+  const excerpt = generateExcerpt(entry.content, entry.encryptedContent, safeLocale, entry.excerpt);
   const coverImage = entry.images?.[0]?.url;
   const [imageError, setImageError] = useState(false);
   const moodBorder = getMoodColor(entry.mood);
@@ -174,7 +204,7 @@ export function JournalMagazineCard({
             {entry.mood && (
               <div className="pt-2 border-t border-stone-100">
                 <span className="text-xs text-stone-500 capitalize">
-                  Humeur:{" "}
+                  {safeLocale === "fr" ? "Humeur" : "Mood"}:{" "}
                   <span className="font-medium text-stone-700">
                     {entry.mood}
                   </span>
@@ -187,5 +217,5 @@ export function JournalMagazineCard({
         </Card>
       </Link>
     </motion.div>
-  );
+    );
 }

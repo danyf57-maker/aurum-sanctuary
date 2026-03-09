@@ -3,6 +3,8 @@ export type JournalEntry = {
   userId: string;
   content: string;
   encryptedContent?: string;
+  title?: string | null;
+  excerpt?: string | null;
   tags: string[];
   createdAt: Date;
   sentiment: string;

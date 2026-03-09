@@ -373,14 +373,14 @@ export async function saveJournalEntry(
 
     // Build magazine card data (cover + excerpt) for gallery-style browsing
     const coverImageUrl = parsedImages[0]?.url || null;
-    // For encrypted content, use placeholder text (cannot decrypt server-side)
     const isEncrypted = !!encryptedContent;
-    const excerpt = isEncrypted
-      ? "Contenu chiffré"
-      : generateExcerpt(content || "");
-    const title = isEncrypted
-      ? "Entrée chiffrée"
-      : generateTitle(stripImageMarkdown(content || "") || "Entrée");
+    const plainContent = stripImageMarkdown(content || "").trim();
+    const excerpt = plainContent
+      ? generateExcerpt(content || "")
+      : txt(locale, "Un aperçu privé de ton écriture apparaîtra ici.", "A private glimpse of your writing will appear here.");
+    const title = plainContent
+      ? generateTitle(plainContent)
+      : txt(locale, "Extrait privé", "Private excerpt");
 
     await db
       .collection("users")
