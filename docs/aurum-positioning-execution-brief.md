@@ -419,3 +419,107 @@ The design language must remain:
 - private
 
 But the product promise must become unmistakable.
+
+## 15) Current implementation baseline
+
+This section defines what is already done on `feat/freemium-entry-limit` and must not be undone in future work.
+
+### Branch / PR status
+
+- Branch: `feat/freemium-entry-limit`
+- Active PR: `#43`
+- Latest merge conflicts resolved
+
+### Monetization and billing already in place
+
+- Stripe checkout fixed in production
+- Legacy local trials migrated to a real Stripe model
+- Freemium model enforced server-side with `5` free entries
+- 6th write attempt blocked server-side
+- Paywall connected to the real `7-day` trial
+- Discreet monthly to yearly upsell added in `Settings` after `90` days
+- Four lifecycle emails kept for testing:
+  - freemium limit reached
+  - trial started
+  - trial ending
+  - converted to paid
+- Email attribution implemented from return to writing to subscription
+- Analytics exports prepared for Google Sheets
+
+### Product and UX structure already in place
+
+- `Write` = action
+- `Journal` = memory
+- `Magazine` = reading / analysis
+- `Dashboard` removed as a real product page and redirected
+- `Insights` removed and redirected to `Magazine`
+- Menu order corrected
+- Post-login entry redirected to `Write`
+- 7-day action plan removed
+- Programmable reminders added
+- Web push flow added
+
+Important:
+- full reminder automation still depends on deployed `Functions`
+
+### i18n, language, and personalization already in place
+
+- FR / EN corrections applied across landing, auth, settings, magazine, and stats
+- Aurum now responds according to the actual app language
+- Magazine and Journal results are localized
+- User first-name persistence added for personalization
+- French editorial rule updated to use `Bonjour`, not `Salut`
+
+### Positioning work already started
+
+- Positioning brief created
+- Copy / UI audit started
+- First positioning patch already applied across homepage, pricing, write, journal, and magazine
+- The four strategic pillars already reinforced:
+  - AI-guided reflection
+  - emotional clarity
+  - private thinking companion
+  - inner pattern discovery
+
+### What must be protected
+
+Do not regress:
+
+- server-side free-entry enforcement
+- Stripe trial / paid continuity
+- post-login redirect to `Write`
+- `Magazine` as the destination for analysis value
+- app-language-driven Aurum responses
+- personalization through first name
+- privacy-forward premium tone
+
+## 16) P1 copy handoff
+
+This is the short handoff for the highest-priority copy surfaces. Keep it small. Clarify without adding weight.
+
+| Page / component | Current issue | Objective | Recommended direction |
+| --- | --- | --- | --- |
+| Homepage browser title | still too close to a private journal frame | make the category shift explicit | `Private AI-guided reflection for emotional clarity` |
+| Homepage hero subheadline | AI role still too soft in places | make guidance explicit without sounding technical | say Aurum helps users write freely, clarify what they feel, and uncover recurring patterns through private AI-guided reflection |
+| Homepage support copy | can drift toward calm / stress relief only | broaden toward insight and understanding | emphasize clarity, reflection, and what returns over time |
+| Pricing descriptors | can still read like premium storage | justify premium transformation | foreground guided reflection, pattern discovery, emotional insight, and privacy-by-design |
+| Write intro | can read like a calm writing space only | frame writing as the first step in a loop of understanding | position writing as the start of a private reflection process that helps clarify what is returning |
+| Journal framing | can feel archival only | make memory meaningful | frame Journal as the place where what repeats becomes visible over time |
+| Magazine framing | can feel abstract | make analysis tangible | frame Magazine as the place where Aurum surfaces themes, patterns, and guided interpretation |
+
+## 17) Practical rule for future copy changes
+
+For every page, prefer:
+
+- one primary promise
+- one supporting proof
+- one clear action
+
+Do not add value by stacking more sections.
+
+The target is:
+
+- clearer
+- sharper
+- more premium
+- still calm
