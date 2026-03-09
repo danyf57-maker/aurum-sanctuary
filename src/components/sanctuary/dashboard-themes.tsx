@@ -11,6 +11,7 @@ import {
   Tooltip,
   Legend,
 } from 'recharts';
+import { useLocale } from '@/hooks/use-locale';
 
 type MagazineIssue = {
   id: string;
@@ -22,43 +23,77 @@ type MagazineIssue = {
   mood: string | null;
 };
 
-const LIFE_CATEGORIES: Record<string, string[]> = {
-  Travail: ['travail', 'boulot', 'carrière', 'projet', 'réunion', 'bureau', 'professionnel', 'emploi', 'collègue'],
-  Relations: ['famille', 'ami', 'amis', 'couple', 'parent', 'enfant', 'relation', 'amour', 'frère', 'soeur'],
-  Santé: ['santé', 'sport', 'sommeil', 'méditation', 'énergie', 'corps', 'fatigue', 'repos', 'exercice'],
-  Émotions: ['anxiété', 'stress', 'joie', 'tristesse', 'colère', 'peur', 'gratitude', 'bonheur', 'introspection'],
-  Loisirs: ['lecture', 'musique', 'voyage', 'nature', 'créativité', 'art', 'film', 'cuisine', 'jeu'],
+type CategoryKey = 'work' | 'relationships' | 'health' | 'emotions' | 'leisure' | 'other';
+
+const CATEGORY_CONFIG: Record<CategoryKey, { keywords: string[]; labels: { fr: string; en: string }; color: string }> = {
+  work: {
+    keywords: ['travail', 'boulot', 'carriere', 'career', 'work', 'projet', 'project', 'reunion', 'meeting', 'bureau', 'office', 'professionnel', 'professional', 'emploi', 'job', 'collegue', 'colleague'],
+    labels: { fr: 'Travail', en: 'Work' },
+    color: '#C5A059',
+  },
+  relationships: {
+    keywords: ['famille', 'family', 'ami', 'amis', 'friend', 'friends', 'couple', 'partner', 'parent', 'enfant', 'child', 'children', 'relation', 'relationship', 'amour', 'love', 'frere', 'soeur', 'brother', 'sister'],
+    labels: { fr: 'Relations', en: 'Relationships' },
+    color: '#60A5FA',
+  },
+  health: {
+    keywords: ['sante', 'health', 'sport', 'sommeil', 'sleep', 'meditation', 'energie', 'energy', 'corps', 'body', 'fatigue', 'repos', 'rest', 'exercice', 'exercise'],
+    labels: { fr: 'Sante', en: 'Health' },
+    color: '#4ADE80',
+  },
+  emotions: {
+    keywords: ['anxiete', 'anxiety', 'stress', 'joie', 'joy', 'tristesse', 'sadness', 'colere', 'anger', 'peur', 'fear', 'gratitude', 'bonheur', 'happiness', 'emotion', 'emotions', 'introspection'],
+    labels: { fr: 'Emotions', en: 'Emotions' },
+    color: '#818CF8',
+  },
+  leisure: {
+    keywords: ['lecture', 'reading', 'musique', 'music', 'voyage', 'travel', 'nature', 'creativite', 'creativity', 'art', 'film', 'movie', 'cinema', 'cuisine', 'cooking', 'jeu', 'game', 'games'],
+    labels: { fr: 'Loisirs', en: 'Leisure' },
+    color: '#FB923C',
+  },
+  other: {
+    keywords: [],
+    labels: { fr: 'Autre', en: 'Other' },
+    color: '#A8A29E',
+  },
 };
 
-const CATEGORY_COLORS: Record<string, string> = {
-  Travail: '#C5A059',
-  Relations: '#60A5FA',
-  Santé: '#4ADE80',
-  Émotions: '#818CF8',
-  Loisirs: '#FB923C',
-  Autre: '#A8A29E',
-};
+function normalizeValue(value: string): string {
+  return value
+    .toLowerCase()
+    .trim()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '');
+}
+
+function categorizeTag(tag: string): CategoryKey {
+  const normalized = normalizeValue(tag);
+  for (const [category, config] of Object.entries(CATEGORY_CONFIG) as [CategoryKey, (typeof CATEGORY_CONFIG)[CategoryKey]][]) {
+    if (category !== 'other' && config.keywords.some((keyword) => normalized.includes(keyword))) {
+      return category;
+    }
+  }
+  return 'other';
+}
+
+function getCategoryLabel(category: CategoryKey, isFr: boolean): string {
+  return CATEGORY_CONFIG[category].labels[isFr ? 'fr' : 'en'];
+}
 
 type DashboardThemesProps = {
   issues: MagazineIssue[];
 };
 
-function categorizeTag(tag: string): string {
-  const normalized = tag.toLowerCase().trim();
-  for (const [category, keywords] of Object.entries(LIFE_CATEGORIES)) {
-    if (keywords.some((kw) => normalized.includes(kw))) {
-      return category;
-    }
-  }
-  return 'Autre';
-}
-
 export function DashboardThemes({ issues }: DashboardThemesProps) {
+  const locale = useLocale();
+  const isFr = locale === 'fr';
+  const dateLocale = isFr ? 'fr-FR' : 'en-US';
+
   const tagCloud = useMemo(() => {
     const counts = new Map<string, number>();
     for (const issue of issues) {
       for (const tag of issue.tags) {
-        const normalized = tag.toLowerCase().trim();
+        const normalized = normalizeValue(tag);
         if (normalized) {
           counts.set(normalized, (counts.get(normalized) || 0) + 1);
         }
@@ -73,45 +108,42 @@ export function DashboardThemes({ issues }: DashboardThemesProps) {
   const maxTagCount = tagCloud[0]?.count || 1;
 
   const categoryByMonth = useMemo(() => {
-    const months = new Map<string, Record<string, number>>();
+    const months = new Map<string, Record<CategoryKey | 'month', number | string>>();
 
     for (const issue of issues) {
       if (!issue.createdAt) continue;
-      const monthKey = issue.createdAt.toLocaleDateString('fr-FR', {
+      const monthKey = issue.createdAt.toLocaleDateString(dateLocale, {
         month: 'short',
         year: '2-digit',
       });
 
       if (!months.has(monthKey)) {
         months.set(monthKey, {
-          Travail: 0,
-          Relations: 0,
-          Santé: 0,
-          Émotions: 0,
-          Loisirs: 0,
-          Autre: 0,
+          month: monthKey,
+          work: 0,
+          relationships: 0,
+          health: 0,
+          emotions: 0,
+          leisure: 0,
+          other: 0,
         });
       }
 
       const monthData = months.get(monthKey)!;
       for (const tag of issue.tags) {
         const category = categorizeTag(tag);
-        monthData[category] = (monthData[category] || 0) + 1;
+        monthData[category] = Number(monthData[category] || 0) + 1;
       }
     }
 
-    // Take last 6 months
-    return Array.from(months.entries())
-      .map(([month, data]) => ({ month, ...data }))
-      .slice(0, 6)
-      .reverse();
-  }, [issues]);
+    return Array.from(months.values()).slice(0, 6).reverse();
+  }, [dateLocale, issues]);
 
   if (issues.length === 0) {
     return (
       <div className="rounded-xl border border-dashed border-stone-300 bg-stone-50/70 p-8 text-center">
         <p className="text-sm text-stone-500">
-          Pas encore assez de données pour afficher les thèmes.
+          {isFr ? 'Pas encore assez de donnees pour afficher les themes.' : 'Not enough data yet to show themes.'}
         </p>
       </div>
     );
@@ -119,13 +151,12 @@ export function DashboardThemes({ issues }: DashboardThemesProps) {
 
   return (
     <div className="space-y-6">
-      {/* Tag Cloud */}
       <article className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
         <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-stone-600">
-          Nuage de sujets
+          {isFr ? 'Nuage de sujets' : 'Topic cloud'}
         </p>
         {tagCloud.length === 0 ? (
-          <p className="mt-4 text-sm text-stone-400">Aucun tag disponible.</p>
+          <p className="mt-4 text-sm text-stone-400">{isFr ? 'Aucun tag disponible.' : 'No tags available yet.'}</p>
         ) : (
           <div className="mt-4 flex flex-wrap items-center gap-2.5 px-2">
             {tagCloud.map((item) => {
@@ -151,11 +182,10 @@ export function DashboardThemes({ issues }: DashboardThemesProps) {
         )}
       </article>
 
-      {/* Life Categories Stacked Bar */}
       {categoryByMonth.length > 0 && (
         <article className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
           <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-stone-600">
-            Catégories de vie par mois
+            {isFr ? 'Categories de vie par mois' : 'Life categories by month'}
           </p>
           <div className="mt-3 h-72 w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -164,6 +194,10 @@ export function DashboardThemes({ issues }: DashboardThemesProps) {
                 <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#57534E' }} />
                 <YAxis tick={{ fontSize: 10, fill: '#A8A29E' }} />
                 <Tooltip
+                  formatter={(value: number, name: string) => [
+                    value,
+                    getCategoryLabel(name as CategoryKey, isFr),
+                  ]}
                   contentStyle={{
                     borderRadius: '12px',
                     border: '1px solid #E7E5E4',
@@ -171,17 +205,19 @@ export function DashboardThemes({ issues }: DashboardThemesProps) {
                   }}
                 />
                 <Legend
+                  formatter={(value: string) => getCategoryLabel(value as CategoryKey, isFr)}
                   wrapperStyle={{ fontSize: '11px' }}
                   iconType="circle"
                   iconSize={8}
                 />
-                {Object.entries(CATEGORY_COLORS).map(([category, color]) => (
+                {(Object.keys(CATEGORY_CONFIG) as CategoryKey[]).map((category) => (
                   <Bar
                     key={category}
                     dataKey={category}
                     stackId="a"
-                    fill={color}
-                    radius={category === 'Autre' ? [4, 4, 0, 0] : undefined}
+                    name={category}
+                    fill={CATEGORY_CONFIG[category].color}
+                    radius={category === 'other' ? [4, 4, 0, 0] : undefined}
                   />
                 ))}
               </BarChart>
