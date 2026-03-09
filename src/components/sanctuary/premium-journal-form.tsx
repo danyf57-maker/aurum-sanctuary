@@ -384,6 +384,7 @@ export function PremiumJournalForm() {
         body: JSON.stringify({
           content,
           idToken,
+          locale,
           entryId: options?.entryId || undefined,
           userMessage: options?.userMessage,
         }),
