@@ -427,7 +427,7 @@
     "checkoutNoUrl": "No payment URL received.",
     "offerPending": "Offer in preparation. Contact us at aurumdiary.com to be notified.",
     "title": "Choose your plan",
-    "subtitle": "Full Aurum access from 13€/month or 129€/year.",
+    "subtitle": "An encrypted writing space, AI-guided reflection, and inner patterns that become visible over time.",
     "recommended": "Recommended",
     "stripeNote": "Subscriptions are handled by Stripe. Cancel anytime.",
     "currentPlan": "Current plan",
@@ -435,21 +435,21 @@
     "monthly": {
       "name": "Monthly",
       "period": "/month",
-      "description": "Full Aurum access, billed monthly.",
+      "description": "The full Aurum experience, guided by AI and billed monthly.",
       "cta": "Choose monthly"
     },
     "yearly": {
       "name": "Yearly",
       "period": "/year",
-      "description": "Same full access, with 2 months free.",
+      "description": "The same full experience, with 2 months free and more continuity.",
       "cta": "Choose yearly"
     },
     "features": {
-      "entries": "Unlimited journal entries",
-      "conversations": "Unlimited conversations with Aurum",
-      "history": "Full history",
-      "export": "Data export",
-      "reflections": "In-depth reflections"
+      "entries": "Unlimited private encrypted writing",
+      "conversations": "Unlimited AI-guided reflection with Aurum",
+      "history": "Your full history and how it evolves over time",
+      "export": "Export your writing and reflections",
+      "reflections": "Recurring patterns and in-depth reflections"
     },
     "trial": {
       "badge": "FREE TRIAL",
@@ -463,12 +463,12 @@
     }
   },
   "hero": {
-    "badge": "MOMENT OF SERENITY",
-    "title": "Your mind is full. Lighten it here.",
-    "subtitle": "Your private journal to transform your inner chaos into clarity.",
+    "badge": "PRIVATE GUIDED REFLECTION",
+    "title": "Write in private. Understand what keeps returning.",
+    "subtitle": "Aurum helps you write, clarify what you feel, and surface the inner patterns that repeat over time.",
     "cta": "Create my free account",
     "ctaSecondary": "Write first, no commitment",
-    "trust": "100% Encrypted • Anonymous • Your private garden.",
+    "trust": "100% Encrypted • Reflective AI • Private by design.",
     "placeholders": {
       "0": "I can't sleep, my mind keeps replaying tomorrow's meeting...",
       "1": "I feel completely overwhelmed by my to-do list today...",
@@ -735,8 +735,8 @@
       "label": "No commitment • Private"
     },
     "studySection": {
-      "title": "Did you know writing can genuinely help?",
-      "subtitle": "Serious research points to practical effects. Here are a few findings and simple examples.",
+      "title": "Writing helps. Aurum helps you understand what returns.",
+      "subtitle": "Privacy protects your words. Aurum’s guided reflection helps turn them into more clarity and patterns you can notice over time.",
       "cta": "Create my account and start today"
     },
     "studyCards": [
@@ -969,17 +969,17 @@
       "privateBadge": "Private space",
       "titleLine1": "Your sanctuary",
       "titleLine2": "is waiting",
-      "description": "An encrypted space where your thoughts can land, without judgment or interruption.",
+      "description": "An encrypted space to write in private, then let Aurum help you clarify what you feel and what keeps returning over time.",
       "featurePrivate": "100% Private",
       "featureEncrypted": "Encrypted",
-      "featureAi": "Supportive AI",
+      "featureAi": "AI-guided reflection",
       "cta": "Enter your sanctuary",
       "signInNote": "Secure sign-in via Google or email",
       "footerQuote": "\"Write what needs to be placed into words. The rest will come.\""
     },
     "authenticated": {
       "title": "Your writing space",
-      "subtitle": "Place here what is moving through your mind."
+      "subtitle": "Write freely. Aurum will then help surface what keeps returning and what asks for clarity."
     },
     "quotes": [
       {

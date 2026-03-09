@@ -1087,40 +1087,45 @@ export default function MagazinePage() {
       <header className="mb-10">
         <div className="mb-4 h-px w-10 bg-amber-600/50" />
         <h1 className="font-headline text-4xl tracking-tight text-stone-900">
-          Magazine
+          {isFr ? 'Magazine' : 'Magazine'}
         </h1>
         <p className="mt-2 max-w-xl text-stone-500">
-          Your editorial and analytical reading space. Aurum assembles your pages to surface key themes, standout excerpts, and your evolution.
+          {isFr
+            ? 'Ton espace de lecture et d’analyse. Aurum relie tes pages pour faire émerger thèmes récurrents, extraits marquants et évolution dans le temps.'
+            : 'Your reading and analysis space. Aurum connects your pages to surface recurring themes, standout excerpts, and how you evolve over time.'}
         </p>
       </header>
 
       {landingAssessment && (
         <div className="mb-6 rounded-2xl border border-amber-200/70 bg-amber-50/40 p-5 md:p-6">
           <p className="text-[11px] uppercase tracking-[0.2em] text-amber-700/80">
-            Entry profile
+            {isFr ? 'Profil d’entrée' : 'Entry profile'}
           </p>
           <h2 className="mt-2 text-xl font-semibold text-stone-900">
             {landingAssessment.profileTitle}
           </h2>
           <p className="mt-2 text-sm text-stone-600">
-            Result saved in Magazine{landingAssessment.completedAt
-              ? ` on ${landingAssessment.completedAt.toLocaleDateString("en-US")}`
-              : ""}.
+            {isFr ? 'Résultat enregistré dans Magazine' : 'Result saved in Magazine'}
+            {landingAssessment.completedAt
+              ? ` ${isFr ? 'le' : 'on'} ${landingAssessment.completedAt.toLocaleDateString(isFr ? 'fr-FR' : 'en-US')}`
+              : ''}.
           </p>
           <p className="mt-1 text-xs text-stone-500">
-            Answers captured: {landingAssessment.answers.length}
+            {isFr ? 'Réponses enregistrées' : 'Answers captured'}: {landingAssessment.answers.length}
           </p>
 
           {isLandingInsightLoading && (
             <p className="mt-4 text-sm text-stone-600">
-              Aurum is deepening your profile for a more precise reading...
+              {isFr
+                ? 'Aurum approfondit ton profil pour affiner cette lecture...'
+                : 'Aurum is deepening your profile for a more precise reading...'}
             </p>
           )}
 
           {landingInsight && (
             <div className="mt-4 rounded-2xl border border-amber-200/70 bg-white/80 p-4">
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-amber-700/80">
-                Premium Aurum reading
+                {isFr ? 'Lecture Aurum premium' : 'Premium Aurum reading'}
               </p>
               <p className="mt-2 text-sm leading-relaxed text-stone-700">
                 {landingInsight.narrative}
@@ -1197,11 +1202,12 @@ export default function MagazinePage() {
               <BookImage className="h-7 w-7 text-amber-700" />
             </div>
             <h2 className="text-lg font-semibold text-stone-900">
-              Your path, revealed by Aurum
+              {isFr ? 'Ton parcours, relu par Aurum' : 'Your path, revealed by Aurum'}
             </h2>
             <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-stone-500">
-              Aurum combines your saved pages and guided paths to highlight recurring themes,
-              standout excerpts, and your growth over time.
+              {isFr
+                ? 'Aurum relie tes pages, tes reflets et tes parcours guidés pour faire apparaître les thèmes récurrents, les extraits marquants et ton évolution dans le temps.'
+                : 'Aurum connects your pages, reflections, and guided paths to highlight recurring themes, standout excerpts, and your growth over time.'}
             </p>
           </div>
 
@@ -1213,25 +1219,31 @@ export default function MagazinePage() {
               </div>
               <p className="text-sm font-medium text-stone-900">Themes & excerpts</p>
               <p className="mt-1.5 text-xs leading-relaxed text-stone-500">
-                The common threads in your writing, surfaced automatically by Aurum.
+                {isFr
+                  ? 'Les fils communs de ton écriture, rendus visibles automatiquement par Aurum.'
+                  : 'The common threads in your writing, surfaced automatically by Aurum.'}
               </p>
             </div>
             <div className="flex flex-col items-center p-7 text-center">
               <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">
                 <AlignLeft className="h-4 w-4 text-stone-600" />
               </div>
-              <p className="text-sm font-medium text-stone-900">Growth over time</p>
+              <p className="text-sm font-medium text-stone-900">{isFr ? 'Évolution dans le temps' : 'Growth over time'}</p>
               <p className="mt-1.5 text-xs leading-relaxed text-stone-500">
-                Your wellbeing and personality profile tracked across time, page by page.
+                {isFr
+                  ? 'Ton bien-être et ton profil se lisent dans la durée, page après page.'
+                  : 'Your wellbeing and personality profile tracked across time, page by page.'}
               </p>
             </div>
             <div className="flex flex-col items-center p-7 text-center">
               <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">
                 <Archive className="h-4 w-4 text-stone-600" />
               </div>
-              <p className="text-sm font-medium text-stone-900">Editorial view</p>
+              <p className="text-sm font-medium text-stone-900">{isFr ? 'Lecture éditoriale' : 'Editorial view'}</p>
               <p className="mt-1.5 text-xs leading-relaxed text-stone-500">
-                Each page becomes an edition with image, excerpt, and date. Your journal, elevated.
+                {isFr
+                  ? 'Chaque page devient une édition avec image, extrait et date. Ton journal devient lecture et compréhension.'
+                  : 'Each page becomes an edition with image, excerpt, and date. Your journal, elevated.'}
               </p>
             </div>
           </div>
@@ -1244,7 +1256,7 @@ export default function MagazinePage() {
             >
               <Link href={to("/sanctuary/write")}>
                 <PenSquare className="mr-2 h-4 w-4" />
-                Write an entry
+                {isFr ? 'Écrire une page' : 'Write an entry'}
               </Link>
             </Button>
             <Button
@@ -1255,7 +1267,7 @@ export default function MagazinePage() {
               className="border-stone-200 text-stone-600 hover:bg-stone-100"
             >
               <RefreshCw className={`mr-2 h-4 w-4 ${isBackfilling ? "animate-spin" : ""}`} />
-              {isBackfilling ? "Rebuilding..." : "Rebuild from journal"}
+              {isBackfilling ? (isFr ? 'Reconstruction...' : 'Rebuilding...') : (isFr ? 'Reconstruire depuis Journal' : 'Rebuild from journal')}
             </Button>
           </div>
         </div>

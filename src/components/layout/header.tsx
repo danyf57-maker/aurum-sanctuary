@@ -31,15 +31,13 @@ export function Header() {
   }
 
   const isAdminPage = normalizedPath.startsWith('/admin');
-  const isAppPage = normalizedPath.startsWith('/dashboard') || normalizedPath.startsWith('/sanctuary') || normalizedPath.startsWith('/settings');
+  const isAppPage = normalizedPath.startsWith('/sanctuary') || normalizedPath.startsWith('/settings');
   const currentSection = normalizedPath.startsWith('/sanctuary/write')
     ? tNav('write')
     : normalizedPath.startsWith('/sanctuary/magazine')
     ? tNav('magazine')
     : normalizedPath.startsWith('/sanctuary')
     ? tNav('journal')
-    : normalizedPath.startsWith('/dashboard')
-    ? tNav('dashboard')
     : normalizedPath.startsWith('/settings')
     ? tNav('settings')
     : null;

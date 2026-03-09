@@ -427,7 +427,7 @@
     "checkoutNoUrl": "Aucune URL de paiement reçue.",
     "offerPending": "Offre en préparation. Contacte-nous sur aurumdiary.com pour être prévenu.",
     "title": "Choisissez votre formule",
-    "subtitle": "Accès complet à Aurum à partir de 13€/mois, ou 129€/an.",
+    "subtitle": "Un espace d’écriture chiffré, des reflets guidés par IA, et des motifs intérieurs qui émergent dans le temps.",
     "recommended": "Recommandé",
     "stripeNote": "Les abonnements sont gérés via Stripe. Résiliation possible à tout moment.",
     "currentPlan": "Plan actuel",
@@ -435,21 +435,21 @@
     "monthly": {
       "name": "Mensuel",
       "period": "/mois",
-      "description": "L'accès complet à Aurum, facturé au mois.",
+      "description": "L’expérience Aurum complète, guidée par l’IA, facturée au mois.",
       "cta": "Choisir mensuel"
     },
     "yearly": {
       "name": "Annuel",
       "period": "/an",
-      "description": "Le même accès complet, avec 2 mois offerts.",
+      "description": "La même expérience complète, avec 2 mois offerts et plus de continuité.",
       "cta": "Choisir annuel"
     },
     "features": {
-      "entries": "Entrées de journal illimitées",
-      "conversations": "Conversations avec Aurum illimitées",
-      "history": "Historique complet",
-      "export": "Export des données",
-      "reflections": "Reflets approfondis"
+      "entries": "Écriture privée et chiffrée illimitée",
+      "conversations": "Réflexions guidées illimitées avec Aurum",
+      "history": "Mémoire complète de tes pages et de leur évolution",
+      "export": "Export de tes écrits et reflets",
+      "reflections": "Motifs récurrents et reflets approfondis"
     },
     "trial": {
       "badge": "ESSAI OFFERT",
@@ -463,12 +463,12 @@
     }
   },
   "hero": {
-    "badge": "INSTANT DE SÉRÉNITÉ",
-    "title": "Ton esprit est plein. Allège-le ici.",
-    "subtitle": "Ton journal intime privé pour transformer ton chaos intérieur en clarté.",
+    "badge": "RÉFLEXION PRIVÉE GUIDÉE",
+    "title": "Écris en privé. Comprends ce qui revient.",
+    "subtitle": "Aurum t’aide à écrire, clarifier ce que tu ressens, et faire émerger les motifs intérieurs qui se répètent dans le temps.",
     "cta": "Créer mon compte gratuitement",
     "ctaSecondary": "Écrire d'abord sans engagement",
-    "trust": "100% Chiffré • Anonyme • Ton jardin privé.",
+    "trust": "100% Chiffré • IA de réflexion • Privé par design.",
     "placeholders": {
       "0": "Je n'arrive pas à dormir, mon cerveau tourne en boucle sur la réunion de demain...",
       "1": "Je me sens complètement submergé par ma liste de tâches aujourd'hui...",
@@ -735,8 +735,8 @@
       "label": "Sans engagement • Privé"
     },
     "studySection": {
-      "title": "Sais-tu que l'écriture peut vraiment t'aider ?",
-      "subtitle": "Des recherches sérieuses montrent des effets concrets. Voici des résultats et des exemples simples.",
+      "title": "Écrire aide. Aurum aide à comprendre ce qui revient.",
+      "subtitle": "La confidentialité protège tes mots. La réflexion guidée par Aurum aide à en faire émerger plus de clarté et des motifs dans le temps.",
       "cta": "Créer mon compte et commencer aujourd'hui"
     },
     "studyCards": [
@@ -969,17 +969,17 @@
       "privateBadge": "Espace privé",
       "titleLine1": "Ton sanctuaire",
       "titleLine2": "t'attend",
-      "description": "Un espace chiffré où tes pensées trouvent leur place, sans jugement ni interruption.",
+      "description": "Un espace chiffré pour écrire en privé, puis laisser Aurum t’aider à clarifier ce que tu ressens et ce qui revient dans le temps.",
       "featurePrivate": "100% privé",
       "featureEncrypted": "Chiffré",
-      "featureAi": "IA bienveillante",
+      "featureAi": "Réflexion guidée par IA",
       "cta": "Entrer dans le Sanctuaire",
       "signInNote": "Connexion sécurisée via Google ou Email",
       "footerQuote": "\"Écris ce qui demande à être posé. Le reste viendra.\""
     },
     "authenticated": {
       "title": "Ton espace d'écriture",
-      "subtitle": "Dépose ici ce qui traverse ton esprit."
+      "subtitle": "Écris librement. Aurum t’aidera ensuite à faire émerger ce qui revient et ce qui demande de la clarté."
     },
     "quotes": [
       {

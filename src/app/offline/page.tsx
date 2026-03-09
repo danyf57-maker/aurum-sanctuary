@@ -24,7 +24,7 @@ export default function OfflinePage() {
             </p>
             <div className="flex items-center justify-center space-x-4">
                 <Button asChild>
-                    <Link href={to('/dashboard')}>
+                    <Link href={to('/sanctuary/write')}>
                         Retour au tableau de bord (version cache)
                     </Link>
                 </Button>

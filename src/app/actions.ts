@@ -463,7 +463,7 @@ export async function saveJournalEntry(
     if (publishAsPost && isAdminEmail(userEmail)) {
       revalidatePath("/blog");
     }
-    revalidatePath("/dashboard");
+    revalidatePath("/sanctuary/write");
     revalidatePath("/sanctuary");
     revalidatePath("/sanctuary/magazine");
 
@@ -519,7 +519,7 @@ export async function generateUserInsights() {
       }
     });
 
-    revalidatePath('/dashboard');
+    revalidatePath('/sanctuary/write');
     return { success: true };
 
   } catch (error: any) {

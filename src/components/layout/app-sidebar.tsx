@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
-  LayoutDashboard,
   PenSquare,
   BookOpenText,
   BarChart3,
@@ -26,7 +25,6 @@ const NAV_ITEMS = [
   { key: "write",     descKey: "writeDesc",     href: "/sanctuary/write", icon: PenSquare },
   { key: "journal",   descKey: "journalDesc",   href: "/sanctuary", icon: BookOpenText },
   { key: "magazine",  descKey: "magazineDesc",  href: "/sanctuary/magazine", icon: BarChart3 },
-  { key: "dashboard", descKey: "dashboardDesc", href: "/dashboard", icon: LayoutDashboard },
   { key: "settings",  descKey: "settingsDesc",  href: "/settings", icon: Settings },
 ] as const;
 
@@ -54,7 +52,6 @@ export function AppSidebar() {
   if (!mounted) return null;
 
   const isItemActive = (href: string) => {
-    if (href === "/dashboard") return normalizedPath === "/dashboard";
     if (href === "/sanctuary") return normalizedPath === "/sanctuary";
     return normalizedPath === href || normalizedPath.startsWith(`${href}/`);
   };

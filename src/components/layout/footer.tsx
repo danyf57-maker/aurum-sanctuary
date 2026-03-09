@@ -57,7 +57,7 @@ export function Footer() {
             <div>
               <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground">{isFr ? "Compte" : "Account"}</h3>
               <ul className="mt-4 space-y-2">
-                <li><Link href={to('/dashboard')} className="text-sm text-muted-foreground hover:text-foreground">{isFr ? "Tableau de Bord" : "Dashboard"}</Link></li>
+                <li><Link href={to('/sanctuary/write')} className="text-sm text-muted-foreground hover:text-foreground">{isFr ? "Écrire" : "Write"}</Link></li>
                 <li><Link href={to('/settings')} className="text-sm text-muted-foreground hover:text-foreground">{isFr ? "Paramètres & Données" : "Settings & Data"}</Link></li>
               </ul>
             </div>

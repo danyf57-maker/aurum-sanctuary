@@ -258,8 +258,8 @@ function SanctuaryPageContent() {
           ) : (
             <p className="mt-2 max-w-xl text-stone-500">
               {isFr
-                ? "L'archive de toutes tes pages enregistrées, dans la durée."
-                : 'The archive of every page you keep, over time.'}
+                ? "La mémoire de tes pages, et l’endroit où ce qui revient devient plus visible dans le temps."
+                : 'The memory of your pages, and where what keeps returning becomes clearer over time.'}
             </p>
           )}
           {tags.length > 0 && (
