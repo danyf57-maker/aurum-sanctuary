@@ -99,7 +99,7 @@ function SignupPage() {
   }, []);
   const quizSyncInProgressRef = useRef(false);
   const quizComplete = searchParams.get("quiz") === "complete";
-  const redirectAfterGoogle = quizComplete ? "/sanctuary/magazine" : "/dashboard";
+  const redirectAfterGoogle = quizComplete ? "/sanctuary/magazine" : "/sanctuary/write";
 
   useEffect(() => {
     if (!user || !quizComplete || !quizData?.profile || quizSyncInProgressRef.current) return;

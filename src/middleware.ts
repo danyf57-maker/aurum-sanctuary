@@ -90,8 +90,8 @@ export function middleware(request: NextRequest) {
   }
 
   if (isAuthRoute && hasLikelySession) {
-    const dashboardUrl = new URL(`${localePrefix}/dashboard`, request.url);
-    const response = NextResponse.redirect(dashboardUrl);
+    const writeUrl = new URL(`${localePrefix}/sanctuary/write`, request.url);
+    const response = NextResponse.redirect(writeUrl);
     setLocaleCookie(response, localeForPath);
     return response;
   }
