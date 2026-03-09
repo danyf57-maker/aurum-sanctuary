@@ -398,13 +398,13 @@ export async function saveJournalEntry(
     const excerpt = previewExcerpt?.trim()
       ? previewExcerpt.trim()
       : plainContent
-      ? generateExcerpt(content || "")
-      : txt(locale, "Un aperçu privé de ton écriture apparaîtra ici.", "A private glimpse of your writing will appear here.");
+        ? generateExcerpt(content || "")
+        : txt(locale, "Un aperçu privé de ton écriture apparaîtra ici.", "A private glimpse of your writing will appear here.");
     const title = previewTitle?.trim()
       ? previewTitle.trim()
       : plainContent
-      ? generateTitle(plainContent)
-      : txt(locale, "Extrait privé", "Private excerpt");
+        ? generateTitle(plainContent)
+        : txt(locale, "Extrait privé", "Private excerpt");
 
     await db
       .collection("users")
