@@ -8,7 +8,6 @@ import {
   PenSquare,
   BookOpenText,
   BarChart3,
-  Sparkles,
   Settings,
   LogOut,
   LogIn,
@@ -28,7 +27,6 @@ const NAV_ITEMS = [
   { key: "journal",   descKey: "journalDesc",   href: "/sanctuary", icon: BookOpenText },
   { key: "magazine",  descKey: "magazineDesc",  href: "/sanctuary/magazine", icon: BarChart3 },
   { key: "dashboard", descKey: "dashboardDesc", href: "/dashboard", icon: LayoutDashboard },
-  { key: "insights",  descKey: "insightsDesc",  href: "/insights", icon: Sparkles },
   { key: "settings",  descKey: "settingsDesc",  href: "/settings", icon: Settings },
 ] as const;
 

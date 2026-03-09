@@ -31,7 +31,7 @@ export function Header() {
   }
 
   const isAdminPage = normalizedPath.startsWith('/admin');
-  const isAppPage = normalizedPath.startsWith('/dashboard') || normalizedPath.startsWith('/sanctuary') || normalizedPath.startsWith('/insights') || normalizedPath.startsWith('/settings');
+  const isAppPage = normalizedPath.startsWith('/dashboard') || normalizedPath.startsWith('/sanctuary') || normalizedPath.startsWith('/settings');
   const currentSection = normalizedPath.startsWith('/sanctuary/write')
     ? tNav('write')
     : normalizedPath.startsWith('/sanctuary/magazine')
@@ -40,8 +40,6 @@ export function Header() {
     ? tNav('journal')
     : normalizedPath.startsWith('/dashboard')
     ? tNav('dashboard')
-    : normalizedPath.startsWith('/insights')
-    ? tNav('insights')
     : normalizedPath.startsWith('/settings')
     ? tNav('settings')
     : null;

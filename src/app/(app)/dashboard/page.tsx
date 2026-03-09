@@ -173,10 +173,10 @@ export default function DashboardPage() {
               {isFr ? "Fréquence d'introspection" : "Reflection frequency"}
             </h3>
             <Link
-              href={to("/insights")}
+              href={to("/sanctuary/magazine")}
               className="text-xs font-bold text-amber-600 hover:underline"
             >
-              {isFr ? "Voir les analyses complètes" : "View full insights"}
+              {isFr ? "Ouvrir le Magazine" : "Open Magazine"}
             </Link>
           </div>
           <EntryHeatmap entries={entries} />
