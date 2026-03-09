@@ -47,6 +47,8 @@ function buildFormSchema(locale: Locale) {
       version: optionalString(), // Encryption version for future migration
       // Plaintext field (optional - legacy compatibility)
       content: optionalString(),
+      previewTitle: optionalString(),
+      previewExcerpt: optionalString(),
       idToken: optionalString(),
       images: optionalString(),
       tags: optionalString(),
@@ -75,6 +77,8 @@ export type FormState = {
     iv?: string[];
     version?: string[];
     idToken?: string[];
+    previewTitle?: string[];
+    previewExcerpt?: string[];
     images?: string[];
     sentiment?: string[];
     mood?: string[];
@@ -232,6 +236,8 @@ export async function saveJournalEntry(
     tags: formData.get("tags"),
     publishAsPost: formData.get("publishAsPost") === "on",
     content: formData.get("content"),
+    previewTitle: formData.get("previewTitle"),
+    previewExcerpt: formData.get("previewExcerpt"),
     idToken: formData.get("idToken"),
     images: formData.get("images"),
     sentiment: formData.get("sentiment"),
@@ -246,7 +252,21 @@ export async function saveJournalEntry(
     };
   }
 
-  const { encryptedContent, iv, version, tags, publishAsPost, content, idToken, images, sentiment, mood, insight } = validatedFields.data;
+  const {
+    encryptedContent,
+    iv,
+    version,
+    tags,
+    publishAsPost,
+    content,
+    previewTitle,
+    previewExcerpt,
+    idToken,
+    images,
+    sentiment,
+    mood,
+    insight,
+  } = validatedFields.data;
   let parsedImages: Array<z.infer<typeof journalImageSchema>> = [];
   if (images) {
     try {
@@ -375,12 +395,16 @@ export async function saveJournalEntry(
     const coverImageUrl = parsedImages[0]?.url || null;
     const isEncrypted = !!encryptedContent;
     const plainContent = stripImageMarkdown(content || "").trim();
-    const excerpt = plainContent
-      ? generateExcerpt(content || "")
-      : txt(locale, "Un aperçu privé de ton écriture apparaîtra ici.", "A private glimpse of your writing will appear here.");
-    const title = plainContent
-      ? generateTitle(plainContent)
-      : txt(locale, "Extrait privé", "Private excerpt");
+    const excerpt = previewExcerpt?.trim()
+      ? previewExcerpt.trim()
+      : plainContent
+        ? generateExcerpt(content || "")
+        : txt(locale, "Un aperçu privé de ton écriture apparaîtra ici.", "A private glimpse of your writing will appear here.");
+    const title = previewTitle?.trim()
+      ? previewTitle.trim()
+      : plainContent
+        ? generateTitle(plainContent)
+        : txt(locale, "Extrait privé", "Private excerpt");
 
     await db
       .collection("users")
