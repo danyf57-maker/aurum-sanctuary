@@ -36,7 +36,6 @@ export async function POST(req: NextRequest) {
         deviceId: body.deviceId,
       },
     });
-
     return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json({ error: 'Unable to unregister device' }, { status: 500 });

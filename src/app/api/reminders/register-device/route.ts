@@ -50,7 +50,6 @@ export async function POST(req: NextRequest) {
         timezone: body.timezone || 'UTC',
       },
     });
-
     return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json({ error: 'Unable to register device' }, { status: 500 });

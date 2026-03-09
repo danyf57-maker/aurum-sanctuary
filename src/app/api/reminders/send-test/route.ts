@@ -74,7 +74,6 @@ export async function POST(req: NextRequest) {
         },
       });
     }
-
     return NextResponse.json({ ok: true, successCount: response.successCount, failureCount: response.failureCount });
   } catch {
     return NextResponse.json({ error: 'Unable to send test reminder' }, { status: 500 });

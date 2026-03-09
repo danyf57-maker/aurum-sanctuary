@@ -207,7 +207,6 @@ export const sendWritingReminders = onSchedule(
             },
             { merge: true }
           );
-
           await firestore.collection('analyticsEvents').add({
             name: 'writing_reminder_sent',
             userId,
@@ -224,7 +223,6 @@ export const sendWritingReminders = onSchedule(
             occurredAt: new Date(),
             source: 'server',
           });
-
           sent += 1;
         } catch (error: any) {
           const code = String(error?.code || '');
