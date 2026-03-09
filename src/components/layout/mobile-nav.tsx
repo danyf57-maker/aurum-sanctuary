@@ -19,10 +19,10 @@ const Logo = (props: React.SVGProps<SVGSVGElement>) => (
 )
 
 const mobileNavItems = [
-  { href: '/dashboard', key: 'dashboard', helperKey: 'overview', icon: LayoutDashboard },
   { href: '/sanctuary/write', key: 'write', helperKey: 'newPage', icon: PenSquare },
   { href: '/sanctuary', key: 'journal', helperKey: 'yourEntries', icon: BookOpenText },
   { href: '/sanctuary/magazine', key: 'magazine', helperKey: 'profilesProgress', icon: BarChart3 },
+  { href: '/dashboard', key: 'dashboard', helperKey: 'overview', icon: LayoutDashboard },
   { href: '/insights', key: 'insights', helperKey: 'guidedClarity', icon: Sparkles },
   { href: '/settings', key: 'settings', helperKey: 'accountData', icon: Settings },
 ] as const;

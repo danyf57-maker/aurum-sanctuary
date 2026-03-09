@@ -25,6 +25,10 @@ export const TRACKED_EVENTS = [
   "onboarding_email_link_clicked",
   "email_returned_to_aurum",
   "onboarding_email_unsubscribed",
+  "writing_reminder_sent",
+  "writing_reminder_test_sent",
+  "writing_reminder_device_registered",
+  "writing_reminder_device_unregistered",
 ] as const;
 
 export type TrackedEventName = (typeof TRACKED_EVENTS)[number];
@@ -62,4 +66,8 @@ export const LEAD_SCORE_WEIGHTS: Record<TrackedEventName, number> = {
   onboarding_email_link_clicked: 1,
   email_returned_to_aurum: 5,
   onboarding_email_unsubscribed: -5,
+  writing_reminder_sent: 0,
+  writing_reminder_test_sent: 0,
+  writing_reminder_device_registered: 0,
+  writing_reminder_device_unregistered: 0,
 };

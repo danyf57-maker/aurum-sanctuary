@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth, db } from '@/lib/firebase/admin';
+import { trackServerEvent } from '@/lib/analytics/server';
 import { buildWritingReminderCopy } from '@/lib/reminders/writing-reminders';
 
 export const runtime = 'nodejs';
@@ -60,6 +61,19 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    if (response.successCount > 0) {
+      await trackServerEvent('writing_reminder_test_sent', {
+        userId: decoded.uid,
+        userEmail: decoded.email ?? null,
+        path: '/api/reminders/send-test',
+        params: {
+          tone,
+          locale,
+          successCount: response.successCount,
+          failureCount: response.failureCount,
+        },
+      });
+    }
     return NextResponse.json({ ok: true, successCount: response.successCount, failureCount: response.failureCount });
   } catch {
     return NextResponse.json({ error: 'Unable to send test reminder' }, { status: 500 });

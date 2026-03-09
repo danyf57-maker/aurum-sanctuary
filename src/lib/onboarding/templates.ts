@@ -87,7 +87,7 @@ export function renderOnboardingEmail(input: TemplateInput): EmailTemplateResult
       fr: {
         subject: `Bienvenue dans Aurum Diary, ${name} !`,
         preheader: "Un premier pas simple pour commencer ton journaling.",
-        body: `Salut ${name},<br/><br/>Et bienvenue dans Aurum Diary ! Je suis Daniel, le créateur de l&apos;application.<br/><br/>La plupart des gens abandonnent le journaling parce qu&apos;ils ne savent pas par où commencer. Mon conseil : ne te mets pas la pression.<br/><br/>Pour ta toute première entrée, écris simplement une phrase. Une seule. Sur ce que tu ressens, là, maintenant.<br/><br/>À très vite,<br/>Daniel`,
+        body: `Bonjour ${name},<br/><br/>Et bienvenue dans Aurum Diary ! Je suis Daniel, le créateur de l&apos;application.<br/><br/>La plupart des gens abandonnent le journaling parce qu&apos;ils ne savent pas par où commencer. Mon conseil : ne te mets pas la pression.<br/><br/>Pour ta toute première entrée, écris simplement une phrase. Une seule. Sur ce que tu ressens, là, maintenant.<br/><br/>À très vite,<br/>Daniel`,
         ctaLabel: "Écrire ma première entrée",
         ctaUrl: writeUrl,
         footer: "Tu reçois cet email dans le cadre de ton onboarding Aurum Diary.",
@@ -107,7 +107,7 @@ export function renderOnboardingEmail(input: TemplateInput): EmailTemplateResult
       fr: {
         subject: "La page blanche ?",
         preheader: "Une question simple pour démarrer sans pression.",
-        body: `Salut ${name},<br/><br/>Parfois, même trouver la première phrase est difficile. C&apos;est normal.<br/><br/>Alors aujourd&apos;hui, je te propose une seule question :<br/><br/><strong>&quot;De quoi suis-je reconnaissant(e) aujourd&apos;hui, même si c&apos;est tout petit ?&quot;</strong><br/><br/>Pas besoin d&apos;aller plus loin que ça. Le plus dur est de commencer.<br/><br/>Daniel`,
+        body: `Bonjour ${name},<br/><br/>Parfois, même trouver la première phrase est difficile. C&apos;est normal.<br/><br/>Alors aujourd&apos;hui, je te propose une seule question :<br/><br/><strong>&quot;De quoi suis-je reconnaissant(e) aujourd&apos;hui, même si c&apos;est tout petit ?&quot;</strong><br/><br/>Pas besoin d&apos;aller plus loin que ça. Le plus dur est de commencer.<br/><br/>Daniel`,
         ctaLabel: "Répondre à cette question",
         ctaUrl: writeUrl,
         footer: "Tu reçois cet email dans le cadre de ton onboarding Aurum Diary.",
@@ -127,7 +127,7 @@ export function renderOnboardingEmail(input: TemplateInput): EmailTemplateResult
       fr: {
         subject: "Ce n'est pas juste un journal...",
         preheader: "Un dialogue silencieux, mais puissant.",
-        body: `Salut ${name},<br/><br/>Le journaling n&apos;est pas seulement un endroit pour vider son sac. C&apos;est aussi un espace pour se rencontrer soi-même.<br/><br/>Aujourd&apos;hui, je te propose cette question :<br/><br/><strong>&quot;Quelle est une chose que j&apos;ai apprise sur moi-même récemment ?&quot;</strong><br/><br/>Il n&apos;y a pas de bonne ou de mauvaise réponse. Juste ta vérité du moment.<br/><br/>Daniel`,
+        body: `Bonjour ${name},<br/><br/>Le journaling n&apos;est pas seulement un endroit pour vider son sac. C&apos;est aussi un espace pour se rencontrer soi-même.<br/><br/>Aujourd&apos;hui, je te propose cette question :<br/><br/><strong>&quot;Quelle est une chose que j&apos;ai apprise sur moi-même récemment ?&quot;</strong><br/><br/>Il n&apos;y a pas de bonne ou de mauvaise réponse. Juste ta vérité du moment.<br/><br/>Daniel`,
         ctaLabel: "Explorer cette question",
         ctaUrl: writeUrl,
         footer: "Tu reçois cet email dans le cadre de ton onboarding Aurum Diary.",
@@ -147,7 +147,7 @@ export function renderOnboardingEmail(input: TemplateInput): EmailTemplateResult
       fr: {
         subject: `Déjà une semaine, ${name} !`,
         preheader: "Célébrer ce premier jalon et continuer ton rythme.",
-        body: `Salut ${name},<br/><br/>Cela fait déjà une semaine depuis tes débuts sur Aurum.<br/><br/>Que tu aies écrit souvent ou seulement une fois, le plus important est là : tu as ouvert la porte à un dialogue avec toi-même.<br/><br/>Le plus utile maintenant est de continuer, même avec quelques lignes.<br/><br/>Daniel`,
+        body: `Bonjour ${name},<br/><br/>Cela fait déjà une semaine depuis tes débuts sur Aurum.<br/><br/>Que tu aies écrit souvent ou seulement une fois, le plus important est là : tu as ouvert la porte à un dialogue avec toi-même.<br/><br/>Le plus utile maintenant est de continuer, même avec quelques lignes.<br/><br/>Daniel`,
         ctaLabel: "Écrire ma pensée du jour",
         ctaUrl: writeUrl,
         footer: "Tu reçois cet email dans le cadre de ton onboarding Aurum Diary.",
@@ -167,7 +167,7 @@ export function renderOnboardingEmail(input: TemplateInput): EmailTemplateResult
       fr: {
         subject: "Tu as commencé : bravo pour ce premier pas",
         preheader: "Le plus difficile est fait : garder un rythme simple et réaliste.",
-        body: `Salut ${name},<br/><br/>Tu as déjà commencé à écrire, et c&apos;est excellent.<br/><br/>La clé maintenant, ce n&apos;est pas d&apos;écrire longtemps. C&apos;est d&apos;écrire régulièrement, même quelques lignes.<br/><br/>Une mini-structure qui marche bien : un fait, une émotion, un besoin.<br/><br/>Daniel`,
+        body: `Bonjour ${name},<br/><br/>Tu as déjà commencé à écrire, et c&apos;est excellent.<br/><br/>La clé maintenant, ce n&apos;est pas d&apos;écrire longtemps. C&apos;est d&apos;écrire régulièrement, même quelques lignes.<br/><br/>Une mini-structure qui marche bien : un fait, une émotion, un besoin.<br/><br/>Daniel`,
         ctaLabel: "Continuer mon écriture",
         ctaUrl: writeUrl,
         footer: "Tu reçois cet email dans le cadre de ton onboarding Aurum Diary.",
@@ -187,7 +187,7 @@ export function renderOnboardingEmail(input: TemplateInput): EmailTemplateResult
       fr: {
         subject: "Ton rythme se construit, une ligne après l'autre",
         preheader: "Transforme ton écriture en routine simple et utile.",
-        body: `Salut ${name},<br/><br/>Quand on écrit un peu chaque semaine, on commence à voir des repères : ce qui te vide, ce qui te recharge, ce qui revient souvent.<br/><br/>Pas besoin de performance. Une phrase utile vaut mieux qu&apos;une page parfaite.<br/><br/>Daniel`,
+        body: `Bonjour ${name},<br/><br/>Quand on écrit un peu chaque semaine, on commence à voir des repères : ce qui te vide, ce qui te recharge, ce qui revient souvent.<br/><br/>Pas besoin de performance. Une phrase utile vaut mieux qu&apos;une page parfaite.<br/><br/>Daniel`,
         ctaLabel: "Écrire 3 minutes",
         ctaUrl: writeUrl,
         footer: "Tu reçois cet email dans le cadre de ton onboarding Aurum Diary.",
@@ -207,7 +207,7 @@ export function renderOnboardingEmail(input: TemplateInput): EmailTemplateResult
       fr: {
         subject: "Tu as atteint tes 5 entrées gratuites",
         preheader: "Tu peux continuer avec 7 jours offerts.",
-        body: `Salut ${name},<br/><br/>Tu as déjà commencé quelque chose d&apos;utile.<br/><br/>Mettre ses pensées en mots aide souvent à y voir plus clair, surtout quand elles tournent en boucle.<br/><br/>Pour continuer sans couper ton élan, tu peux activer tes 7 jours offerts.<br/><br/>Daniel`,
+        body: `Bonjour ${name},<br/><br/>Tu as déjà commencé quelque chose d&apos;utile.<br/><br/>Mettre ses pensées en mots aide souvent à y voir plus clair, surtout quand elles tournent en boucle.<br/><br/>Pour continuer sans couper ton élan, tu peux activer tes 7 jours offerts.<br/><br/>Daniel`,
         ctaLabel: "Activer mes 7 jours offerts",
         ctaUrl: pricingUrl,
         footer: "Tu reçois cet email car tu as atteint la limite gratuite d'Aurum.",
@@ -227,7 +227,7 @@ export function renderOnboardingEmail(input: TemplateInput): EmailTemplateResult
       fr: {
         subject: "Tes 7 jours offerts ont commencé",
         preheader: "Le plus important cette semaine : écrire un peu, pas écrire parfaitement.",
-        body: `Salut ${name},<br/><br/>Ton essai est actif.<br/><br/>Quelques lignes suffisent souvent à faire baisser le bruit intérieur et à remettre un peu d&apos;ordre dans ce que l&apos;on ressent.<br/><br/>Si tu ne sais pas par où commencer, essaie simplement :<br/><br/><strong>&quot;Qu&apos;est-ce qui prend le plus de place dans ma tête aujourd&apos;hui ?&quot;</strong><br/><br/>Daniel`,
+        body: `Bonjour ${name},<br/><br/>Ton essai est actif.<br/><br/>Quelques lignes suffisent souvent à faire baisser le bruit intérieur et à remettre un peu d&apos;ordre dans ce que l&apos;on ressent.<br/><br/>Si tu ne sais pas par où commencer, essaie simplement :<br/><br/><strong>&quot;Qu&apos;est-ce qui prend le plus de place dans ma tête aujourd&apos;hui ?&quot;</strong><br/><br/>Daniel`,
         ctaLabel: "Écrire aujourd'hui",
         ctaUrl: writeUrl,
         footer: "Tu reçois cet email car ton essai Aurum est maintenant actif.",
@@ -247,7 +247,7 @@ export function renderOnboardingEmail(input: TemplateInput): EmailTemplateResult
       fr: {
         subject: "Ton essai se termine bientôt",
         preheader: "Ce que tu as commencé peut encore devenir un vrai rythme.",
-        body: `Salut ${name},<br/><br/>Ton essai Aurum arrive bientôt à sa fin.<br/><br/>L&apos;écriture régulière aide souvent à mieux voir ce qui revient, ce qui fatigue, et ce qui apaise.<br/><br/>Si Aurum t&apos;aide à garder ce lien avec toi-même, tu peux simplement continuer.<br/><br/>Daniel`,
+        body: `Bonjour ${name},<br/><br/>Ton essai Aurum arrive bientôt à sa fin.<br/><br/>L&apos;écriture régulière aide souvent à mieux voir ce qui revient, ce qui fatigue, et ce qui apaise.<br/><br/>Si Aurum t&apos;aide à garder ce lien avec toi-même, tu peux simplement continuer.<br/><br/>Daniel`,
         ctaLabel: "Continuer avec Aurum",
         ctaUrl: pricingUrl,
         footer: "Tu reçois cet email car ton essai Aurum approche de sa fin.",
@@ -267,7 +267,7 @@ export function renderOnboardingEmail(input: TemplateInput): EmailTemplateResult
       fr: {
         subject: "Ton abonnement Aurum est actif",
         preheader: "Ton espace reste ouvert, à ton rythme.",
-        body: `Salut ${name},<br/><br/>Ton abonnement est maintenant actif.<br/><br/>La valeur du journaling apparaît rarement en un seul jour. Elle se construit dans la continuité.<br/><br/>Tu peux continuer simplement : quelques lignes quand c&apos;est utile, plus quand c&apos;est nécessaire.<br/><br/>Daniel`,
+        body: `Bonjour ${name},<br/><br/>Ton abonnement est maintenant actif.<br/><br/>La valeur du journaling apparaît rarement en un seul jour. Elle se construit dans la continuité.<br/><br/>Tu peux continuer simplement : quelques lignes quand c&apos;est utile, plus quand c&apos;est nécessaire.<br/><br/>Daniel`,
         ctaLabel: "Retourner écrire",
         ctaUrl: writeUrl,
         footer: "Tu reçois cet email car ton abonnement Aurum est maintenant actif.",
@@ -287,7 +287,7 @@ export function renderOnboardingEmail(input: TemplateInput): EmailTemplateResult
       fr: {
         subject: "Ton essai est terminé",
         preheader: "Tu peux revenir quand tu veux, sans repartir de zéro.",
-        body: `Salut ${name},<br/><br/>Ton essai Aurum est maintenant terminé.<br/><br/>Peut-être que ce n&apos;était pas le bon moment. Peut-être aussi que tu as seulement manqué de temps pour vraiment installer ton rythme.<br/><br/>Dans tous les cas, il n&apos;y a rien à forcer.<br/><br/>Si tu veux revenir, Aurum est là pour t&apos;aider à reprendre un fil et retrouver un peu de clarté au milieu du bruit.<br/><br/>Daniel`,
+        body: `Bonjour ${name},<br/><br/>Ton essai Aurum est maintenant terminé.<br/><br/>Peut-être que ce n&apos;était pas le bon moment. Peut-être aussi que tu as seulement manqué de temps pour vraiment installer ton rythme.<br/><br/>Dans tous les cas, il n&apos;y a rien à forcer.<br/><br/>Si tu veux revenir, Aurum est là pour t&apos;aider à reprendre un fil et retrouver un peu de clarté au milieu du bruit.<br/><br/>Daniel`,
         ctaLabel: "Revenir à Aurum",
         ctaUrl: pricingUrl,
         footer: "Tu reçois cet email car ton essai Aurum est terminé.",
@@ -344,7 +344,7 @@ export function renderOnboardingEmail(input: TemplateInput): EmailTemplateResult
 </html>`;
 
   const text =
-    `${isFr ? 'Salut' : 'Hi'} ${name},\n\n` +
+    `${isFr ? 'Bonjour' : 'Hi'} ${name},\n\n` +
     selected.body.replace(/<br\/>/g, "\n").replace(/<[^>]+>/g, "") +
     `\n\n${selected.ctaLabel}: ${selected.ctaUrl}\n\n` +
     `${selected.unsubscribeLabel}: ${unsubUrl}\n`;

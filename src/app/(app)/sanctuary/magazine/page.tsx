@@ -32,6 +32,7 @@ import { WellbeingRadar } from "@/components/sanctuary/wellbeing-radar";
 import { RyffQuestionnaire } from "@/components/sanctuary/ryff-questionnaire";
 import { PersonalityRadar } from "@/components/sanctuary/personality-radar";
 import { PersonalityQuestionnaire } from "@/components/sanctuary/personality-questionnaire";
+import { useLocale } from "@/hooks/use-locale";
 import { useLocalizedHref } from "@/hooks/use-localized-href";
 import type {
   RyffDimensionScores,
@@ -62,30 +63,68 @@ type LandingInsight = {
   narrative: string;
 };
 
-const PROFILE_TITLES: Record<string, string> = {
-  D: "The Pioneer",
-  I: "The Connector",
-  S: "The Anchor",
-  C: "The Architect",
-  MIXTE: "Balanced profile • The Equilibrist",
+const PROFILE_TITLES: Record<"fr" | "en", Record<string, string>> = {
+  fr: {
+    D: "Le Pionnier",
+    I: "Le Connecteur",
+    S: "Le Pilier",
+    C: "L'Architecte",
+    MIXTE: "Profil équilibré • L'Équilibriste",
+  },
+  en: {
+    D: "The Pioneer",
+    I: "The Connector",
+    S: "The Anchor",
+    C: "The Architect",
+    MIXTE: "Balanced profile • The Equilibrist",
+  },
 };
-const RYFF_DIMENSION_LABELS: Record<keyof RyffDimensionScores, string> = {
-  acceptationDeSoi: "self-acceptance",
-  developpementPersonnel: "personal growth",
-  sensDeLaVie: "purpose in life",
-  maitriseEnvironnement: "daily mastery",
-  autonomie: "autonomy",
-  relationsPositives: "positive relationships",
+const RYFF_DIMENSION_LABELS: Record<"fr" | "en", Record<keyof RyffDimensionScores, string>> = {
+  fr: {
+    acceptationDeSoi: "l'acceptation de soi",
+    developpementPersonnel: "la croissance personnelle",
+    sensDeLaVie: "le sens",
+    maitriseEnvironnement: "la maîtrise du quotidien",
+    autonomie: "l'autonomie",
+    relationsPositives: "les relations positives",
+  },
+  en: {
+    acceptationDeSoi: "self-acceptance",
+    developpementPersonnel: "personal growth",
+    sensDeLaVie: "purpose in life",
+    maitriseEnvironnement: "daily mastery",
+    autonomie: "autonomy",
+    relationsPositives: "positive relationships",
+  },
 };
 
-function buildWellbeingNarrative(scores: RyffDimensionScores): string {
+function buildWellbeingNarrative(scores: RyffDimensionScores, locale: "fr" | "en"): string {
   const entries = Object.entries(scores) as [keyof RyffDimensionScores, number][];
-  if (entries.length === 0) return "Your profile is ready. Take a moment to observe it gently.";
+  if (entries.length === 0) {
+    return locale === "fr"
+      ? "Ton profil est prêt. Prends un instant pour l'observer avec douceur."
+      : "Your profile is ready. Take a moment to observe it gently.";
+  }
 
   const sorted = [...entries].sort((a, b) => b[1] - a[1]);
   const [topKey, topValue] = sorted[0];
   const [lowKey, lowValue] = sorted[sorted.length - 1];
   const average = entries.reduce((sum, [, value]) => sum + value, 0) / entries.length;
+
+  if (locale === "fr") {
+    const tone =
+      average >= 4.3
+        ? "Tu traverses une période plutôt stable."
+        : average >= 3.3
+        ? "Tu es dans une phase de rééquilibrage."
+        : "Tu sembles passer par une période plus exigeante.";
+
+    return `${tone} Ton point d'appui principal du moment : ${RYFF_DIMENSION_LABELS.fr[topKey]} (${topValue.toFixed(
+      1
+    )}/6). L'axe à soutenir en priorité : ${RYFF_DIMENSION_LABELS.fr[lowKey]} (${lowValue.toFixed(
+      1
+    )}/6). Écrire quelques lignes dans Aurum peut t'aider à clarifier cette zone et à suivre des progrès concrets.`;
+  }
 
   const tone =
     average >= 4.3
@@ -94,29 +133,48 @@ function buildWellbeingNarrative(scores: RyffDimensionScores): string {
       ? "You are in a phase of building balance."
       : "You seem to be in a more demanding period.";
 
-  return `${tone} Your strongest area right now: ${RYFF_DIMENSION_LABELS[topKey]} (${topValue.toFixed(
+  return `${tone} Your strongest area right now: ${RYFF_DIMENSION_LABELS.en[topKey]} (${topValue.toFixed(
     1
-  )}/6). The top area to support first: ${RYFF_DIMENSION_LABELS[lowKey]} (${lowValue.toFixed(
+  )}/6). The top area to support first: ${RYFF_DIMENSION_LABELS.en[lowKey]} (${lowValue.toFixed(
     1
   )}/6). Writing a few lines in Aurum will help you clarify this weaker area and track concrete progress.`;
 }
 
-const PERSONALITY_DIMENSION_LABELS: Record<keyof PersonalityScores, string> = {
-  determination: "determination",
-  influence: "influence",
-  stabilite: "stability",
-  rigueur: "discipline",
+const PERSONALITY_DIMENSION_LABELS: Record<"fr" | "en", Record<keyof PersonalityScores, string>> = {
+  fr: {
+    determination: "la détermination",
+    influence: "l'influence",
+    stabilite: "la stabilité",
+    rigueur: "la rigueur",
+  },
+  en: {
+    determination: "determination",
+    influence: "influence",
+    stabilite: "stability",
+    rigueur: "discipline",
+  },
 };
 
-function buildPersonalityNarrative(scores: PersonalityScores, archetype: string): string {
+function buildPersonalityNarrative(scores: PersonalityScores, archetype: string, locale: "fr" | "en"): string {
   const entries = Object.entries(scores) as [keyof PersonalityScores, number][];
-  if (entries.length === 0) return "Your profile is ready. Focus on what helps you move forward with more clarity.";
+  if (entries.length === 0) {
+    return locale === "fr"
+      ? "Ton profil est prêt. Concentre-toi sur ce qui t'aide à avancer avec plus de clarté."
+      : "Your profile is ready. Focus on what helps you move forward with more clarity.";
+  }
   const sorted = [...entries].sort((a, b) => b[1] - a[1]);
   const [topKey, topValue] = sorted[0];
   const [lowKey, lowValue] = sorted[sorted.length - 1];
-  return `You show a clear ${archetype} style. Your dominant strength today: ${PERSONALITY_DIMENSION_LABELS[topKey]} (${topValue.toFixed(
+  if (locale === "fr") {
+    return `Tu montres aujourd'hui un style ${archetype} bien marqué. Ta force dominante du moment : ${PERSONALITY_DIMENSION_LABELS.fr[topKey]} (${topValue.toFixed(
+      1
+    )}/6). Pour avancer avec plus de fluidité, travaille doucement ${PERSONALITY_DIMENSION_LABELS.fr[
+      lowKey
+    ]} (${lowValue.toFixed(1)}/6) à travers une action simple et répétée cette semaine. Écrire dans Aurum t'aide à préparer cette action, à la garder visible et à mesurer son effet réel.`;
+  }
+  return `You show a clear ${archetype} style. Your dominant strength today: ${PERSONALITY_DIMENSION_LABELS.en[topKey]} (${topValue.toFixed(
     1
-  )}/6). To progress with more fluidity, gently work on ${PERSONALITY_DIMENSION_LABELS[
+  )}/6). To progress with more fluidity, gently work on ${PERSONALITY_DIMENSION_LABELS.en[
     lowKey
   ]} (${lowValue.toFixed(1)}/6) through one simple repeated action this week. Writing in Aurum helps you prepare that action, keep it visible, and measure its real effect.`;
 }
@@ -181,6 +239,8 @@ function generateIssueExcerpt(content: string, maxLength = 170) {
 }
 
 export default function MagazinePage() {
+  const locale = useLocale();
+  const isFr = locale === 'fr';
   const to = useLocalizedHref();
   const { user, loading } = useAuth();
   const { toast } = useToast();
@@ -383,8 +443,8 @@ export default function MagazinePage() {
           id: latest.item.id,
           profile: String(latest.d.profile || "MIXTE"),
           profileTitle:
-            PROFILE_TITLES[String(latest.d.profile || "MIXTE")] ||
-            String(latest.d.profileTitle || "Personal profile"),
+            PROFILE_TITLES[isFr ? 'fr' : 'en'][String(latest.d.profile || "MIXTE")] ||
+            String(latest.d.profileTitle || (isFr ? "Profil personnel" : "Personal profile")),
           answers: Array.isArray(latest.d.answers)
             ? latest.d.answers.map((entry) => String(entry))
             : [],
@@ -415,7 +475,7 @@ export default function MagazinePage() {
             const parsed = parseCreatedAt(localQuiz.completedAt);
             return parsed ?? new Date();
           })();
-          const profileTitle = PROFILE_TITLES[profile] || "Personal profile";
+          const profileTitle = PROFILE_TITLES[isFr ? 'fr' : 'en'][profile] || (isFr ? "Profil personnel" : "Personal profile");
 
           const created = await addDoc(assessmentsRef, {
             source: "landing-quiz",
@@ -594,7 +654,7 @@ export default function MagazinePage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             kind: "landing",
-            locale: "en",
+            locale,
             profile: landingAssessment.profile,
             profileTitle: landingAssessment.profileTitle,
             answers: landingAssessment.answers,
@@ -609,7 +669,9 @@ export default function MagazinePage() {
         const narrative =
           typeof data.narrative === "string" && data.narrative.trim()
             ? data.narrative.trim()
-            : "Your entry profile is ready. Move forward with simple, steady steps.";
+            : isFr
+              ? "Ton profil d'entrée est prêt. Avance avec des pas simples et réguliers."
+              : "Your entry profile is ready. Move forward with simple, steady steps.";
         if (!cancelled) {
           setLandingInsight({ narrative });
         }
@@ -716,7 +778,7 @@ export default function MagazinePage() {
     if (!user) return;
     setIsQuestionnaireSubmitting(true);
     const optimisticComputedAt = new Date();
-    let narrative = buildWellbeingNarrative(scores);
+    let narrative = buildWellbeingNarrative(scores, isFr ? 'fr' : 'en');
 
     try {
       const explainResponse = await fetch("/api/analyze-questionnaire", {
@@ -724,7 +786,7 @@ export default function MagazinePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           kind: "wellbeing",
-          locale: "en",
+          locale,
           scores,
         }),
       });
@@ -782,9 +844,10 @@ export default function MagazinePage() {
         }
       }, 1200);
       toast({
-        title: "Profile ready",
-        description:
-          "Your result is visible. We are finalizing the save in the background.",
+        title: isFr ? "Profil prêt" : "Profile ready",
+        description: isFr
+          ? "Ton résultat est visible. Nous finalisons l'enregistrement en arrière-plan."
+          : "Your result is visible. We are finalizing the save in the background.",
       });
     } finally {
       setIsQuestionnaireSubmitting(false);
@@ -854,7 +917,7 @@ export default function MagazinePage() {
   ) => {
     if (!user) return;
     setIsPersonalitySubmitting(true);
-    let narrative = buildPersonalityNarrative(scores, archetype);
+    let narrative = buildPersonalityNarrative(scores, archetype, isFr ? 'fr' : 'en');
 
     try {
       const explainResponse = await fetch("/api/analyze-questionnaire", {
@@ -862,7 +925,7 @@ export default function MagazinePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           kind: "personality",
-          locale: "en",
+          locale,
           scores,
           archetype,
         }),
@@ -925,8 +988,10 @@ export default function MagazinePage() {
         }
       }, 1200);
       toast({
-        title: "Profile ready",
-        description: "Your result is visible. We are finalizing the save in the background.",
+        title: isFr ? "Profil prêt" : "Profile ready",
+        description: isFr
+          ? "Ton résultat est visible. Nous finalisons l'enregistrement en arrière-plan."
+          : "Your result is visible. We are finalizing the save in the background.",
       });
     } finally {
       setIsPersonalitySubmitting(false);
@@ -959,7 +1024,7 @@ export default function MagazinePage() {
                 ? data.createdAt
                 : (data.createdAt as { toDate?: () => Date }).toDate?.() ||
                   new Date();
-            dateTitle = `Reflection from ${entryDate.toLocaleDateString("en-US", {
+            dateTitle = `${isFr ? 'Réflexion du' : 'Reflection from'} ${entryDate.toLocaleDateString(isFr ? "fr-FR" : "en-US", {
               day: "numeric",
               month: "long",
             })}`;
@@ -967,7 +1032,7 @@ export default function MagazinePage() {
 
           const title = isEncrypted ? dateTitle : generateIssueTitle(content);
           const excerpt = isEncrypted
-            ? "Encrypted content"
+            ? (isFr ? "Contenu chiffré" : "Encrypted content")
             : generateIssueExcerpt(content);
           const images = Array.isArray(data.images) ? data.images : [];
           const firstImage = images[0] as { url?: string } | undefined;

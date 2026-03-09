@@ -207,6 +207,22 @@ export const sendWritingReminders = onSchedule(
             },
             { merge: true }
           );
+          await firestore.collection('analyticsEvents').add({
+            name: 'writing_reminder_sent',
+            userId,
+            userEmail: typeof userData.email === 'string' ? userData.email : null,
+            clientId: null,
+            path: '/functions/sendWritingReminders',
+            params: {
+              deviceId: deviceDoc.id,
+              tone,
+              locale,
+              reminderTime: String(prefs.writingReminderTime || '20:30'),
+              reminderDateKey: context.localDateKey,
+            },
+            occurredAt: new Date(),
+            source: 'server',
+          });
           sent += 1;
         } catch (error: any) {
           const code = String(error?.code || '');

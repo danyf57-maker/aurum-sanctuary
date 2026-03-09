@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth, db } from '@/lib/firebase/admin';
+import { trackServerEvent } from '@/lib/analytics/server';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -27,6 +28,14 @@ export async function POST(req: NextRequest) {
       { merge: true }
     );
 
+    await trackServerEvent('writing_reminder_device_unregistered', {
+      userId: decoded.uid,
+      userEmail: decoded.email ?? null,
+      path: '/api/reminders/unregister-device',
+      params: {
+        deviceId: body.deviceId,
+      },
+    });
     return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json({ error: 'Unable to unregister device' }, { status: 500 });

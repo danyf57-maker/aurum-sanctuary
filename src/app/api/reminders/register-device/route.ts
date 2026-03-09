@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth, db } from '@/lib/firebase/admin';
+import { trackServerEvent } from '@/lib/analytics/server';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -39,6 +40,16 @@ export async function POST(req: NextRequest) {
       { merge: true }
     );
 
+    await trackServerEvent('writing_reminder_device_registered', {
+      userId: decoded.uid,
+      userEmail: decoded.email ?? null,
+      path: '/api/reminders/register-device',
+      params: {
+        deviceId: body.deviceId,
+        language: body.language || 'en',
+        timezone: body.timezone || 'UTC',
+      },
+    });
     return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json({ error: 'Unable to register device' }, { status: 500 });
