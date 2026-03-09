@@ -62,6 +62,8 @@ function LoginForm() {
       ? rawRedirectUrl
       : "/sanctuary/write";
   const redirectUrl = authRoutePrefixes.some((route) => unsafeRedirectUrl.startsWith(route))
+    || unsafeRedirectUrl === "/dashboard"
+    || unsafeRedirectUrl.startsWith("/dashboard?")
     ? "/sanctuary/write"
     : unsafeRedirectUrl;
   const verified = searchParams.get("verified");
