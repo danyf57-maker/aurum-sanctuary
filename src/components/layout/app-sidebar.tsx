@@ -24,10 +24,10 @@ import { stripLocalePrefix } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
 
 const NAV_ITEMS = [
-  { key: "dashboard", descKey: "dashboardDesc", href: "/dashboard", icon: LayoutDashboard },
   { key: "write",     descKey: "writeDesc",     href: "/sanctuary/write", icon: PenSquare },
   { key: "journal",   descKey: "journalDesc",   href: "/sanctuary", icon: BookOpenText },
   { key: "magazine",  descKey: "magazineDesc",  href: "/sanctuary/magazine", icon: BarChart3 },
+  { key: "dashboard", descKey: "dashboardDesc", href: "/dashboard", icon: LayoutDashboard },
   { key: "insights",  descKey: "insightsDesc",  href: "/insights", icon: Sparkles },
   { key: "settings",  descKey: "settingsDesc",  href: "/settings", icon: Settings },
 ] as const;
