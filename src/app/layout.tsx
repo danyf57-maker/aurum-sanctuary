@@ -40,17 +40,17 @@ export async function generateMetadata(): Promise<Metadata> {
   const isFr = locale === "fr";
 
   const title = isFr
-    ? "Aurum Diary | Journal intime chiffré pour vider ta tête et apaiser ton esprit"
-    : "Aurum Diary | Encrypted private journal to clear your mind and calm stress";
+    ? "Aurum Diary | Réflexion privée guidée pour plus de clarté émotionnelle"
+    : "Aurum Diary | Private AI-guided reflection for emotional clarity";
   const description = isFr
-    ? "Quand ta tête tourne en boucle, écris ici. Aurum Diary est un journal intime en ligne 100% chiffré pour soulager ta charge mentale, calmer l'overthinking et retrouver de la clarté."
-    : "When your mind keeps spinning, write here. Aurum Diary is a fully encrypted private journal to reduce mental load, ease overthinking, and regain clarity.";
+    ? "Aurum Diary est un compagnon de réflexion privée guidée par IA pour écrire librement, clarifier tes émotions et faire émerger les motifs intérieurs qui reviennent dans le temps."
+    : "Aurum Diary is a private AI-guided reflection companion that helps you write freely, clarify emotions, and uncover recurring inner patterns over time.";
   const ogTitle = isFr
-    ? "Aurum Diary | Journal intime chiffré pour vider ta tête"
-    : "Aurum Diary | Encrypted private journal for mental clarity";
+    ? "Aurum Diary | Un compagnon privé de réflexion pour plus de clarté émotionnelle"
+    : "Aurum Diary | A private AI reflection companion for emotional clarity";
   const ogDescription = isFr
-    ? "Quand ta tête tourne en boucle, écris ici. Un journal intime 100% chiffré pour relâcher la pression et retrouver de la clarté."
-    : "Write to release pressure and regain clarity with a fully encrypted private journal.";
+    ? "Écris librement en privé, reçois une réflexion guidée par IA, et remarque les motifs intérieurs qui reviennent."
+    : "Write freely in private, receive AI-guided reflection, and notice recurring inner patterns over time.";
 
   return {
     title,
@@ -81,8 +81,8 @@ export async function generateMetadata(): Promise<Metadata> {
       card: "summary_large_image",
       title: ogTitle,
       description: isFr
-        ? "Écris pour relâcher ta charge mentale. Journal intime en ligne 100% chiffré."
-        : "Write to ease mental load. Fully encrypted private online journaling.",
+        ? "Réflexion privée guidée par IA pour plus de clarté émotionnelle et des motifs récurrents."
+        : "Private AI-guided reflection for emotional clarity and recurring inner patterns.",
       images: ["/og-image.png"],
     },
     alternates: {
@@ -117,9 +117,9 @@ export default async function RootLayout({
     '@type': 'SoftwareApplication',
     name: 'Aurum',
     description: isFr
-      ? "Journal intime en ligne 100% chiffré pour relâcher la charge mentale, calmer l'overthinking et retrouver de la clarté."
-      : "A fully encrypted online private journal to reduce mental load, calm overthinking, and regain clarity.",
-    applicationCategory: ['HealthApplication', 'LifestyleApplication'],
+      ? "Un compagnon de réflexion privée guidée par IA pour écrire librement, clarifier ses émotions et faire émerger des motifs intérieurs récurrents."
+      : "A private AI-guided reflection companion that helps users write freely, clarify emotions, and uncover recurring inner patterns over time.",
+    applicationCategory: ['LifestyleApplication', 'ProductivityApplication'],
     operatingSystem: 'Web, iOS, Android',
     offers: {
       '@type': 'Offer',
@@ -128,17 +128,17 @@ export default async function RootLayout({
     },
     featureList: isFr
       ? [
-          "Journal intime en ligne chiffré AES-256",
-          "Gestion de la charge mentale",
-          "Suivi des émotions et de l'humeur",
-          "Journal guidé avec intelligence artificielle",
+          "Espace de réflexion privée chiffré en AES-256",
+          "Réflexion guidée par IA pour la clarté émotionnelle",
+          "Motifs intérieurs récurrents visibles dans le temps",
+          "Suivi des émotions et de leur évolution",
           "Alternative privée à Rosebud",
         ]
       : [
-          "AES-256 encrypted private online journal",
-          "Mental load support",
+          "AES-256 encrypted private reflection space",
+          "AI-guided reflection for emotional clarity",
+          "Recurring inner pattern discovery over time",
           "Mood and emotion tracking",
-          "AI-guided journaling",
           "Private alternative to Rosebud",
         ]
   };

@@ -27,7 +27,7 @@ export function Footer() {
               <span className="font-bold text-xl font-headline">Aurum</span>
             </div>
             <p className="text-muted-foreground text-sm">
-              {isFr ? "Le silence qui vous écoute." : "The silence that listens."}
+              {isFr ? "La réflexion privée, guidée avec douceur." : "Private reflection, guided with care."}
             </p>
           </div>
           <div className="md:col-span-3 grid grid-cols-2 sm:grid-cols-4 gap-8">
@@ -65,7 +65,7 @@ export function Footer() {
         </div>
         <div className="mt-12 border-t border-stone-200 dark:border-stone-800 pt-8 flex flex-col sm:flex-row justify-between items-center">
           <p className="text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} Aurum. {isFr ? "Un espace pour vous." : "A space for you."}
+            &copy; {new Date().getFullYear()} Aurum. {isFr ? "Un espace privé pour écrire et voir plus clair." : "A private space to write and see more clearly."}
           </p>
         </div>
       </div>

@@ -6,14 +6,14 @@ import { BlogCard } from '@/components/blog/blog-card';
 export const metadata: Metadata = {
     title: "Le Journal d'Alma",
     description:
-        "Articles et réflexions sur l'introspection, la charge mentale et la clarté émotionnelle.",
+        "Articles et réflexions sur l'introspection, la clarté émotionnelle et les motifs intérieurs qui émergent dans le temps.",
     alternates: {
         canonical: "https://aurumdiary.com/blog",
     },
     openGraph: {
         title: "Le Journal d'Alma",
         description:
-            "Articles et réflexions sur l'introspection, la charge mentale et la clarté émotionnelle.",
+            "Articles et réflexions sur l'introspection, la clarté émotionnelle et les motifs intérieurs qui émergent dans le temps.",
         url: "https://aurumdiary.com/blog",
         type: "website",
         locale: "fr_FR",
@@ -42,7 +42,7 @@ export default async function BlogPage() {
                 <div className="container max-w-4xl mx-auto text-center animate-fade-in">
                     <h1 className="text-4xl md:text-5xl font-headline font-bold tracking-tight">Le Journal d'Alma</h1>
                     <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-                        Pensées partagées depuis le sanctuaire. Un regard sur le cheminement intérieur, les réflexions et les découvertes faites au fil des mots.
+                        Textes sur l'écriture privée, la clarté émotionnelle et les motifs intérieurs qui se révèlent au fil du temps.
                     </p>
                 </div>
             </section>

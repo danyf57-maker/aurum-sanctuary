@@ -28,7 +28,7 @@ export function LastInsightCard({ entry }: LastInsightCardProps) {
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <CardTitle className="text-sm font-bold uppercase tracking-widest text-stone-500 flex items-center gap-2">
           <Compass className="h-4 w-4 text-stone-900" />
-          {isFr ? "Dernier Écho Aurum" : "Latest Aurum Echo"}
+          {isFr ? "Dernier reflet d'Aurum" : "Latest Aurum reflection"}
         </CardTitle>
         <span className="text-[10px] font-medium text-stone-400">{formattedDate}</span>
       </CardHeader>
@@ -37,8 +37,8 @@ export function LastInsightCard({ entry }: LastInsightCardProps) {
           <p className="text-stone-700 italic leading-relaxed line-clamp-3 pl-4 border-l-2 border-stone-200">
             {entry.insight ||
               (isFr
-                ? "Aucun reflet disponible pour cette entrée. Commencez à écrire pour recevoir un premier écho d'Aurum."
-                : "No reflection is available for this entry yet. Start writing to receive your first Aurum echo.")}
+                ? "Aucun reflet guidé n'est encore lié à cette page. Écris une nouvelle page privée pour commencer à voir ce qu'Aurum remarque."
+                : "No guided reflection is linked to this page yet. Write a new private page to start seeing what Aurum notices.")}
           </p>
         </div>
 

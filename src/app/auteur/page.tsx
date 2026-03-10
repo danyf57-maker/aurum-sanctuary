@@ -6,7 +6,7 @@ import { toLocalePath } from "@/i18n/routing";
 export const metadata: Metadata = {
   title: "Auteur: Alma",
   description:
-    "Profil éditorial d'Alma, voix du Journal d'Aurum, et principes de publication des contenus.",
+    "Profil éditorial d'Alma, voix d'Aurum, et principes de publication autour de la réflexion, de la clarté émotionnelle et de la prudence d'interprétation.",
   alternates: {
     canonical: "https://aurumdiary.com/auteur",
   },
@@ -23,15 +23,15 @@ export default async function AuteurPage() {
             Alma, voix éditoriale d&apos;Aurum
           </h1>
           <p className="text-lg text-muted-foreground mb-8">
-            Alma est la voix narrative du Journal d&apos;Aurum. Ses textes sont
-            édités pour favoriser l&apos;introspection, la clarté émotionnelle et la
+            Alma est la voix narrative d&apos;Aurum. Ses textes sont édités pour
+            favoriser l&apos;introspection, la clarté émotionnelle et la
             prudence dans l&apos;interprétation.
           </p>
           <div className="space-y-6 text-foreground/90">
             <p>
               Les contenus publiés suivent une ligne éditoriale centrée sur la
-              santé mentale du quotidien: charge mentale, émotions, rumination,
-              fatigue et régulation.
+              vie intérieure du quotidien: émotions, rumination, fatigue,
+              motifs relationnels et besoin de clarté.
             </p>
             <p>
               Les articles ne constituent pas un avis médical et ne remplacent
