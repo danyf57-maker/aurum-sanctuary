@@ -14,7 +14,7 @@ const copy = {
       "En accédant à Aurum Sanctuary, vous acceptez les présentes conditions d'utilisation. Si vous n'acceptez pas ces conditions, n'utilisez pas l'application.",
     s2t: "2. Description du Service",
     s2b:
-      "Aurum Sanctuary est un service de journalisation orienté bien-être mental. Nous proposons des outils pour écrire, structurer vos réflexions et générer des reflets personnalisés.",
+      "Aurum Sanctuary est un service de réflexion privée qui utilise des fonctionnalités assistées par IA pour aider à écrire, organiser ses réflexions et faire émerger des thèmes récurrents dans le temps.",
     s3t: "3. Confidentialité et Chiffrement",
     s3a:
       "Vos entrées sont protégées par chiffrement côté client. Nous mettons en place une architecture limitant l'accès interne aux données en clair.",
@@ -58,7 +58,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const isFr = locale === "fr";
   const title = isFr ? "Conditions d'Utilisation | Aurum" : "Terms of Use | Aurum";
   const description = isFr
-    ? "Conditions d'utilisation d'Aurum Sanctuary: service, confidentialité, paiements et responsabilités."
+    ? "Conditions d'utilisation d'Aurum Sanctuary: service de réflexion privée, confidentialité, paiements et responsabilités."
     : "Aurum Sanctuary terms of use: service scope, privacy, payments, and responsibilities.";
   const canonical = "https://aurumdiary.com/terms";
 

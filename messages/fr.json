@@ -53,7 +53,7 @@
     "emailNotVerified": "Votre email n'est pas encore vérifié. Nous venons de renvoyer un message. Vérifiez vos mails et vos spams.",
     "loading": "Chargement...",
     "title": "Connexion",
-    "description": "Connectez-vous à votre compte Aurum Sanctuary",
+    "description": "Connecte-toi à ton espace de réflexion privé Aurum",
     "quizBadge": "Votre profil vous attend",
     "quizText": "Votre profil de réflexion est prêt ! Connectez-vous pour découvrir votre résultat personnalisé.",
     "verified": "Email vérifié. Vous pouvez vous connecter.",
@@ -387,7 +387,7 @@
   },
   "signup": {
     "title": "Créer un compte",
-    "description": "Rejoignez Aurum Sanctuary et commencez votre voyage",
+    "description": "Crée ton espace de réflexion privé avec Aurum",
     "quizBadge": "Votre profil vous attend",
     "quizText": "Votre profil de réflexion est prêt ! Créez votre compte pour découvrir votre résultat personnalisé et commencer votre expérience.",
     "encrypted": "Vos données sont chiffrées de bout en bout",
@@ -465,10 +465,10 @@
   "hero": {
     "badge": "RÉFLEXION PRIVÉE GUIDÉE",
     "title": "Écris en privé. Comprends ce qui revient.",
-    "subtitle": "Aurum t’aide à écrire, clarifier ce que tu ressens, et faire émerger les motifs intérieurs qui se répètent dans le temps.",
+    "subtitle": "Aurum t'aide à écrire librement, clarifier ce que tu ressens, et faire émerger les motifs intérieurs qui reviennent grâce à une réflexion privée guidée par IA.",
     "cta": "Créer mon compte gratuitement",
     "ctaSecondary": "Écrire d'abord sans engagement",
-    "trust": "100% Chiffré • IA de réflexion • Privé par design.",
+    "trust": "100% Chiffré • Réflexion guidée par IA • Privé par design.",
     "placeholders": {
       "0": "Je n'arrive pas à dormir, mon cerveau tourne en boucle sur la réunion de demain...",
       "1": "Je me sens complètement submergé par ma liste de tâches aujourd'hui...",
@@ -476,7 +476,7 @@
     },
     "quotes": {
       "0": {
-        "hint": "Couche tes pensées. Apaise ton esprit avant de dormir.",
+        "hint": "Écris sans te filtrer. Retrouve de la clarté grâce à une réflexion douce.",
         "detail": "Écris simplement ce que tu as en tête, sans filtre.",
         "quote": "Écrire, c'est une façon de parler sans être interrompu.",
         "author": "Jules Renard"
@@ -500,14 +500,14 @@
         "author": "Margaret Atwood"
       },
       "4": {
-        "hint": "Quand la charge mentale monte, ce cadre devient ton sas.",
-        "detail": "Tu peux poser tes priorités et retrouver de l'air.",
+        "hint": "Quand la surcharge intérieure monte, cet espace t'aide à ralentir.",
+        "detail": "Tu peux y déposer ce qui s'emmêle et remarquer ce qui demande de la clarté.",
         "quote": "Nous écrivons pour goûter la vie deux fois.",
         "author": "Anaïs Nin"
       },
       "5": {
-        "hint": "Après une journée lourde, vide ta tête avant la nuit.",
-        "detail": "Même 2 minutes d'écriture peuvent changer ton état.",
+        "hint": "Après une journée lourde, écris ce qui est resté avec toi.",
+        "detail": "Même 2 minutes de réflexion peuvent rendre un motif plus visible.",
         "quote": "Écrire est une forme de thérapie.",
         "author": "Graham Greene"
       },
@@ -528,8 +528,8 @@
   "marketingPage": {
     "exitIntent": {
       "title": "Une dernière chose avant de partir...",
-      "description": "Tu ne sais pas par où commencer ? Fais notre évaluation de bien-être en 30 secondes pour obtenir ton profil personnalisé.",
-      "cta": "Faire le parcours (30s)",
+      "description": "Tu ne sais pas par où commencer ? Fais notre parcours de réflexion en 30 secondes pour révéler ton profil de départ.",
+      "cta": "Faire le parcours de réflexion (30s)",
       "dismiss": "Non merci, je souhaite continuer à naviguer"
     },
     "quiz": {
@@ -710,23 +710,23 @@
       "profiles": {
         "D": {
           "title": "Le Pionnier",
-          "description": "Tu aimes avancer vite et décider. Ton journal t'aide à canaliser cette énergie."
+          "description": "Tu aimes avancer vite et décider. Aurum t'aide à canaliser cette énergie vers une réflexion plus claire et utile."
         },
         "I": {
           "title": "Le Connecteur",
-          "description": "Tu es guidé par les relations et les émotions. Ton journal devient un espace d'expression."
+          "description": "Tu es guidé par les relations et les émotions. Aurum t'aide à transformer ce que tu ressens en quelque chose de plus clair et plus dicible."
         },
         "S": {
           "title": "L'Ancre",
-          "description": "Tu cherches la paix et la constance. Ton journal t'offre un refuge stable."
+          "description": "Tu cherches la paix et la constance. Aurum t'offre un rythme privé pour réfléchir plus en profondeur."
         },
         "C": {
           "title": "L'Architecte",
-          "description": "Tu aimes comprendre avant d'agir. Ton journal devient ton laboratoire d'idées."
+          "description": "Tu aimes comprendre avant d'agir. Aurum t'aide à structurer ce que tu remarques et ce qui revient."
         },
         "MIXTE": {
           "title": "Profil mixte • L'Équilibriste",
-          "description": "Tu combines plusieurs forces. Ton journal s'adapte à ta complexité."
+          "description": "Tu combines plusieurs forces. Aurum t'aide à voir comment tes motifs intérieurs changent selon les situations."
         }
       }
     },
@@ -736,7 +736,7 @@
     },
     "studySection": {
       "title": "Écrire aide. Aurum aide à comprendre ce qui revient.",
-      "subtitle": "La confidentialité protège tes mots. La réflexion guidée par Aurum aide à en faire émerger plus de clarté et des motifs dans le temps.",
+      "subtitle": "La confidentialité protège tes mots. La réflexion guidée d'Aurum aide à en faire émerger de la clarté émotionnelle et des motifs récurrents que tu peux reconnaître dans le temps.",
       "cta": "Créer mon compte et commencer aujourd'hui"
     },
     "studyCards": [
@@ -760,9 +760,9 @@
       }
     ],
     "useCases": {
-      "title": "Douleurs fréquentes : comment l'écriture peut vraiment aider",
-      "subtitle": "Des exemples concrets pour relâcher la charge mentale, calmer l'anxiété et sortir de la rumination.",
-      "note": "Basé sur des recherches récentes sur l'écriture et le bien-être psychologique",
+      "title": "Moments fréquents où l'écriture peut ramener de la clarté",
+      "subtitle": "Des exemples concrets pour démêler ce que tu ressens, alléger la surcharge intérieure et faire apparaître ce qui revient.",
+      "note": "Ancré dans des recherches récentes sur l'écriture expressive et le bien-être psychologique",
       "cards": [
         {
           "badge": "Insomnie",
@@ -835,12 +835,12 @@
       ]
     },
     "problem": {
-      "title": "C'est comment, une tête en bazar ?",
-      "body": "C'est quand les pensées tournent en rond sans s'arrêter. Ça peut empêcher de dormir, rendre triste ou énervé. On a parfois l'impression d'être coincé."
+      "title": "À quoi ressemble la surcharge intérieure ?",
+      "body": "Les pensées tournent, les émotions se mélangent, et il devient plus difficile de voir ce qui compte vraiment. L'écriture rend ces signaux plus lisibles."
     },
     "solution": {
-      "title": "Le super-pouvoir de l'écriture.",
-      "body": "Écrire tes pensées, même les plus secrètes, c'est comme leur dire \"Stop !\". Ça les calme. Aurum est ton outil pour faire ça, en toute sécurité."
+      "title": "L'écriture ralentit assez pour voir clair.",
+      "body": "Écrire en privé donne à tes pensées un endroit où se poser. Aurum ajoute une réflexion guidée douce pour laisser émerger la clarté et les motifs récurrents dans le temps."
     },
     "trust": {
       "eyebrow": "Ton intégrité, notre priorité",
@@ -861,23 +861,23 @@
         }
       ],
       "manifestoTitle": "Notre manifeste de confiance",
-      "manifestoBody": "« Nous ne vendons pas de publicité. Nous ne vendons pas tes données. Nous vendons de la clarté et de la tranquillité d'esprit. Ton journal n'est pas un produit, c'est ton jardin sacré. »",
+      "manifestoBody": "« Nous ne vendons pas de publicité. Nous ne vendons pas tes données. Nous protégeons un espace privé pour la clarté, la réflexion et la compréhension de soi. Ton journal n'est pas un produit. C'est ton terrain intérieur. »",
       "seal": "Sceau de confiance"
     },
     "finalCta": {
       "button": "Créer mon sanctuaire maintenant",
       "note": "Sans engagement • Chiffrement de bout en bout",
-      "subtitle": "Tu entres dans un espace conçu pour écrire régulièrement, comprendre ce qui te traverse et retrouver de la clarté sans exposition.",
+      "subtitle": "Tu entres dans un espace de réflexion privée conçu pour écrire régulièrement, comprendre ce qui revient et retrouver de la clarté dans le temps.",
       "cards": [
         {
           "title": "writing",
           "eyebrow": "Écriture",
-          "body": "Un espace calme pour déposer ce qui t'occupe, sans distraction."
+          "body": "Un espace calme pour écrire librement, sans distraction ni auto-censure."
         },
         {
           "title": "analysis",
-          "eyebrow": "Lecture",
-          "body": "Des repères pour voir émerger tes thèmes, tes rythmes et tes besoins."
+          "eyebrow": "Réflexion",
+          "body": "Des repères guidés pour voir émerger tes thèmes récurrents, tes rythmes émotionnels et tes besoins."
         },
         {
           "title": "privacy",
@@ -887,7 +887,7 @@
         {
           "title": "continuity",
           "eyebrow": "Continuité",
-          "body": "Tu construis un lieu à toi, page après page, sans repartir de zéro."
+          "body": "Ta réflexion s'approfondit dans le temps, page après page, sans perdre le fil."
         }
       ]
     },
@@ -898,24 +898,24 @@
         "answer": "Personne. Nous utilisons une architecture « Admin-Blind » avec chiffrement AES-256 côté client. Tes entrées sont chiffrées avec ta clé privée avant d'être envoyées. Techniquement, même avec un accès total à nos serveurs, il est impossible de déchiffrer tes écrits sans ton mot de passe."
       },
       {
-        "question": "Comment calmer l'anxiété la nuit et mieux dormir ?",
-        "answer": "Écris 3 lignes avant de te coucher : ce qui te pèse, ce que tu ressens, puis ce dont tu as besoin demain. Le but est de sortir la rumination de ta tête pour apaiser ton esprit."
+        "question": "Comment l'écriture privée aide-t-elle à retrouver de la clarté le soir ?",
+        "answer": "Écris 3 lignes avant de te coucher : ce qui te pèse, ce que tu ressens, puis ce dont tu as besoin demain. Le but est de sortir les boucles mentales de ta tête pour laisser revenir la clarté."
       },
       {
-        "question": "Comment réduire la charge mentale en 5 minutes ?",
-        "answer": "Pose un minuteur 5 minutes et écris sans corriger : faits, émotions, besoins. Cette routine courte t'aide à relâcher la pression et à retrouver de la clarté, même pendant une journée chargée."
+        "question": "Comment réduire la surcharge intérieure en 5 minutes ?",
+        "answer": "Pose un minuteur 5 minutes et écris sans corriger : faits, émotions, besoins. Cette courte réflexion aide à alléger la surcharge intérieure et à retrouver de la clarté, même pendant une journée chargée."
       },
       {
-        "question": "Comment arrêter de trop penser (overthinking) rapidement ?",
-        "answer": "Quand tout tourne dans ta tête, écris une idée par ligne. Cela transforme un flot confus en liste concrète. Ensuite, choisis une seule petite action à faire aujourd'hui."
+        "question": "Comment la réflexion aide-t-elle à sortir du trop-plein mental ?",
+        "answer": "Quand tout tourne dans ta tête, écris une idée par ligne. La réflexion transforme un flot confus en quelque chose que tu peux voir, nommer et traverser plus clairement."
       },
       {
-        "question": "Est-ce que l'écriture aide vraiment contre le stress et l'anxiété ?",
-        "answer": "Les études montrent que l'écriture régulière peut améliorer le bien-être psychologique et réduire certains symptômes liés au stress et à l'anxiété. Ce n'est pas magique, mais c'est un outil simple, accessible et utile."
+        "question": "L'écriture réflexive peut-elle améliorer la clarté émotionnelle ?",
+        "answer": "L'écriture réflexive peut améliorer la clarté émotionnelle dans le temps en aidant à nommer ce que tu ressens, remarquer ce qui revient et prendre un peu de distance avec le bruit mental."
       },
       {
-        "question": "Quel journal intime en ligne est vraiment privé ?",
-        "answer": "Choisis un journal intime chiffré de bout en bout, sans publicité, où tes notes ne sont pas exposées publiquement. Sur Aurum, tu écris dans un espace privé conçu pour la clarté mentale."
+        "question": "Quelle app de réflexion privée protège vraiment mes écrits ?",
+        "answer": "Choisis une app de réflexion privée chiffrée de bout en bout, sans publicité, où tes écrits ne sont pas exposés publiquement. Sur Aurum, tes mots restent dans un espace privé conçu pour la clarté et les motifs récurrents."
       },
       {
         "question": "Combien coûte Aurum ?",
@@ -969,7 +969,7 @@
       "privateBadge": "Espace privé",
       "titleLine1": "Ton sanctuaire",
       "titleLine2": "t'attend",
-      "description": "Un espace chiffré pour écrire en privé, puis laisser Aurum t’aider à clarifier ce que tu ressens et ce qui revient dans le temps.",
+      "description": "Un espace privé et chiffré pour écrire librement, puis recevoir une réflexion guidée par IA qui aide à clarifier ce que tu ressens et ce qui revient dans le temps.",
       "featurePrivate": "100% privé",
       "featureEncrypted": "Chiffré",
       "featureAi": "Réflexion guidée par IA",

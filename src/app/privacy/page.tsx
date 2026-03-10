@@ -11,14 +11,14 @@ const copy = {
     back: "Retour à aurumdiary.com",
     i1t: "1. Introduction",
     i1b:
-      "Cette politique décrit comment Aurum collecte, utilise et protège vos données dans une logique privacy-by-design.",
+      "Cette politique décrit comment Aurum collecte, utilise et protège vos données dans une logique privacy-by-design au service d'une réflexion privée.",
     i2t: "2. Données collectées",
     i2a: "Données de compte: email et informations de profil.",
-    i2b: "Entrées de journal: stockées de façon sécurisée.",
+    i2b: "Écrits et reflets privés: stockés de façon sécurisée.",
     i2c: "Métadonnées d'usage: fréquence, durée, navigation produit.",
     i3t: "3. Utilisation des données",
     i3b:
-      "Les données servent à fournir le service, sécuriser votre compte, et améliorer la qualité des fonctionnalités.",
+      "Les données servent à fournir le service, sécuriser votre compte, personnaliser les fonctionnalités de réflexion et améliorer leur qualité.",
     i4t: "4. Sécurité",
     i4b:
       "Nous appliquons chiffrement en transit, contrôles d'accès stricts et journalisation de sécurité.",
@@ -32,14 +32,14 @@ const copy = {
     back: "Back to aurumdiary.com",
     i1t: "1. Introduction",
     i1b:
-      "This policy explains how Aurum collects, uses, and protects your data under a privacy-by-design model.",
+      "This policy explains how Aurum collects, uses, and protects your data for a private reflection experience built with privacy by design.",
     i2t: "2. Data We Collect",
     i2a: "Account data: email and profile information.",
-    i2b: "Journal entries: stored securely.",
+    i2b: "Private writings and reflections: stored securely.",
     i2c: "Usage metadata: frequency, session duration, product navigation.",
     i3t: "3. How We Use Data",
     i3b:
-      "Data is used to provide the service, secure your account, and improve feature quality.",
+      "Data is used to provide the service, secure your account, support reflection and personalization features, and improve feature quality.",
     i4t: "4. Security",
     i4b:
       "We apply encryption in transit, strict access controls, and security logging.",
@@ -54,8 +54,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const isFr = locale === "fr";
   const title = isFr ? "Politique de Confidentialité | Aurum" : "Privacy Policy | Aurum";
   const description = isFr
-    ? "Comment Aurum collecte, protège et traite vos données selon une approche privacy-by-design."
-    : "How Aurum collects, protects, and processes your data with a privacy-by-design approach.";
+    ? "Comment Aurum collecte, protège et traite vos données pour une expérience de réflexion privée conçue selon une approche privacy-by-design."
+    : "How Aurum collects, protects, and processes your data for a private reflection experience designed with privacy by design.";
   const canonical = "https://aurumdiary.com/privacy";
 
   return {

@@ -53,7 +53,7 @@
     "emailNotVerified": "Your email is not verified yet. We sent a new message. Please check your inbox and spam folder.",
     "loading": "Loading...",
     "title": "Sign in",
-    "description": "Sign in to your Aurum Sanctuary account",
+    "description": "Sign in to your private reflection space with Aurum",
     "quizBadge": "Your profile is waiting",
     "quizText": "Your reflection profile is ready. Sign in to view your personalized result.",
     "verified": "Email verified. You can sign in now.",
@@ -387,7 +387,7 @@
   },
   "signup": {
     "title": "Create an account",
-    "description": "Join Aurum Sanctuary and start your journey",
+    "description": "Create your private reflection space with Aurum",
     "quizBadge": "Your profile is waiting",
     "quizText": "Your reflection profile is ready! Create your account to discover your personalized result and begin your experience.",
     "encrypted": "Your data is end-to-end encrypted",
@@ -528,8 +528,8 @@
   "marketingPage": {
     "exitIntent": {
       "title": "One last thing before you go...",
-      "description": "Not sure where to begin? Take our 30-second well-being assessment to unlock your personalized profile.",
-      "cta": "Take the path (30s)",
+      "description": "Not sure where to begin? Take our 30-second reflection path to reveal your starting profile.",
+      "cta": "Take the reflection path (30s)",
       "dismiss": "No thanks, I want to keep browsing"
     },
     "quiz": {
@@ -710,23 +710,23 @@
       "profiles": {
         "D": {
           "title": "The Pioneer",
-          "description": "You like to move fast and decide quickly. Your journal helps you channel that energy."
+          "description": "You move quickly and decide decisively. Aurum helps channel that energy into clearer reflection and next steps."
         },
         "I": {
           "title": "The Connector",
-          "description": "You are guided by relationships and emotions. Your journal becomes a space of expression."
+          "description": "You are guided by connection and emotion. Aurum helps turn what you feel into something clearer and easier to express."
         },
         "S": {
           "title": "The Anchor",
-          "description": "You seek peace and steadiness. Your journal offers a stable refuge."
+          "description": "You seek steadiness and calm. Aurum gives you a private rhythm for slower, deeper reflection."
         },
         "C": {
           "title": "The Architect",
-          "description": "You like to understand before acting. Your journal becomes a lab for your ideas."
+          "description": "You like to understand before acting. Aurum helps structure what you notice and what keeps returning."
         },
         "MIXTE": {
           "title": "Mixed profile • The Balancer",
-          "description": "You combine several strengths. Your journal adapts to your complexity."
+          "description": "You combine several strengths. Aurum helps you notice how your inner patterns shift across situations."
         }
       }
     },
@@ -760,9 +760,9 @@
       }
     ],
     "useCases": {
-      "title": "Frequent pain points: how writing can truly help",
-      "subtitle": "Concrete ways to untangle what you feel, reduce inner overload, and regain clarity through reflection.",
-      "note": "Based on recent research on writing and psychological well-being",
+      "title": "Common moments when writing can restore clarity",
+      "subtitle": "Concrete ways private reflection can untangle what you feel, reduce inner overload, and reveal what keeps returning.",
+      "note": "Grounded in research on expressive writing and psychological well-being",
       "cards": [
         {
           "badge": "Insomnia",
@@ -835,12 +835,12 @@
       ]
     },
     "problem": {
-      "title": "What does a messy mind feel like?",
-      "body": "It is when thoughts keep circling without stopping. It can disrupt sleep, make you sad or irritable, and leave you feeling stuck."
+      "title": "What does inner overload feel like?",
+      "body": "Thoughts keep circling, feelings blur together, and it becomes harder to see what matters. Writing makes those signals easier to notice."
     },
     "solution": {
-      "title": "The quiet power of writing.",
-      "body": "Writing your thoughts down, even the most private ones, is like telling them “stop.” It helps them settle. Aurum is the place built for that, safely."
+      "title": "Writing slows things down enough to be seen.",
+      "body": "Private writing gives your thoughts somewhere to land. Aurum adds gentle guided reflection so clarity and recurring patterns can emerge over time."
     },
     "trust": {
       "eyebrow": "Your integrity, our priority",
@@ -861,18 +861,18 @@
         }
       ],
       "manifestoTitle": "Our trust manifesto",
-      "manifestoBody": "“We do not sell advertising. We do not sell your data. We sell clarity and peace of mind. Your journal is not a product. It is your sacred garden.”",
+      "manifestoBody": "\"We do not sell advertising. We do not sell your data. We protect a private space for clarity, reflection, and self-understanding. Your journal is not a product. It is your inner ground.\"",
       "seal": "Trust seal"
     },
     "finalCta": {
       "button": "Create my sanctuary now",
       "note": "No commitment • End-to-end encryption",
-      "subtitle": "You enter a space designed to help you write regularly, understand what is moving through you, and regain clarity without exposure.",
+      "subtitle": "You enter a private reflection space designed to help you write regularly, understand what keeps returning, and regain clarity over time.",
       "cards": [
         {
           "title": "writing",
           "eyebrow": "Writing",
-          "body": "A calm space to put down what occupies you, without distraction."
+          "body": "A calm space to write freely, without distraction or self-censorship."
         },
         {
           "title": "reflection",
@@ -887,7 +887,7 @@
         {
           "title": "continuity",
           "eyebrow": "Continuity",
-          "body": "You build a place that is yours, page after page, without starting over."
+          "body": "Your reflection deepens over time, page after page, without losing continuity."
         }
       ]
     },
@@ -969,7 +969,7 @@
       "privateBadge": "Private space",
       "titleLine1": "Your sanctuary",
       "titleLine2": "is waiting",
-      "description": "An encrypted space to write in private, then let Aurum help you clarify what you feel and what keeps returning over time.",
+      "description": "An encrypted private space to write freely, then receive AI-guided reflection that helps clarify what you feel and what keeps returning over time.",
       "featurePrivate": "100% Private",
       "featureEncrypted": "Encrypted",
       "featureAi": "AI-guided reflection",

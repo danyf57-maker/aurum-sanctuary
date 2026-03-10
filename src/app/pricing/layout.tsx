@@ -6,7 +6,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const isFr = locale === "fr";
   const title = isFr ? "Tarifs Aurum" : "Aurum Pricing";
   const description = isFr
-    ? "Compare les offres Aurum et choisis le plan qui correspond à ton rythme d'introspection."
+    ? "Compare les offres Aurum pour une réflexion privée guidée, plus de clarté émotionnelle et une lecture des motifs dans le temps."
     : "Compare Aurum plans for private AI-guided reflection, emotional clarity, and recurring pattern discovery.";
   const canonical = "https://aurumdiary.com/pricing";
 
