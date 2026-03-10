@@ -344,8 +344,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         toast({
           title: txt("Email non vérifié", "Email not verified"),
           description: txt(
-            "Nous venons de renvoyer un email de vérification. Vérifiez votre boîte de réception.",
-            "We sent a new verification email. Please check your inbox."
+            "Nous venons de renvoyer un email de vérification. Vérifiez votre boîte de réception pour ouvrir votre espace de réflexion privé.",
+            "We sent a new verification email. Please check your inbox to unlock your private reflection space."
           ),
           variant: "destructive",
         });
@@ -373,8 +373,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       toast({
         title: txt("Vérifiez votre email", "Check your email"),
         description: txt(
-          "Un message de vérification vient d'être envoyé.",
-          "A verification email has just been sent."
+          "Un message de vérification vient d'être envoyé pour activer votre espace de réflexion privé.",
+          "A verification email has just been sent to activate your private reflection space."
         ),
       });
     } catch (error) {

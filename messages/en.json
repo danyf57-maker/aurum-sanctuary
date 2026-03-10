@@ -50,19 +50,23 @@
   "login": {
     "invalidEmail": "Invalid email",
     "passwordMin": "Password must contain at least 6 characters",
-    "emailNotVerified": "Your email is not verified yet. We sent a new message. Please check your inbox and spam folder.",
+    "emailNotVerified": "Your email is not verified yet. We sent a new message. Please check your inbox and spam folder to unlock your private reflection space.",
     "loading": "Loading...",
     "title": "Sign in",
-    "description": "Sign in to your private reflection space with Aurum",
+    "description": "Return to your private reflection space. Pick up your writing, guided reflection, and recurring patterns.",
     "quizBadge": "Your profile is waiting",
     "quizText": "Your reflection profile is ready. Sign in to view your personalized result.",
-    "verified": "Email verified. You can sign in now.",
-    "checkEmail": "A verification email has just been sent. Please check your inbox and spam folder.",
+    "verified": "Email verified. You can sign in now and continue your private reflection.",
+    "checkEmail": "A verification email has just been sent. Please check your inbox and spam folder to unlock your private reflection space.",
     "inAppBrowser": "Google sign-in is blocked in this in-app browser. Open this page in Safari or Chrome and try again.",
     "google": "Continue with Google",
     "or": "OR CONTINUE WITH",
     "emailPlaceholder": "you@example.com",
     "password": "Password",
+    "pillPrivate": "Private by design",
+    "pillGuided": "Guided reflection",
+    "pillClarity": "Emotional clarity",
+    "pillPatterns": "Patterns over time",
     "forgot": "Forgot password?",
     "signingIn": "Signing in...",
     "signIn": "Sign in",
@@ -85,10 +89,10 @@
       "defaultFirstName": "dear explorer",
       "close": "Close",
       "welcome": "Welcome",
-      "line1": "This space is yours.",
-      "line2": "No rush here. Aurum helps you notice what feels alive, what keeps returning, and what may need more clarity.",
-      "line3": "Write what feels most present. Clarity often arrives after the words.",
-      "badge": "Private guided reflection"
+      "line1": "This private space is yours.",
+      "line2": "Write without filtering. Aurum reflects back what stands out, what keeps returning, and where more clarity may be waiting.",
+      "line3": "Over time, your pages begin to reveal recurring emotional patterns you can recognize more easily.",
+      "badge": "Private AI-guided reflection"
     },
     "personalityQuestionnaire": {
       "fallbackArchetype": "The Decider",
@@ -387,10 +391,10 @@
   },
   "signup": {
     "title": "Create an account",
-    "description": "Create your private reflection space with Aurum",
+    "description": "Create your private reflection space. Write freely, receive guided reflection, and notice recurring patterns over time.",
     "quizBadge": "Your profile is waiting",
     "quizText": "Your reflection profile is ready! Create your account to discover your personalized result and begin your experience.",
-    "encrypted": "Your data is end-to-end encrypted",
+    "encrypted": "End-to-end encrypted and private by design",
     "inAppBrowser": "Google sign-in is blocked in this in-app browser. Open this page in Safari or Chrome and try again.",
     "google": "Continue with Google",
     "or": "Or continue with",
@@ -404,11 +408,15 @@
     "privacy": "privacy policy",
     "creating": "Creating...",
     "create": "Create account",
-    "emailNote": "A verification email will be sent to activate your account.",
+    "emailNote": "A verification email will activate your private reflection space.",
     "alreadyAccount": "Already have an account?",
     "signIn": "Sign in",
-    "checkEmail": "Check your inbox to activate your account.",
+    "checkEmail": "Check your inbox to activate your private reflection space.",
     "loading": "Loading...",
+    "pillPrivate": "Private by design",
+    "pillGuided": "Guided reflection",
+    "pillClarity": "Emotional clarity",
+    "pillPatterns": "Patterns over time",
     "validation": {
       "invalidEmail": "Invalid email",
       "passwordMinLength": "Password must contain at least 8 characters",
@@ -508,8 +516,8 @@
       "5": {
         "hint": "After a heavy day, write what stayed with you.",
         "detail": "Even 2 minutes of reflection can make a pattern easier to see.",
-        "quote": "Writing is a form of therapy.",
-        "author": "Graham Greene"
+        "quote": "Clarity begins when words stop circling and start landing.",
+        "author": "Aurum"
       },
       "6": {
         "hint": "When everything is foggy, one clear sentence is enough to start again.",
@@ -944,9 +952,9 @@
   },
   "authDialog": {
     "createTitle": "Create my account",
-    "createDescription": "Begin your path toward more clarity",
+    "createDescription": "Create your private reflection space and begin writing with guided clarity.",
     "signInTitle": "Sign in",
-    "signInDescription": "Return to your sanctuary",
+    "signInDescription": "Return to your private reflection space and continue noticing what keeps returning.",
     "google": "Continue with Google",
     "or": "Or",
     "yourName": "Your name",
@@ -969,17 +977,22 @@
       "privateBadge": "Private space",
       "titleLine1": "Your sanctuary",
       "titleLine2": "is waiting",
-      "description": "An encrypted private space to write freely, then receive AI-guided reflection that helps clarify what you feel and what keeps returning over time.",
+      "description": "An encrypted private space to write freely, receive guided reflection, and begin seeing recurring emotional patterns over time.",
       "featurePrivate": "100% Private",
       "featureEncrypted": "Encrypted",
-      "featureAi": "AI-guided reflection",
+      "featureAi": "Guided reflection",
+      "featurePatterns": "Patterns over time",
       "cta": "Enter your sanctuary",
       "signInNote": "Secure sign-in via Google or email",
       "footerQuote": "\"Write what needs to be placed into words. The rest will come.\""
     },
     "authenticated": {
       "title": "Your private writing space",
-      "subtitle": "Write without self-censorship. Aurum will help reflect back what stands out, what returns, and what may need more clarity."
+      "subtitle": "Write without self-censorship. Aurum reflects back what stands out, helps you clarify what you feel, and lets recurring patterns emerge over time.",
+      "signalPrivate": "Private by design",
+      "signalGuided": "Guided after each page",
+      "signalClarity": "Emotional clarity",
+      "signalPatterns": "Patterns over time"
     },
     "quotes": [
       {
@@ -991,8 +1004,8 @@
         "author": "Margaret Atwood"
       },
       {
-        "text": "Writing is a form of therapy.",
-        "author": "Graham Greene"
+        "text": "Clarity begins when words stop circling and start landing.",
+        "author": "Aurum"
       },
       {
         "text": "Writing is a way of talking without being interrupted.",
@@ -1060,15 +1073,15 @@
   "trialOffer": {
     "badge": "7 DAYS FREE",
     "title": "Start with 7 days of private guided reflection.",
-    "body": "Write without self-censorship, receive gentle AI-guided reflection, and notice recurring emotional patterns before your first charge.",
+    "body": "Write without self-censorship, receive guided reflection after each page, and notice recurring emotional patterns before your first charge.",
     "cta": "View plans"
   },
   "paywall": {
     "close": "Close",
     "title": "Keep your reflections unfolding",
-    "intro": "Unlock the full Aurum experience:",
-    "benefit1": "Receive AI-guided reflection after each entry",
-    "benefit2": "See recurring themes and emotional patterns build over time",
+    "intro": "Continue with the full Aurum reflection experience:",
+    "benefit1": "Receive guided reflection after each entry",
+    "benefit2": "See recurring themes and emotional patterns become easier to recognize over time",
     "benefit3": "Keep your private reflection history and clarity map growing",
     "reassurance": "Private by design. No ads, no data sale, no pressure.",
     "subscribe": "Start my 7 free days",

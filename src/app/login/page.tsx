@@ -69,6 +69,12 @@ function LoginForm() {
   const verified = searchParams.get("verified");
   const checkEmail = searchParams.get("check_email");
   const prefilledEmail = searchParams.get("email") ?? "";
+  const onboardingPills = [
+    t("pillPrivate"),
+    t("pillGuided"),
+    t("pillClarity"),
+    t("pillPatterns"),
+  ];
 
   useEffect(() => {
     if (!authLoading && user) {
@@ -185,6 +191,17 @@ function LoginForm() {
               <p className="text-sm text-amber-800 dark:text-amber-200">{t("quizText")}</p>
             </motion.div>
           )}
+
+          <div className="mt-4 flex flex-wrap gap-2">
+            {onboardingPills.map((pill) => (
+              <span
+                key={pill}
+                className="rounded-full border border-stone-200 bg-stone-50 px-3 py-1 text-xs font-medium text-stone-600"
+              >
+                {pill}
+              </span>
+            ))}
+          </div>
         </CardHeader>
         <CardContent className="space-y-4">
           {verified && (

@@ -50,19 +50,23 @@
   "login": {
     "invalidEmail": "Email invalide",
     "passwordMin": "Le mot de passe doit contenir au moins 6 caractères",
-    "emailNotVerified": "Votre email n'est pas encore vérifié. Nous venons de renvoyer un message. Vérifiez vos mails et vos spams.",
+    "emailNotVerified": "Votre email n'est pas encore vérifié. Nous venons de renvoyer un message. Vérifiez vos mails et vos spams pour ouvrir votre espace de réflexion privé.",
     "loading": "Chargement...",
     "title": "Connexion",
-    "description": "Connecte-toi à ton espace de réflexion privé Aurum",
+    "description": "Retrouve ton espace de réflexion privé. Reprends tes pages, tes reflets guidés et les motifs qui émergent.",
     "quizBadge": "Votre profil vous attend",
     "quizText": "Votre profil de réflexion est prêt ! Connectez-vous pour découvrir votre résultat personnalisé.",
-    "verified": "Email vérifié. Vous pouvez vous connecter.",
-    "checkEmail": "Un email de vérification vient d'être envoyé. Merci de vérifier votre boîte de réception et vos spams.",
+    "verified": "Email vérifié. Vous pouvez vous connecter et reprendre votre réflexion privée.",
+    "checkEmail": "Un email de vérification vient d'être envoyé. Merci de vérifier votre boîte de réception et vos spams pour ouvrir votre espace de réflexion privé.",
     "inAppBrowser": "Connexion Google bloquée dans ce navigateur intégré. Ouvre cette page dans Safari ou Chrome puis réessaie.",
     "google": "Continuer avec Google",
     "or": "Ou continuer avec",
     "emailPlaceholder": "vous@exemple.com",
     "password": "Mot de passe",
+    "pillPrivate": "Privé par conception",
+    "pillGuided": "Reflet guidé",
+    "pillClarity": "Clarté émotionnelle",
+    "pillPatterns": "Motifs dans le temps",
     "forgot": "Mot de passe oublié ?",
     "signingIn": "Connexion...",
     "signIn": "Se connecter",
@@ -85,10 +89,10 @@
       "defaultFirstName": "cher explorateur",
       "close": "Fermer",
       "welcome": "Bienvenue",
-      "line1": "Cet espace est le tien.",
-      "line2": "Ici, rien ne presse. Aurum t'aide à remarquer ce qui est vivant, ce qui revient, et ce qui demande plus de clarté.",
-      "line3": "Écris ce qui est le plus présent. La clarté arrive souvent après les mots.",
-      "badge": "Réflexion guidée privée"
+      "line1": "Cet espace privé est le tien.",
+      "line2": "Écris sans te filtrer. Aurum te renvoie ce qui ressort, ce qui revient, et là où plus de clarté t'attend peut-être.",
+      "line3": "Avec le temps, tes pages commencent à révéler des motifs émotionnels récurrents que tu peux reconnaître plus facilement.",
+      "badge": "Réflexion privée guidée par IA"
     },
     "personalityQuestionnaire": {
       "fallbackArchetype": "Le Décideur",
@@ -387,10 +391,10 @@
   },
   "signup": {
     "title": "Créer un compte",
-    "description": "Crée ton espace de réflexion privé avec Aurum",
+    "description": "Crée ton espace de réflexion privé. Écris librement, reçois des reflets guidés, et remarque les motifs récurrents dans le temps.",
     "quizBadge": "Votre profil vous attend",
     "quizText": "Votre profil de réflexion est prêt ! Créez votre compte pour découvrir votre résultat personnalisé et commencer votre expérience.",
-    "encrypted": "Vos données sont chiffrées de bout en bout",
+    "encrypted": "Chiffré de bout en bout et privé par conception",
     "inAppBrowser": "Connexion Google bloquée dans ce navigateur intégré. Ouvre cette page dans Safari ou Chrome puis réessaie.",
     "google": "Continuer avec Google",
     "or": "Ou continuer avec",
@@ -404,11 +408,15 @@
     "privacy": "politique de confidentialité",
     "creating": "Création...",
     "create": "Créer un compte",
-    "emailNote": "Un email de vérification vous sera envoyé pour activer votre compte.",
+    "emailNote": "Un email de vérification activera votre espace de réflexion privé.",
     "alreadyAccount": "Vous avez déjà un compte ?",
     "signIn": "Se connecter",
-    "checkEmail": "Vérifiez votre boîte de réception pour activer votre compte.",
+    "checkEmail": "Vérifiez votre boîte de réception pour activer votre espace de réflexion privé.",
     "loading": "Chargement...",
+    "pillPrivate": "Privé par conception",
+    "pillGuided": "Reflet guidé",
+    "pillClarity": "Clarté émotionnelle",
+    "pillPatterns": "Motifs dans le temps",
     "validation": {
       "invalidEmail": "Email invalide",
       "passwordMinLength": "Le mot de passe doit contenir au moins 8 caractères",
@@ -508,8 +516,8 @@
       "5": {
         "hint": "Après une journée lourde, écris ce qui est resté avec toi.",
         "detail": "Même 2 minutes de réflexion peuvent rendre un motif plus visible.",
-        "quote": "Écrire est une forme de thérapie.",
-        "author": "Graham Greene"
+        "quote": "La clarté commence quand les mots cessent de tourner et commencent à se poser.",
+        "author": "Aurum"
       },
       "6": {
         "hint": "Quand tout est flou, une phrase claire suffit pour repartir.",
@@ -944,9 +952,9 @@
   },
   "authDialog": {
     "createTitle": "Créer mon compte",
-    "createDescription": "Commence ton chemin vers plus de clarté",
+    "createDescription": "Crée ton espace de réflexion privé et commence à écrire avec plus de clarté guidée.",
     "signInTitle": "Se connecter",
-    "signInDescription": "Retrouve ton sanctuaire",
+    "signInDescription": "Retrouve ton espace de réflexion privé et ce qui revient en toi.",
     "google": "Continuer avec Google",
     "or": "Ou",
     "yourName": "Ton nom",
@@ -969,17 +977,22 @@
       "privateBadge": "Espace privé",
       "titleLine1": "Ton sanctuaire",
       "titleLine2": "t'attend",
-      "description": "Un espace privé et chiffré pour écrire librement, puis recevoir une réflexion guidée par IA qui aide à clarifier ce que tu ressens et ce qui revient dans le temps.",
+      "description": "Un espace privé et chiffré pour écrire librement, recevoir un reflet guidé, et commencer à voir les motifs émotionnels qui reviennent dans le temps.",
       "featurePrivate": "100% privé",
       "featureEncrypted": "Chiffré",
-      "featureAi": "Réflexion guidée par IA",
+      "featureAi": "Reflet guidé",
+      "featurePatterns": "Motifs dans le temps",
       "cta": "Entrer dans le Sanctuaire",
       "signInNote": "Connexion sécurisée via Google ou Email",
       "footerQuote": "\"Écris ce qui demande à être posé. Le reste viendra.\""
     },
     "authenticated": {
       "title": "Ton espace d'écriture privé",
-      "subtitle": "Écris sans te censurer. Aurum t'aidera à te renvoyer ce qui ressort, ce qui revient, et ce qui demande plus de clarté."
+      "subtitle": "Écris sans te censurer. Aurum te renvoie ce qui ressort, t'aide à clarifier ce que tu ressens, et laisse les motifs récurrents émerger dans le temps.",
+      "signalPrivate": "Privé par conception",
+      "signalGuided": "Reflet après chaque page",
+      "signalClarity": "Clarté émotionnelle",
+      "signalPatterns": "Motifs dans le temps"
     },
     "quotes": [
       {
@@ -991,8 +1004,8 @@
         "author": "Margaret Atwood"
       },
       {
-        "text": "Écrire est une forme de thérapie.",
-        "author": "Graham Greene (attribution courante)"
+        "text": "La clarté commence quand les mots cessent de tourner et commencent à se poser.",
+        "author": "Aurum"
       },
       {
         "text": "Écrire, c'est une façon de parler sans être interrompu.",
@@ -1060,15 +1073,15 @@
   "trialOffer": {
     "badge": "7 JOURS OFFERTS",
     "title": "Commence avec 7 jours de réflexion guidée privée.",
-    "body": "Écris sans te censurer, reçois des reflets guidés et commence à voir tes thèmes récurrents avant la première facturation.",
+    "body": "Écris sans te censurer, reçois un reflet guidé après chaque page, et commence à voir tes motifs émotionnels récurrents avant la première facturation.",
     "cta": "Voir l'offre"
   },
   "paywall": {
     "close": "Fermer",
     "title": "Laisse tes reflets continuer à se déployer",
-    "intro": "Débloque l'expérience Aurum complète :",
+    "intro": "Continue avec l'expérience complète de réflexion Aurum :",
     "benefit1": "Recevoir un reflet guidé après chaque page",
-    "benefit2": "Voir les thèmes récurrents et les motifs émotionnels se construire dans le temps",
+    "benefit2": "Voir les thèmes récurrents et les motifs émotionnels devenir plus reconnaissables dans le temps",
     "benefit3": "Continuer à faire grandir ton historique privé et ta carte de clarté",
     "reassurance": "Privé par conception. Pas de publicité, pas de vente de données, pas de pression.",
     "subscribe": "Activer mes 7 jours offerts",

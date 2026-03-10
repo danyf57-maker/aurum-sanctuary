@@ -24,7 +24,7 @@ const REMINDER_LIBRARY: Record<Locale, Record<Tone, string[]>> = {
     clarity: [
       '{firstName}, tu veux y voir un peu plus clair ?',
       '{firstName}, qu\'est-ce qui prend le plus de place dans ta tete ?',
-      '{firstName}, pose ce qui tourne en boucle.',
+      '{firstName}, pose ce qui revient le plus en ce moment.',
     ],
     pressure_release: [
       '{firstName}, tu veux relacher un peu la pression ?',
@@ -34,7 +34,7 @@ const REMINDER_LIBRARY: Record<Locale, Record<Tone, string[]>> = {
     routine: [
       '{firstName}, tu reprends ton fil aujourd\'hui ?',
       '{firstName}, quelques lignes pour garder ton rythme ?',
-      '{firstName}, tu veux continuer ton espace d\'ecriture ?',
+      '{firstName}, tu veux revenir a ton espace de reflection prive ?',
     ],
   },
   en: {
@@ -56,7 +56,7 @@ const REMINDER_LIBRARY: Record<Locale, Record<Tone, string[]>> = {
     routine: [
       '{firstName}, ready to pick up your thread today?',
       '{firstName}, a few lines to keep your rhythm going?',
-      '{firstName}, want to come back to your writing space?',
+      '{firstName}, want to come back to your private reflection space?',
     ],
   },
 };
@@ -74,8 +74,8 @@ function buildCopy(params: { locale: Locale; tone: Tone; firstName?: string | nu
   return {
     title: template.replace('{firstName}', firstName),
     body: params.locale === 'fr'
-      ? 'Ouvre Aurum et ecris quelques lignes, sans pression.'
-      : 'Open Aurum and write a few lines, without pressure.',
+      ? 'Ouvre Aurum et ecris quelques lignes privees. Aurum t aidera a voir ce qui ressort et ce qui revient.'
+      : 'Open Aurum and write a few private lines. Aurum will help you notice what stands out and what keeps returning.',
   };
 }
 

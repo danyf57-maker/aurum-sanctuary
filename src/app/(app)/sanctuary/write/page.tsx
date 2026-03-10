@@ -19,7 +19,7 @@ import { PremiumJournalForm } from "@/components/sanctuary/premium-journal-form"
 import { AuthDialog } from "@/components/auth/auth-dialog";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
-import { Feather, Sparkles, Shield, Lock, ChevronRight } from "lucide-react";
+import { Feather, Sparkles, Shield, Lock, ChevronRight, Compass } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 export default function WritePage() {
@@ -29,6 +29,12 @@ export default function WritePage() {
   const [isVisible, setIsVisible] = useState(false);
   const writingQuotes = t.raw("quotes") as { text: string; author: string }[];
   const [quoteIndex, setQuoteIndex] = useState(0);
+  const authenticatedSignals = [
+    t("authenticated.signalPrivate"),
+    t("authenticated.signalGuided"),
+    t("authenticated.signalClarity"),
+    t("authenticated.signalPatterns"),
+  ];
 
   useEffect(() => {
     // Trigger entrance animation
@@ -159,6 +165,10 @@ export default function WritePage() {
                               <Sparkles className="h-3.5 w-3.5 text-[#C5A059]" />
                               <span>{t("anonymous.featureAi")}</span>
                             </div>
+                            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-stone-100/80">
+                              <Compass className="h-3.5 w-3.5 text-[#C5A059]" />
+                              <span>{t("anonymous.featurePatterns")}</span>
+                            </div>
                           </div>
                         </motion.div>
 
@@ -239,6 +249,16 @@ export default function WritePage() {
               <p className="text-stone-500 text-lg">
                 {t("authenticated.subtitle")}
               </p>
+              <div className="mt-5 flex flex-wrap justify-center gap-2">
+                {authenticatedSignals.map((signal) => (
+                  <span
+                    key={signal}
+                    className="rounded-full border border-stone-200 bg-white/80 px-3 py-1 text-xs font-medium text-stone-600"
+                  >
+                    {signal}
+                  </span>
+                ))}
+              </div>
             </motion.header>
 
             {/* Writing Form */}

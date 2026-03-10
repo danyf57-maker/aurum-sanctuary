@@ -58,9 +58,9 @@ const copy = {
         source: "Commonly attributed quote.",
       },
       {
-        quote: "Writing is a form of therapy.",
-        author: "Graham Greene",
-        source: "Common attribution; wording may vary by source.",
+        quote: "Clarity begins when words stop circling and start landing.",
+        author: "Aurum",
+        source: "Original Aurum line used in the product experience.",
       },
     ],
   },
