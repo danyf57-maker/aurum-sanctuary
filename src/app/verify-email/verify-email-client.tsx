@@ -16,6 +16,8 @@ export default function VerifyEmailClient() {
   const router = useRouter();
   const locale = useLocale();
   const to = (href: string) => localizeHref(href, locale);
+  const isFr = locale === 'fr';
+  const txt = (fr: string, en: string) => (isFr ? fr : en);
   const [status, setStatus] = useState<Status>('idle');
   const [error, setError] = useState<string | null>(null);
 
@@ -25,7 +27,7 @@ export default function VerifyEmailClient() {
 
     if (!mode || !oobCode || mode !== 'verifyEmail') {
       setStatus('error');
-      setError('Lien de vérification invalide ou expiré.');
+      setError(txt('Lien de vérification invalide ou expiré.', 'Invalid or expired verification link.'));
       return;
     }
 
@@ -36,7 +38,7 @@ export default function VerifyEmailClient() {
         setStatus('success');
       } catch (e) {
         setStatus('error');
-        setError('Impossible de vérifier votre email. Merci de réessayer.');
+        setError(txt('Impossible de vérifier votre email. Merci de réessayer.', 'Unable to verify your email. Please try again.'));
       }
     };
 
@@ -47,22 +49,32 @@ export default function VerifyEmailClient() {
     <div className="min-h-screen flex items-center justify-center p-4 bg-stone-50">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="font-headline text-2xl">Vérification Aurum</CardTitle>
+          <CardTitle className="font-headline text-2xl">
+            {txt('Vérifier votre email', 'Verify your email')}
+          </CardTitle>
           <CardDescription>
-            Aurum est un miroir intime pour déposer vos pensées et retrouver de la clarté.
+            {txt(
+              'Ouvrez votre espace de réflexion privé pour écrire librement, recevoir des reflets guidés, et voir ce qui revient dans le temps.',
+              'Open your private reflection space to write freely, receive guided reflection, and notice what keeps returning over time.'
+            )}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {status === 'verifying' && (
-            <p className="text-sm text-muted-foreground">Vérification en cours...</p>
+            <p className="text-sm text-muted-foreground">
+              {txt('Vérification en cours...', 'Verifying...')}
+            </p>
           )}
           {status === 'success' && (
             <>
               <p className="text-sm text-stone-700">
-                Votre email est vérifié. Vous pouvez maintenant vous connecter.
+                {txt(
+                  'Votre email est vérifié. Vous pouvez maintenant vous connecter et commencer votre réflexion privée guidée.',
+                  'Your email is verified. You can now sign in and begin your private guided reflection.'
+                )}
               </p>
               <Button onClick={() => router.push(to('/login?verified=1'))} className="w-full">
-                Se connecter
+                {txt('Se connecter', 'Sign in')}
               </Button>
             </>
           )}
@@ -70,7 +82,7 @@ export default function VerifyEmailClient() {
             <>
               <p className="text-sm text-destructive">{error}</p>
               <Button variant="outline" onClick={() => router.push(to('/login'))} className="w-full">
-                Retour à la connexion
+                {txt('Retour à la connexion', 'Back to sign in')}
               </Button>
             </>
           )}

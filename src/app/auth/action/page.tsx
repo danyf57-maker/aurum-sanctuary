@@ -29,6 +29,8 @@ function AuthActionContent() {
   const router = useRouter();
   const locale = useLocale();
   const to = (href: string) => localizeHref(href, locale);
+  const isFr = locale === 'fr';
+  const txt = (fr: string, en: string) => (isFr ? fr : en);
 
   const [mode, setMode] = useState<ActionMode>(null);
   const [actionCode, setActionCode] = useState<string | null>(null);
@@ -50,7 +52,7 @@ function AuthActionContent() {
 
     if (!code) {
       setStatus('error');
-      setMessage('Code d\'action manquant ou invalide.');
+      setMessage(txt("Code d'action manquant ou invalide.", "Missing or invalid action code."));
       return;
     }
 
@@ -70,7 +72,12 @@ function AuthActionContent() {
       setVerifiedEmail(email);
       await applyActionCode(auth, code);
       setStatus('success');
-      setMessage('Votre email a été vérifié avec succès !');
+      setMessage(
+        txt(
+          "Votre email est vérifié. Connectez-vous pour commencer votre réflexion privée guidée et voir ce qui revient dans le temps.",
+          "Your email is verified. Sign in to begin your private guided reflection and notice what keeps returning over time."
+        )
+      );
 
       // Redirect to login after 3 seconds
       setTimeout(() => {
@@ -83,11 +90,26 @@ function AuthActionContent() {
       setStatus('error');
 
       if (error.code === 'auth/invalid-action-code') {
-        setMessage('Ce lien de vérification est invalide ou a déjà été utilisé.');
+        setMessage(
+          txt(
+            "Ce lien de vérification est invalide ou a déjà été utilisé.",
+            "This verification link is invalid or has already been used."
+          )
+        );
       } else if (error.code === 'auth/expired-action-code') {
-        setMessage('Ce lien de vérification a expiré. Veuillez demander un nouveau lien.');
+        setMessage(
+          txt(
+            "Ce lien de vérification a expiré. Veuillez demander un nouveau lien.",
+            "This verification link has expired. Please request a new one."
+          )
+        );
       } else {
-        setMessage('Une erreur est survenue lors de la vérification. Veuillez réessayer.');
+        setMessage(
+          txt(
+            "Une erreur est survenue lors de la vérification. Veuillez réessayer.",
+            "Something went wrong during verification. Please try again."
+          )
+        );
       }
     }
   };
@@ -96,17 +118,32 @@ function AuthActionContent() {
     try {
       await verifyPasswordResetCode(auth, code);
       setStatus('success');
-      setMessage('Code vérifié. Veuillez entrer votre nouveau mot de passe.');
+      setMessage(
+        txt(
+          "Code vérifié. Vous pouvez maintenant choisir un nouveau mot de passe.",
+          "Code verified. You can now choose a new password."
+        )
+      );
     } catch (error: any) {
       console.error('Password reset code verification error:', error);
       setStatus('error');
 
       if (error.code === 'auth/invalid-action-code') {
-        setMessage('Ce lien de réinitialisation est invalide ou a déjà été utilisé.');
+        setMessage(
+          txt(
+            "Ce lien de réinitialisation est invalide ou a déjà été utilisé.",
+            "This reset link is invalid or has already been used."
+          )
+        );
       } else if (error.code === 'auth/expired-action-code') {
-        setMessage('Ce lien de réinitialisation a expiré. Veuillez demander un nouveau lien.');
+        setMessage(
+          txt(
+            "Ce lien de réinitialisation a expiré. Veuillez demander un nouveau lien.",
+            "This reset link has expired. Please request a new one."
+          )
+        );
       } else {
-        setMessage('Une erreur est survenue. Veuillez réessayer.');
+        setMessage(txt("Une erreur est survenue. Veuillez réessayer.", "Something went wrong. Please try again."));
       }
     }
   };
@@ -115,12 +152,12 @@ function AuthActionContent() {
     e.preventDefault();
 
     if (newPassword !== confirmPassword) {
-      setMessage('Les mots de passe ne correspondent pas.');
+      setMessage(txt("Les mots de passe ne correspondent pas.", "Passwords do not match."));
       return;
     }
 
     if (newPassword.length < 8) {
-      setMessage('Le mot de passe doit contenir au moins 8 caractères.');
+      setMessage(txt("Le mot de passe doit contenir au moins 8 caractères.", "Password must contain at least 8 characters."));
       return;
     }
 
@@ -131,7 +168,12 @@ function AuthActionContent() {
     try {
       await confirmPasswordReset(auth, actionCode, newPassword);
       setStatus('success');
-      setMessage('Votre mot de passe a été réinitialisé avec succès !');
+      setMessage(
+        txt(
+          "Votre mot de passe a été réinitialisé avec succès.",
+          "Your password has been reset successfully."
+        )
+      );
 
       setTimeout(() => {
         router.push(to('/login?reset=true'));
@@ -139,7 +181,12 @@ function AuthActionContent() {
     } catch (error: any) {
       console.error('Password reset error:', error);
       setStatus('error');
-      setMessage('Erreur lors de la réinitialisation. Veuillez réessayer.');
+      setMessage(
+        txt(
+          "Erreur lors de la réinitialisation. Veuillez réessayer.",
+          "There was an error while resetting your password. Please try again."
+        )
+      );
     } finally {
       setResetting(false);
     }
@@ -149,11 +196,21 @@ function AuthActionContent() {
     try {
       await applyActionCode(auth, code);
       setStatus('success');
-      setMessage('Votre adresse email a été restaurée avec succès.');
+      setMessage(
+        txt(
+          "Votre adresse email a été restaurée avec succès.",
+          "Your email address has been restored successfully."
+        )
+      );
     } catch (error: any) {
       console.error('Email recovery error:', error);
       setStatus('error');
-      setMessage('Une erreur est survenue lors de la restauration de votre email.');
+      setMessage(
+        txt(
+          "Une erreur est survenue lors de la restauration de votre email.",
+          "Something went wrong while restoring your email address."
+        )
+      );
     }
   };
 
@@ -168,9 +225,9 @@ function AuthActionContent() {
           </div>
 
           <CardTitle className="font-headline text-2xl">
-            {mode === 'verifyEmail' && 'Vérification d\'email'}
-            {mode === 'resetPassword' && 'Réinitialiser le mot de passe'}
-            {mode === 'recoverEmail' && 'Restaurer l\'email'}
+            {mode === 'verifyEmail' && txt("Vérifier votre email", "Verify your email")}
+            {mode === 'resetPassword' && txt("Réinitialiser le mot de passe", "Reset your password")}
+            {mode === 'recoverEmail' && txt("Restaurer votre email", "Restore your email")}
           </CardTitle>
 
           <CardDescription className="mt-2">
@@ -184,7 +241,7 @@ function AuthActionContent() {
               <div>
                 <Input
                   type="password"
-                  placeholder="Nouveau mot de passe"
+                  placeholder={txt("Nouveau mot de passe", "New password")}
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   required
@@ -195,7 +252,7 @@ function AuthActionContent() {
               <div>
                 <Input
                   type="password"
-                  placeholder="Confirmer le mot de passe"
+                  placeholder={txt("Confirmer le mot de passe", "Confirm password")}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
@@ -207,10 +264,10 @@ function AuthActionContent() {
                 {resetting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Réinitialisation...
+                    {txt("Réinitialisation...", "Resetting...")}
                   </>
                 ) : (
-                  'Réinitialiser le mot de passe'
+                  txt("Réinitialiser le mot de passe", "Reset password")
                 )}
               </Button>
             </form>
@@ -229,7 +286,9 @@ function AuthActionContent() {
               }}
               className="w-full"
             >
-              Retour à la connexion
+              {mode === 'verifyEmail'
+                ? txt("Se connecter à Aurum", "Sign in to Aurum")
+                : txt("Retour à la connexion", "Back to sign in")}
             </Button>
           </CardContent>
         )}
@@ -238,21 +297,30 @@ function AuthActionContent() {
   );
 }
 
+function LoadingFallback() {
+  const locale = useLocale();
+  const isFr = locale === 'fr';
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-background">
+      <Card className="w-full max-w-md">
+        <CardHeader className="text-center">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+            <Loader2 className="h-8 w-8 text-primary animate-spin" />
+          </div>
+          <CardTitle className="font-headline text-2xl">
+            {isFr ? "Vérification en cours..." : "Verifying..."}
+          </CardTitle>
+        </CardHeader>
+      </Card>
+    </div>
+  );
+}
+
 export default function AuthActionPage() {
   return (
     <Suspense
-      fallback={
-        <div className="min-h-screen flex items-center justify-center bg-background">
-          <Card className="w-full max-w-md">
-            <CardHeader className="text-center">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-                <Loader2 className="h-8 w-8 text-primary animate-spin" />
-              </div>
-              <CardTitle className="font-headline text-2xl">Chargement...</CardTitle>
-            </CardHeader>
-          </Card>
-        </div>
-      }
+      fallback={<LoadingFallback />}
     >
       <AuthActionContent />
     </Suspense>

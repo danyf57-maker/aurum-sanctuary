@@ -210,8 +210,8 @@ export default function SettingsPage() {
       subscription: {
         title: isFr ? "Abonnement" : "Subscription",
         description: isFr
-          ? "Gérez votre formule d'abonnement Aurum."
-          : "Manage your Aurum subscription plan.",
+          ? "Gérez votre formule Aurum et la continuité de votre réflexion privée."
+          : "Manage your Aurum plan and the continuity of your private reflection.",
         currentPlan: isFr ? "Formule actuelle" : "Current plan",
         noPlan: isFr ? "Aucune formule active" : "No active plan",
         pricing: isFr ? "Voir les tarifs" : "View pricing",
@@ -224,11 +224,11 @@ export default function SettingsPage() {
         manage: isFr ? "Gérer la facturation" : "Manage billing",
         annualOfferBadge: isFr ? "2 mois offerts" : "2 months free",
         annualOfferTitle: isFr
-          ? "Passez à l'annuel, sans changer votre rythme"
-          : "Move to yearly, without changing your rhythm",
+          ? "Passe à l'annuel sans casser ton fil de réflexion"
+          : "Move to yearly without breaking your reflection thread",
         annualOfferBody: isFr
-          ? "Vous utilisez Aurum depuis déjà quelques mois. Si vous savez que vous souhaitez continuer, le forfait annuel vous offre 2 mois."
-          : "You have already been using Aurum for a few months. If you know you want to continue, the yearly plan gives you 2 months free.",
+          ? "Si Aurum fait déjà partie de ta manière d'écrire, de recevoir des reflets guidés, et de voir ce qui revient, le forfait annuel t'offre 2 mois."
+          : "If Aurum is already part of how you write, receive guided reflection, and notice what keeps returning, the yearly plan gives you 2 months free.",
         annualOfferMeta: isFr
           ? "Proposé après 3 mois d'abonnement mensuel, directement dans votre espace de facturation Stripe."
           : "Shown after 3 months on monthly billing, directly inside your Stripe billing space.",

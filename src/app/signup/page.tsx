@@ -100,6 +100,12 @@ function SignupPage() {
   const quizSyncInProgressRef = useRef(false);
   const quizComplete = searchParams.get("quiz") === "complete";
   const redirectAfterGoogle = quizComplete ? "/sanctuary/magazine" : "/sanctuary/write";
+  const onboardingPills = [
+    tSign("pillPrivate"),
+    tSign("pillGuided"),
+    tSign("pillClarity"),
+    tSign("pillPatterns"),
+  ];
 
   useEffect(() => {
     if (!user || !quizComplete || !quizData?.profile || quizSyncInProgressRef.current) return;
@@ -280,6 +286,17 @@ function SignupPage() {
             <p className="text-sm text-emerald-700 dark:text-emerald-300 font-medium">
               {tSign("encrypted")}
             </p>
+          </div>
+
+          <div className="mt-4 flex flex-wrap gap-2">
+            {onboardingPills.map((pill) => (
+              <span
+                key={pill}
+                className="rounded-full border border-stone-200 bg-stone-50 px-3 py-1 text-xs font-medium text-stone-600"
+              >
+                {pill}
+              </span>
+            ))}
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
