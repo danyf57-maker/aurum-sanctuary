@@ -66,14 +66,17 @@ aurum-sanctuary/
 ### Installation
 
 ```bash
-# Install dependencies
-npm install
+# Install dependencies and create .env.local if missing
+make bootstrap
 
-# Setup environment variables
-cp .env.example .env.local
+# Review environment safety before using real credentials
+make guard-env
 
-# Run development server
-npm run dev
+# Run the local verification harness
+make verify
+
+# Start development server
+make dev
 ```
 
 **For detailed setup instructions, see [docs/development-setup.md](docs/development-setup.md)**
@@ -91,18 +94,17 @@ See `.env.example` for required variables:
 ## Development
 
 ```bash
-# Run dev server (Turbopack)
-npm run dev
+# Bootstrap from zero
+make bootstrap
 
-# Type checking
-npm run typecheck
+# Environment safety checks
+make guard-env
 
-# Linting
-npm run lint
-
-# Build for production
-npm run build
+# Full local verification harness
+make verify
 ```
+
+`make verify` runs environment checks, client/server boundary checks, ESLint, TypeScript, EN/FR i18n parity, Next.js build, and Cloud Functions build.
 
 ## Architecture Decisions
 

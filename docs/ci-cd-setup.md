@@ -4,8 +4,8 @@
 
 Aurum Sanctuary uses GitHub Actions for automated CI/CD pipelines:
 
-1. **CI Pipeline**: Lint, type check, build validation
-2. **Privacy Checks**: Prohibited terms, schema sync, safe logging
+1. **CI Pipeline**: Environment guard, client/server boundary guard, lint, type check, i18n parity, build validation
+2. **Privacy Checks**: Prohibited terms, schema sync, safe logging, client/server boundary enforcement
 3. **Deploy Functions**: Cloud Functions deployment
 4. **Deploy Firestore**: Rules and indexes deployment
 
@@ -18,9 +18,13 @@ Aurum Sanctuary uses GitHub Actions for automated CI/CD pipelines:
 **Triggers**: Push/PR to `main` or `develop`
 
 **Checks:**
+- ✅ Environment guard (`npm run guard:env`)
+- ✅ Client/server boundary guard (`npm run guard:client-boundaries`)
 - ✅ ESLint (`npm run lint`)
 - ✅ TypeScript type check (`npm run typecheck`)
+- ✅ EN/FR translation parity (`npm run test:e2e:i18n`)
 - ✅ Build validation (`npm run build`)
+- ✅ Cloud Functions build (`npm run functions:build`)
 
 ### 2. Privacy & Security Checks
 **File**: `.github/workflows/privacy-checks.yml`  
@@ -30,6 +34,7 @@ Aurum Sanctuary uses GitHub Actions for automated CI/CD pipelines:
 - ✅ Prohibited privacy terms (E-2-E-E, Admin-Blind, etc.)
 - ✅ Firestore schema sync (rules + indexes modified together)
 - ✅ Safe logging patterns (no `console.error(error)`)
+- ✅ Client components cannot import server-only modules or non-public env vars
 
 **Prohibited Terms:**
 - ❌ "E.2.E.E"
@@ -133,14 +138,7 @@ firebase login:ci
 ### Test CI Checks Locally
 
 ```bash
-# Lint
-npm run lint
-
-# Type check
-npm run typecheck
-
-# Build
-npm run build
+make verify
 ```
 
 ### Test Privacy Checks Locally
@@ -154,6 +152,9 @@ git diff --name-only HEAD~1 HEAD | grep firestore
 
 # Check safe logging
 grep -rE "console.error\(error\)|console.error\(err\)" src/ functions/
+
+# Check client/server boundaries
+npm run guard:client-boundaries
 ```
 
 ---
