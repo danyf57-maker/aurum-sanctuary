@@ -22,23 +22,19 @@ cd aurum-sanctuary
 ### 2. Install Dependencies
 
 ```bash
-# Install root dependencies
-npm install
-
-# Install Cloud Functions dependencies
-cd functions
-npm install
-cd ..
+# Install root + Cloud Functions dependencies
+make bootstrap
 ```
 
 ### 3. Configure Environment Variables
 
 ```bash
-# Copy example env file
-cp .env.example .env.local
-
+# .env.local is created automatically if missing
 # Fill in your Firebase config
 # See docs/firebase-setup.md for details
+
+# Guard against prod/test mixups before building
+make guard-env
 ```
 
 ### 4. Install VSCode Extensions
@@ -60,27 +56,35 @@ VSCode will prompt you to install recommended extensions on first open.
 ### Start Development Server
 
 ```bash
-npm run dev
+make dev
 # Server runs on http://localhost:9002
 ```
 
 ### Run Type Checking
 
 ```bash
-npm run typecheck
+make typecheck
 ```
 
 ### Run Linting
 
 ```bash
-npm run lint
+make lint
 ```
 
 ### Build for Production
 
 ```bash
-npm run build
+make build
 ```
+
+### Run the Full Verification Harness
+
+```bash
+make verify
+```
+
+This runs the environment guard, the client/server boundary guard, ESLint, TypeScript, EN/FR translation parity, Next.js build, and Cloud Functions build.
 
 ---
 
@@ -89,8 +93,7 @@ npm run build
 ### Build Functions
 
 ```bash
-cd functions
-npm run build
+make functions-build
 ```
 
 ### Run Functions Locally (Emulator)
@@ -163,16 +166,16 @@ npm run lint -- --fix
 
 ## Testing
 
-### Unit Tests (TODO)
+### Harness Checks
 
 ```bash
-npm run test
+make verify
 ```
 
-### E2E Tests (TODO)
+### i18n Parity Only
 
 ```bash
-npm run test:e2e
+make i18n-check
 ```
 
 ---
@@ -197,7 +200,7 @@ Follow conventional commits:
 
 1. Create feature branch
 2. Make changes
-3. Run `npm run typecheck` and `npm run lint`
+3. Run `make verify`
 4. Commit changes
 5. Push to GitHub
 6. Create Pull Request
