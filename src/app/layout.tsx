@@ -41,16 +41,16 @@ export async function generateMetadata(): Promise<Metadata> {
 
   const title = isFr
     ? "Aurum Diary | Journal intime chiffré pour vider ta tête et apaiser ton esprit"
-    : "Aurum Diary | Encrypted private journal to clear your mind and calm stress";
+    : "Aurum Diary | Private AI-guided reflection for emotional clarity";
   const description = isFr
     ? "Quand ta tête tourne en boucle, écris ici. Aurum Diary est un journal intime en ligne 100% chiffré pour soulager ta charge mentale, calmer l'overthinking et retrouver de la clarté."
-    : "When your mind keeps spinning, write here. Aurum Diary is a fully encrypted private journal to reduce mental load, ease overthinking, and regain clarity.";
+    : "Aurum Diary is a private AI-guided reflection companion that helps you write freely, clarify emotions, and uncover recurring inner patterns over time.";
   const ogTitle = isFr
     ? "Aurum Diary | Journal intime chiffré pour vider ta tête"
-    : "Aurum Diary | Encrypted private journal for mental clarity";
+    : "Aurum Diary | A private AI reflection companion for emotional clarity";
   const ogDescription = isFr
     ? "Quand ta tête tourne en boucle, écris ici. Un journal intime 100% chiffré pour relâcher la pression et retrouver de la clarté."
-    : "Write to release pressure and regain clarity with a fully encrypted private journal.";
+    : "Write freely in private, receive AI-guided reflection, and notice recurring inner patterns over time.";
 
   return {
     title,
@@ -82,7 +82,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title: ogTitle,
       description: isFr
         ? "Écris pour relâcher ta charge mentale. Journal intime en ligne 100% chiffré."
-        : "Write to ease mental load. Fully encrypted private online journaling.",
+        : "Private AI-guided reflection for emotional clarity and recurring inner patterns.",
       images: ["/og-image.png"],
     },
     alternates: {
@@ -118,8 +118,8 @@ export default async function RootLayout({
     name: 'Aurum',
     description: isFr
       ? "Journal intime en ligne 100% chiffré pour relâcher la charge mentale, calmer l'overthinking et retrouver de la clarté."
-      : "A fully encrypted online private journal to reduce mental load, calm overthinking, and regain clarity.",
-    applicationCategory: ['HealthApplication', 'LifestyleApplication'],
+      : "A private AI-guided reflection companion that helps users write freely, clarify emotions, and uncover recurring inner patterns over time.",
+    applicationCategory: ['LifestyleApplication', 'ProductivityApplication'],
     operatingSystem: 'Web, iOS, Android',
     offers: {
       '@type': 'Offer',
@@ -135,10 +135,10 @@ export default async function RootLayout({
           "Alternative privée à Rosebud",
         ]
       : [
-          "AES-256 encrypted private online journal",
-          "Mental load support",
+          "AES-256 encrypted private reflection space",
+          "AI-guided reflection for emotional clarity",
+          "Recurring inner pattern discovery over time",
           "Mood and emotion tracking",
-          "AI-guided journaling",
           "Private alternative to Rosebud",
         ]
   };

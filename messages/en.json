@@ -373,7 +373,7 @@
     "journal": "Journal",
     "journalDesc": "Your entries",
     "magazine": "Magazine",
-    "magazineDesc": "Profiles & progress",
+    "magazineDesc": "Patterns & progress",
     "insights": "Insights",
     "insightsDesc": "Guided clarity",
     "settings": "Settings",
@@ -427,7 +427,7 @@
     "checkoutNoUrl": "No payment URL received.",
     "offerPending": "Offer in preparation. Contact us at aurumdiary.com to be notified.",
     "title": "Choose your plan",
-    "subtitle": "An encrypted writing space, AI-guided reflection, and inner patterns that become visible over time.",
+    "subtitle": "Write without self-censorship, receive gentle AI-guided reflection, and uncover recurring inner patterns over time.",
     "recommended": "Recommended",
     "stripeNote": "Subscriptions are handled by Stripe. Cancel anytime.",
     "currentPlan": "Current plan",
@@ -435,13 +435,13 @@
     "monthly": {
       "name": "Monthly",
       "period": "/month",
-      "description": "The full Aurum experience, guided by AI and billed monthly.",
+      "description": "Private AI-guided reflection and emotional clarity, billed monthly.",
       "cta": "Choose monthly"
     },
     "yearly": {
       "name": "Yearly",
       "period": "/year",
-      "description": "The same full experience, with 2 months free and more continuity.",
+      "description": "The full Aurum experience for deeper continuity and pattern discovery, with 2 months free.",
       "cta": "Choose yearly"
     },
     "features": {
@@ -465,10 +465,10 @@
   "hero": {
     "badge": "PRIVATE GUIDED REFLECTION",
     "title": "Write in private. Understand what keeps returning.",
-    "subtitle": "Aurum helps you write, clarify what you feel, and surface the inner patterns that repeat over time.",
+    "subtitle": "Aurum helps you write freely, clarify what you feel, and uncover recurring inner patterns through private AI-guided reflection.",
     "cta": "Create my free account",
     "ctaSecondary": "Write first, no commitment",
-    "trust": "100% Encrypted • Reflective AI • Private by design.",
+    "trust": "100% Encrypted • AI-guided reflection • Private by design.",
     "placeholders": {
       "0": "I can't sleep, my mind keeps replaying tomorrow's meeting...",
       "1": "I feel completely overwhelmed by my to-do list today...",
@@ -476,7 +476,7 @@
     },
     "quotes": {
       "0": {
-        "hint": "Put your thoughts to rest. Calm your mind before sleep.",
+        "hint": "Write without filtering. Regain clarity with gentle reflection.",
         "detail": "Just write what's on your mind, without filtering.",
         "quote": "Writing is a way of talking without being interrupted.",
         "author": "Jules Renard"
@@ -500,14 +500,14 @@
         "author": "Margaret Atwood"
       },
       "4": {
-        "hint": "When mental load rises, this space becomes your decompression.",
-        "detail": "You can set down your priorities and find some air.",
+        "hint": "When inner overload rises, this space helps you sort what matters.",
+        "detail": "You can set down what feels tangled and notice what asks for clarity.",
         "quote": "We write to taste life twice.",
         "author": "Anaïs Nin"
       },
       "5": {
-        "hint": "After a heavy day, empty your mind before the night.",
-        "detail": "Even 2 minutes of writing can shift your state.",
+        "hint": "After a heavy day, write what stayed with you.",
+        "detail": "Even 2 minutes of reflection can make a pattern easier to see.",
         "quote": "Writing is a form of therapy.",
         "author": "Graham Greene"
       },
@@ -735,8 +735,8 @@
       "label": "No commitment • Private"
     },
     "studySection": {
-      "title": "Writing helps. Aurum helps you understand what returns.",
-      "subtitle": "Privacy protects your words. Aurum’s guided reflection helps turn them into more clarity and patterns you can notice over time.",
+      "title": "Writing helps. Aurum helps you understand what keeps returning.",
+      "subtitle": "Privacy protects your words. Aurum’s guided reflection helps turn them into emotional clarity and recurring patterns you can recognize over time.",
       "cta": "Create my account and start today"
     },
     "studyCards": [
@@ -761,7 +761,7 @@
     ],
     "useCases": {
       "title": "Frequent pain points: how writing can truly help",
-      "subtitle": "Concrete examples to reduce mental load, calm anxiety, and step out of rumination.",
+      "subtitle": "Concrete ways to untangle what you feel, reduce inner overload, and regain clarity through reflection.",
       "note": "Based on recent research on writing and psychological well-being",
       "cards": [
         {
@@ -875,9 +875,9 @@
           "body": "A calm space to put down what occupies you, without distraction."
         },
         {
-          "title": "reading",
-          "eyebrow": "Reading",
-          "body": "Guidance to see your themes, rhythms, and needs emerge over time."
+          "title": "reflection",
+          "eyebrow": "Reflection",
+          "body": "Guided reflection that helps recurring themes, emotional rhythms, and unmet needs become visible over time."
         },
         {
           "title": "privacy",
@@ -898,24 +898,24 @@
         "answer": "No one. We use an “Admin-Blind” architecture with client-side AES-256 encryption. Your entries are encrypted with your private key before being sent. Technically, even with total server access, your writing cannot be decrypted without your password."
       },
       {
-        "question": "How can I calm anxiety at night and sleep better?",
-        "answer": "Write three lines before going to bed: what feels heavy, what you feel, and what you need tomorrow. The goal is to move rumination out of your head so your mind can settle."
+        "question": "How can private writing help me regain clarity at night?",
+        "answer": "Write three lines before bed: what feels heavy, what you feel, and what you need tomorrow. The goal is to move looping thoughts onto the page so clarity can return."
       },
       {
-        "question": "How can I reduce mental load in 5 minutes?",
-        "answer": "Set a five-minute timer and write without editing: facts, emotions, needs. This short ritual helps release pressure and regain clarity, even on a crowded day."
+        "question": "How can I reduce inner overload in 5 minutes?",
+        "answer": "Set a five-minute timer and write without editing: facts, emotions, needs. This short reflection helps reduce inner overload and regain clarity, even on a crowded day."
       },
       {
-        "question": "How can I stop overthinking quickly?",
-        "answer": "When everything spins in your head, write one idea per line. It turns a confused stream into a concrete list. Then choose one tiny action for today."
+        "question": "How can reflection help me step out of overthinking?",
+        "answer": "When everything spins in your head, write one thought per line. Reflection turns mental noise into something you can see, name, and act on."
       },
       {
-        "question": "Does writing really help with stress and anxiety?",
-        "answer": "Research suggests that regular writing can improve psychological well-being and reduce some stress- and anxiety-related symptoms. It is not magic, but it is a simple, accessible, useful tool."
+        "question": "Can reflective writing improve emotional clarity?",
+        "answer": "Reflective writing can improve emotional clarity over time by helping you name what you feel, notice what repeats, and create some distance from mental noise."
       },
       {
-        "question": "What online journal is actually private?",
-        "answer": "Choose a journal with end-to-end encryption, no advertising, and no public exposure of your notes. On Aurum, you write inside a private space built for mental clarity."
+        "question": "What private reflection app actually protects my writing?",
+        "answer": "Choose a reflection app with end-to-end encryption, no advertising, and no public exposure of your writing. On Aurum, your words stay in a private space built for clarity and pattern discovery."
       },
       {
         "question": "How much does Aurum cost?",
@@ -1059,8 +1059,8 @@
   },
   "trialOffer": {
     "badge": "7 DAYS FREE",
-    "title": "Start with 7 days free.",
-    "body": "Try Aurum with full access for 7 days, then decide whether you want to continue.",
+    "title": "Start with 7 days of private guided reflection.",
+    "body": "Write without self-censorship, receive gentle AI-guided reflection, and notice recurring emotional patterns before your first charge.",
     "cta": "View pricing"
   },
   "paywall": {

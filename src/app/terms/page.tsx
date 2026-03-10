@@ -37,7 +37,7 @@ const copy = {
       "By using Aurum Sanctuary, you agree to these Terms of Use. If you do not agree, do not use the application.",
     s2t: "2. Service Description",
     s2b:
-      "Aurum Sanctuary is a journaling service focused on mental well-being. We provide tools to write, structure reflections, and generate personalized insights.",
+      "Aurum Sanctuary is a private reflection service that uses AI-assisted features to help users write, organize reflections, and surface recurring themes over time.",
     s3t: "3. Privacy and Encryption",
     s3a:
       "Your entries are protected with client-side encryption. We use an architecture that limits internal access to unencrypted data.",

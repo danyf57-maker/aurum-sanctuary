@@ -8,10 +8,10 @@ export async function generateMetadata(): Promise<Metadata> {
   const isFr = locale === "fr";
   const title = isFr
     ? "Guides Aurum | Clarté mentale, introspection et journal guidé"
-    : "Aurum Guides | Mental clarity, introspection, and guided journaling";
+    : "Aurum Guides | Emotional clarity, guided reflection, and recurring patterns";
   const description = isFr
     ? "Ressources Aurum en format question-réponse: charge mentale, introspection, confidentialité mentale et routine de 5 minutes."
-    : "Aurum resources in clear Q&A format: mental load, introspection, mental privacy, and a 5-minute routine.";
+    : "Aurum resources in clear Q&A format: emotional clarity, guided reflection, private writing, and recurring patterns over time.";
   const canonical = "https://aurumdiary.com/guides";
 
   return {
