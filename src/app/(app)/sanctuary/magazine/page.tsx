@@ -1091,8 +1091,8 @@ export default function MagazinePage() {
         </h1>
         <p className="mt-2 max-w-xl text-stone-500">
           {isFr
-            ? 'Ton espace de lecture et d’analyse. Aurum relie tes pages pour faire émerger thèmes récurrents, extraits marquants et évolution dans le temps.'
-            : 'Your reading and analysis space. Aurum connects your pages to surface recurring themes, standout excerpts, and how you evolve over time.'}
+            ? 'Ton espace de lecture et d’analyse. Aurum relie tes pages et tes reflets pour faire émerger thèmes récurrents, évolutions émotionnelles et lectures guidées dans le temps.'
+            : 'Your reading and analysis space. Aurum connects your pages and reflections to surface recurring themes, emotional shifts, and guided readings over time.'}
         </p>
       </header>
 
@@ -1202,12 +1202,12 @@ export default function MagazinePage() {
               <BookImage className="h-7 w-7 text-amber-700" />
             </div>
             <h2 className="text-lg font-semibold text-stone-900">
-              {isFr ? 'Ton parcours, relu par Aurum' : 'Your path, revealed by Aurum'}
+              {isFr ? 'Là où tes pages deviennent des motifs' : 'Where your pages become patterns'}
             </h2>
             <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-stone-500">
               {isFr
-                ? 'Aurum relie tes pages, tes reflets et tes parcours guidés pour faire apparaître les thèmes récurrents, les extraits marquants et ton évolution dans le temps.'
-                : 'Aurum connects your pages, reflections, and guided paths to highlight recurring themes, standout excerpts, and your growth over time.'}
+                ? 'Aurum relie tes pages, tes reflets et tes parcours guidés pour faire apparaître les thèmes récurrents, les évolutions émotionnelles et les fils qui méritent d’être suivis.'
+                : 'Aurum connects your pages, reflections, and guided paths to reveal recurring themes, emotional shifts, and the threads worth following over time.'}
             </p>
           </div>
 
@@ -1217,33 +1217,33 @@ export default function MagazinePage() {
               <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">
                 <ImageIcon className="h-4 w-4 text-stone-600" />
               </div>
-              <p className="text-sm font-medium text-stone-900">Themes & excerpts</p>
+              <p className="text-sm font-medium text-stone-900">{isFr ? 'Thèmes récurrents' : 'Recurring themes'}</p>
               <p className="mt-1.5 text-xs leading-relaxed text-stone-500">
                 {isFr
-                  ? 'Les fils communs de ton écriture, rendus visibles automatiquement par Aurum.'
-                  : 'The common threads in your writing, surfaced automatically by Aurum.'}
+                  ? 'Les fils communs de ton écriture et les extraits qui les rendent tangibles.'
+                  : 'The common threads in your writing, along with the excerpts that make them tangible.'}
               </p>
             </div>
             <div className="flex flex-col items-center p-7 text-center">
               <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">
                 <AlignLeft className="h-4 w-4 text-stone-600" />
               </div>
-              <p className="text-sm font-medium text-stone-900">{isFr ? 'Évolution dans le temps' : 'Growth over time'}</p>
+              <p className="text-sm font-medium text-stone-900">{isFr ? 'Évolutions dans le temps' : 'Shifts over time'}</p>
               <p className="mt-1.5 text-xs leading-relaxed text-stone-500">
                 {isFr
-                  ? 'Ton bien-être et ton profil se lisent dans la durée, page après page.'
-                  : 'Your wellbeing and personality profile tracked across time, page by page.'}
+                  ? 'Lis comment le ton, le bien-être et certains repères changent à travers les semaines.'
+                  : 'See how tone, wellbeing, and key signals move across weeks and months.'}
               </p>
             </div>
             <div className="flex flex-col items-center p-7 text-center">
               <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">
                 <Archive className="h-4 w-4 text-stone-600" />
               </div>
-              <p className="text-sm font-medium text-stone-900">{isFr ? 'Lecture éditoriale' : 'Editorial view'}</p>
+              <p className="text-sm font-medium text-stone-900">{isFr ? 'Lectures guidées' : 'Guided readings'}</p>
               <p className="mt-1.5 text-xs leading-relaxed text-stone-500">
                 {isFr
-                  ? 'Chaque page devient une édition avec image, extrait et date. Ton journal devient lecture et compréhension.'
-                  : 'Each page becomes an edition with image, excerpt, and date. Your journal, elevated.'}
+                  ? 'Chaque page peut devenir une lecture avec contexte, extraits et pistes pour continuer à réfléchir.'
+                  : 'Each page can become a reading with context, excerpts, and cues for where to reflect next.'}
               </p>
             </div>
           </div>
@@ -1267,7 +1267,7 @@ export default function MagazinePage() {
               className="border-stone-200 text-stone-600 hover:bg-stone-100"
             >
               <RefreshCw className={`mr-2 h-4 w-4 ${isBackfilling ? "animate-spin" : ""}`} />
-              {isBackfilling ? (isFr ? 'Reconstruction...' : 'Rebuilding...') : (isFr ? 'Reconstruire depuis Journal' : 'Rebuild from journal')}
+              {isBackfilling ? (isFr ? 'Actualisation...' : 'Refreshing...') : (isFr ? 'Actualiser depuis Journal' : 'Refresh from Journal')}
             </Button>
           </div>
         </div>

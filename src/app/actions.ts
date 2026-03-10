@@ -353,8 +353,8 @@ export async function saveJournalEntry(
       return {
         message: txt(
           locale,
-          `Vous avez utilisé vos ${FREE_ENTRY_LIMIT} entrées gratuites. Activez 7 jours offerts pour continuer.`,
-          `You have used your ${FREE_ENTRY_LIMIT} free entries. Start your 7-day free trial to keep writing.`
+          `Vous avez utilisé vos ${FREE_ENTRY_LIMIT} entrées gratuites. Activez 7 jours offerts pour continuer vos reflets guidés et voir vos motifs se construire.`,
+          `You have used your ${FREE_ENTRY_LIMIT} free entries. Start your 7-day free trial to continue guided reflection and let your patterns build over time.`
         ),
         freeLimitReached: true,
         entriesUsed: entryCount,

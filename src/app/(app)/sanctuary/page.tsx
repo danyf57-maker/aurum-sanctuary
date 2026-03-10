@@ -59,7 +59,7 @@ function AurumExchangePreview({ exchanges, isFr }: { exchanges: AurumExchange[];
       <div className="mb-1.5 flex items-center gap-1.5">
         <Flame className="h-3 w-3 text-amber-500" />
         <span className="text-[10px] font-medium uppercase tracking-wider text-amber-600">
-          {isFr ? "Réflexion d'Aurum" : 'Aurum reflection'}
+          {isFr ? "Ce qu'Aurum remarque" : 'What Aurum notices'}
         </span>
       </div>
       <p className="line-clamp-2 text-xs leading-relaxed text-stone-600">{latestAurum.text}</p>
@@ -258,8 +258,8 @@ function SanctuaryPageContent() {
           ) : (
             <p className="mt-2 max-w-xl text-stone-500">
               {isFr
-                ? "La mémoire de tes pages, et l’endroit où ce qui revient devient plus visible dans le temps."
-                : 'The memory of your pages, and where what keeps returning becomes clearer over time.'}
+                ? "La mémoire de tes pages privées, et l'endroit où les fils récurrents commencent à devenir plus visibles."
+                : 'The memory of your private pages, and where recurring threads start to become easier to notice.'}
             </p>
           )}
           {tags.length > 0 && (
@@ -290,18 +290,18 @@ function SanctuaryPageContent() {
                 <BookOpen className="h-7 w-7 text-amber-700" />
               </div>
               <h2 className="text-lg font-semibold text-stone-900">
-                {isFr ? "L'archive de toutes tes pages" : 'The archive of all your pages'}
+                {isFr ? 'Là où tes pages gardent leur continuité' : 'Where your pages keep their continuity'}
               </h2>
               <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-stone-500">
                 {isFr ? (
                   <>
                     Chaque page enregistrée depuis <span className="font-medium text-stone-700">Écrire</span> apparaît ici,
-                    classée dans la durée. Ton journal, c&apos;est ta mémoire complète.
+                    classée dans le temps. C&apos;est l&apos;endroit où ta mémoire se construit et où les retours deviennent repérables.
                   </>
                 ) : (
                   <>
                     Every page you save from <span className="font-medium text-stone-700">Write</span> appears here,
-                    ordered over time. Your journal becomes your full memory.
+                    ordered over time. This is where your memory builds and recurring threads become easier to spot.
                   </>
                 )}
               </p>
@@ -320,30 +320,30 @@ function SanctuaryPageContent() {
                 <p className="text-sm font-medium text-stone-900">{isFr ? 'Chronologie' : 'Timeline'}</p>
                 <p className="mt-1.5 text-xs leading-relaxed text-stone-500">
                   {isFr
-                    ? "Toutes tes pages dans l'ordre où tu les as écrites, sans rien perdre."
-                    : 'Every page in the order you wrote it, with nothing lost.'}
+                    ? "Retrouve chaque page dans l'ordre où elle a été écrite, pour revoir comment un fil s'est formé."
+                    : 'Return to every page in the order it appeared, and see how a thread began to form.'}
                 </p>
               </div>
               <div className="flex flex-col items-center p-7 text-center">
                 <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">
                   <Heart className="h-4 w-4 text-stone-600" />
                 </div>
-                <p className="text-sm font-medium text-stone-900">{isFr ? 'Filtres & humeurs' : 'Filters & moods'}</p>
+                <p className="text-sm font-medium text-stone-900">{isFr ? 'Thèmes & humeurs' : 'Themes & moods'}</p>
                 <p className="mt-1.5 text-xs leading-relaxed text-stone-500">
                   {isFr
-                    ? 'Retrouve une page par humeur, étiquette ou période. Ton passé, navigable.'
-                    : 'Find a page by mood, tag, or period. Your past becomes navigable.'}
+                    ? 'Retrouve une page par humeur, thème ou période, surtout quand quelque chose commence à revenir.'
+                    : 'Find a page by mood, theme, or period, especially when something starts to repeat.'}
                 </p>
               </div>
               <div className="flex flex-col items-center p-7 text-center">
                 <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">
                   <BookOpen className="h-4 w-4 text-stone-600" />
                 </div>
-                <p className="text-sm font-medium text-stone-900">{isFr ? 'Consultation' : 'Revisit & edit'}</p>
+                <p className="text-sm font-medium text-stone-900">{isFr ? 'Revenir avec Aurum' : 'Revisit with Aurum'}</p>
                 <p className="mt-1.5 text-xs leading-relaxed text-stone-500">
                   {isFr
-                    ? "Relis, modifie ou approfondit n'importe quelle entrée avec Aurum."
-                    : 'Revisit, edit, or deepen any entry with Aurum.'}
+                    ? "Relis, modifie ou approfondis n'importe quelle page avec Aurum pour comparer ce qui a changé."
+                    : 'Reopen, edit, or deepen any page with Aurum to compare what has changed.'}
                 </p>
               </div>
             </div>

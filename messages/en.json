@@ -71,24 +71,24 @@
   },
   "sanctuary": {
     "insightsPanel": {
-      "title": "Trends",
-      "analyze": "Analyze",
-      "digest": "Digest",
-      "emptyState": "Run an analysis to reveal recurring themes, writing rhythms, and emotional evolution.",
+      "title": "Patterns",
+      "analyze": "Reveal",
+      "digest": "Weekly reflection",
+      "emptyState": "Run an analysis to surface recurring themes, emotional shifts, and next reflection prompts.",
       "recurringThemes": "Recurring themes",
-      "mostActiveTime": "Most active time",
-      "emotionalTrend": "Emotional trend",
-      "suggestions": "Suggestions",
-      "weeklyDigest": "Weekly digest"
+      "mostActiveTime": "Writing rhythm",
+      "emotionalTrend": "Shift over time",
+      "suggestions": "Next reflection prompts",
+      "weeklyDigest": "Weekly reflection"
     },
     "welcomePresence": {
       "defaultFirstName": "dear explorer",
       "close": "Close",
       "welcome": "Welcome",
       "line1": "This space is yours.",
-      "line2": "No rush here. No score to chase. Aurum supports you, without steering you.",
-      "line3": "Write what needs to be placed into words. The rest will come.",
-      "badge": "Premium Presence"
+      "line2": "No rush here. Aurum helps you notice what feels alive, what keeps returning, and what may need more clarity.",
+      "line3": "Write what feels most present. Clarity often arrives after the words.",
+      "badge": "Private guided reflection"
     },
     "personalityQuestionnaire": {
       "fallbackArchetype": "The Decider",
@@ -271,44 +271,44 @@
     },
     "reflectionPulse": {
       "steps": {
-        "toneAnalysis": "Tone analysis",
-        "biasDetection": "Bias detection",
-        "patternExtraction": "Pattern extraction",
-        "reflectionSynthesis": "Reflection synthesis"
+        "toneAnalysis": "Reading your tone",
+        "biasDetection": "Locating tension",
+        "patternExtraction": "Noticing recurring themes",
+        "reflectionSynthesis": "Composing your reflection"
       }
     },
     "reflectionResponse": {
-      "title": "Aurum reflection",
-      "patternsUsed": "This reflection uses {count} explored theme(s)."
+      "title": "What Aurum notices",
+      "patternsUsed": "Informed by {count} recurring theme(s) you have already explored."
     },
     "premiumJournalForm": {
       "restoredTitle": "Your text was restored",
-      "restoredDescription": "Continue writing where you left off.",
+      "restoredDescription": "Continue the thread you already opened.",
       "dayLabel": "Day",
       "todayPrompt": "What I write today:",
       "dropImageHere": "Drop your image here",
-      "dragAndDropHint": "Drag and drop images to enrich your writing",
+      "dragAndDropHint": "Add images if they help keep this moment visible",
       "addImage": "Add an image",
       "removeImageAria": "Remove image",
       "tagsLabel": "Tags",
-      "uploadImage": "Uploading image...",
-      "saving": "Saving...",
-      "saveThought": "Save this thought",
-      "savedThoughtTitle": "Thought saved",
-      "savedThoughtSubtitle": "Encrypted and secure",
-      "getReflection": "Get your reflection",
-      "getReflectionDescription": "Aurum reflects what it perceives in your words, without judgment or pressure.",
-      "revealReflection": "Reveal my reflection",
-      "continueWithAurum": "Continue with Aurum",
-      "aurumThinking": "Aurum is thinking...",
+      "uploadImage": "Uploading...",
+      "saving": "Securing...",
+      "saveThought": "Secure this page",
+      "savedThoughtTitle": "Page secured",
+      "savedThoughtSubtitle": "Encrypted, private, ready for reflection",
+      "getReflection": "See what Aurum notices",
+      "getReflectionDescription": "A gentle reflection to clarify what stands out, what returns, and where the emotional center seems to be.",
+      "revealReflection": "Reveal what Aurum notices",
+      "continueWithAurum": "Deepen this reflection",
+      "aurumThinking": "Aurum is reflecting...",
       "send": "Send",
-      "anythingElse": "Anything else to put down?",
-      "openNewWritingSpace": "Open a new writing space",
+      "anythingElse": "Anything else wants a page?",
+      "openNewWritingSpace": "Open a new private page",
       "placeholders": {
-        "write": "Write what needs to be put into words...",
-        "caption": "Add a caption...",
-        "tags": "Tags (optional)",
-        "replyToAurum": "Write your reply to Aurum..."
+        "write": "Write freely. Aurum will help you notice what returns...",
+        "caption": "Add a note...",
+        "tags": "Themes, moods, moments (optional)",
+        "replyToAurum": "Ask about what stands out, what repeats, or what still feels unclear..."
       },
       "toasts": {
         "signInRequiredTitle": "Sign in required",
@@ -324,8 +324,8 @@
         "sessionExpiredDescription": "Please sign in again.",
         "planCompletedTitle": "Plan completed",
         "planCompletedDescription": "Great work. You completed all steps of this plan.",
-        "entrySavedTitle": "Entry saved",
-        "entrySavedDescription": "Your writing is secure.",
+        "entrySavedTitle": "Page secured",
+        "entrySavedDescription": "Your page is encrypted. You can now see what Aurum notices.",
         "validationErrorTitle": "Validation error"
       },
       "errors": {
@@ -344,13 +344,13 @@
         "generic": "An error occurred.",
         "signInRequired": "Sign in required.",
         "sessionExpiredReload": "Session expired. Reload the page and sign in again if needed.",
-        "generatingReflection": "Error while generating reflection",
+        "generatingReflection": "Unable to generate Aurum's reflection right now.",
         "emptyResponse": "Empty response"
       },
       "conversation": {
         "userLabel": "User",
         "aurumLabel": "Aurum",
-        "replyInstruction": "Reply to the user in continuity with the exchange."
+        "replyInstruction": "Reply with gentle guided reflection. Help the user clarify what stands out, what repeats, or what remains unclear, without sounding clinical or technical."
       }
     }
   },
@@ -369,11 +369,11 @@
     "dashboard": "Dashboard",
     "dashboardDesc": "Overview",
     "write": "Write",
-    "writeDesc": "New page",
+    "writeDesc": "Guided entry",
     "journal": "Journal",
-    "journalDesc": "Your entries",
+    "journalDesc": "Pages & memory",
     "magazine": "Magazine",
-    "magazineDesc": "Patterns & progress",
+    "magazineDesc": "Patterns & profiles",
     "insights": "Insights",
     "insightsDesc": "Guided clarity",
     "settings": "Settings",
@@ -383,7 +383,7 @@
     "user": "User",
     "memberAurum": "Aurum member",
     "tip": "Tip",
-    "tipText": "2 minutes of writing beats a long session postponed."
+    "tipText": "A few honest lines are enough for Aurum to surface what keeps returning."
   },
   "signup": {
     "title": "Create an account",
@@ -978,8 +978,8 @@
       "footerQuote": "\"Write what needs to be placed into words. The rest will come.\""
     },
     "authenticated": {
-      "title": "Your writing space",
-      "subtitle": "Write freely. Aurum will then help surface what keeps returning and what asks for clarity."
+      "title": "Your private writing space",
+      "subtitle": "Write without self-censorship. Aurum will help reflect back what stands out, what returns, and what may need more clarity."
     },
     "quotes": [
       {
@@ -1061,16 +1061,16 @@
     "badge": "7 DAYS FREE",
     "title": "Start with 7 days of private guided reflection.",
     "body": "Write without self-censorship, receive gentle AI-guided reflection, and notice recurring emotional patterns before your first charge.",
-    "cta": "View pricing"
+    "cta": "View plans"
   },
   "paywall": {
     "close": "Close",
-    "title": "Your weekly analysis is ready",
-    "intro": "Unlock it with the free trial:",
-    "benefit1": "View your full analysis",
-    "benefit2": "Access all your past analyses",
-    "benefit3": "Keep building your emotional clarity map",
-    "reassurance": "No pressure. Your writing stays private and secure.",
+    "title": "Keep your reflections unfolding",
+    "intro": "Unlock the full Aurum experience:",
+    "benefit1": "Receive AI-guided reflection after each entry",
+    "benefit2": "See recurring themes and emotional patterns build over time",
+    "benefit3": "Keep your private reflection history and clarity map growing",
+    "reassurance": "Private by design. No ads, no data sale, no pressure.",
     "subscribe": "Start my 7 free days",
     "loading": "Loading...",
     "later": "Maybe later",
@@ -1079,11 +1079,11 @@
     "checkoutNoUrl": "No payment URL received.",
     "unknownError": "Something went wrong.",
     "trialBadge": "FREE TRIAL",
-    "trialTitle": "How do the 7 days work?",
-    "trialBody": "The trial starts when you confirm Stripe Checkout and lasts exactly 7 days, which means 7 x 24 hours.",
-    "trialBullet1": "Premium access starts immediately",
-    "trialBullet2": "The timer starts at the exact checkout confirmation time",
+    "trialTitle": "What starts during the 7-day trial?",
+    "trialBody": "The trial begins when you confirm Stripe Checkout and unlocks the full Aurum reflection experience for exactly 7 days.",
+    "trialBullet1": "Guided reflections and Magazine access start immediately",
+    "trialBullet2": "Your private history and recurring patterns keep building during the trial",
     "trialBullet3": "You can cancel before the end to avoid being charged",
-    "trialNote": "Example: activation on March 7 at 2:32 PM = end on March 14 at 2:32 PM."
+    "trialNote": "Example: activation on March 10, 2026 at 2:32 PM = end on March 17, 2026 at 2:32 PM."
   }
 }

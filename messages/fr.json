@@ -71,24 +71,24 @@
   },
   "sanctuary": {
     "insightsPanel": {
-      "title": "Tendances",
-      "analyze": "Analyser",
-      "digest": "Digest",
-      "emptyState": "Lance une analyse pour voir thèmes récurrents, rythmes d'écriture et évolution émotionnelle.",
+      "title": "Motifs",
+      "analyze": "Révéler",
+      "digest": "Reflet hebdomadaire",
+      "emptyState": "Lance une analyse pour faire émerger les thèmes récurrents, les évolutions émotionnelles et les prochaines pistes de réflexion.",
       "recurringThemes": "Thèmes récurrents",
-      "mostActiveTime": "Moment actif",
-      "emotionalTrend": "Tendance émotionnelle",
-      "suggestions": "Suggestions",
-      "weeklyDigest": "Digest hebdomadaire"
+      "mostActiveTime": "Rythme d'écriture",
+      "emotionalTrend": "Évolution dans le temps",
+      "suggestions": "Pistes de réflexion",
+      "weeklyDigest": "Reflet hebdomadaire"
     },
     "welcomePresence": {
       "defaultFirstName": "cher explorateur",
       "close": "Fermer",
       "welcome": "Bienvenue",
       "line1": "Cet espace est le tien.",
-      "line2": "Ici, rien ne presse. Rien ne mesure. Aurum t'accompagne, sans te diriger.",
-      "line3": "Écris ce qui demande à être posé. Le reste viendra.",
-      "badge": "Présence Premium"
+      "line2": "Ici, rien ne presse. Aurum t'aide à remarquer ce qui est vivant, ce qui revient, et ce qui demande plus de clarté.",
+      "line3": "Écris ce qui est le plus présent. La clarté arrive souvent après les mots.",
+      "badge": "Réflexion guidée privée"
     },
     "personalityQuestionnaire": {
       "fallbackArchetype": "Le Décideur",
@@ -271,44 +271,44 @@
     },
     "reflectionPulse": {
       "steps": {
-        "toneAnalysis": "Analyse tonale",
-        "biasDetection": "Détection de biais",
-        "patternExtraction": "Extraction de patterns",
-        "reflectionSynthesis": "Synthèse du reflet"
+        "toneAnalysis": "Lecture du ton",
+        "biasDetection": "Repérage des tensions",
+        "patternExtraction": "Repérage des thèmes récurrents",
+        "reflectionSynthesis": "Composition du reflet"
       }
     },
     "reflectionResponse": {
-      "title": "Réflexion d'Aurum",
-      "patternsUsed": "Ce reflet s'appuie sur {count} thème(s) déjà exploré(s)."
+      "title": "Ce qu'Aurum remarque",
+      "patternsUsed": "Éclairé par {count} thème(s) récurrent(s) déjà exploré(s)."
     },
     "premiumJournalForm": {
       "restoredTitle": "Votre texte a été récupéré",
-      "restoredDescription": "Continuez d'écrire où vous vous étiez arrêté.",
+      "restoredDescription": "Reprends le fil que tu avais déjà ouvert.",
       "dayLabel": "Jour",
       "todayPrompt": "Ce que j'écris aujourd'hui:",
       "dropImageHere": "Dépose ton image ici",
-      "dragAndDropHint": "Glisse-dépose des images dans la page pour enrichir ton écriture",
+      "dragAndDropHint": "Ajoute des images si elles aident à garder ce moment visible",
       "addImage": "Ajouter une image",
       "removeImageAria": "Supprimer l'image",
       "tagsLabel": "Étiquettes",
-      "uploadImage": "Upload image...",
-      "saving": "Préservation en cours...",
-      "saveThought": "Préserver cette pensée",
-      "savedThoughtTitle": "Pensée préservée",
-      "savedThoughtSubtitle": "Chiffrée et en sécurité",
-      "getReflection": "Recevoir un reflet",
-      "getReflectionDescription": "Aurum te renvoie ce qu'il perçoit dans tes mots, sans juger ni diriger.",
-      "revealReflection": "Découvrir mon reflet",
-      "continueWithAurum": "Continuer avec Aurum",
-      "aurumThinking": "Aurum réfléchit...",
+      "uploadImage": "Envoi...",
+      "saving": "Sécurisation...",
+      "saveThought": "Sécuriser cette page",
+      "savedThoughtTitle": "Page sécurisée",
+      "savedThoughtSubtitle": "Chiffrée, privée, prête pour un reflet",
+      "getReflection": "Voir ce qu'Aurum remarque",
+      "getReflectionDescription": "Un reflet doux pour clarifier ce qui ressort, ce qui revient, et là où se situe le centre émotionnel.",
+      "revealReflection": "Révéler ce qu'Aurum remarque",
+      "continueWithAurum": "Approfondir ce reflet",
+      "aurumThinking": "Aurum relit...",
       "send": "Envoyer",
-      "anythingElse": "Autre chose à poser ?",
-      "openNewWritingSpace": "Ouvre un nouvel espace d'écriture",
+      "anythingElse": "Autre chose demande une page ?",
+      "openNewWritingSpace": "Ouvrir une nouvelle page privée",
       "placeholders": {
-        "write": "Écris ce qui demande à être posé...",
-        "caption": "Ajoute une légende...",
-        "tags": "Étiquettes (optionnel)",
-        "replyToAurum": "Écris ta réponse à Aurum..."
+        "write": "Écris librement. Aurum t'aidera à remarquer ce qui revient...",
+        "caption": "Ajouter une note...",
+        "tags": "Thèmes, humeurs, moments (optionnel)",
+        "replyToAurum": "Demande à Aurum ce qui ressort, ce qui revient, ou ce qui reste flou..."
       },
       "toasts": {
         "signInRequiredTitle": "Connexion requise",
@@ -324,8 +324,8 @@
         "sessionExpiredDescription": "Veuillez vous reconnecter.",
         "planCompletedTitle": "Plan terminé",
         "planCompletedDescription": "Bravo. Tu as complété toutes les étapes de ce plan.",
-        "entrySavedTitle": "Entrée préservée",
-        "entrySavedDescription": "Ton écriture est en sécurité.",
+        "entrySavedTitle": "Page sécurisée",
+        "entrySavedDescription": "Ta page est chiffrée. Tu peux maintenant voir ce qu'Aurum remarque.",
         "validationErrorTitle": "Erreur de validation"
       },
       "errors": {
@@ -344,13 +344,13 @@
         "generic": "Une erreur est survenue.",
         "signInRequired": "Connexion requise.",
         "sessionExpiredReload": "Session expirée. Recharge la page puis reconnecte-toi si nécessaire.",
-        "generatingReflection": "Erreur lors de la génération du reflet",
+        "generatingReflection": "Impossible de générer le reflet d'Aurum pour le moment.",
         "emptyResponse": "Réponse vide"
       },
       "conversation": {
         "userLabel": "Utilisateur",
         "aurumLabel": "Aurum",
-        "replyInstruction": "Réponds à l'utilisateur dans la continuité de l'échange."
+        "replyInstruction": "Réponds avec un reflet guidé, doux et concret. Aide l'utilisateur à clarifier ce qui ressort, ce qui revient ou ce qui reste flou, sans jargon clinique ou technique."
       }
     }
   },
@@ -369,11 +369,11 @@
     "dashboard": "Tableau de bord",
     "dashboardDesc": "Vue d'ensemble",
     "write": "Écrire",
-    "writeDesc": "Nouvelle page",
+    "writeDesc": "Entrée guidée",
     "journal": "Journal",
-    "journalDesc": "Tes entrées",
+    "journalDesc": "Pages & mémoire",
     "magazine": "Magazine",
-    "magazineDesc": "Profils & progression",
+    "magazineDesc": "Motifs & profils",
     "insights": "Analyses",
     "insightsDesc": "Clarté guidée",
     "settings": "Paramètres",
@@ -383,7 +383,7 @@
     "user": "Utilisateur",
     "memberAurum": "Membre Aurum",
     "tip": "Astuce",
-    "tipText": "2 minutes d'écriture valent mieux qu'une longue session reportée."
+    "tipText": "Quelques lignes honnêtes suffisent pour qu'Aurum fasse émerger ce qui revient."
   },
   "signup": {
     "title": "Créer un compte",
@@ -978,8 +978,8 @@
       "footerQuote": "\"Écris ce qui demande à être posé. Le reste viendra.\""
     },
     "authenticated": {
-      "title": "Ton espace d'écriture",
-      "subtitle": "Écris librement. Aurum t’aidera ensuite à faire émerger ce qui revient et ce qui demande de la clarté."
+      "title": "Ton espace d'écriture privé",
+      "subtitle": "Écris sans te censurer. Aurum t'aidera à te renvoyer ce qui ressort, ce qui revient, et ce qui demande plus de clarté."
     },
     "quotes": [
       {
@@ -1059,31 +1059,31 @@
   },
   "trialOffer": {
     "badge": "7 JOURS OFFERTS",
-    "title": "Commence avec 7 jours offerts.",
-    "body": "Teste Aurum en accès complet pendant 7 jours, puis décide si tu veux continuer.",
-    "cta": "Voir la page abonnement"
+    "title": "Commence avec 7 jours de réflexion guidée privée.",
+    "body": "Écris sans te censurer, reçois des reflets guidés et commence à voir tes thèmes récurrents avant la première facturation.",
+    "cta": "Voir l'offre"
   },
   "paywall": {
     "close": "Fermer",
-    "title": "Votre analyse hebdomadaire est prête",
-    "intro": "Débloquez-la avec l'essai offert :",
-    "benefit1": "Voir votre analyse complète",
-    "benefit2": "Accéder à toutes vos analyses passées",
-    "benefit3": "Continuer à construire votre carte de clarté émotionnelle",
-    "reassurance": "Sans pression. Vos écrits restent privés et sécurisés.",
+    "title": "Laisse tes reflets continuer à se déployer",
+    "intro": "Débloque l'expérience Aurum complète :",
+    "benefit1": "Recevoir un reflet guidé après chaque page",
+    "benefit2": "Voir les thèmes récurrents et les motifs émotionnels se construire dans le temps",
+    "benefit3": "Continuer à faire grandir ton historique privé et ta carte de clarté",
+    "reassurance": "Privé par conception. Pas de publicité, pas de vente de données, pas de pression.",
     "subscribe": "Activer mes 7 jours offerts",
     "loading": "Chargement...",
     "later": "Plus tard",
-    "signinRequired": "Veuillez vous connecter pour activer votre essai.",
+    "signinRequired": "Connecte-toi pour activer ton essai.",
     "checkoutError": "Impossible de créer la session de paiement.",
     "checkoutNoUrl": "Aucune URL de paiement reçue.",
     "unknownError": "Une erreur est survenue.",
     "trialBadge": "ESSAI OFFERT",
-    "trialTitle": "Comment fonctionnent les 7 jours ?",
-    "trialBody": "L'essai commence quand vous confirmez Stripe Checkout et dure exactement 7 jours, soit 7 x 24 heures.",
-    "trialBullet1": "L'accès premium est immédiat",
-    "trialBullet2": "Le compteur part de l'heure exacte de validation",
-    "trialBullet3": "Vous pouvez annuler avant la fin pour éviter la facturation",
-    "trialNote": "Exemple : activation le 7 mars à 14:32 = fin le 14 mars à 14:32."
+    "trialTitle": "Que débloquent les 7 jours ?",
+    "trialBody": "L'essai commence quand tu confirmes Stripe Checkout et ouvre l'expérience complète de réflexion Aurum pendant exactement 7 jours.",
+    "trialBullet1": "Les reflets guidés et Magazine sont accessibles immédiatement",
+    "trialBullet2": "Ton historique privé et tes motifs récurrents continuent de se construire pendant l'essai",
+    "trialBullet3": "Tu peux annuler avant la fin si tu ne veux pas être facturé",
+    "trialNote": "Exemple : activation le 10 mars 2026 à 14:32 = fin le 17 mars 2026 à 14:32."
   }
 }

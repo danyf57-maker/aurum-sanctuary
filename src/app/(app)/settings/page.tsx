@@ -56,6 +56,7 @@ import { useLocale } from "@/hooks/use-locale";
 import { useSubscription } from "@/hooks/useSubscription";
 import { resolveFirstName } from "@/lib/profile/first-name";
 import { registerPushReminderDevice, unregisterPushReminderDevice } from "@/lib/reminders/push";
+import { buildWritingReminderCopy } from "@/lib/reminders/writing-reminders";
 
 const WEEKDAY_OPTIONS = [0, 1, 2, 3, 4, 5, 6] as const;
 
@@ -146,61 +147,58 @@ export default function SettingsPage() {
       notifications: {
         title: isFr ? "Notifications" : "Notifications",
         description: isFr
-          ? "Gérez la manière dont nous communiquons avec vous."
-          : "Control how we reach out to you.",
-        analysisLabel: isFr ? "Alertes d'analyses" : "Insight alerts",
+          ? "Choisis comment Aurum te ramène doucement vers ton espace de réflexion privé."
+          : "Choose how Aurum gently brings you back into your private reflection space.",
+        analysisLabel: isFr ? "Alertes de reflet hebdomadaire" : "Weekly reflection alerts",
         analysisDescription: isFr
-          ? "Recevez une notification quand vos analyses hebdomadaires sont prêtes."
-          : "Get notified when your weekly insights are ready.",
-        reminderTitle: isFr ? "Rappel d'ecriture" : "Writing reminder",
+          ? "Reçois une notification quand ton reflet hebdomadaire est prêt."
+          : "Get notified when your weekly reflection is ready.",
+        reminderTitle: isFr ? "Rappel de réflexion" : "Reflection reminder",
         reminderDescription: isFr
-          ? "Programme une invitation douce a revenir ecrire, avec ton prenom et le ton qui te convient."
-          : "Schedule a gentle invitation to come back and write, with your first name and the tone that suits you.",
-        reminderToggle: isFr ? "Activer le rappel programme" : "Enable scheduled reminder",
+          ? "Programme une invitation douce à revenir vers ton espace d'écriture privé, avec ton prénom et le ton qui te convient."
+          : "Schedule a gentle invitation back into your private writing space, with your first name and the tone that fits the moment.",
+        reminderToggle: isFr ? "Activer le rappel programmé" : "Enable scheduled reminder",
         reminderHelp: isFr
-          ? "Le rappel apparait sur cet appareil quand Aurum est ouvert et que les notifications navigateur sont autorisees."
+          ? "Le rappel apparaît sur cet appareil quand Aurum est ouvert et que les notifications navigateur sont autorisées."
           : "The reminder appears on this device when Aurum is open and browser notifications are allowed.",
         reminderTime: isFr ? "Heure" : "Time",
         reminderDays: isFr ? "Jours" : "Days",
         reminderTone: isFr ? "Ton" : "Tone",
         reminderPermission: isFr ? "Notifications navigateur" : "Browser notifications",
         reminderAllow: isFr ? "Autoriser les notifications" : "Allow notifications",
-        reminderGranted: isFr ? "Autorisees" : "Allowed",
-        reminderDenied: isFr ? "Bloquees" : "Blocked",
+        reminderGranted: isFr ? "Autorisées" : "Allowed",
+        reminderDenied: isFr ? "Bloquées" : "Blocked",
         reminderDefault: isFr ? "A confirmer" : "To be confirmed",
         reminderUnsupported: isFr ? "Non disponibles" : "Unavailable",
         reminderPermissionHint: isFr
-          ? "Pour une alerte visible sur mobile ou ordinateur, autorise les notifications pour ce navigateur."
+          ? "Pour recevoir un rappel visible sur mobile ou ordinateur, autorise les notifications pour ce navigateur."
           : "For a visible reminder on mobile or desktop, allow notifications for this browser.",
         reminderPermissionErrorTitle: isFr ? "Notifications indisponibles" : "Notifications unavailable",
         reminderPermissionErrorDescription: isFr
           ? "Impossible d'activer les notifications navigateur sur cet appareil pour le moment."
           : "We could not enable browser notifications on this device right now.",
-        reminderSavedTitle: isFr ? "Rappel active" : "Reminder enabled",
+        reminderSavedTitle: isFr ? "Rappel activé" : "Reminder enabled",
         reminderSavedDescription: isFr
-          ? "Cet appareil recevra maintenant les rappels d'ecriture hors de l'app."
-          : "This device will now receive writing reminders outside the app.",
-        reminderDisabledTitle: isFr ? "Rappel desactive" : "Reminder disabled",
+          ? "Cet appareil recevra maintenant les rappels de réflexion privés en dehors de l'app."
+          : "This device will now receive private reflection reminders outside the app.",
+        reminderDisabledTitle: isFr ? "Rappel désactivé" : "Reminder disabled",
         reminderDisabledDescription: isFr
-          ? "Les rappels hors app sont coupes pour cet appareil."
+          ? "Les rappels hors app sont coupés pour cet appareil."
           : "Outside-app reminders are now turned off for this device.",
         reminderTest: isFr ? "Envoyer un test" : "Send a test",
         reminderTestSending: isFr ? "Envoi..." : "Sending...",
-        reminderTestSuccessTitle: isFr ? "Test envoye" : "Test sent",
+        reminderTestSuccessTitle: isFr ? "Test envoyé" : "Test sent",
         reminderTestSuccessDescription: isFr
-          ? "La notification de test est partie vers cet appareil."
+          ? "La notification de test a été envoyée à cet appareil."
           : "The test notification was sent to this device.",
         reminderTestErrorTitle: isFr ? "Test impossible" : "Test unavailable",
         reminderTestErrorDescription: isFr
           ? "Aucun appareil push actif n'est disponible pour ce compte."
           : "No active push device is available for this account.",
         reminderPreviewLabel: isFr ? "Exemple" : "Preview",
-        reminderPreviewBody: isFr
-          ? "Ouvre Aurum et ecris quelques lignes, sans pression."
-          : "Open Aurum and write a few lines, without pressure.",
         toneGentle: isFr ? "Doux" : "Gentle",
-        toneClarity: isFr ? "Clarite" : "Clarity",
-        tonePressure: isFr ? "Relacher la pression" : "Pressure release",
+        toneClarity: isFr ? "Clarté" : "Clarity",
+        tonePressure: isFr ? "Desserrer la pression" : "Ease pressure",
         toneRoutine: isFr ? "Routine" : "Routine",
       },
       profile: {
@@ -453,22 +451,11 @@ export default function SettingsPage() {
   );
 
   const reminderPreview = useMemo(() => {
-    const previews = {
-      fr: {
-        gentle: `${firstName}, tu veux prendre trois minutes pour toi ?`,
-        clarity: `${firstName}, tu veux y voir un peu plus clair ?`,
-        pressure_release: `${firstName}, tu veux relacher un peu la pression ?`,
-        routine: `${firstName}, tu reprends ton fil aujourd'hui ?`,
-      },
-      en: {
-        gentle: `${firstName}, want to take three quiet minutes for yourself?`,
-        clarity: `${firstName}, want a little more clarity today?`,
-        pressure_release: `${firstName}, want to let some pressure out?`,
-        routine: `${firstName}, ready to pick up your thread today?`,
-      },
-    } as const;
-
-    return previews[locale][preferences.writingReminderTone];
+    return buildWritingReminderCopy({
+      locale,
+      tone: preferences.writingReminderTone,
+      firstName,
+    });
   }, [firstName, locale, preferences.writingReminderTone]);
 
   const notificationPermissionLabel =
@@ -820,8 +807,8 @@ export default function SettingsPage() {
                   <p className="text-xs font-semibold uppercase tracking-[0.16em] text-amber-900">
                     {copy.notifications.reminderPreviewLabel}
                   </p>
-                  <p className="mt-2 text-sm font-medium text-foreground">{reminderPreview}</p>
-                  <p className="mt-1 text-sm text-muted-foreground">{copy.notifications.reminderPreviewBody}</p>
+                  <p className="mt-2 text-sm font-medium text-foreground">{reminderPreview.title}</p>
+                  <p className="mt-1 text-sm text-muted-foreground">{reminderPreview.body}</p>
                   <div className="mt-3 flex justify-start">
                     <Button
                       type="button"

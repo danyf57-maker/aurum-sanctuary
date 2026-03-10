@@ -614,15 +614,15 @@ export function PremiumJournalForm() {
   };
 
   const progressLabel = isFr
-    ? `${entriesUsed} / ${entriesLimit} entrées gratuites utilisées`
-    : `${entriesUsed} / ${entriesLimit} free entries used`;
+    ? `${entriesUsed} / ${entriesLimit} pages gratuites utilisées`
+    : `${entriesUsed} / ${entriesLimit} free pages used`;
   const remainingLabel = isFr
     ? remaining > 0
-      ? `Il vous reste ${remaining} entrée${remaining > 1 ? 's' : ''} gratuite${remaining > 1 ? 's' : ''}.`
-      : 'Passez au premium avec 7 jours offerts pour continuer.'
+      ? `Il te reste ${remaining} page${remaining > 1 ? 's' : ''} gratuite${remaining > 1 ? 's' : ''} avant l'expérience complète de réflexion.`
+      : 'Passe au premium avec 7 jours offerts pour continuer les reflets guidés.'
     : remaining > 0
-      ? `${remaining} free entr${remaining > 1 ? 'ies' : 'y'} remaining.`
-      : 'Go premium with a 7-day free trial to keep writing.';
+      ? `${remaining} free page${remaining > 1 ? 's' : ''} left before the full reflection experience.`
+      : 'Go premium with a 7-day free trial to continue guided reflection.';
 
   return (
     <>

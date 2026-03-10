@@ -4,53 +4,53 @@ export type ReminderLocale = 'fr' | 'en';
 const REMINDER_LIBRARY: Record<ReminderLocale, Record<WritingReminderTone, string[]>> = {
   fr: {
     gentle: [
-      '{firstName}, tu veux prendre trois minutes pour toi ?',
-      '{firstName}, comment ca va vraiment aujourd\'hui ?',
-      '{firstName}, quelques lignes suffisent pour te retrouver.',
+      '{firstName}, tu veux prendre trois minutes pour revenir a toi ?',
+      '{firstName}, comment ca se passe en toi aujourd\'hui ?',
+      '{firstName}, quelques lignes peuvent suffire pour te retrouver.',
     ],
     clarity: [
-      '{firstName}, tu veux y voir un peu plus clair ?',
-      '{firstName}, qu\'est-ce qui prend le plus de place dans ta tete ?',
-      '{firstName}, pose ce qui tourne en boucle.',
+      '{firstName}, tu veux y voir un peu plus clair aujourd\'hui ?',
+      '{firstName}, qu\'est-ce qui prend le plus de place en toi en ce moment ?',
+      '{firstName}, pose ce qui revient en boucle.',
     ],
     pressure_release: [
-      '{firstName}, tu veux relacher un peu la pression ?',
-      '{firstName}, quelques lignes peuvent deja alleger la charge.',
-      '{firstName}, un moment pour deposer ce qui pese ?',
+      '{firstName}, tu veux desserrer un peu ce qui te pese ?',
+      '{firstName}, quelques lignes peuvent deja redonner de l\'air.',
+      '{firstName}, un moment pour deposer ce qui te serre ?',
     ],
     routine: [
       '{firstName}, tu reprends ton fil aujourd\'hui ?',
-      '{firstName}, quelques lignes pour garder ton rythme ?',
-      '{firstName}, tu veux continuer ton espace d\'ecriture ?',
+      '{firstName}, quelques lignes pour garder ton rythme interieur ?',
+      '{firstName}, tu reviens a ton espace prive ?',
     ],
   },
   en: {
     gentle: [
-      '{firstName}, want to take three quiet minutes for yourself?',
-      '{firstName}, how are you really doing today?',
-      '{firstName}, a few lines can be enough to come back to yourself.',
+      '{firstName}, want to take three quiet minutes to come back to yourself?',
+      '{firstName}, what feels most alive in you today?',
+      '{firstName}, a few lines can be enough to reconnect with yourself.',
     ],
     clarity: [
       '{firstName}, want a little more clarity today?',
-      '{firstName}, what is taking the most space in your mind right now?',
-      '{firstName}, want to put down what keeps looping?',
+      '{firstName}, what is taking the most space inside you right now?',
+      '{firstName}, want to put down what keeps returning?',
     ],
     pressure_release: [
-      '{firstName}, want to let some pressure out?',
-      '{firstName}, a few lines can already lighten the load.',
-      '{firstName}, want a moment to put down what feels heavy?',
+      '{firstName}, want to soften some of the pressure you are carrying?',
+      '{firstName}, a few lines can already make more room inside.',
+      '{firstName}, want a moment to set down what feels heavy?',
     ],
     routine: [
       '{firstName}, ready to pick up your thread today?',
-      '{firstName}, a few lines to keep your rhythm going?',
-      '{firstName}, want to come back to your writing space?',
+      '{firstName}, a few lines to keep your inner rhythm going?',
+      '{firstName}, want to come back to your private space?',
     ],
   },
 };
 
 const BODY_COPY: Record<ReminderLocale, string> = {
-  fr: 'Ouvre Aurum et ecris quelques lignes, sans pression.',
-  en: 'Open Aurum and write a few lines, without pressure.',
+  fr: 'Ouvre Aurum et ecris quelques lignes privees. Aurum t\'aidera a voir ce qui ressort.',
+  en: 'Open Aurum and write a few private lines. Aurum will help you notice what stands out.',
 };
 
 function sanitizeName(firstName?: string | null) {
