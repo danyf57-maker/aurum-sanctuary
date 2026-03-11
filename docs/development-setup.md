@@ -212,15 +212,36 @@ Follow conventional commits:
 
 ### Pull Request Workflow
 
-1. Create feature branch
-2. Make changes
-3. Run `make verify`
+1. Create an isolated task worktree with `make worktree branch=<name>`
+2. Make changes inside that worktree
+3. Run `make preflight`
 4. Commit changes
-5. Push to GitHub
-6. Create Pull Request
-7. Wait for CI checks to pass
-8. Request review
-9. Merge to `main`
+5. Generate the local PR body with `make pr-draft`
+6. Push to GitHub
+7. Create Pull Request
+8. Wait for CI checks to pass
+9. Request review
+10. Merge to `main`
+
+### Worktree Helpers
+
+```bash
+# Create an isolated task workspace
+make worktree branch=fix/example-issue
+
+# Remove it when finished
+make worktree-remove branch=fix/example-issue
+```
+
+### Preflight & PR Draft
+
+```bash
+# Run the full local gate before review
+make preflight
+
+# Generate a PR draft body under .git/codex/pr-drafts/
+make pr-draft
+```
 
 ---
 

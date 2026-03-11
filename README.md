@@ -114,6 +114,21 @@ make verify
 
 `make verify` runs environment checks, client/server boundary checks, ESLint, TypeScript, tests, Next.js build, Cloud Functions build, and a local smoke run against the built app.
 
+## Task Orchestration
+
+```bash
+# Create an isolated task worktree
+make worktree branch=chore/example-task
+
+# Run the full preflight before review
+make preflight
+
+# Generate a local PR draft body
+make pr-draft
+```
+
+These helpers stay local-first on purpose. They do not push, deploy, or publish a PR unless you explicitly opt into that later.
+
 ## Architecture Decisions
 
 See `_bmad-output/planning-artifacts/architecture.md` for detailed architecture documentation.
