@@ -1,0 +1,47 @@
+{
+  "id": "cranford-et-al-2006-within-person-change-reliability",
+  "title": "A Procedure for Evaluating Sensitivity to Within-Person Change: Can Mood Measures in Diary Studies Detect Change Reliably?",
+  "year": 2006,
+  "authors": ["James A. Cranford", "Patrick E. Shrout", "Masumi Iida", "Eshkol Rafaeli", "Tiffany Yip", "Niall Bolger"],
+  "source_type": "paper",
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2414486/",
+  "language": "en",
+  "domains": [
+    "diary-studies",
+    "within-person-change",
+    "measurement-reliability",
+    "mood-tracking"
+  ],
+  "study_type": "methods_paper",
+  "confidence": "high",
+  "runtime_status": "evaluation_only",
+  "population": "Daily diary datasets examining mood change over time",
+  "main_findings": [
+    "Measures built for between-person differences are not automatically reliable for within-person change.",
+    "Short diary mood measures can reliably detect within-person changes if evaluated specifically for that purpose.",
+    "Within-person emotional tracking needs measurement design that is sensitive to change over time, not only trait differences."
+  ],
+  "allowed_inferences": [
+    "Aurum should evaluate mood labels and emotional indicators for sensitivity to change within the same user over time.",
+    "Aurum can justify short repeated measures if they are designed for longitudinal sensitivity rather than static classification."
+  ],
+  "forbidden_inferences": [
+    "Do not use this paper as evidence that Aurum improves mood.",
+    "Do not turn measurement reliability into a user-facing efficacy claim."
+  ],
+  "use_for": [
+    "analytics design",
+    "journal metrics",
+    "evaluation harnesses",
+    "emotion trend validation"
+  ],
+  "do_not_use_for": [
+    "runtime interpretation prompts",
+    "user-facing benefit claims"
+  ],
+  "prompt_guidance": [
+    "None. This card is for evaluation and product measurement design."
+  ],
+  "example_questions": [],
+  "notes": "Important for stats, trend cards, and internal evaluation. This card should inform how Aurum measures change, not what DeepSeek says to users."
+}

@@ -1,0 +1,78 @@
+{
+  "version": 1,
+  "updated_at": "2026-03-11",
+  "approved_runtime_cards": [
+    {
+      "id": "baikie-wilhelm-2005-expressive-writing-overview",
+      "path": "knowledge/studies/cards/baikie-wilhelm-2005-expressive-writing-overview.json",
+      "priority": "high",
+      "tags": [
+        "expressive-writing",
+        "session-design",
+        "safety-boundaries",
+        "prompt-framing"
+      ],
+      "runtime_summary": [
+        "Private, self-directed writing that includes feelings and thoughts is consistent with expressive writing protocols.",
+        "Use reflective prompts to support clarity, not to promise treatment outcomes.",
+        "Keep emotionally intense prompts bounded, optional, and non-clinical."
+      ]
+    },
+    {
+      "id": "sloan-feinstein-marx-2009-expressive-writing-durability",
+      "path": "knowledge/studies/cards/sloan-feinstein-marx-2009-expressive-writing-durability.json",
+      "priority": "high",
+      "tags": [
+        "longitudinal-effects",
+        "overclaim-avoidance",
+        "change-over-time",
+        "expectation-setting"
+      ],
+      "runtime_summary": [
+        "Reflective writing effects may vary over time and should not be framed as durable symptom relief.",
+        "Favor prompts that compare current entries with earlier ones to surface change, persistence, or recurrence.",
+        "Use tentative language around improvement and stay grounded in the user's own observations."
+      ]
+    },
+    {
+      "id": "park-ayduk-kross-2016-self-distancing",
+      "path": "knowledge/studies/cards/park-ayduk-kross-2016-self-distancing.json",
+      "priority": "high",
+      "tags": [
+        "self-distancing",
+        "anti-rumination",
+        "meaning-making",
+        "post-entry-guidance"
+      ],
+      "runtime_summary": [
+        "Good reflective writing helps the user step back from an experience rather than replay it from inside.",
+        "Prompts should emphasize observation, causes, and meaning instead of emotional re-immersion.",
+        "Use self-distancing as a reflective aid, not as emotional invalidation."
+      ]
+    }
+  ],
+  "evaluation_only_cards": [
+    {
+      "id": "cranford-et-al-2006-within-person-change-reliability",
+      "path": "knowledge/studies/cards/cranford-et-al-2006-within-person-change-reliability.json",
+      "reason": "Important for diary metrics and trend reliability, not for runtime reflection text."
+    }
+  ],
+  "context_only_cards": [
+    {
+      "id": "gao-2022-expressive-writing-bibliometric-landscape",
+      "path": "knowledge/studies/cards/gao-2022-expressive-writing-bibliometric-landscape.json",
+      "reason": "Useful for research mapping, not for runtime evidence."
+    },
+    {
+      "id": "schmidt-et-al-2010-appraisal-emotion-regulation",
+      "path": "knowledge/studies/cards/schmidt-et-al-2010-appraisal-emotion-regulation.json",
+      "reason": "Useful for designing reflection questions about appraisals, but too context-specific for high-confidence runtime grounding."
+    },
+    {
+      "id": "augustyn-2025-emotional-granularity-critique",
+      "path": "knowledge/studies/cards/augustyn-2025-emotional-granularity-critique.json",
+      "reason": "Useful as a guardrail against overclaiming the value of refined emotion vocabulary."
+    }
+  ]
+}

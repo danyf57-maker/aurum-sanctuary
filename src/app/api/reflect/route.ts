@@ -26,6 +26,7 @@ import {
   validateResponse,
 } from '@/lib/patterns/anti-meta';
 import { rateLimit, RateLimitPresets } from '@/lib/rate-limit';
+import { buildEvidencePrompt } from '@/lib/ai/evidence/prompt-policy';
 
 type AurumIntent = 'reflection' | 'conversation' | 'analysis' | 'action' | 'philosophy';
 type SupportedLocale = 'fr' | 'en';
@@ -129,6 +130,11 @@ function getSkillIdForIntent(intent: AurumIntent): string | null {
   if (intent === 'analysis') return PSYCHOLOGIST_ANALYST_SKILL_ID;
   if (intent === 'philosophy') return PHILOSOPHY_SKILL_ID;
   return null;
+}
+
+function getEvidencePromptModeForIntent(intent: AurumIntent): 'reflect' | 'mirror' {
+  if (intent === 'conversation') return 'mirror';
+  return 'reflect';
 }
 
 function normalizeRequestedLocale(value: unknown): SupportedLocale | null {
@@ -263,6 +269,10 @@ export async function POST(request: NextRequest) {
       {
         role: 'system',
         content: buildLanguageInstruction(userLanguage, requestedLocale),
+      },
+      {
+        role: 'system',
+        content: buildEvidencePrompt(getEvidencePromptModeForIntent(intent)),
       },
     ];
 

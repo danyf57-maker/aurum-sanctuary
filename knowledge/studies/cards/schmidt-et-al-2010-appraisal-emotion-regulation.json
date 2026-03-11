@@ -1,0 +1,50 @@
+{
+  "id": "schmidt-et-al-2010-appraisal-emotion-regulation",
+  "title": "Appraisals, emotions and emotion regulation: An integrative approach",
+  "year": 2010,
+  "authors": ["Susanna Schmidt", "Carla Tinti", "Linda J. Levine", "Silvia Testa"],
+  "source_type": "paper",
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2844958/",
+  "language": "en",
+  "domains": [
+    "appraisal",
+    "emotion-regulation",
+    "emotion-mapping",
+    "coping-strategies"
+  ],
+  "study_type": "structural_modeling_study",
+  "confidence": "medium",
+  "runtime_status": "context_only",
+  "population": "Italian students anticipating a high school diploma examination",
+  "main_findings": [
+    "Different appraisal profiles were associated with different emotional clusters such as anxiety/fear, frustration/powerlessness, and positive emotions.",
+    "Those emotional clusters were associated with different regulation tendencies, including reappraisal, suppression, distancing, and problem-focused strategies."
+  ],
+  "allowed_inferences": [
+    "Aurum can model emotions as linked to how a situation is appraised, not only to what objectively happened.",
+    "Aurum can ask questions about perceived threat, control, helplessness, or meaning when trying to clarify an emotional pattern."
+  ],
+  "forbidden_inferences": [
+    "Do not hard-map a user's emotion to a single appraisal profile with certainty.",
+    "Do not generalize this exam-specific sample into universal emotional laws."
+  ],
+  "use_for": [
+    "question design",
+    "pattern naming",
+    "appraisal-oriented reflection prompts"
+  ],
+  "do_not_use_for": [
+    "strong runtime assertions",
+    "clinical interpretation"
+  ],
+  "prompt_guidance": [
+    "When emotions are unclear, ask what the situation meant to the user: threat, loss, blocked control, opportunity, or uncertainty.",
+    "Treat appraisal as a hypothesis generator, not a deterministic explanation."
+  ],
+  "example_questions": [
+    "Did this situation feel threatening, unfair, blocking, or simply uncertain?",
+    "What did this moment seem to say about your control, safety, or value?",
+    "If the emotion is mixed, what interpretation of the situation is driving it?"
+  ],
+  "notes": "Useful for richer reflective questioning, but the evidence is too context-specific to use as a high-confidence runtime card."
+}

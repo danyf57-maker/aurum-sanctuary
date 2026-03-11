@@ -1,0 +1,43 @@
+{
+  "id": "study-id",
+  "title": "Full study title",
+  "year": 2026,
+  "authors": ["Author One", "Author Two"],
+  "source_type": "paper",
+  "url": "https://example.org/study",
+  "language": "en",
+  "domains": ["expressive-writing", "emotional-processing"],
+  "study_type": "systematic_review",
+  "confidence": "high",
+  "population": "Adults",
+  "main_findings": [
+    "Writing about difficult experiences may support emotional processing over time."
+  ],
+  "allowed_inferences": [
+    "Private writing can help name emotions and organize subjective experience."
+  ],
+  "forbidden_inferences": [
+    "Do not claim therapy.",
+    "Do not claim diagnosis.",
+    "Do not promise medical outcomes."
+  ],
+  "use_for": [
+    "reflection prompts",
+    "pattern naming",
+    "emotional clarification"
+  ],
+  "do_not_use_for": [
+    "crisis handling",
+    "clinical decision-making",
+    "medical advice"
+  ],
+  "prompt_guidance": [
+    "Encourage naming emotions rather than interpreting pathology.",
+    "Prefer gentle hypotheses over strong causal claims."
+  ],
+  "example_questions": [
+    "What part of this experience seems to keep returning?",
+    "Which emotion is easiest to name here?"
+  ],
+  "notes": "Human-reviewed card. Safe for runtime only after validation."
+}

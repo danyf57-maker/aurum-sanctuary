@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { rateLimit, RateLimitPresets } from '@/lib/rate-limit';
 import { logger } from '@/lib/logger/safe';
 import { requireUserIdFromRequest, UserGuardError } from '@/lib/api/require-user-id';
+import { buildEvidencePrompt } from '@/lib/ai/evidence/prompt-policy';
 
 type InputEntry = {
   id: string;
@@ -72,7 +73,7 @@ export async function POST(request: NextRequest) {
         messages: [
           {
             role: 'system',
-            content: 'Tu ecris des digests hebdomadaires de journaling. Reponds uniquement avec du markdown.',
+            content: `Tu ecris des digests hebdomadaires de journaling. Reponds uniquement avec du markdown.\n\n${buildEvidencePrompt('digest')}`,
           },
           { role: 'user', content: prompt },
         ],
