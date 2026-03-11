@@ -33,9 +33,10 @@ import {
 } from '@/lib/ai/language';
 import { buildAurumResponseContract } from '@/lib/ai/aurum-response-contract';
 import { getFreeEntryState, resolveAurumAccessState } from '@/lib/billing/aurum-access';
+import type { Locale } from '@/lib/locale';
 
 type AurumIntent = 'reflection' | 'conversation' | 'analysis' | 'action' | 'philosophy';
-type SupportedLocale = 'fr' | 'en';
+type SupportedLocale = Locale;
 
 /**
  * System prompt for reflection (with implicit pattern awareness)
