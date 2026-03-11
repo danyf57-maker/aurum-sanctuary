@@ -16,7 +16,7 @@
   "entryForm": {
     "savedTitle": "Entrée sauvegardée",
     "savedDescription": "Votre pensée a été chiffrée et enregistrée.",
-    "encryptionActive": "Chiffrement de bout en bout actif",
+    "encryptionActive": "Chiffrement côté client actif",
     "save": "Sauvegarder"
   },
   "settings": {
@@ -394,7 +394,7 @@
     "description": "Crée ton espace de réflexion privé. Écris librement, reçois des reflets guidés, et remarque les motifs récurrents dans le temps.",
     "quizBadge": "Votre profil vous attend",
     "quizText": "Votre profil de réflexion est prêt ! Créez votre compte pour découvrir votre résultat personnalisé et commencer votre expérience.",
-    "encrypted": "Chiffré de bout en bout et privé par conception",
+    "encrypted": "Chiffré et privé par conception",
     "inAppBrowser": "Connexion Google bloquée dans ce navigateur intégré. Ouvre cette page dans Safari ou Chrome puis réessaie.",
     "google": "Continuer avec Google",
     "or": "Ou continuer avec",
@@ -853,15 +853,15 @@
     "trust": {
       "eyebrow": "Ton intégrité, notre priorité",
       "title": "Un sanctuaire où tu es le seul maître.",
-      "subtitle": "Nous avons conçu Aurum autour d'une idée simple : ton monde intérieur ne regarde que toi. Pas même nous.",
+      "subtitle": "Aurum a été conçu pour offrir à tes écrits un espace privé et protégé. Le chiffrement côté client, la limitation des accès internes et des contrôles clairs sont intégrés dès le départ.",
       "cards": [
         {
-          "title": "Confidentialité absolue",
-          "body": "Tes pensées sont chiffrées (AES-256) directement sur ton appareil. Même nous ne pouvons pas lire tes secrets."
+          "title": "Chiffré par défaut",
+          "body": "Tes pages sont chiffrées sur ton appareil avant d'être stockées. Aurum est conçu pour protéger ce que tu écris contre un accès interne trop large."
         },
         {
-          "title": "Anonymat garanti",
-          "body": "Aucune donnée personnelle n'est liée à tes écrits. Le moteur d'analyse Aurum opère en local sur ton appareil."
+          "title": "Privé par conception",
+          "body": "Nous ne vendons pas tes données et nous n'utilisons pas tes écrits pour la publicité. Les fonctionnalités assistées par IA ne traitent que les textes nécessaires pour générer les reflets que tu demandes."
         },
         {
           "title": "Droit à l'oubli",
@@ -874,7 +874,7 @@
     },
     "finalCta": {
       "button": "Créer mon sanctuaire maintenant",
-      "note": "Sans engagement • Chiffrement de bout en bout",
+      "note": "Sans engagement • Chiffré et privé par conception",
       "subtitle": "Tu entres dans un espace de réflexion privée conçu pour écrire régulièrement, comprendre ce qui revient et retrouver de la clarté dans le temps.",
       "cards": [
         {
@@ -902,8 +902,8 @@
     "faqTitle": "Questions fréquentes",
     "faqs": [
       {
-        "question": "Qui peut lire mes données ?",
-        "answer": "Personne. Nous utilisons une architecture « Admin-Blind » avec chiffrement AES-256 côté client. Tes entrées sont chiffrées avec ta clé privée avant d'être envoyées. Techniquement, même avec un accès total à nos serveurs, il est impossible de déchiffrer tes écrits sans ton mot de passe."
+        "question": "Comment mes écrits sont-ils protégés ?",
+        "answer": "Tes pages sont chiffrées avant d'être stockées, et Aurum est conçu pour limiter l'accès interne aux données lisibles. Quand tu demandes une réflexion guidée par IA, le texte nécessaire est traité pour générer cette réponse. Nous ne vendons pas tes données et nous ne les utilisons pas pour la publicité."
       },
       {
         "question": "Comment l'écriture privée aide-t-elle à retrouver de la clarté le soir ?",
@@ -923,7 +923,7 @@
       },
       {
         "question": "Quelle app de réflexion privée protège vraiment mes écrits ?",
-        "answer": "Choisis une app de réflexion privée chiffrée de bout en bout, sans publicité, où tes écrits ne sont pas exposés publiquement. Sur Aurum, tes mots restent dans un espace privé conçu pour la clarté et les motifs récurrents."
+        "answer": "Choisis une app de réflexion privée conçue avec la confidentialité en tête, claire sur la façon dont les fonctionnalités assistées par IA traitent tes écrits, et sans incitation publicitaire. Sur Aurum, tes mots restent dans un espace privé conçu pour la clarté et les motifs récurrents."
       },
       {
         "question": "Combien coûte Aurum ?",
@@ -978,7 +978,7 @@
       "titleLine1": "Ton sanctuaire",
       "titleLine2": "t'attend",
       "description": "Un espace privé et chiffré pour écrire librement, recevoir un reflet guidé, et commencer à voir les motifs émotionnels qui reviennent dans le temps.",
-      "featurePrivate": "100% privé",
+      "featurePrivate": "Privé par conception",
       "featureEncrypted": "Chiffré",
       "featureAi": "Reflet guidé",
       "featurePatterns": "Motifs dans le temps",

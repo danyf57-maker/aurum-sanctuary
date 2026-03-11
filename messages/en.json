@@ -16,7 +16,7 @@
   "entryForm": {
     "savedTitle": "Entry saved",
     "savedDescription": "Your thought has been encrypted and saved.",
-    "encryptionActive": "End-to-end encryption is active",
+    "encryptionActive": "Client-side encryption is active",
     "save": "Save"
   },
   "settings": {
@@ -394,7 +394,7 @@
     "description": "Create your private reflection space. Write freely, receive guided reflection, and notice recurring patterns over time.",
     "quizBadge": "Your profile is waiting",
     "quizText": "Your reflection profile is ready! Create your account to discover your personalized result and begin your experience.",
-    "encrypted": "End-to-end encrypted and private by design",
+    "encrypted": "Encrypted and private by design",
     "inAppBrowser": "Google sign-in is blocked in this in-app browser. Open this page in Safari or Chrome and try again.",
     "google": "Continue with Google",
     "or": "Or continue with",
@@ -853,15 +853,15 @@
     "trust": {
       "eyebrow": "Your integrity, our priority",
       "title": "A sanctuary where you remain in control.",
-      "subtitle": "Aurum was designed around one simple idea: your inner world belongs to you alone. Not even to us.",
+      "subtitle": "Aurum was designed to give your writing a private, protected space. Client-side encryption, limited internal access, and clear controls are built in from the start.",
       "cards": [
         {
-          "title": "Absolute privacy",
-          "body": "Your thoughts are encrypted (AES-256) directly on your device. Even we cannot read your private notes."
+          "title": "Encrypted by default",
+          "body": "Your pages are encrypted on your device before they are stored. Aurum is built to protect what you write from broad internal access."
         },
         {
-          "title": "Guaranteed anonymity",
-          "body": "No personal identity is tied to your writing. Aurum's analysis engine operates locally on your device."
+          "title": "Private by design",
+          "body": "We do not sell your data or use your writing for advertising. AI-assisted features process the writing needed to generate the reflections you request."
         },
         {
           "title": "Right to be forgotten",
@@ -874,7 +874,7 @@
     },
     "finalCta": {
       "button": "Create my sanctuary now",
-      "note": "No commitment • End-to-end encryption",
+      "note": "No commitment • Encrypted and private by design",
       "subtitle": "You enter a private reflection space designed to help you write regularly, understand what keeps returning, and regain clarity over time.",
       "cards": [
         {
@@ -902,8 +902,8 @@
     "faqTitle": "Frequently asked questions",
     "faqs": [
       {
-        "question": "Who can read my data?",
-        "answer": "No one. We use an “Admin-Blind” architecture with client-side AES-256 encryption. Your entries are encrypted with your private key before being sent. Technically, even with total server access, your writing cannot be decrypted without your password."
+        "question": "How is my writing protected?",
+        "answer": "Your pages are encrypted before they are stored, and Aurum is built to limit internal access to readable data. When you ask for AI-guided reflection, the relevant writing is processed to generate that response. We do not sell your data or use it for advertising."
       },
       {
         "question": "How can private writing help me regain clarity at night?",
@@ -923,7 +923,7 @@
       },
       {
         "question": "What private reflection app actually protects my writing?",
-        "answer": "Choose a reflection app with end-to-end encryption, no advertising, and no public exposure of your writing. On Aurum, your words stay in a private space built for clarity and pattern discovery."
+        "answer": "Choose a reflection app that is private by design, clear about how AI-assisted features use your writing, and free of advertising incentives. On Aurum, your words stay in a private space built for clarity and pattern discovery."
       },
       {
         "question": "How much does Aurum cost?",
@@ -978,7 +978,7 @@
       "titleLine1": "Your sanctuary",
       "titleLine2": "is waiting",
       "description": "An encrypted private space to write freely, receive guided reflection, and begin seeing recurring emotional patterns over time.",
-      "featurePrivate": "100% Private",
+      "featurePrivate": "Private by design",
       "featureEncrypted": "Encrypted",
       "featureAi": "Guided reflection",
       "featurePatterns": "Patterns over time",
