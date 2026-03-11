@@ -28,6 +28,22 @@ const FORBIDDEN_PHRASES = [
   'tu avais',
   'précédemment',
   'antérieurement',
+  'tu as écrit en',
+  'écrit en italien',
+  'écrit en français',
+  'écrit en anglais',
+  'wrote in',
+  'written in',
+];
+
+const LANGUAGE_META_PATTERNS = [
+  /\bje remarque que tu as écrit en [^.!?]+[.!?]?/gi,
+  /\btu as écrit en [^.!?]+[.!?]?/gi,
+  /\bi notice that you wrote in [^.!?]+[.!?]?/gi,
+  /\byou wrote in [^.!?]+[.!?]?/gi,
+  /\bveo que escribiste en [^.!?]+[.!?]?/gi,
+  /\bhai scritto in [^.!?]+[.!?]?/gi,
+  /\bdu hast auf [^.!?]+ geschrieben[.!?]?/gi,
 ];
 
 /**
@@ -44,6 +60,17 @@ export function containsMetaReference(text: string): boolean {
       });
       return true;
     }
+  }
+
+  for (const pattern of LANGUAGE_META_PATTERNS) {
+    if (pattern.test(text)) {
+      logger.warnSafe('Detected language-meta reference in AI response', {
+        textPreview: text.substring(0, 100),
+      });
+      pattern.lastIndex = 0;
+      return true;
+    }
+    pattern.lastIndex = 0;
   }
 
   return false;
@@ -101,6 +128,11 @@ export function sanitizeMetaReferences(text: string): string {
   for (const [forbidden, replacement] of Object.entries(replacements)) {
     const regex = new RegExp(forbidden, 'gi');
     sanitized = sanitized.replace(regex, replacement);
+  }
+
+  for (const pattern of LANGUAGE_META_PATTERNS) {
+    sanitized = sanitized.replace(pattern, '');
+    pattern.lastIndex = 0;
   }
 
   // Clean up double spaces

@@ -100,6 +100,7 @@ export function PremiumJournalForm() {
     patternsUsed: number;
   } | null>(null);
   const isFocusMode = draftContent.trim().length > 0 && isActivelyTyping;
+  const isConversationLocked = isLimitReached && !isPremium;
 
   const setTypingActivity = () => {
     setIsActivelyTyping(true);
@@ -424,6 +425,9 @@ export function PremiumJournalForm() {
 
     if (!response.ok) {
       const error = await response.json().catch(() => ({}));
+      if (response.status === 402 && error?.freeLimitReached) {
+        setIsPaywallOpen(true);
+      }
       if (response.status === 401) {
         throw new Error(t('errors.sessionExpiredReload'));
       }
@@ -496,6 +500,10 @@ export function PremiumJournalForm() {
   const handleContinueConversation = async () => {
     const prompt = conversationInput.trim();
     if (!prompt || !savedContent) return;
+    if (isConversationLocked) {
+      setIsPaywallOpen(true);
+      return;
+    }
 
     const userTurn: ConversationTurn = {
       id: `user-${Date.now()}`,
@@ -943,44 +951,64 @@ export function PremiumJournalForm() {
                     </div>
                   )}
 
-                  <div className="space-y-3">
-                    <Textarea
-                      value={conversationInput}
-                      onChange={(event) => setConversationInput(event.currentTarget.value)}
-                      placeholder={t('placeholders.replyToAurum')}
-                      className="min-h-[88px] resize-y rounded-2xl border-stone-200 bg-white/60 [font-family:var(--font-cormorant)] text-lg text-stone-800 placeholder:text-stone-400 focus:border-[#C5A059]/30 focus:ring-[#C5A059]/10"
-                    />
-                    <div className="flex justify-end">
-                      <Button
-                        type="button"
-                        onClick={handleContinueConversation}
-                        disabled={isContinuingConversation || !conversationInput.trim()}
-                        className="bg-gradient-to-r from-[#D4AF37] to-[#C5A059] text-stone-900 hover:from-[#C5A059] hover:to-[#D4AF37] rounded-xl px-6 font-semibold shadow-[0_6px_18px_rgba(212,175,55,0.2)] transition-all duration-300 hover:shadow-[0_8px_24px_rgba(212,175,55,0.3)]"
-                      >
-                        {isContinuingConversation ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            {t('aurumThinking')}
-                          </>
-                        ) : (
-                          t('send')
-                        )}
-                      </Button>
-                    </div>
-                    <AnimatePresence>
-                      {isContinuingConversation && (
-                        <motion.div
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: 'auto' }}
-                          exit={{ opacity: 0, height: 0 }}
-                          transition={{ duration: 0.3 }}
-                          className="pt-2"
+                  {isConversationLocked ? (
+                    <div className="rounded-2xl border border-amber-200 bg-amber-50/80 p-5">
+                      <p className="text-base font-medium text-stone-900">
+                        {t('conversationLockedTitle')}
+                      </p>
+                      <p className="mt-2 text-sm leading-relaxed text-stone-600">
+                        {t('conversationLockedBody')}
+                      </p>
+                      <div className="mt-4 flex justify-end">
+                        <Button
+                          type="button"
+                          onClick={() => setIsPaywallOpen(true)}
+                          className="bg-gradient-to-r from-[#D4AF37] to-[#C5A059] text-stone-900 hover:from-[#C5A059] hover:to-[#D4AF37] rounded-xl px-6 font-semibold shadow-[0_6px_18px_rgba(212,175,55,0.2)] transition-all duration-300 hover:shadow-[0_8px_24px_rgba(212,175,55,0.3)]"
                         >
-                          <NeuroBreadcrumbs className="text-left" />
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
+                          {t('unlockConversation')}
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      <Textarea
+                        value={conversationInput}
+                        onChange={(event) => setConversationInput(event.currentTarget.value)}
+                        placeholder={t('placeholders.replyToAurum')}
+                        className="min-h-[88px] resize-y rounded-2xl border-stone-200 bg-white/60 [font-family:var(--font-cormorant)] text-lg text-stone-800 placeholder:text-stone-400 focus:border-[#C5A059]/30 focus:ring-[#C5A059]/10"
+                      />
+                      <div className="flex justify-end">
+                        <Button
+                          type="button"
+                          onClick={handleContinueConversation}
+                          disabled={isContinuingConversation || !conversationInput.trim()}
+                          className="bg-gradient-to-r from-[#D4AF37] to-[#C5A059] text-stone-900 hover:from-[#C5A059] hover:to-[#D4AF37] rounded-xl px-6 font-semibold shadow-[0_6px_18px_rgba(212,175,55,0.2)] transition-all duration-300 hover:shadow-[0_8px_24px_rgba(212,175,55,0.3)]"
+                        >
+                          {isContinuingConversation ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              {t('aurumThinking')}
+                            </>
+                          ) : (
+                            t('send')
+                          )}
+                        </Button>
+                      </div>
+                      <AnimatePresence>
+                        {isContinuingConversation && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="pt-2"
+                          >
+                            <NeuroBreadcrumbs className="text-left" />
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  )}
                 </div>
               </motion.div>
             )}
