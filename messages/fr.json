@@ -478,9 +478,9 @@
     "ctaSecondary": "Écrire d'abord sans engagement",
     "trust": "100% Chiffré • Réflexion guidée par IA • Privé par design.",
     "placeholders": {
-      "0": "Je n'arrive pas à dormir, mon cerveau tourne en boucle sur la réunion de demain...",
-      "1": "Je me sens complètement submergé par ma liste de tâches aujourd'hui...",
-      "2": "J'ai juste besoin de vider ma tête avant d'exploser..."
+      "0": "La même conversation rejoue encore dans ma tête...",
+      "1": "Je remarque la même tension chaque lundi...",
+      "2": "Quelque chose sonne faux, mais je n'arrive pas encore à le nommer..."
     },
     "quotes": {
       "0": {
@@ -490,14 +490,14 @@
         "author": "Jules Renard"
       },
       "1": {
-        "hint": "Quand tu rumines, écris ce qui tourne en boucle.",
-        "detail": "Mettre les mots dehors aide ton mental à ralentir.",
+        "hint": "Quand quelque chose rejoue, écris ce qui revient et ce que cela raconte.",
+        "detail": "Quelques lignes sincères peuvent révéler le motif dessous.",
         "quote": "J'écris pour découvrir ce que je pense.",
         "author": "Joan Didion"
       },
       "2": {
-        "hint": "Si tu portes trop, dépose tout ici, ligne après ligne.",
-        "detail": "Tu n'as pas besoin d'écrire parfaitement, juste d'écrire vrai.",
+        "hint": "Si plusieurs émotions se mélangent, laisse-les se poser une à une.",
+        "detail": "Tu n'as pas besoin d'écrire parfaitement, juste assez précisément pour te remarquer.",
         "quote": "Il n'y a pas de plus grande agonie que de porter une histoire non racontée en soi.",
         "author": "Maya Angelou"
       },
@@ -508,14 +508,14 @@
         "author": "Margaret Atwood"
       },
       "4": {
-        "hint": "Quand la surcharge intérieure monte, cet espace t'aide à ralentir.",
-        "detail": "Tu peux y déposer ce qui s'emmêle et remarquer ce qui demande de la clarté.",
+        "hint": "Quand tes signaux intérieurs se brouillent, cet espace t'aide à trier l'essentiel.",
+        "detail": "Tu peux y déposer ce qui s'emmêle et remarquer ce qui revient.",
         "quote": "Nous écrivons pour goûter la vie deux fois.",
         "author": "Anaïs Nin"
       },
       "5": {
-        "hint": "Après une journée lourde, écris ce qui est resté avec toi.",
-        "detail": "Même 2 minutes de réflexion peuvent rendre un motif plus visible.",
+        "hint": "Après un moment marquant, écris ce qui est resté avec toi.",
+        "detail": "Même 2 minutes de réflexion peuvent rendre un thème récurrent plus visible.",
         "quote": "La clarté commence quand les mots cessent de tourner et commencent à se poser.",
         "author": "Aurum"
       },
@@ -526,8 +526,8 @@
         "author": "Jules Renard"
       },
       "7": {
-        "hint": "Quand ton esprit accélère, ralentis avec des mots simples.",
-        "detail": "Ici, tu peux déposer sans te juger.",
+        "hint": "Quand ton attention se disperse, ralentis avec des mots simples.",
+        "detail": "Ici, tu peux remarquer sans avoir à performer.",
         "quote": "J'écris pour découvrir ce que je pense.",
         "author": "Joan Didion"
       }
@@ -750,50 +750,50 @@
     "studyCards": [
       {
         "eyebrow": "Sais-tu que...",
-        "title": "écrire un stress vécu peut réduire des symptômes physiques ?",
-        "body": "Dans une étude fondatrice, les personnes qui écrivaient sur un événement difficile ont montré de meilleurs indicateurs de santé.",
-        "example": "Exemple concret : 10 minutes le soir pour poser ce qui te pèse au lieu de ruminer au lit."
+        "title": "écrire une expérience difficile peut aider à organiser ce que tu ressens ?",
+        "body": "Dans une étude fondatrice, les personnes qui écrivaient sur un événement difficile ont montré des changements mesurables dans leur façon de le traiter.",
+        "example": "Exemple concret : écris 10 minutes sur ce qui s'est passé, ce que tu as ressenti, puis ce qui semble revenir."
       },
       {
         "eyebrow": "Sais-tu que...",
-        "title": "mettre tes émotions en mots peut améliorer ton rebond ?",
+        "title": "mettre tes émotions en mots peut soutenir des prochains pas plus clairs ?",
         "body": "Une étude sur des personnes en période de perte d'emploi a trouvé un meilleur retour à l'action chez celles qui écrivaient.",
         "example": "Exemple concret : écrire 3 fois par semaine ce que tu ressens, puis ton prochain pas réaliste."
       },
       {
         "eyebrow": "Sais-tu que...",
-        "title": "les revues systématiques confirment un gain de bien-être ?",
-        "body": "Les synthèses récentes montrent un effet positif du journaling sur le stress et le bien-être psychologique.",
+        "title": "une écriture réflexive régulière peut améliorer le bien-être dans le temps ?",
+        "body": "Les revues récentes suggèrent qu'un journaling régulier peut soutenir la clarté émotionnelle, la réflexion et le bien-être dans la durée.",
         "example": "Exemple concret : une routine de 5 minutes par jour peut déjà changer ton niveau de clarté."
       }
     ],
     "useCases": {
-      "title": "Moments fréquents où l'écriture peut ramener de la clarté",
-      "subtitle": "Des exemples concrets pour démêler ce que tu ressens, alléger la surcharge intérieure et faire apparaître ce qui revient.",
-      "note": "Ancré dans des recherches récentes sur l'écriture expressive et le bien-être psychologique",
+      "title": "Moments fréquents où la réflexion peut rendre les motifs visibles",
+      "subtitle": "Des exemples concrets pour démêler ce que tu ressens, faire émerger les thèmes récurrents, et transformer des pensées dispersées en signaux plus lisibles.",
+      "note": "Ancré dans des recherches sur l'écriture expressive, la mise en mots des émotions et la pratique réflexive",
       "cards": [
         {
-          "badge": "Insomnie",
-          "title": "Ton cerveau tourne la nuit",
-          "body": "Écris ce qui tourne en boucle. En pratique: 3 lignes avant de dormir (fait, émotion, besoin) peuvent déjà apaiser ton esprit.",
+          "badge": "Clarté du soir",
+          "title": "Une conversation rejoue encore à la fin de la journée",
+          "body": "Écris les faits, ce qui est resté émotionnellement, puis ce dont tu as besoin maintenant. Trois lignes peuvent transformer une boucle en quelque chose que tu vois vraiment.",
           "cta": "Commencer gratuitement →"
         },
         {
           "badge": "Self-talk",
-          "title": "Tu te parles trop durement",
-          "body": "Quand la petite voix dit \"je suis nul\", écris une version plus juste: \"j'avance petit à petit\". Ça aide à reprendre confiance.",
+          "title": "Ta voix intérieure raconte toujours la même histoire",
+          "body": "Écris la phrase exacte que tu te répètes, puis réponds-lui avec quelque chose de plus juste et plus vrai. Le motif devient plus facile à nommer.",
           "cta": "Créer mon compte →"
         },
         {
-          "badge": "Overthinking",
-          "title": "Tout est confus dans ta tête",
-          "body": "Écris une idée par ligne. Tu transformes la confusion mentale en points clairs, puis tu choisis un seul petit pas pour aujourd'hui.",
+          "badge": "Motif récurrent",
+          "title": "La même tension revient dans des situations différentes",
+          "body": "Liste trois moments récents qui se ressemblent. Aurum t'aide à voir le fil commun au lieu de traiter chaque scène comme isolée.",
           "cta": "Je veux essayer →"
         },
         {
-          "badge": "Pression",
-          "title": "Tu gardes tout, puis tu exploses",
-          "body": "Quelques lignes régulières valent mieux qu'une longue session rare. Tu décompresses avant saturation et tu retrouves plus de calme.",
+          "badge": "Signal émotionnel",
+          "title": "Tu te sens chargé sans voir ce qu'il y a dessous",
+          "body": "Écris ce qui s'est passé, ce que tu as ressenti d'abord, puis ce qui est apparu ensuite. Une courte réflexion révèle souvent le vrai centre émotionnel.",
           "cta": "Je commence maintenant →"
         },
         {
@@ -803,52 +803,52 @@
           "cta": "Ouvrir mon journal →"
         },
         {
-          "badge": "Charge mentale",
-          "title": "Ta liste de tâches t'étouffe",
-          "body": "Pose un minuteur 5 minutes et écris sans corriger: faits, émotions, besoins. Cette routine courte te redonne de l'air mental.",
+          "badge": "Surcharge de rôles",
+          "title": "Tu portes trop de rôles en même temps",
+          "body": "Écris en trois colonnes: ce qu'on attend de toi, ce qui compte pour toi, puis ce qui t'épuise. Ta hiérarchie intérieure devient plus visible.",
           "cta": "Créer mon espace →"
         },
         {
           "badge": "Conflit",
-          "title": "Après une dispute, ton mental rejoue la scène",
-          "body": "Pose les faits, ce que tu as ressenti, puis ce dont tu as besoin maintenant. Tu sors du film mental et tu reviens à toi.",
-          "cta": "Revenir au calme →"
+          "title": "Après une dispute, tu veux comprendre clairement ta part",
+          "body": "Pose les faits, ce que tu as ressenti, puis la limite ou le besoin qui est devenu visible. Tu passes de la scène rejouée au motif compris.",
+          "cta": "Revenir à la réflexion →"
         },
         {
-          "badge": "Fatigue mentale",
-          "title": "Tu te sens vidé sans savoir pourquoi",
-          "body": "Écris 5 lignes en fin de journée: ce qui t'a pris de l'énergie, ce qui t'en a donné. Tu retrouves des repères pour demain.",
-          "cta": "Retrouver de l'énergie →"
+          "badge": "Rythme d'énergie",
+          "title": "Ton énergie baisse sans que tu voies vraiment pourquoi",
+          "body": "Écris cinq lignes en fin de journée: ce qui t'a vidé, ce qui t'a recentré, puis ce qui s'est répété. Avec le temps, le rythme devient plus lisible.",
+          "cta": "Voir le motif →"
         },
         {
           "badge": "Décision",
           "title": "Tu bloques sur une décision importante",
-          "body": "Divise ta page en deux colonnes: ce que tu gagnes, ce que tu perds. Mettre à plat tes pensées fait souvent émerger ton vrai choix.",
+          "body": "Divise ta page en deux colonnes: ce qui t'aligne, puis ce qui te compromet. Mettre tes pensées devant toi fait souvent émerger le vrai choix.",
           "cta": "Clarifier ma décision →"
         }
       ]
     },
     "scientificProof": {
-      "title": "Ce n'est pas de la magie, c'est un phénomène observé.",
-      "subtitle": "Des chercheurs se sont penchés sur le pouvoir de l'écriture. Dans leurs études, ils ont fait des découvertes surprenantes :",
+      "title": "Écrire n'est pas seulement expressif. C'est clarifiant.",
+      "subtitle": "Les recherches sur l'écriture expressive suggèrent que mettre une expérience en mots peut soutenir la prise de recul, le traitement émotionnel et des choix plus clairs dans le temps.",
       "discoveries": [
         {
           "label": "Découverte n°1 :",
-          "body": "Les participants qui prenaient le temps d'écrire sur leurs soucis ont vu leurs visites chez le médecin diminuer de moitié"
+          "body": "Les participants qui écrivaient régulièrement sur des expériences difficiles ont montré des évolutions mesurables dans leurs marqueurs d'ajustement et de santé"
         },
         {
           "label": "Découverte n°2 :",
-          "body": "Dans une autre étude sur des personnes ayant perdu leur emploi, celles qui écrivaient sur leurs émotions avaient deux fois plus de chances de retrouver un travail que les autres"
+          "body": "Dans une autre étude sur des personnes ayant perdu leur emploi, celles qui écrivaient sur leurs émotions étaient plus susceptibles de retrouver de l'élan et de poser des prochains pas constructifs"
         }
       ]
     },
     "problem": {
-      "title": "À quoi ressemble la surcharge intérieure ?",
-      "body": "Les pensées tournent, les émotions se mélangent, et il devient plus difficile de voir ce qui compte vraiment. L'écriture rend ces signaux plus lisibles."
+      "title": "Que se passe-t-il quand les signaux intérieurs restent sans nom ?",
+      "body": "Les pensées tournent, les émotions se mélangent, et les mêmes réactions reviennent sans nom clair. L'écriture rend ces signaux plus visibles avant qu'ils ne disparaissent."
     },
     "solution": {
-      "title": "L'écriture ralentit assez pour voir clair.",
-      "body": "Écrire en privé donne à tes pensées un endroit où se poser. Aurum ajoute une réflexion guidée douce pour laisser émerger la clarté et les motifs récurrents dans le temps."
+      "title": "Écrire crée assez de distance pour mieux te voir.",
+      "body": "Écrire en privé donne à tes pensées un endroit où se poser. Aurum ajoute une réflexion guidée douce pour laisser émerger des motifs émotionnels, des thèmes récurrents et des prochains pas plus clairs dans le temps."
     },
     "trust": {
       "eyebrow": "Ton intégrité, notre priorité",
@@ -906,16 +906,16 @@
         "answer": "Tes pages sont chiffrées avant d'être stockées, et Aurum est conçu pour limiter l'accès interne aux données lisibles. Quand tu demandes une réflexion guidée par IA, le texte nécessaire est traité pour générer cette réponse. Nous ne vendons pas tes données et nous ne les utilisons pas pour la publicité."
       },
       {
-        "question": "Comment l'écriture privée aide-t-elle à retrouver de la clarté le soir ?",
-        "answer": "Écris 3 lignes avant de te coucher : ce qui te pèse, ce que tu ressens, puis ce dont tu as besoin demain. Le but est de sortir les boucles mentales de ta tête pour laisser revenir la clarté."
+        "question": "Comment l'écriture privée aide-t-elle à voir ce qui revient ?",
+        "answer": "Écris trois lignes courtes : ce qui s'est passé, ce que tu as ressenti, puis ce qui semble se répéter. Le but n'est pas seulement de te soulager sur le moment, mais de mieux voir le motif dessous."
       },
       {
-        "question": "Comment réduire la surcharge intérieure en 5 minutes ?",
-        "answer": "Pose un minuteur 5 minutes et écris sans corriger : faits, émotions, besoins. Cette courte réflexion aide à alléger la surcharge intérieure et à retrouver de la clarté, même pendant une journée chargée."
+        "question": "Comment retrouver de la clarté en 5 minutes ?",
+        "answer": "Pose un minuteur 5 minutes et écris sans corriger : faits, émotions, besoins. Cette courte réflexion aide à transformer des pensées dispersées en quelque chose que tu peux voir et comprendre."
       },
       {
-        "question": "Comment la réflexion aide-t-elle à sortir du trop-plein mental ?",
-        "answer": "Quand tout tourne dans ta tête, écris une idée par ligne. La réflexion transforme un flot confus en quelque chose que tu peux voir, nommer et traverser plus clairement."
+        "question": "Comment la réflexion aide-t-elle à voir un motif récurrent plus clairement ?",
+        "answer": "Quand quelque chose tourne en boucle, écris une idée par ligne, puis souligne ce qui revient. La réflexion transforme le bruit mental en motif que tu peux nommer et travailler."
       },
       {
         "question": "L'écriture réflexive peut-elle améliorer la clarté émotionnelle ?",
