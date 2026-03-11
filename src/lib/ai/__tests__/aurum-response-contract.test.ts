@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { buildAurumResponseContract } from '../aurum-response-contract';
 import { buildStrictReplyLanguageInstruction, resolveReplyLanguage } from '../language';
+import { PRODUCT_LOCALES, REFLECTION_LANGUAGES } from '../../language-policy';
 
 describe('Aurum response contract', () => {
   it('keeps reflection mode grounded and modest', () => {
@@ -23,9 +24,20 @@ describe('Aurum response contract', () => {
 });
 
 describe('Reply language rules', () => {
+  it('keeps a single source of truth for product and reflection languages', () => {
+    expect(PRODUCT_LOCALES).toEqual(['en', 'fr']);
+    expect(REFLECTION_LANGUAGES).toEqual(['en', 'fr', 'es', 'it', 'de', 'pt']);
+  });
+
   it('prefers the latest human message over the app locale', () => {
     expect(resolveReplyLanguage('Sono mentalmente stanco', 'en')).toBe('it');
     expect(resolveReplyLanguage('Estoy agotado', 'en')).toBe('es');
+  });
+
+  it('detects Portuguese instead of drifting to Spanish', () => {
+    const portugueseSample = `Ultimamente tenho sentido um cansaço que não melhora nem quando durmo. Durante o dia eu continuo funcionando, mas por dentro é como se eu estivesse ficando mais distante de mim mesmo. À noite eu sinto mais claramente o vazio.`;
+
+    expect(resolveReplyLanguage(portugueseSample, 'en')).toBe('pt');
   });
 
   it('tells the model to sound natural in the target language', () => {
@@ -34,5 +46,12 @@ describe('Reply language rules', () => {
     expect(instruction).toContain('entirely in Italian');
     expect(instruction).toContain('Prefer idiomatic, natural phrasing');
     expect(instruction).toContain('literal translation');
+  });
+
+  it('can issue a strict Portuguese language rule', () => {
+    const instruction = buildStrictReplyLanguageInstruction('pt', 'en');
+
+    expect(instruction).toContain('entirely in Portuguese');
+    expect(instruction).toContain('User message language takes priority over app locale');
   });
 });

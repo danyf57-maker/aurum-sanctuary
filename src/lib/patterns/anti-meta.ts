@@ -32,6 +32,7 @@ const FORBIDDEN_PHRASES = [
   'écrit en italien',
   'écrit en français',
   'écrit en anglais',
+  'escreveu em',
   'wrote in',
   'written in',
 ];
@@ -44,6 +45,9 @@ const LANGUAGE_META_PATTERNS = [
   /\bveo que escribiste en [^.!?]+[.!?]?/gi,
   /\bhai scritto in [^.!?]+[.!?]?/gi,
   /\bdu hast auf [^.!?]+ geschrieben[.!?]?/gi,
+  /\bvejo que você escreveu em [^.!?]+[.!?]?/gi,
+  /\bvejo que voce escreveu em [^.!?]+[.!?]?/gi,
+  /\bpercebo que você escreveu em [^.!?]+[.!?]?/gi,
 ];
 
 /**
