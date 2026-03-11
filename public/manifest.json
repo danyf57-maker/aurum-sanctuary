@@ -1,11 +1,18 @@
 {
-    "name": "Aurum Sanctuary",
+    "id": "/",
+    "name": "Aurum Diary",
     "short_name": "Aurum",
-    "description": "Votre sanctuaire de santé mentale et journal intime IA.",
-    "start_url": "/",
+    "description": "Private guided reflection for emotional clarity.",
+    "start_url": "/?source=pwa",
+    "scope": "/",
+    "lang": "en",
+    "dir": "ltr",
     "display": "standalone",
+    "display_override": ["standalone", "minimal-ui", "browser"],
     "background_color": "#1c1917",
     "theme_color": "#1c1917",
+    "categories": ["lifestyle", "productivity", "health"],
+    "prefer_related_applications": false,
     "icons": [
         {
             "src": "/icons/icon-192x192.png",
@@ -16,6 +23,47 @@
             "src": "/icons/icon-512x512.png",
             "sizes": "512x512",
             "type": "image/png"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "Write",
+            "short_name": "Write",
+            "description": "Open your private writing space",
+            "url": "/sanctuary/write?source=pwa-shortcut",
+            "icons": [
+                {
+                    "src": "/icons/icon-192x192.png",
+                    "sizes": "192x192",
+                    "type": "image/png"
+                }
+            ]
+        },
+        {
+            "name": "Journal",
+            "short_name": "Journal",
+            "description": "Return to your private pages",
+            "url": "/sanctuary?source=pwa-shortcut",
+            "icons": [
+                {
+                    "src": "/icons/icon-192x192.png",
+                    "sizes": "192x192",
+                    "type": "image/png"
+                }
+            ]
+        },
+        {
+            "name": "Magazine",
+            "short_name": "Magazine",
+            "description": "Review reflections and recurring patterns",
+            "url": "/sanctuary/magazine?source=pwa-shortcut",
+            "icons": [
+                {
+                    "src": "/icons/icon-192x192.png",
+                    "sizes": "192x192",
+                    "type": "image/png"
+                }
+            ]
         }
     ]
 }
