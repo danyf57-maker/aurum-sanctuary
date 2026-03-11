@@ -7,6 +7,7 @@
 
 import { DerivedMemoryLite } from '@/lib/schemas/derivedMemory';
 import { MIRROR_EVIDENCE_PROMPT, MIRROR_SYSTEM_PROMPT, buildContextPrompt } from './prompts';
+import { buildStrictReplyLanguageInstruction, resolveReplyLanguage } from '@/lib/ai/language';
 
 /**
  * DeepSeek API configuration
@@ -45,6 +46,7 @@ export async function callDeepSeek(
 
     // Build full prompt with context
     const contextPrompt = buildContextPrompt(context);
+    const replyLanguage = resolveReplyLanguage(userMessage, null);
     const fullPrompt = contextPrompt
         ? `${contextPrompt}\n\nUser: ${userMessage}`
         : userMessage;
@@ -64,6 +66,7 @@ export async function callDeepSeek(
                 messages: [
                     { role: 'system', content: MIRROR_SYSTEM_PROMPT },
                     { role: 'system', content: MIRROR_EVIDENCE_PROMPT },
+                    { role: 'system', content: buildStrictReplyLanguageInstruction(replyLanguage, null) },
                     { role: 'user', content: fullPrompt },
                 ],
                 max_tokens: maxTokens,

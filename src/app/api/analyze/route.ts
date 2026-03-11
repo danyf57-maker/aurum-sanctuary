@@ -2,12 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { logger } from '@/lib/logger/safe';
 import { requireUserIdFromRequest, UserGuardError } from '@/lib/api/require-user-id';
 import { buildEvidencePrompt } from '@/lib/ai/evidence/prompt-policy';
+import { buildStrictReplyLanguageInstruction, resolveReplyLanguage } from '@/lib/ai/language';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     await requireUserIdFromRequest(request, body);
     const { content } = body as { content?: string };
+    const replyLanguage = resolveReplyLanguage(content || '', null);
 
     if (!content) {
       return NextResponse.json(
@@ -40,6 +42,10 @@ export async function POST(request: NextRequest) {
           {
             role: 'system',
             content: `Tu es un assistant empathique spécialisé dans l'analyse d'écrits personnels. Analyse le texte suivant et retourne UNIQUEMENT un objet JSON avec: {"sentiment": "positive/negative/neutral", "mood": "calme/anxieux/joyeux/triste/etc", "insight": "une phrase courte, prudente et non clinique sur ce qui semble se vivre ici"}\n\n${buildEvidencePrompt('entryAnalysis')}`
+          },
+          {
+            role: 'system',
+            content: `${buildStrictReplyLanguageInstruction(replyLanguage, null)} Return the JSON values in that same language.`,
           },
           {
             role: 'user',
