@@ -17,17 +17,19 @@ import { useState } from 'react';
 import { PricingOfferBlock } from '@/components/marketing/pricing-offer-block';
 import { useToast } from '@/hooks/use-toast';
 import { TrialExplainerCard } from '@/components/marketing/trial-explainer-card';
+import { PUBLIC_PRICING } from '@/lib/billing/config';
 
 export const dynamic = 'force-dynamic';
 
 // Preferred naming; fallback keeps backward compatibility with existing env vars.
 const PRICE_ID_MONTHLY = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY || process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO;
 const PRICE_ID_YEARLY = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_YEARLY || process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PREMIUM;
+const formatPrice = (amount: number) => `${PUBLIC_PRICING.currencySymbol}${amount}`;
 
 const buildPlans = (t: ReturnType<typeof useTranslations>) => [
     {
         name: t("monthly.name"),
-        price: "13€",
+        price: formatPrice(PUBLIC_PRICING.monthlyAmount),
         period: t("monthly.period"),
         description: t("monthly.description"),
         features: [
@@ -43,7 +45,7 @@ const buildPlans = (t: ReturnType<typeof useTranslations>) => [
     },
     {
         name: t("yearly.name"),
-        price: "129€",
+        price: formatPrice(PUBLIC_PRICING.yearlyAmount),
         period: t("yearly.period"),
         description: t("yearly.description"),
         features: [

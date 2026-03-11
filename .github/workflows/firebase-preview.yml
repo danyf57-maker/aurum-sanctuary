@@ -55,6 +55,8 @@ jobs:
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
           NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
+          NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY: price_1T9kWBREu3GIrDilO5pdUMB4
+          NEXT_PUBLIC_STRIPE_PRICE_ID_YEARLY: price_1T9kWBREu3GIrDilWeGaZMQz
         run: |
           firebase hosting:channel:deploy "pr-${{ github.event.number }}" \
             --expires 7d \

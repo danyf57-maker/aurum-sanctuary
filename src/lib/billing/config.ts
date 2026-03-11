@@ -19,3 +19,10 @@ export const STRIPE_TRIAL_REMINDER_DAYS = 3;
 
 export const FREE_ENTRY_LIMIT = 5;
 export const ANNUAL_UPGRADE_ELIGIBILITY_DAYS = 90;
+
+export const PUBLIC_PRICING = {
+  currencyCode: 'USD',
+  currencySymbol: '$',
+  monthlyAmount: 13,
+  yearlyAmount: 129,
+} as const;

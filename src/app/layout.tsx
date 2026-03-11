@@ -10,6 +10,7 @@ import ProductEventTracker from '@/components/analytics/ProductEventTracker';
 import { CookieConsent } from '@/components/legal/CookieConsent';
 import { TermsModal } from '@/components/auth/TermsModal';
 import { getRequestLocale } from '@/lib/locale-server';
+import { PUBLIC_PRICING } from '@/lib/billing/config';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 
@@ -123,8 +124,8 @@ export default async function RootLayout({
     operatingSystem: 'Web, iOS, Android',
     offers: {
       '@type': 'Offer',
-      price: '13',
-      priceCurrency: 'EUR',
+      price: String(PUBLIC_PRICING.monthlyAmount),
+      priceCurrency: PUBLIC_PRICING.currencyCode,
     },
     featureList: isFr
       ? [

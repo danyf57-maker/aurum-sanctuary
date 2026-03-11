@@ -29,6 +29,9 @@ These are client-side Firebase config values (not secrets):
 - `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID`
 - `NEXT_PUBLIC_FIREBASE_APP_ID`
 - `NEXT_PUBLIC_GOOGLE_CLIENT_ID`
+- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
+- `NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY`
+- `NEXT_PUBLIC_STRIPE_PRICE_ID_YEARLY`
 
 These must have `availability: [BUILD, RUNTIME]` because Next.js needs them during static page generation (prerendering).
 
@@ -109,3 +112,4 @@ This happens when no successful rollout has ever completed, or DNS propagation i
 ## History
 
 - **2026-02-10:** Removed `FIREBASE_SERVICE_ACCOUNT_KEY_B64` in favor of ADC. Added all `NEXT_PUBLIC_FIREBASE_*` variables. Created `DEEPSEEK_API_KEY` and `STRIPE_SECRET_KEY` in Secret Manager. First successful App Hosting deployment.
+- **2026-03-11:** Added public Stripe config for the US launch pricing surface and moved live pricing display to `$13/month` and `$129/year`.
