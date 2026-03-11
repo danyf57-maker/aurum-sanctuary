@@ -93,7 +93,7 @@ export function buildStrictReplyLanguageInstruction(
   replyLanguage: ReplyLanguage,
   requestedLocale?: SupportedLocale | null
 ): string {
-  const sharedRules = 'Never mention the language the user wrote in. Do not open with a greeting unless the user greeted you first in the same turn. Respond directly to the meaning and emotional content.';
+  const sharedRules = 'Never mention the language the user wrote in. Do not open with a greeting unless the user greeted you first in the same turn. Respond directly to the meaning and emotional content. Prefer idiomatic, natural phrasing in the target language. If you are unsure, use simpler native wording instead of literal translation.';
 
   if (replyLanguage === 'en') {
     return `Language rule (strict): Your final answer must be entirely in English. User message language takes priority over app locale. App locale: ${requestedLocale ?? 'unknown'}. ${sharedRules}`;
