@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-.PHONY: bootstrap dev lint typecheck build functions-build i18n-check guard-env guard-client-boundaries verify
+.PHONY: bootstrap dev lint typecheck test smoke build functions-build i18n-check guard-env guard-client-boundaries verify
 
 bootstrap:
 	./scripts/bootstrap.sh
@@ -13,6 +13,12 @@ lint:
 
 typecheck:
 	npm run typecheck
+
+test:
+	npm run test
+
+smoke: build
+	npm run smoke
 
 build:
 	npm run build

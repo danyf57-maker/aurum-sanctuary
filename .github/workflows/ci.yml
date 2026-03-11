@@ -27,7 +27,7 @@ jobs:
         run: npm --prefix functions ci
 
       - name: Run verification harness
-        run: npm run verify
+        run: make verify
         env:
           # Use non-production placeholders so the verification harness can run
           # without accidentally coupling CI to live Firebase/Stripe config.

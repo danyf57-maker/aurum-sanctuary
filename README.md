@@ -100,11 +100,19 @@ make bootstrap
 # Environment safety checks
 make guard-env
 
+# Fast checks
+make lint
+make typecheck
+make test
+
+# Runtime smoke validation
+make smoke
+
 # Full local verification harness
 make verify
 ```
 
-`make verify` runs environment checks, client/server boundary checks, ESLint, TypeScript, EN/FR i18n parity, Next.js build, and Cloud Functions build.
+`make verify` runs environment checks, client/server boundary checks, ESLint, TypeScript, tests, Next.js build, Cloud Functions build, and a local smoke run against the built app.
 
 ## Architecture Decisions
 

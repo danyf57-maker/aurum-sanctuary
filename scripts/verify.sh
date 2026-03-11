@@ -16,13 +16,16 @@ npm run lint
 echo "==> TypeScript"
 npm run typecheck
 
-echo "==> i18n parity"
-npm run test:e2e:i18n
+echo "==> Tests"
+npm run test
 
 echo "==> Next.js build"
 npm run build
 
 echo "==> Functions build"
 npm run functions:build
+
+echo "==> Smoke"
+npm run smoke
 
 echo "Verification complete."

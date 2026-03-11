@@ -4,7 +4,7 @@
 
 Aurum Sanctuary uses GitHub Actions for automated CI/CD pipelines:
 
-1. **CI Pipeline**: Environment guard, client/server boundary guard, lint, type check, i18n parity, build validation
+1. **CI Pipeline**: Environment guard, client/server boundary guard, lint, type check, tests, build validation, smoke validation
 2. **Privacy Checks**: Prohibited terms, schema sync, safe logging, client/server boundary enforcement
 3. **Deploy Functions**: Cloud Functions deployment
 4. **Deploy Firestore**: Rules and indexes deployment
@@ -22,9 +22,10 @@ Aurum Sanctuary uses GitHub Actions for automated CI/CD pipelines:
 - ✅ Client/server boundary guard (`npm run guard:client-boundaries`)
 - ✅ ESLint (`npm run lint`)
 - ✅ TypeScript type check (`npm run typecheck`)
-- ✅ EN/FR translation parity (`npm run test:e2e:i18n`)
+- ✅ Tests (`npm run test`)
 - ✅ Build validation (`npm run build`)
 - ✅ Cloud Functions build (`npm run functions:build`)
+- ✅ Local-style smoke validation (`npm run smoke`)
 
 ### 2. Privacy & Security Checks
 **File**: `.github/workflows/privacy-checks.yml`  

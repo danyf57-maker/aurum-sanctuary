@@ -66,6 +66,12 @@ make dev
 make typecheck
 ```
 
+### Run Tests
+
+```bash
+make test
+```
+
 ### Run Linting
 
 ```bash
@@ -84,7 +90,15 @@ make build
 make verify
 ```
 
-This runs the environment guard, the client/server boundary guard, ESLint, TypeScript, EN/FR translation parity, Next.js build, and Cloud Functions build.
+This runs the environment guard, the client/server boundary guard, ESLint, TypeScript, unit/i18n tests, Next.js build, Cloud Functions build, and a local smoke run against the built app.
+
+### Run Smoke Only
+
+```bash
+make smoke
+```
+
+This starts the built app locally and validates a small set of public EN/FR routes end-to-end.
 
 ---
 
