@@ -67,10 +67,19 @@ export function detectUserLanguage(content: string): ReplyLanguage {
   return 'same-as-user';
 }
 
-export function resolveReplyLanguage(content: string, requestedLocale?: SupportedLocale | null): ReplyLanguage {
-  const detected = detectUserLanguage(content);
+export function resolveReplyLanguage(
+  primaryContent: string,
+  requestedLocale?: SupportedLocale | null,
+  fallbackContent?: string
+): ReplyLanguage {
+  const detected = detectUserLanguage(primaryContent);
   if (detected !== 'same-as-user') {
     return detected;
+  }
+
+  const fallbackDetected = detectUserLanguage(fallbackContent || '');
+  if (fallbackDetected !== 'same-as-user') {
+    return fallbackDetected;
   }
 
   if (requestedLocale === 'fr' || requestedLocale === 'en') {
@@ -84,25 +93,27 @@ export function buildStrictReplyLanguageInstruction(
   replyLanguage: ReplyLanguage,
   requestedLocale?: SupportedLocale | null
 ): string {
+  const sharedRules = 'Never mention the language the user wrote in. Do not open with a greeting unless the user greeted you first in the same turn. Respond directly to the meaning and emotional content.';
+
   if (replyLanguage === 'en') {
-    return `Language rule (strict): Your final answer must be entirely in English. User message language takes priority over app locale. App locale: ${requestedLocale ?? 'unknown'}.`;
+    return `Language rule (strict): Your final answer must be entirely in English. User message language takes priority over app locale. App locale: ${requestedLocale ?? 'unknown'}. ${sharedRules}`;
   }
 
   if (replyLanguage === 'fr') {
-    return `Language rule (strict): Your final answer must be entirely in French. User message language takes priority over app locale. App locale: ${requestedLocale ?? 'unknown'}.`;
+    return `Language rule (strict): Your final answer must be entirely in French. User message language takes priority over app locale. App locale: ${requestedLocale ?? 'unknown'}. ${sharedRules}`;
   }
 
   if (replyLanguage === 'es') {
-    return `Language rule (strict): Your final answer must be entirely in Spanish. User message language takes priority over app locale. App locale: ${requestedLocale ?? 'unknown'}.`;
+    return `Language rule (strict): Your final answer must be entirely in Spanish. User message language takes priority over app locale. App locale: ${requestedLocale ?? 'unknown'}. ${sharedRules}`;
   }
 
   if (replyLanguage === 'it') {
-    return `Language rule (strict): Your final answer must be entirely in Italian. User message language takes priority over app locale. App locale: ${requestedLocale ?? 'unknown'}.`;
+    return `Language rule (strict): Your final answer must be entirely in Italian. User message language takes priority over app locale. App locale: ${requestedLocale ?? 'unknown'}. ${sharedRules}`;
   }
 
   if (replyLanguage === 'de') {
-    return `Language rule (strict): Your final answer must be entirely in German. User message language takes priority over app locale. App locale: ${requestedLocale ?? 'unknown'}.`;
+    return `Language rule (strict): Your final answer must be entirely in German. User message language takes priority over app locale. App locale: ${requestedLocale ?? 'unknown'}. ${sharedRules}`;
   }
 
-  return `Language rule (strict): Reply in the same language as the user's message, even if the app locale is different. If the user writes in French, answer in French. If the user writes in Spanish, answer in Spanish. If the user writes in Italian, answer in Italian. If the user writes in German, answer in German. App locale: ${requestedLocale ?? 'unknown'}.`;
+  return `Language rule (strict): Reply in the same language as the user's message, even if the app locale is different. If the user writes in French, answer in French. If the user writes in Spanish, answer in Spanish. If the user writes in Italian, answer in Italian. If the user writes in German, answer in German. App locale: ${requestedLocale ?? 'unknown'}. ${sharedRules}`;
 }

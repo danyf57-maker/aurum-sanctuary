@@ -14,6 +14,7 @@ import { getRequestLocale } from "@/lib/locale-server";
 import type { Locale } from "@/lib/locale";
 import { FREE_ENTRY_LIMIT } from "@/lib/billing/config";
 import { getActiveEmailAttribution, EMAIL_ATTRIBUTION_WINDOW_HOURS } from "@/lib/onboarding/email-attribution";
+import { getFreeEntryState, resolveAurumAccessState } from "@/lib/billing/aurum-access";
 
 const txt = (locale: Locale, fr: string, en: string) =>
   locale === "fr" ? fr : en;
@@ -314,20 +315,9 @@ export async function saveJournalEntry(
     const userDoc = await userDocRef.get();
     const userData = userDoc.data();
     userEmail = userData?.email || '';
-    const entryCount = userData?.entryCount || 0;
+    const { entriesUsed: entryCount } = getFreeEntryState(userData || {});
     isFirstEntry = entryCount === 0;
-    const subscriptionStatus = String(userData?.subscriptionStatus || '');
-    const hasStripeSubscription =
-      typeof userData?.subscriptionId === 'string' && userData.subscriptionId.length > 0;
-    const trialEndsAt =
-      toDate(userData?.subscriptionTrialEndsAt) ||
-      toDate(userData?.subscriptionCurrentPeriodEnd);
-    const hasPremiumAccess =
-      subscriptionStatus === 'active' ||
-      (subscriptionStatus === 'trialing' &&
-        hasStripeSubscription &&
-        !!trialEndsAt &&
-        trialEndsAt.getTime() > Date.now());
+    const { hasSubscription: hasPremiumAccess } = resolveAurumAccessState(userData || {});
 
     if (!hasPremiumAccess && entryCount >= FREE_ENTRY_LIMIT) {
       if (!userData?.freeLimitReachedAt) {
