@@ -1,0 +1,58 @@
+{
+  "id": "baikie-wilhelm-2005-expressive-writing-overview",
+  "title": "Emotional and physical health benefits of expressive writing",
+  "year": 2005,
+  "authors": ["Karen A. Baikie", "Kay Wilhelm"],
+  "source_type": "review_article",
+  "url": "https://www.cambridge.org/core/journals/advances-in-psychiatric-treatment/article/emotional-and-physical-health-benefits-of-expressive-writing/ED2976A61F5DE56B46F07A1CE9EA9F9F",
+  "language": "en",
+  "domains": [
+    "expressive-writing",
+    "emotional-processing",
+    "reflection-protocols",
+    "safety-boundaries"
+  ],
+  "study_type": "clinical_review",
+  "confidence": "medium",
+  "runtime_status": "approved",
+  "population": "Review of clinical and non-clinical expressive writing studies",
+  "main_findings": [
+    "The review describes a common expressive writing protocol: writing for roughly 15 to 20 minutes on 3 to 5 occasions about stressful or emotional experiences.",
+    "Across studies, expressive writing was associated with some physical and psychological benefits, but emotional outcomes were less consistent than physical outcomes.",
+    "The review recommends a private, self-directed writing context and cautions that expressive writing should remain an adjunct, not a replacement for medical or psychological care."
+  ],
+  "allowed_inferences": [
+    "Aurum can invite private writing that combines feelings and thoughts rather than only facts.",
+    "Aurum can encourage writing without performance pressure, grammar pressure, or external evaluation.",
+    "Aurum can frame reflective writing as supportive for emotional processing and clarity without promising clinical benefit."
+  ],
+  "forbidden_inferences": [
+    "Do not claim that expressive writing reliably improves mental health for every user.",
+    "Do not frame Aurum as treatment, therapy, or a substitute for professional care.",
+    "Do not imply that research-backed privacy in writing means stronger privacy than the actual product architecture provides."
+  ],
+  "use_for": [
+    "prompt framing",
+    "writing session guidance",
+    "safety copy",
+    "expectation setting"
+  ],
+  "do_not_use_for": [
+    "diagnosis",
+    "crisis response",
+    "medical claims",
+    "guaranteed outcome claims"
+  ],
+  "prompt_guidance": [
+    "Invite the user to write freely for themselves, not for evaluation.",
+    "Encourage writing that includes both what happened and what was felt.",
+    "Prefer gentle reflection over interpretation with clinical certainty.",
+    "When content is emotionally intense, keep suggestions bounded and optional."
+  ],
+  "example_questions": [
+    "What happened here, and what did it mean to you emotionally?",
+    "What part of this experience still feels unfinished or unresolved?",
+    "If you name both the facts and the feelings, what becomes clearer?"
+  ],
+  "notes": "Use this card to shape the tone and structure of Aurum's reflective prompts. It is stronger for protocol design and safety framing than for strong outcome claims."
+}

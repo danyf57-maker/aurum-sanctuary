@@ -14,6 +14,7 @@
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { FieldValue } from 'firebase-admin/firestore';
 import { firestore } from './admin';
+import { buildEvidencePrompt } from './evidencePrompt';
 
 /**
  * Call DeepSeek API to generate insight
@@ -37,7 +38,9 @@ Core Principles:
 4. Use CALM, NON-JUDGMENTAL language
 5. Maximum 200 words
 
-Remember: You are a mirror, not a guide. Reflect patterns, don't prescribe solutions.`;
+Remember: You are a mirror, not a guide. Reflect patterns, don't prescribe solutions.
+
+${buildEvidencePrompt('weeklyInsight')}`;
 
     const userPrompt = buildUserPrompt(derivedMemoryLite);
 

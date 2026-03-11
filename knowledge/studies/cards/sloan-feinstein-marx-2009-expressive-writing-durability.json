@@ -1,0 +1,56 @@
+{
+  "id": "sloan-feinstein-marx-2009-expressive-writing-durability",
+  "title": "The durability of beneficial health effects associated with expressive writing",
+  "year": 2009,
+  "authors": ["Denise M. Sloan", "Brian A. Feinstein", "Brian P. Marx"],
+  "source_type": "paper",
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4842937/",
+  "language": "en",
+  "domains": [
+    "expressive-writing",
+    "longitudinal-effects",
+    "expectation-setting",
+    "overclaim-avoidance"
+  ],
+  "study_type": "randomized_controlled_trial",
+  "confidence": "medium",
+  "runtime_status": "approved",
+  "population": "68 first-year college undergraduates in the United States",
+  "main_findings": [
+    "Participants assigned to expressive writing showed lower depression symptom severity at the two-month follow-up than control participants.",
+    "Those reductions were not sustained at the four- or six-month follow-ups in this sample.",
+    "The study did not find significant follow-up differences for stress, anxiety, physical health complaints, or academic performance."
+  ],
+  "allowed_inferences": [
+    "Aurum can describe reflective writing as potentially helpful for short-term clarification or easing certain states in some users.",
+    "Aurum should emphasize continuity and observation over time instead of promising durable symptom reduction.",
+    "Aurum can use repeated check-ins and longitudinal pattern tracking because effects may shift rather than remain stable."
+  ],
+  "forbidden_inferences": [
+    "Do not claim that expressive writing produces lasting reductions in depression, stress, or anxiety.",
+    "Do not claim physical health improvements or academic gains from Aurum based on this study.",
+    "Do not generalize this college sample to all users or all emotional difficulties."
+  ],
+  "use_for": [
+    "longitudinal prompt design",
+    "change-over-time questions",
+    "marketing restraint",
+    "outcome claim boundaries"
+  ],
+  "do_not_use_for": [
+    "broad efficacy promises",
+    "medical positioning",
+    "clinical outcome guarantees"
+  ],
+  "prompt_guidance": [
+    "Ask what changed, stayed the same, or returned since earlier entries.",
+    "Treat reflection as a process of noticing patterns, not a promise of symptom removal.",
+    "When discussing progress, use tentative language and stay close to the user's own observations."
+  ],
+  "example_questions": [
+    "Compared with your last entries, what feels lighter, and what still returns?",
+    "Is this pattern fading, changing shape, or staying the same?",
+    "What do you notice today that you could not name two weeks ago?"
+  ],
+  "notes": "This card is especially useful for preventing Aurum from overselling the effects of reflective writing. It supports longitudinal design but argues against strong efficacy claims."
+}

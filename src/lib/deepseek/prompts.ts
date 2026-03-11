@@ -5,6 +5,7 @@
  */
 
 import { DerivedMemoryLite } from '@/lib/schemas/derivedMemory';
+import { buildEvidencePrompt } from '@/lib/ai/evidence/prompt-policy';
 
 /**
  * System prompt for Mirror Chat
@@ -37,6 +38,8 @@ Exemples du ton juste :
 - "Il y a un fil entre ce besoin de tout contrôler au travail et ce que tu décris chez toi. Tu le vois aussi ?"
 
 Rappel : tu es un miroir, pas un réparateur. Tu éclaires, tu ne fixes pas.`;
+
+export const MIRROR_EVIDENCE_PROMPT = buildEvidencePrompt('mirror');
 
 /**
  * Build context prompt from DerivedMemoryLite

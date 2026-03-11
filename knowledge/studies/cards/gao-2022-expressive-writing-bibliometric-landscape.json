@@ -1,0 +1,46 @@
+{
+  "id": "gao-2022-expressive-writing-bibliometric-landscape",
+  "title": "Research on Expressive Writing in Psychology: A Forty-year Bibliometric Analysis and Visualization of Current Status and Research Trends",
+  "year": 2022,
+  "authors": ["Xiaojuan Gao"],
+  "source_type": "paper",
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9611203/",
+  "language": "en",
+  "domains": [
+    "research-landscape",
+    "expressive-writing",
+    "source-prioritization"
+  ],
+  "study_type": "bibliometric_analysis",
+  "confidence": "context_only",
+  "runtime_status": "context_only",
+  "population": "1,429 expressive writing publications from the Web of Science Core Collection",
+  "main_findings": [
+    "The paper maps the expressive writing field over four decades rather than testing an intervention effect directly.",
+    "It shows that expressive writing research has become broad, multidisciplinary, and methodologically diverse.",
+    "It identifies future directions such as positive psychology contexts and broader population coverage."
+  ],
+  "allowed_inferences": [
+    "Use this source to prioritize further reading and identify clusters of expressive writing research.",
+    "Use it to justify building a curated evidence base instead of relying on isolated studies."
+  ],
+  "forbidden_inferences": [
+    "Do not use this paper as evidence that Aurum improves user outcomes.",
+    "Do not convert bibliometric trends into user-facing efficacy claims."
+  ],
+  "use_for": [
+    "research roadmap",
+    "source prioritization",
+    "knowledge base planning"
+  ],
+  "do_not_use_for": [
+    "runtime interpretation",
+    "user-facing health claims",
+    "prompt grounding for specific emotional analyses"
+  ],
+  "prompt_guidance": [
+    "None. This card is for research planning, not runtime prompting."
+  ],
+  "example_questions": [],
+  "notes": "Keep this as context only. It is useful for deciding what evidence to read next, not for grounding individual Aurum reflections."
+}

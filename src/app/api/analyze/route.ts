@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { logger } from '@/lib/logger/safe';
 import { requireUserIdFromRequest, UserGuardError } from '@/lib/api/require-user-id';
+import { buildEvidencePrompt } from '@/lib/ai/evidence/prompt-policy';
 
 export async function POST(request: NextRequest) {
   try {
@@ -38,7 +39,7 @@ export async function POST(request: NextRequest) {
         messages: [
           {
             role: 'system',
-            content: 'Tu es un assistant empathique spécialisé dans l\'analyse des émotions. Analyse le texte suivant et retourne UNIQUEMENT un objet JSON avec: {"sentiment": "positive/negative/neutral", "mood": "calme/anxieux/joyeux/triste/etc", "insight": "une phrase courte et bienveillante sur ce que ressent la personne"}'
+            content: `Tu es un assistant empathique spécialisé dans l'analyse d'écrits personnels. Analyse le texte suivant et retourne UNIQUEMENT un objet JSON avec: {"sentiment": "positive/negative/neutral", "mood": "calme/anxieux/joyeux/triste/etc", "insight": "une phrase courte, prudente et non clinique sur ce qui semble se vivre ici"}\n\n${buildEvidencePrompt('entryAnalysis')}`
           },
           {
             role: 'user',

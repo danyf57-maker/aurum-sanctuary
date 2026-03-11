@@ -1,0 +1,56 @@
+{
+  "id": "park-ayduk-kross-2016-self-distancing",
+  "title": "Stepping Back to Move Forward: Expressive Writing Promotes Self-Distancing",
+  "year": 2016,
+  "authors": ["Jiyoung Park", "Ozlem Ayduk", "Ethan Kross"],
+  "source_type": "paper",
+  "url": "https://doi.org/10.1037/emo0000121",
+  "language": "en",
+  "domains": [
+    "expressive-writing",
+    "self-distancing",
+    "meaning-making",
+    "emotional-reactivity"
+  ],
+  "study_type": "randomized_controlled_trial",
+  "confidence": "medium",
+  "runtime_status": "approved",
+  "population": "Adults reflecting on distressing life experiences across two longitudinal studies",
+  "main_findings": [
+    "Expressive writing promoted greater self-distancing than comparison conditions when participants reflected on distressing experiences.",
+    "Greater self-distancing was associated with lower emotional reactivity at follow-up.",
+    "Linguistic analyses suggested that causation language increased while negative emotion words and first-person singular pronouns decreased as self-distancing increased."
+  ],
+  "allowed_inferences": [
+    "Aurum can guide users toward stepping back from an experience to observe it more clearly.",
+    "Aurum can support meaning-making by asking what changed, what caused what, and what perspective becomes visible with distance.",
+    "Aurum can prefer prompts that move the user from immersion toward observation without detachment from reality."
+  ],
+  "forbidden_inferences": [
+    "Do not claim that self-distancing through writing works the same way for every user or every situation.",
+    "Do not use self-distancing to invalidate, minimize, or suppress the user's emotional experience.",
+    "Do not frame Aurum as a substitute for trauma treatment or psychotherapy."
+  ],
+  "use_for": [
+    "runtime prompt design",
+    "follow-up questions",
+    "reflection summaries",
+    "post-entry guidance"
+  ],
+  "do_not_use_for": [
+    "diagnosis",
+    "trauma processing claims",
+    "clinical guarantees"
+  ],
+  "prompt_guidance": [
+    "Ask the user to describe the situation from a small distance rather than from total immersion.",
+    "Encourage the user to notice causes, consequences, and recurring meaning rather than only replaying the event.",
+    "Use language that helps the user observe the experience rather than relive it."
+  ],
+  "example_questions": [
+    "If you step back slightly from this moment, what becomes easier to see?",
+    "What seems to have triggered this reaction, and what followed from it?",
+    "What meaning are you giving this event, and does that meaning keep returning elsewhere?"
+  ],
+  "notes": "This is one of the strongest cards for shaping Aurum's anti-rumination, pro-reflection posture. It is highly relevant to post-entry reflections."
+}

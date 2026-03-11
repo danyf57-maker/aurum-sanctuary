@@ -6,7 +6,7 @@
  */
 
 import { DerivedMemoryLite } from '@/lib/schemas/derivedMemory';
-import { MIRROR_SYSTEM_PROMPT, buildContextPrompt } from './prompts';
+import { MIRROR_EVIDENCE_PROMPT, MIRROR_SYSTEM_PROMPT, buildContextPrompt } from './prompts';
 
 /**
  * DeepSeek API configuration
@@ -63,6 +63,7 @@ export async function callDeepSeek(
                 model: 'deepseek-chat',
                 messages: [
                     { role: 'system', content: MIRROR_SYSTEM_PROMPT },
+                    { role: 'system', content: MIRROR_EVIDENCE_PROMPT },
                     { role: 'user', content: fullPrompt },
                 ],
                 max_tokens: maxTokens,

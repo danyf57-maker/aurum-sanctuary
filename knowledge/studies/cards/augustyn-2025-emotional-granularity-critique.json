@@ -1,0 +1,54 @@
+{
+  "id": "augustyn-2025-emotional-granularity-critique",
+  "title": "Emotional granularity – Vocabulary for mental health?",
+  "year": 2025,
+  "authors": ["Prisca Augustyn"],
+  "source_type": "paper",
+  "url": "https://doi.org/10.2478/lf-2025-0002",
+  "language": "en",
+  "domains": [
+    "emotional-granularity",
+    "vocabulary",
+    "overclaim-avoidance",
+    "theory-critique"
+  ],
+  "study_type": "critical_theoretical_paper",
+  "confidence": "context_only",
+  "runtime_status": "context_only",
+  "population": "Theoretical critique of emotional granularity claims",
+  "main_findings": [
+    "The paper challenges the assumption that increasingly refined emotion vocabulary automatically improves coping or mental health.",
+    "It argues that emotional meaning depends on context, discourse, and lived experience rather than isolated lexemes alone.",
+    "It warns against deficit-style assumptions that equate richer vocabulary with superior emotional functioning."
+  ],
+  "allowed_inferences": [
+    "Aurum should not confuse better wording with deeper self-understanding.",
+    "Aurum can offer richer emotional language as optional scaffolding rather than as a correctness test.",
+    "Aurum should respect contextual meaning and the user's own phrasing."
+  ],
+  "forbidden_inferences": [
+    "Do not claim that refined emotion labels automatically improve health outcomes.",
+    "Do not treat vocabulary precision as proof of psychological insight or maturity.",
+    "Do not push Aurum toward elitist, prescriptive emotion naming."
+  ],
+  "use_for": [
+    "guardrails",
+    "tone design",
+    "emotion vocabulary UX"
+  ],
+  "do_not_use_for": [
+    "runtime evidence for intervention effects",
+    "user-facing efficacy claims"
+  ],
+  "prompt_guidance": [
+    "Offer alternative emotion words gently and optionally.",
+    "Accept approximate, mixed, or imperfect user language.",
+    "Prefer contextual clarification over lexical correction."
+  ],
+  "example_questions": [
+    "Would another word fit better, or is the feeling still mixed?",
+    "Does this feel more like tension, fear, shame, anger, or a blend of several?",
+    "If none of these labels fit exactly, how would you describe it in your own words?"
+  ],
+  "notes": "Useful as a corrective influence on Aurum's design: richer emotion vocab can help, but it must not become a pseudo-clinical scoring system."
+}
