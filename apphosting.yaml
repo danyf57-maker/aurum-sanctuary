@@ -54,6 +54,21 @@ env:
     availability:
       - BUILD
       - RUNTIME
+  - variable: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+    value: pk_live_51T8dqUREu3GIrDil9s9EWprhxss9GTopDguZjG552PgQWtTXtKV0KRRUIgDIMZm0YivtFzkLI3Kz1ZvWmlCKFnuk003Q3jXmhm
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY
+    value: price_1T9kWBREu3GIrDilO5pdUMB4
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_STRIPE_PRICE_ID_YEARLY
+    value: price_1T9kWBREu3GIrDilWeGaZMQz
+    availability:
+      - BUILD
+      - RUNTIME
   - variable: NEXT_PUBLIC_APP_URL
     value: https://aurumdiary.com
     availability:
