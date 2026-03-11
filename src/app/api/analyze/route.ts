@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { logger } from '@/lib/logger/safe';
 import { requireUserIdFromRequest, UserGuardError } from '@/lib/api/require-user-id';
 import { buildEvidencePrompt } from '@/lib/ai/evidence/prompt-policy';
+import { buildAurumResponseContract } from '@/lib/ai/aurum-response-contract';
 import { buildStrictReplyLanguageInstruction, resolveReplyLanguage } from '@/lib/ai/language';
 
 export async function POST(request: NextRequest) {
@@ -41,7 +42,7 @@ export async function POST(request: NextRequest) {
         messages: [
           {
             role: 'system',
-            content: `Tu es un assistant empathique spécialisé dans l'analyse d'écrits personnels. Analyse le texte suivant et retourne UNIQUEMENT un objet JSON avec: {"sentiment": "positive/negative/neutral", "mood": "calme/anxieux/joyeux/triste/etc", "insight": "une phrase courte, prudente et non clinique sur ce qui semble se vivre ici"}\n\n${buildEvidencePrompt('entryAnalysis')}`
+            content: `You are Aurum in entry-analysis mode. Analyze the writing and return ONLY a valid JSON object with this exact shape: {"sentiment": "positive/negative/neutral", "mood": "calm/anxious/joyful/sad/etc", "insight": "one short, careful, non-clinical sentence about what seems present here"}\n\n${buildEvidencePrompt('entryAnalysis')}\n\n${buildAurumResponseContract('entryAnalysis')}`
           },
           {
             role: 'system',
