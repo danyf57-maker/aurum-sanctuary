@@ -478,9 +478,9 @@
     "ctaSecondary": "Write first, no commitment",
     "trust": "100% Encrypted • AI-guided reflection • Private by design.",
     "placeholders": {
-      "0": "I can't sleep, my mind keeps replaying tomorrow's meeting...",
-      "1": "I feel completely overwhelmed by my to-do list today...",
-      "2": "I just need to clear my head before I explode..."
+      "0": "The same conversation keeps replaying in my head...",
+      "1": "I keep noticing the same tension every Monday...",
+      "2": "Something feels off, but I can't name it yet..."
     },
     "quotes": {
       "0": {
@@ -490,14 +490,14 @@
         "author": "Jules Renard"
       },
       "1": {
-        "hint": "When you're ruminating, write down what keeps looping.",
-        "detail": "Getting words out helps your mind slow down.",
+        "hint": "When something keeps replaying, write what returns and what it means.",
+        "detail": "A few honest lines can reveal the pattern underneath.",
         "quote": "I write to find out what I think.",
         "author": "Joan Didion"
       },
       "2": {
-        "hint": "If you're carrying too much, set it all down here, line by line.",
-        "detail": "You don't need to write perfectly, just write honestly.",
+        "hint": "If several emotions are mixing together, let them land one by one.",
+        "detail": "You do not need to write perfectly, just precisely enough to notice yourself.",
         "quote": "There is no greater agony than bearing an untold story inside you.",
         "author": "Maya Angelou"
       },
@@ -508,14 +508,14 @@
         "author": "Margaret Atwood"
       },
       "4": {
-        "hint": "When inner overload rises, this space helps you sort what matters.",
-        "detail": "You can set down what feels tangled and notice what asks for clarity.",
+        "hint": "When inner signals blur together, this space helps you sort what matters.",
+        "detail": "You can set down what feels tangled and notice what keeps returning.",
         "quote": "We write to taste life twice.",
         "author": "Anaïs Nin"
       },
       "5": {
-        "hint": "After a heavy day, write what stayed with you.",
-        "detail": "Even 2 minutes of reflection can make a pattern easier to see.",
+        "hint": "After a meaningful moment, write what stayed with you.",
+        "detail": "Even 2 minutes of reflection can make a recurring theme easier to see.",
         "quote": "Clarity begins when words stop circling and start landing.",
         "author": "Aurum"
       },
@@ -526,8 +526,8 @@
         "author": "Jules Renard"
       },
       "7": {
-        "hint": "When your mind speeds up, slow down with simple words.",
-        "detail": "Here, you can set things down without judgment.",
+        "hint": "When your attention scatters, slow down with simple words.",
+        "detail": "This is a place to notice, not to perform.",
         "quote": "I write to find out what I think.",
         "author": "Joan Didion"
       }
@@ -750,50 +750,50 @@
     "studyCards": [
       {
         "eyebrow": "Did you know...",
-        "title": "writing about a stressful event can reduce physical symptoms?",
-        "body": "In a foundational study, people who wrote about a difficult event showed better health indicators.",
-        "example": "Practical example: 10 minutes at night to put down what weighs on you instead of ruminating in bed."
+        "title": "writing about a difficult experience can help organize what you feel?",
+        "body": "In a foundational study, people who wrote about a difficult event showed measurable shifts in how they processed the experience.",
+        "example": "Practical example: write for 10 minutes about what happened, what you felt, and what seems to keep returning."
       },
       {
         "eyebrow": "Did you know...",
-        "title": "putting emotions into words can improve your rebound?",
+        "title": "putting emotions into words can support clearer next steps?",
         "body": "A study on people facing job loss found a stronger return to action among those who wrote regularly.",
         "example": "Practical example: write three times a week about what you feel, then define the next realistic step."
       },
       {
         "eyebrow": "Did you know...",
-        "title": "systematic reviews confirm gains in well-being?",
-        "body": "Recent syntheses show a positive effect of journaling on stress and psychological well-being.",
+        "title": "regular reflective writing can improve well-being over time?",
+        "body": "Recent reviews suggest consistent journaling can support emotional clarity, reflection, and well-being over time.",
         "example": "Practical example: a five-minute daily routine can already change your level of clarity."
       }
     ],
     "useCases": {
-      "title": "Common moments when writing can restore clarity",
-      "subtitle": "Concrete ways private reflection can untangle what you feel, reduce inner overload, and reveal what keeps returning.",
-      "note": "Grounded in research on expressive writing and psychological well-being",
+      "title": "Common moments when reflection can make patterns visible",
+      "subtitle": "Concrete ways private reflection can untangle what you feel, reveal recurring themes, and turn scattered thoughts into clearer signals.",
+      "note": "Grounded in research on expressive writing, emotional processing, and reflective practice",
       "cards": [
         {
-          "badge": "Insomnia",
-          "title": "Your mind keeps spinning at night",
-          "body": "Write down what keeps looping. In practice, three lines before bed (fact, emotion, need) can already soothe your mind.",
+          "badge": "Evening clarity",
+          "title": "A conversation keeps replaying after the day ends",
+          "body": "Write the facts, what lingered emotionally, and what you need now. Three lines can turn a loop into something you can actually see.",
           "cta": "Start for free →"
         },
         {
           "badge": "Self-talk",
-          "title": "You speak to yourself too harshly",
-          "body": "When the inner voice says “I am useless,” write a fairer version: “I am moving forward step by step.” It helps rebuild confidence.",
+          "title": "Your inner voice keeps telling the same story",
+          "body": "Write the exact sentence you tell yourself, then answer it with something fairer and truer. This makes the pattern easier to name.",
           "cta": "Create my account →"
         },
         {
-          "badge": "Overthinking",
-          "title": "Everything feels tangled in your head",
-          "body": "Write one idea per line. You turn mental confusion into clear points, then pick one small step for today.",
+          "badge": "Recurring theme",
+          "title": "The same tension keeps showing up in different situations",
+          "body": "List three recent moments that felt similar. Aurum helps you notice the shared thread instead of treating each one as isolated.",
           "cta": "I want to try →"
         },
         {
-          "badge": "Pressure",
-          "title": "You keep it all in until you explode",
-          "body": "A few regular lines are better than one rare long session. You decompress before saturation and regain calm.",
+          "badge": "Emotional signal",
+          "title": "You feel charged but cannot tell what is underneath",
+          "body": "Write what happened, what you felt first, and what surfaced after. A short reflection often reveals the real emotional center.",
           "cta": "I am starting now →"
         },
         {
@@ -803,52 +803,52 @@
           "cta": "Open my journal →"
         },
         {
-          "badge": "Mental load",
-          "title": "Your task list is suffocating you",
-          "body": "Set a five-minute timer and write without editing: facts, emotions, needs. This short routine gives your mind some air back.",
+          "badge": "Role overload",
+          "title": "You are carrying too many roles at once",
+          "body": "Write in three columns: what is expected of you, what matters to you, and what is draining you. This makes your inner hierarchy visible.",
           "cta": "Create my space →"
         },
         {
           "badge": "Conflict",
-          "title": "After an argument, your mind replays the scene",
-          "body": "Write the facts, what you felt, and what you need now. You step out of the mental movie and come back to yourself.",
-          "cta": "Return to calm →"
+          "title": "After an argument, you want to understand your part clearly",
+          "body": "Write the facts, what you felt, and what boundary or need became visible. You move from replaying the scene to understanding the pattern.",
+          "cta": "Return to reflection →"
         },
         {
-          "badge": "Mental fatigue",
-          "title": "You feel drained without knowing why",
-          "body": "Write five lines at the end of the day: what drained your energy, and what gave some back. You regain reference points for tomorrow.",
-          "cta": "Recover energy →"
+          "badge": "Energy pattern",
+          "title": "Your energy keeps dropping but you cannot see why",
+          "body": "Write five lines at the end of the day: what drained you, what steadied you, and what repeated. Over time, the rhythm becomes easier to recognize.",
+          "cta": "Notice the pattern →"
         },
         {
           "badge": "Decision",
           "title": "You are stuck on an important decision",
-          "body": "Split the page in two columns: what you gain, what you lose. Putting thoughts in front of you often reveals the real choice.",
+          "body": "Split the page in two columns: what aligns, and what compromises you. Putting thoughts in front of you often reveals the real choice.",
           "cta": "Clarify my decision →"
         }
       ]
     },
     "scientificProof": {
-      "title": "This is not magic. It is an observed effect.",
-      "subtitle": "Researchers have examined the power of writing. Their studies surfaced some striking findings:",
+      "title": "Writing is not only expressive. It is clarifying.",
+      "subtitle": "Research on expressive writing suggests that putting experience into words can support perspective, emotional processing, and clearer action over time.",
       "discoveries": [
         {
           "label": "Finding #1:",
-          "body": "Participants who took time to write about their worries saw their medical visits drop significantly"
+          "body": "Participants who wrote regularly about difficult experiences showed measurable shifts in health and adjustment markers"
         },
         {
           "label": "Finding #2:",
-          "body": "In another study on people who had lost their jobs, those who wrote about their emotions were twice as likely to find work again"
+          "body": "In another study on people who had lost their jobs, those who wrote about their emotions were more likely to regain momentum and take constructive next steps"
         }
       ]
     },
     "problem": {
-      "title": "What does inner overload feel like?",
-      "body": "Thoughts keep circling, feelings blur together, and it becomes harder to see what matters. Writing makes those signals easier to notice."
+      "title": "What does it feel like when inner signals stay unnamed?",
+      "body": "Thoughts keep circling, feelings blur together, and the same reactions return without a clear name. Writing makes those signals easier to notice before they disappear."
     },
     "solution": {
-      "title": "Writing slows things down enough to be seen.",
-      "body": "Private writing gives your thoughts somewhere to land. Aurum adds gentle guided reflection so clarity and recurring patterns can emerge over time."
+      "title": "Writing creates enough distance to see yourself more clearly.",
+      "body": "Private writing gives your thoughts somewhere to land. Aurum adds gentle guided reflection so emotional patterns, recurring themes, and clearer next steps can emerge over time."
     },
     "trust": {
       "eyebrow": "Your integrity, our priority",
@@ -906,16 +906,16 @@
         "answer": "Your pages are encrypted before they are stored, and Aurum is built to limit internal access to readable data. When you ask for AI-guided reflection, the relevant writing is processed to generate that response. We do not sell your data or use it for advertising."
       },
       {
-        "question": "How can private writing help me regain clarity at night?",
-        "answer": "Write three lines before bed: what feels heavy, what you feel, and what you need tomorrow. The goal is to move looping thoughts onto the page so clarity can return."
+        "question": "How can private writing help me notice what keeps returning?",
+        "answer": "Write three short lines: what happened, what you felt, and what seems to repeat. The goal is not just relief in the moment, but a clearer view of the pattern underneath."
       },
       {
-        "question": "How can I reduce inner overload in 5 minutes?",
-        "answer": "Set a five-minute timer and write without editing: facts, emotions, needs. This short reflection helps reduce inner overload and regain clarity, even on a crowded day."
+        "question": "How can I gain clarity in 5 minutes?",
+        "answer": "Set a five-minute timer and write without editing: facts, emotions, needs. This short reflection helps turn scattered thoughts into something you can see and understand."
       },
       {
-        "question": "How can reflection help me step out of overthinking?",
-        "answer": "When everything spins in your head, write one thought per line. Reflection turns mental noise into something you can see, name, and act on."
+        "question": "How can reflection help me see a recurring pattern more clearly?",
+        "answer": "When something keeps looping, write one thought per line, then underline what repeats. Reflection turns mental noise into a pattern you can name and work with."
       },
       {
         "question": "Can reflective writing improve emotional clarity?",
