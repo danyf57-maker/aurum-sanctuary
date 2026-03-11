@@ -27,6 +27,10 @@ import {
 } from '@/lib/patterns/anti-meta';
 import { rateLimit, RateLimitPresets } from '@/lib/rate-limit';
 import { buildEvidencePrompt } from '@/lib/ai/evidence/prompt-policy';
+import {
+  buildStrictReplyLanguageInstruction,
+  resolveReplyLanguage,
+} from '@/lib/ai/language';
 
 type AurumIntent = 'reflection' | 'conversation' | 'analysis' | 'action' | 'philosophy';
 type SupportedLocale = 'fr' | 'en';
@@ -142,37 +146,6 @@ function normalizeRequestedLocale(value: unknown): SupportedLocale | null {
   return null;
 }
 
-function detectUserLanguage(content: string): string {
-  const text = (content || '').toLowerCase();
-  if (/[¿¡]/.test(text) || /\b(que|para|porque|estoy|tengo|siento|quiero|puedo|gracias|hola)\b/.test(text)) {
-    return 'es';
-  }
-  if (/\b(the|and|with|feel|because|about|today|this|that|i am|i feel)\b/.test(text)) {
-    return 'en';
-  }
-  if (/\b(je|tu|vous|avec|pour|parce|bonjour|merci|suis|ressens)\b/.test(text)) {
-    return 'fr';
-  }
-  return 'same-as-user';
-}
-
-function resolveReplyLanguage(content: string, requestedLocale?: SupportedLocale | null): string {
-  if (requestedLocale) return requestedLocale;
-  return detectUserLanguage(content);
-}
-
-function buildLanguageInstruction(replyLanguage: string, requestedLocale?: SupportedLocale | null): string {
-  if (replyLanguage === 'en') {
-    return `Language rule (strict): Your final answer must be entirely in English. App locale: ${requestedLocale ?? 'unknown'}. Never answer in French unless the user explicitly asks to switch to French.`;
-  }
-
-  if (replyLanguage === 'fr') {
-    return `Language rule (strict): Your final answer must be entirely in French. App locale: ${requestedLocale ?? 'unknown'}. Never answer in English unless the user explicitly asks to switch to English.`;
-  }
-
-  return `Language rule (strict): Reply in the user's language only. Detected user language: ${replyLanguage}. App locale: ${requestedLocale ?? 'unknown'}. Never switch language unless the user explicitly asks.`;
-}
-
 /**
  * POST /api/reflect
  * Body: { content: string, idToken: string }
@@ -268,7 +241,7 @@ export async function POST(request: NextRequest) {
       },
       {
         role: 'system',
-        content: buildLanguageInstruction(userLanguage, requestedLocale),
+        content: buildStrictReplyLanguageInstruction(userLanguage, requestedLocale),
       },
       {
         role: 'system',
