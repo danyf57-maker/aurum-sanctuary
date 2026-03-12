@@ -106,6 +106,7 @@ function SignupPage() {
     tSign("pillClarity"),
     tSign("pillPatterns"),
   ];
+  const loginHref = to("/login");
 
   useEffect(() => {
     if (!user || !quizComplete || !quizData?.profile || quizSyncInProgressRef.current) return;
@@ -213,6 +214,18 @@ function SignupPage() {
       }
       router.push(to("/login?check_email=1"));
     } catch (error) {
+      const errorCode =
+        typeof error === "object" && error !== null && "code" in error
+          ? String((error as { code?: unknown }).code)
+          : "";
+      if (errorCode === "auth/email-already-in-use") {
+        const existingAccountParams = new URLSearchParams({
+          email,
+          existing: "1",
+        });
+        router.push(to(`/login?${existingAccountParams.toString()}`));
+        return;
+      }
       if ((error as Error)?.message === "EMAIL_NOT_VERIFIED") {
         setInfo(tSign("checkEmail"));
       }
@@ -306,8 +319,13 @@ function SignupPage() {
             </div>
           )}
           {isInAppBrowser && (
-            <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
-              {tSign("inAppBrowser")}
+            <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-3 text-sm text-amber-900">
+              <p className="font-medium">{tSign("existingAccountBannerTitle")}</p>
+              <p className="mt-1 text-amber-800">{tSign("existingAccountBannerBody")}</p>
+              <Button asChild variant="secondary" className="mt-3 w-full">
+                <Link href={loginHref}>{tSign("existingAccountBannerCta")}</Link>
+              </Button>
+              <p className="mt-3 text-amber-800">{tSign("inAppBrowser")}</p>
             </div>
           )}
           {/* Google OAuth Button */}

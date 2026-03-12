@@ -70,6 +70,7 @@
     "forgot": "Forgot password?",
     "signingIn": "Signing in...",
     "signIn": "Sign in",
+    "existingAccountInfo": "This account already exists. Sign in to return to your private reflection space.",
     "noAccount": "Don't have an account yet?",
     "signUp": "Sign up"
   },
@@ -398,6 +399,9 @@
     "quizBadge": "Your profile is waiting",
     "quizText": "Your reflection profile is ready! Create your account to discover your personalized result and begin your experience.",
     "encrypted": "Encrypted and private by design",
+    "existingAccountBannerTitle": "Already have an account?",
+    "existingAccountBannerBody": "Open this page in Safari or Chrome, then sign in. In this in-app browser, Google sign-in and session restoration can be blocked.",
+    "existingAccountBannerCta": "Go to sign in",
     "inAppBrowser": "Google sign-in is blocked in this in-app browser. Open this page in Safari or Chrome and try again.",
     "google": "Continue with Google",
     "or": "Or continue with",
