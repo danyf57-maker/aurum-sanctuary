@@ -23,7 +23,7 @@ import { localizeHref } from "@/lib/i18n/path";
 import { useTranslations } from "next-intl";
 
 export function AuthButton() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const { toast } = useToast();
   const router = useRouter();
   const locale = useLocale();
@@ -36,6 +36,10 @@ export function AuthButton() {
     toast({ title: t("signedOut") });
     router.push(to("/"));
   };
+
+  if (loading) {
+    return <div className="h-8 w-8" aria-hidden="true" />;
+  }
 
   if (user) {
     const userInitial =

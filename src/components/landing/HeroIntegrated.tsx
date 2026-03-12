@@ -5,10 +5,14 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { LanguageSwitch } from "@/components/layout/language-switch";
 import { useLocale, useTranslations } from "next-intl";
+import { useLocalizedHref } from "@/hooks/use-localized-href";
+import { useAuth } from "@/providers/auth-provider";
 
 const HeroIntegrated = () => {
   const locale = useLocale();
   const t = useTranslations("hero");
+  const to = useLocalizedHref();
+  const { user, loading } = useAuth();
 
   const placeholders = [t("placeholders.0"), t("placeholders.1"), t("placeholders.2")];
   const rotatingQuotes = Array.from({ length: 8 }, (_, i) => ({
@@ -23,11 +27,12 @@ const HeroIntegrated = () => {
   const [charIndex, setCharIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
   const [quoteIndex, setQuoteIndex] = useState(0);
-  const writeHref =
+  const guestWriteHref =
     thought.trim().length > 0
-      ? `/sanctuary/write?initial=${encodeURIComponent(thought)}`
-      : "/sanctuary/write";
-  const signupHref = "/signup";
+      ? to(`/sanctuary/write?initial=${encodeURIComponent(thought)}`)
+      : to("/sanctuary/write");
+  const primaryHref = user ? to("/sanctuary/write") : to("/signup");
+  const secondaryHref = user ? to("/sanctuary/magazine") : guestWriteHref;
 
   useEffect(() => {
     setPlaceholderText("");
@@ -112,18 +117,30 @@ const HeroIntegrated = () => {
             </div>
 
             <div className="mt-6 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-              <Button
-                asChild
-                size="lg"
-                className="h-12 md:h-14 px-8 rounded-xl bg-[#D4AF37] text-stone-900 hover:bg-[#D4AF37]/90"
-              >
-                <Link href={signupHref}>
-                  {t("cta")}
-                </Link>
-              </Button>
-              <Link href={writeHref} className="font-body text-sm text-stone-600 hover:text-stone-900 transition-colors">
-                {t("ctaSecondary")}
-              </Link>
+              {loading ? (
+                <Button
+                  size="lg"
+                  disabled
+                  className="h-12 md:h-14 px-8 rounded-xl bg-[#D4AF37] text-stone-900"
+                >
+                  {t("ctaLoading")}
+                </Button>
+              ) : (
+                <>
+                  <Button
+                    asChild
+                    size="lg"
+                    className="h-12 md:h-14 px-8 rounded-xl bg-[#D4AF37] text-stone-900 hover:bg-[#D4AF37]/90"
+                  >
+                    <Link href={primaryHref}>
+                      {user ? t("ctaAuthenticated") : t("cta")}
+                    </Link>
+                  </Button>
+                  <Link href={secondaryHref} className="font-body text-sm text-stone-600 hover:text-stone-900 transition-colors">
+                    {user ? t("ctaSecondaryAuthenticated") : t("ctaSecondary")}
+                  </Link>
+                </>
+              )}
               <span className="font-body text-xs uppercase tracking-[0.2em] text-stone-500">
                 {t("trust")}
               </span>
