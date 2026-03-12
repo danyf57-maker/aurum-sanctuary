@@ -477,7 +477,10 @@
     "badge": "PRIVATE GUIDED REFLECTION",
     "title": "Write in private. Understand what keeps returning.",
     "subtitle": "Aurum helps you write freely, clarify what you feel, and uncover recurring inner patterns through private AI-guided reflection.",
+    "ctaLoading": "Checking your space...",
+    "ctaAuthenticated": "Continue writing",
     "cta": "Create my free account",
+    "ctaSecondaryAuthenticated": "See what keeps returning",
     "ctaSecondary": "Write first, no commitment",
     "trust": "100% Encrypted • AI-guided reflection • Private by design.",
     "placeholders": {
@@ -745,9 +748,16 @@
       "cta": "Create my account",
       "label": "No commitment • Private"
     },
+    "returningUser": {
+      "checkingCta": "Checking your space...",
+      "checkingCtaArrow": "Checking your space... →",
+      "writeCta": "Return to my writing space",
+      "writeCtaArrow": "Return to my writing space →"
+    },
     "studySection": {
       "title": "Writing helps. Aurum helps you understand what keeps returning.",
       "subtitle": "Privacy protects your words. Aurum’s guided reflection helps turn them into emotional clarity and recurring patterns you can recognize over time.",
+      "ctaAuthenticated": "Return to my writing space",
       "cta": "Create my account and start today"
     },
     "studyCards": [
@@ -876,6 +886,7 @@
       "seal": "Trust seal"
     },
     "finalCta": {
+      "buttonAuthenticated": "Return to my writing space",
       "button": "Create my sanctuary now",
       "note": "No commitment • Encrypted and private by design",
       "subtitle": "You enter a private reflection space designed to help you write regularly, understand what keeps returning, and regain clarity over time.",

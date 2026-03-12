@@ -9,7 +9,14 @@
  */
 
 import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
-import { getAuth, Auth } from 'firebase/auth';
+import {
+    getAuth,
+    Auth,
+    setPersistence,
+    indexedDBLocalPersistence,
+    browserLocalPersistence,
+    inMemoryPersistence,
+} from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
 import { getFunctions, Functions } from 'firebase/functions';
 
@@ -37,6 +44,7 @@ let app: FirebaseApp;
 let auth: Auth;
 let firestore: Firestore;
 let functions: Functions;
+let authPersistencePromise: Promise<void> | null = null;
 
 if (typeof window !== 'undefined') {
     for (const key of requiredConfigKeys) {
@@ -57,4 +65,28 @@ if (typeof window !== 'undefined') {
     functions = undefined as unknown as Functions;
 }
 
-export { app, auth, firestore, functions };
+async function applyAuthPersistence() {
+    try {
+        await setPersistence(auth, indexedDBLocalPersistence);
+    } catch {
+        try {
+            await setPersistence(auth, browserLocalPersistence);
+        } catch {
+            await setPersistence(auth, inMemoryPersistence);
+        }
+    }
+}
+
+function ensureAuthPersistence(): Promise<void> {
+    if (typeof window === 'undefined') {
+        return Promise.resolve();
+    }
+
+    if (!authPersistencePromise) {
+        authPersistencePromise = applyAuthPersistence();
+    }
+
+    return authPersistencePromise;
+}
+
+export { app, auth, firestore, functions, ensureAuthPersistence };

@@ -314,8 +314,17 @@ const QuizSection = () => {
     );
 };
 
-const FloatingCTA = ({ visible }: { visible: boolean }) => {
-    const to = useLocalizedHref();
+const FloatingCTA = ({
+    visible,
+    href,
+    label,
+    disabled = false,
+}: {
+    visible: boolean;
+    href: string;
+    label: string;
+    disabled?: boolean;
+}) => {
     const t = useTranslations('marketingPage.floatingCta');
     return (
         <AnimatePresence>
@@ -326,11 +335,23 @@ const FloatingCTA = ({ visible }: { visible: boolean }) => {
                 exit={{ opacity: 0, y: 100 }}
                 className="fixed bottom-8 right-8 z-[100]"
             >
-                <Button asChild size="lg" className="rounded-full shadow-2xl bg-primary hover:bg-primary/90 px-8 h-14 group border-4 border-white/20 backdrop-blur-sm">
-                    <Link href={to('/signup')} className="flex items-center gap-3">
-                        <span className="font-headline font-semibold">{t('cta')}</span>
+                <Button
+                    asChild={!disabled}
+                    size="lg"
+                    disabled={disabled}
+                    className="rounded-full shadow-2xl bg-primary hover:bg-primary/90 px-8 h-14 group border-4 border-white/20 backdrop-blur-sm"
+                >
+                    {disabled ? (
+                        <span className="flex items-center gap-3">
+                            <span className="font-headline font-semibold">{label}</span>
+                            <ArrowRight className="w-5 h-5" />
+                        </span>
+                    ) : (
+                    <Link href={href} className="flex items-center gap-3">
+                        <span className="font-headline font-semibold">{label}</span>
                         <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                     </Link>
+                    )}
                 </Button>
                 <div className="mt-2 text-center pointer-events-none">
                     <span className="text-[9px] text-white bg-black/40 backdrop-blur-sm px-3 py-1 rounded-full uppercase tracking-tighter font-bold">{t('label')}</span>
@@ -342,8 +363,25 @@ const FloatingCTA = ({ visible }: { visible: boolean }) => {
 };
 export default function Home() {
     const [showCTA, setShowCTA] = useState(false);
+    const { user, loading: authLoading } = useAuth();
     const to = useLocalizedHref();
     const t = useTranslations('marketingPage');
+    const loadingHref = to('/login?callbackUrl=/sanctuary/write');
+    const primaryCtaHref = authLoading
+        ? loadingHref
+        : user
+            ? to('/sanctuary/write')
+            : to('/signup');
+    const primaryCtaLabel = authLoading
+        ? t('returningUser.checkingCta')
+        : user
+            ? t('returningUser.writeCta')
+            : null;
+    const primaryCtaLabelArrow = authLoading
+        ? t('returningUser.checkingCtaArrow')
+        : user
+            ? t('returningUser.writeCtaArrow')
+            : null;
 
     useEffect(() => {
         const handleScroll = () => {
@@ -413,9 +451,17 @@ export default function Home() {
                         ))}
                     </div>
                     <div className="mt-8 text-center">
-                        <Button asChild size="lg" className="h-12 px-8 rounded-xl">
-                            <Link href={to('/signup')}>{t('studySection.cta')}</Link>
-                        </Button>
+                        {authLoading ? (
+                            <Button size="lg" disabled className="h-12 px-8 rounded-xl">
+                                {t('returningUser.checkingCta')}
+                            </Button>
+                        ) : (
+                            <Button asChild size="lg" className="h-12 px-8 rounded-xl">
+                                <Link href={primaryCtaHref}>
+                                    {user ? t('studySection.ctaAuthenticated') : t('studySection.cta')}
+                                </Link>
+                            </Button>
+                        )}
                     </div>
                 </div>
             </section>
@@ -445,8 +491,8 @@ export default function Home() {
                                 </div>
                                 <h3 className="text-2xl font-headline text-stone-900 mb-3">{card.title}</h3>
                                 <p className="text-stone-600 font-light leading-relaxed mb-6">{card.body}</p>
-                                <Link href={to('/signup')} className="mt-auto text-primary font-medium hover:underline">
-                                    {card.cta}
+                                <Link href={primaryCtaHref} className="mt-auto text-primary font-medium hover:underline">
+                                    {primaryCtaLabelArrow ?? card.cta}
                                 </Link>
                             </article>
                         ))}
@@ -558,9 +604,17 @@ export default function Home() {
 
                 {/* SECTION 7: CTA Final */}
                 <section className="container py-24 md:py-32 text-center border-t border-black/5">
-                    <Button asChild size="lg" className="h-14 px-12 text-base">
-                        <Link href={to('/signup')}>{t('finalCta.button')}</Link>
-                    </Button>
+                    {authLoading ? (
+                        <Button size="lg" disabled className="h-14 px-12 text-base">
+                            {t('returningUser.checkingCta')}
+                        </Button>
+                    ) : (
+                        <Button asChild size="lg" className="h-14 px-12 text-base">
+                            <Link href={primaryCtaHref}>
+                                {user ? t('finalCta.buttonAuthenticated') : t('finalCta.button')}
+                            </Link>
+                        </Button>
+                    )}
                     <div className="mt-6">
                         <span className="text-xs text-stone-400 font-light">{t('finalCta.note')}</span>
                     </div>
@@ -622,7 +676,12 @@ export default function Home() {
 
             </div>
 
-            <FloatingCTA visible={showCTA} />
+            <FloatingCTA
+                visible={showCTA}
+                href={primaryCtaHref}
+                label={primaryCtaLabel ?? t('floatingCta.cta')}
+                disabled={authLoading}
+            />
             <ExitIntent />
         </main>
     );

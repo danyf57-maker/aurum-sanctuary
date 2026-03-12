@@ -477,7 +477,10 @@
     "badge": "RÉFLEXION PRIVÉE GUIDÉE",
     "title": "Écris en privé. Vois ce qui revient en toi.",
     "subtitle": "Aurum t'aide à écrire librement, clarifier ce que tu ressens, et faire émerger les motifs intérieurs qui reviennent grâce à une réflexion privée guidée par IA.",
+    "ctaLoading": "Vérification de ton espace...",
+    "ctaAuthenticated": "Continuer à écrire",
     "cta": "Créer mon compte gratuitement",
+    "ctaSecondaryAuthenticated": "Voir ce qui revient",
     "ctaSecondary": "Écrire d'abord sans engagement",
     "trust": "100% Chiffré • Réflexion guidée par IA • Privé par design.",
     "placeholders": {
@@ -745,9 +748,16 @@
       "cta": "Créer mon compte",
       "label": "Sans engagement • Privé"
     },
+    "returningUser": {
+      "checkingCta": "Vérification de ton espace...",
+      "checkingCtaArrow": "Vérification de ton espace... →",
+      "writeCta": "Retrouver mon espace d'écriture",
+      "writeCtaArrow": "Retrouver mon espace d'écriture →"
+    },
     "studySection": {
       "title": "Écrire aide. Aurum aide à comprendre ce qui revient.",
       "subtitle": "La confidentialité protège tes mots. La réflexion guidée d'Aurum aide à en faire émerger de la clarté émotionnelle et des motifs récurrents que tu peux reconnaître dans le temps.",
+      "ctaAuthenticated": "Retrouver mon espace d'écriture",
       "cta": "Créer mon compte et commencer aujourd'hui"
     },
     "studyCards": [
@@ -876,6 +886,7 @@
       "seal": "Sceau de confiance"
     },
     "finalCta": {
+      "buttonAuthenticated": "Retrouver mon espace d'écriture",
       "button": "Créer mon sanctuaire maintenant",
       "note": "Sans engagement • Chiffré et privé par conception",
       "subtitle": "Tu entres dans un espace de réflexion privée conçu pour écrire régulièrement, comprendre ce qui revient et retrouver de la clarté dans le temps.",

@@ -15,7 +15,11 @@ import {
   signOut
 } from 'firebase/auth';
 import { addDoc, collection, doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
-import { auth as firebaseAuth, firestore as db } from '@/lib/firebase/web-client';
+import {
+  auth as firebaseAuth,
+  firestore as db,
+  ensureAuthPersistence,
+} from '@/lib/firebase/web-client';
 import { logger } from '@/lib/logger/safe';
 import { resolveFirstName } from '@/lib/profile/first-name';
 import { useToast } from '@/hooks/use-toast';
@@ -143,127 +147,142 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     logger.infoSafe('AuthProvider mounted');
+    let isCancelled = false;
+    let unsubscribe = () => {};
 
-    const unsubscribe = onAuthStateChanged(firebaseAuth, async (firebaseUser) => {
-      logger.infoSafe('AuthStateChanged', {
-        loggedIn: !!firebaseUser,
-        uid: firebaseUser?.uid
-      });
+    void (async () => {
+      try {
+        await ensureAuthPersistence();
+      } catch (error) {
+        logger.errorSafe('Failed to initialize auth persistence', error);
+      }
 
-      if (firebaseUser) {
-        // Sync token to cookie for middleware via API route (HttpOnly)
-        // This runs on EVERY auth state check (including page reload),
-        // which refreshes the cookie and prevents session expiration.
-        const syncCookie = async (attempt = 0): Promise<void> => {
-          try {
-            const token = await firebaseUser.getIdToken(attempt > 0);
-            const res = await fetch('/api/auth/session', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ idToken: token }),
-            });
-            if (!res.ok && attempt < 1) {
-              return syncCookie(attempt + 1);
-            }
-          } catch (e) {
-            if (attempt < 1) {
-              return syncCookie(attempt + 1);
-            }
-            logger.errorSafe('Failed to sync auth token to cookie via API (after retry)', e);
-          }
-        };
-        await syncCookie();
+      if (isCancelled) return;
 
-        // Use a type assertion or helper if needed, but for now just pass firebaseUser
-        const finalUser = firebaseUser;
-        setUser(finalUser);
-        await syncLandingQuizAssessment(finalUser.uid);
-
-        // Listen to user document (created by server-side trigger)
-        const userRef = doc(db, "users", finalUser.uid);
-
-        let userSnap = await getDoc(userRef);
-        const inferredFirstName = resolveFirstName({
-          displayName: finalUser.displayName,
-          email: finalUser.email,
-          fallback: '',
+      unsubscribe = onAuthStateChanged(firebaseAuth, async (firebaseUser) => {
+        logger.infoSafe('AuthStateChanged', {
+          loggedIn: !!firebaseUser,
+          uid: firebaseUser?.uid
         });
 
-        // FALLBACK: If trigger didn't run, create doc client-side
-        // This ensures users can still use the app even if Cloud Functions aren't deployed yet
-        if (!userSnap.exists()) {
-          logger.warnSafe("Creating user doc client-side because Cloud Trigger is missing.", { userId: finalUser.uid });
-          try {
-            // Security hardening: client fallback creates profile metadata only.
-            // Billing/subscription state is server-managed.
-            await setDoc(userRef, {
-              uid: finalUser.uid,
-              email: finalUser.email,
-              displayName: finalUser.displayName,
-              firstName: inferredFirstName || null,
-              photoURL: finalUser.photoURL,
-              createdAt: serverTimestamp(),
-              updatedAt: serverTimestamp(),
-              entryCount: 0,
-            }, { merge: true });
+        if (firebaseUser) {
+          // Sync token to cookie for middleware via API route (HttpOnly)
+          // This runs on EVERY auth state check (including page reload),
+          // which refreshes the cookie and prevents session expiration.
+          const syncCookie = async (attempt = 0): Promise<void> => {
+            try {
+              const token = await firebaseUser.getIdToken(attempt > 0);
+              const res = await fetch('/api/auth/session', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ idToken: token }),
+              });
+              if (!res.ok && attempt < 1) {
+                return syncCookie(attempt + 1);
+              }
+            } catch (e) {
+              if (attempt < 1) {
+                return syncCookie(attempt + 1);
+              }
+              logger.errorSafe('Failed to sync auth token to cookie via API (after retry)', e);
+            }
+          };
+          await syncCookie();
 
-            await setDoc(doc(db, "users", finalUser.uid, "settings", "legal"), {
-              termsAccepted: false,
-              termsAcceptedAt: null,
-              updatedAt: serverTimestamp(),
-            });
+          // Use a type assertion or helper if needed, but for now just pass firebaseUser
+          const finalUser = firebaseUser;
+          setUser(finalUser);
+          await syncLandingQuizAssessment(finalUser.uid);
 
-            logger.infoSafe("User doc created client-side", { userId: finalUser.uid });
-            setTermsAccepted(false);
-            userSnap = await getDoc(userRef);
-          } catch (e) {
-            logger.errorSafe("Failed to create user doc client-side", e, { userId: finalUser.uid });
+          // Listen to user document (created by server-side trigger)
+          const userRef = doc(db, "users", finalUser.uid);
+
+          let userSnap = await getDoc(userRef);
+          const inferredFirstName = resolveFirstName({
+            displayName: finalUser.displayName,
+            email: finalUser.email,
+            fallback: '',
+          });
+
+          // FALLBACK: If trigger didn't run, create doc client-side
+          // This ensures users can still use the app even if Cloud Functions aren't deployed yet
+          if (!userSnap.exists()) {
+            logger.warnSafe("Creating user doc client-side because Cloud Trigger is missing.", { userId: finalUser.uid });
+            try {
+              // Security hardening: client fallback creates profile metadata only.
+              // Billing/subscription state is server-managed.
+              await setDoc(userRef, {
+                uid: finalUser.uid,
+                email: finalUser.email,
+                displayName: finalUser.displayName,
+                firstName: inferredFirstName || null,
+                photoURL: finalUser.photoURL,
+                createdAt: serverTimestamp(),
+                updatedAt: serverTimestamp(),
+                entryCount: 0,
+              }, { merge: true });
+
+              await setDoc(doc(db, "users", finalUser.uid, "settings", "legal"), {
+                termsAccepted: false,
+                termsAcceptedAt: null,
+                updatedAt: serverTimestamp(),
+              });
+
+              logger.infoSafe("User doc created client-side", { userId: finalUser.uid });
+              setTermsAccepted(false);
+              userSnap = await getDoc(userRef);
+            } catch (e) {
+              logger.errorSafe("Failed to create user doc client-side", e, { userId: finalUser.uid });
+            }
           }
-        }
 
-        if (userSnap.exists()) {
-          const userData = userSnap.data();
+          if (userSnap.exists()) {
+            const userData = userSnap.data();
 
-          if (
-            inferredFirstName &&
-            (userData.firstName !== inferredFirstName || userData.displayName !== finalUser.displayName)
-          ) {
-            await setDoc(userRef, {
-              firstName: inferredFirstName,
-              displayName: finalUser.displayName,
-              updatedAt: serverTimestamp(),
-            }, { merge: true });
-          }
+            if (
+              inferredFirstName &&
+              (userData.firstName !== inferredFirstName || userData.displayName !== finalUser.displayName)
+            ) {
+              await setDoc(userRef, {
+                firstName: inferredFirstName,
+                displayName: finalUser.displayName,
+                updatedAt: serverTimestamp(),
+              }, { merge: true });
+            }
 
-          // User exists, check terms in settings/legal
-          const legalRef = doc(db, "users", finalUser.uid, "settings", "legal");
-          const legalSnap = await getDoc(legalRef);
+            // User exists, check terms in settings/legal
+            const legalRef = doc(db, "users", finalUser.uid, "settings", "legal");
+            const legalSnap = await getDoc(legalRef);
 
-          if (legalSnap.exists()) {
-            setTermsAccepted(legalSnap.data().termsAccepted);
+            if (legalSnap.exists()) {
+              setTermsAccepted(legalSnap.data().termsAccepted);
+            } else {
+              setTermsAccepted(false);
+            }
           } else {
+            // User doc doesn't exist yet (Cloud Function might be slow)
             setTermsAccepted(false);
+            logger.warnSafe('User document not found (waiting for trigger)', { userId: finalUser.uid });
           }
         } else {
-          // User doc doesn't exist yet (Cloud Function might be slow)
-          setTermsAccepted(false);
-          logger.warnSafe('User document not found (waiting for trigger)', { userId: finalUser.uid });
+          setUser(null);
+          setTermsAccepted(null);
+          // Remove cookie via API
+          try {
+            await fetch('/api/auth/logout', { method: 'POST' });
+          } catch (e) {
+            logger.errorSafe('Failed to remove session cookie via API', e);
+          }
+          logger.infoSafe('User signed out');
         }
-      } else {
-        setUser(null);
-        setTermsAccepted(null);
-        // Remove cookie via API
-        try {
-          await fetch('/api/auth/logout', { method: 'POST' });
-        } catch (e) {
-          logger.errorSafe('Failed to remove session cookie via API', e);
-        }
-        logger.infoSafe('User signed out');
-      }
-      setLoading(false);
-    });
+        setLoading(false);
+      });
+    })();
 
-    return () => unsubscribe();
+    return () => {
+      isCancelled = true;
+      unsubscribe();
+    };
   }, [toast]);
 
   const signInWithGoogle = async () => {
