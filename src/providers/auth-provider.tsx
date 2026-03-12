@@ -398,9 +398,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
     } catch (error) {
       logger.errorSafe('Sign Up Failed', error);
+      const errorCode =
+        typeof error === "object" && error !== null && "code" in error
+          ? String((error as { code?: unknown }).code)
+          : "";
       toast({
-        title: txt("Erreur d'inscription", "Sign-up error"),
-        description: txt("Impossible de créer le compte.", "Unable to create your account."),
+        title: errorCode === "auth/email-already-in-use"
+          ? txt("Compte déjà existant", "Account already exists")
+          : txt("Erreur d'inscription", "Sign-up error"),
+        description: errorCode === "auth/email-already-in-use"
+          ? txt(
+              "Cet email correspond déjà à un compte. Connectez-vous pour retrouver votre espace.",
+              "This email already has an account. Sign in to return to your space."
+            )
+          : txt("Impossible de créer le compte.", "Unable to create your account."),
         variant: "destructive",
       });
       throw error;

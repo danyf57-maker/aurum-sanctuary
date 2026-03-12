@@ -68,6 +68,7 @@ function LoginForm() {
     : unsafeRedirectUrl;
   const verified = searchParams.get("verified");
   const checkEmail = searchParams.get("check_email");
+  const existingAccount = searchParams.get("existing");
   const prefilledEmail = searchParams.get("email") ?? "";
   const onboardingPills = [
     t("pillPrivate"),
@@ -212,6 +213,11 @@ function LoginForm() {
           {checkEmail && (
             <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
               {t("checkEmail")}
+            </div>
+          )}
+          {existingAccount && (
+            <div className="rounded-md border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-800">
+              {t("existingAccountInfo")}
             </div>
           )}
           {info && (

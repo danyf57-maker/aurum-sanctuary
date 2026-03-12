@@ -70,6 +70,7 @@
     "forgot": "Mot de passe oublié ?",
     "signingIn": "Connexion...",
     "signIn": "Se connecter",
+    "existingAccountInfo": "Ce compte existe déjà. Connectez-vous pour retrouver votre espace de réflexion privé.",
     "noAccount": "Pas encore de compte ?",
     "signUp": "S'inscrire"
   },
@@ -398,6 +399,9 @@
     "quizBadge": "Votre profil vous attend",
     "quizText": "Votre profil de réflexion est prêt ! Créez votre compte pour découvrir votre résultat personnalisé et commencer votre expérience.",
     "encrypted": "Chiffré et privé par conception",
+    "existingAccountBannerTitle": "Vous avez déjà un compte ?",
+    "existingAccountBannerBody": "Ouvre cette page dans Safari ou Chrome puis connecte-toi. Dans ce navigateur intégré, la connexion Google et la restauration de session peuvent être bloquées.",
+    "existingAccountBannerCta": "Aller à la connexion",
     "inAppBrowser": "Connexion Google bloquée dans ce navigateur intégré. Ouvre cette page dans Safari ou Chrome puis réessaie.",
     "google": "Continuer avec Google",
     "or": "Ou continuer avec",
