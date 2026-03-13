@@ -1,57 +1,132 @@
 import type { Metadata } from "next";
+import { getRequestLocale } from "@/lib/locale-server";
+import { absoluteUrl, buildAlternates, openGraphLocale, schemaLanguage } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Methodologie IA",
-  description:
-    "Méthodologie d'Aurum: comment les analyses IA sont produites, leurs limites et les bonnes pratiques d'interprétation.",
-  alternates: {
-    canonical: "https://aurumdiary.com/methodologie",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getRequestLocale();
+  const isFr = locale === "fr";
+  const title = isFr
+    ? "Méthodologie IA Aurum | Limites, analyses et confidentialité"
+    : "Aurum AI Methodology | Limits, analysis, and privacy";
+  const description = isFr
+    ? "Méthodologie d'Aurum: comment les analyses IA sont produites, leurs limites et les bonnes pratiques d'interprétation."
+    : "Aurum's methodology: how AI analyses are produced, where their limits are, and how to interpret them responsibly.";
+  const alternates = buildAlternates("/methodologie", locale);
 
-export default function MethodologiePage() {
+  return {
+    title,
+    description,
+    alternates,
+    openGraph: {
+      title,
+      description,
+      url: alternates.canonical,
+      siteName: "Aurum Diary",
+      type: "website",
+      locale: openGraphLocale(locale),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/og-image.png"],
+    },
+  };
+}
+
+export default async function MethodologiePage() {
+  const locale = await getRequestLocale();
+  const isFr = locale === "fr";
+  const pageUrl = absoluteUrl("/methodologie", locale);
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      headline: isFr ? "Méthodologie IA d'Aurum" : "Aurum AI Methodology",
+      description: isFr
+        ? "Comment Aurum produit ses analyses, ce qu'elles peuvent apporter, et ce qu'elles ne remplacent pas."
+        : "How Aurum produces its analyses, what they can support, and what they do not replace.",
+      url: pageUrl,
+      inLanguage: schemaLanguage(locale),
+      author: {
+        "@type": "Organization",
+        name: "Aurum Diary",
+      },
+      publisher: {
+        "@type": "Organization",
+        name: "Aurum Diary",
+      },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: isFr ? "Méthodologie IA" : "AI Methodology",
+          item: pageUrl,
+        },
+      ],
+    },
+  ];
+
   return (
     <div className="bg-stone-50/50 min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <section className="py-24 md:py-32">
         <div className="container max-w-4xl mx-auto">
           <h1 className="text-4xl md:text-5xl font-headline font-bold tracking-tight mb-6">
-            Méthodologie IA d&apos;Aurum
+            {isFr ? "Méthodologie IA d'Aurum" : "Aurum's AI methodology"}
           </h1>
           <p className="text-lg text-muted-foreground mb-10">
-            Cette page documente comment Aurum génère ses analyses, ce que ces
-            analyses peuvent apporter, et ce qu&apos;elles ne remplacent pas.
+            {isFr
+              ? "Cette page documente comment Aurum génère ses analyses, ce que ces analyses peuvent apporter, et ce qu'elles ne remplacent pas."
+              : "This page explains how Aurum generates its analyses, what they can support, and what they do not replace."}
           </p>
 
           <div className="space-y-8 text-foreground/90">
             <section>
-              <h2 className="text-2xl font-headline mb-3">1. Entrées analysées</h2>
+              <h2 className="text-2xl font-headline mb-3">
+                {isFr ? "1. Entrées analysées" : "1. Inputs analyzed"}
+              </h2>
               <p>
-                Aurum traite le texte que tu écris pour identifier des tendances
-                émotionnelles, des thèmes récurrents et des pistes de réflexion.
+                {isFr
+                  ? "Aurum traite le texte que tu écris pour identifier des tendances émotionnelles, des thèmes récurrents et des pistes de réflexion."
+                  : "Aurum processes the text you write to identify emotional tendencies, recurring themes, and reflection prompts."}
               </p>
             </section>
             <section>
-              <h2 className="text-2xl font-headline mb-3">2. Sorties produites</h2>
+              <h2 className="text-2xl font-headline mb-3">
+                {isFr ? "2. Sorties produites" : "2. Outputs produced"}
+              </h2>
               <p>
-                Les sorties sont des synthèses, des suggestions d&apos;introspection
-                et des observations linguistiques. Elles sont destinées à la
-                clarté personnelle, pas au diagnostic.
+                {isFr
+                  ? "Les sorties sont des synthèses, des suggestions d'introspection et des observations linguistiques. Elles sont destinées à la clarté personnelle, pas au diagnostic."
+                  : "Outputs include summaries, reflection suggestions, and language-based observations. They are designed for personal clarity, not diagnosis."}
               </p>
             </section>
             <section>
-              <h2 className="text-2xl font-headline mb-3">3. Limites connues</h2>
+              <h2 className="text-2xl font-headline mb-3">
+                {isFr ? "3. Limites connues" : "3. Known limits"}
+              </h2>
               <p>
-                Comme tout modèle IA, Aurum peut produire des approximations.
-                Les résultats doivent être interprétés comme un support de
-                réflexion, et non comme un avis médical ou thérapeutique.
+                {isFr
+                  ? "Comme tout modèle IA, Aurum peut produire des approximations. Les résultats doivent être interprétés comme un support de réflexion, et non comme un avis médical ou thérapeutique."
+                  : "Like any AI model, Aurum can produce approximations. Results should be interpreted as reflection support, not as medical or therapeutic advice."}
               </p>
             </section>
             <section>
-              <h2 className="text-2xl font-headline mb-3">4. Confidentialité</h2>
+              <h2 className="text-2xl font-headline mb-3">
+                {isFr ? "4. Confidentialité" : "4. Privacy"}
+              </h2>
               <p>
-                La confidentialité est un principe central du produit. Pour les
-                détails techniques et juridiques, consulte la politique de
-                confidentialité et les conditions d&apos;utilisation.
+                {isFr
+                  ? "La confidentialité est un principe central du produit. Pour les détails techniques et juridiques, consulte la politique de confidentialité et les conditions d'utilisation."
+                  : "Privacy is a core principle of the product. For technical and legal details, see the privacy policy and terms of use."}
               </p>
             </section>
           </div>
