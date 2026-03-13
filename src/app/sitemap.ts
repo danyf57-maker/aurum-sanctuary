@@ -1,28 +1,39 @@
 
 import { MetadataRoute } from 'next';
 import { knowledgeHubTopics } from '@/lib/knowledge-hub';
+import type { Locale } from '@/lib/locale';
+import { absoluteUrl, buildLanguageAlternates } from '@/lib/seo';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const baseUrl = 'https://aurumdiary.com';
-
-    // Strategic static routes (exclude auth pages)
-    const staticRoutes = [
+    const now = new Date();
+    const localizedRoutes = [
         { route: '', priority: 1, changeFrequency: 'weekly' as const },
         { route: '/blog', priority: 0.9, changeFrequency: 'weekly' as const },
         { route: '/guides', priority: 0.8, changeFrequency: 'weekly' as const },
-        { route: '/manifeste', priority: 0.7, changeFrequency: 'monthly' as const },
-        { route: '/auteur', priority: 0.6, changeFrequency: 'monthly' as const },
-        { route: '/methodologie', priority: 0.7, changeFrequency: 'monthly' as const },
-        { route: '/legal/privacy', priority: 0.5, changeFrequency: 'monthly' as const },
-        { route: '/legal/terms', priority: 0.5, changeFrequency: 'monthly' as const },
+        { route: '/pricing', priority: 0.8, changeFrequency: 'weekly' as const },
         { route: '/privacy', priority: 0.4, changeFrequency: 'monthly' as const },
         { route: '/terms', priority: 0.4, changeFrequency: 'monthly' as const },
-    ].map(({ route, priority, changeFrequency }) => ({
-        url: `${baseUrl}${route}`,
-        lastModified: new Date(),
-        changeFrequency,
-        priority,
-    }));
+    ];
+
+    const buildLocalizedEntries = (
+        route: string,
+        priority: number,
+        changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"],
+        lastModified: Date | string = now
+    ): MetadataRoute.Sitemap =>
+        (["en", "fr"] as const).map((locale: Locale) => ({
+            url: absoluteUrl(route || "/", locale),
+            lastModified,
+            changeFrequency,
+            priority,
+            alternates: {
+                languages: buildLanguageAlternates(route || "/"),
+            },
+        }));
+
+    const staticRoutes = localizedRoutes.flatMap(({ route, priority, changeFrequency }) =>
+        buildLocalizedEntries(route || "/", priority, changeFrequency)
+    );
 
     let blogRoutes: MetadataRoute.Sitemap = [];
     try {
@@ -35,25 +46,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         if (hasFirebaseWebConfig) {
             const { getPublicPosts } = await import('@/lib/firebase/firestore');
             const posts = await getPublicPosts();
-            blogRoutes = posts
-                .filter((post) => Boolean(post.slug))
-                .map((post) => ({
-                    url: `${baseUrl}/blog/${post.slug}`,
-                    lastModified: post.publishedAt ?? new Date(),
-                    changeFrequency: 'monthly' as const,
-                    priority: 0.7,
-                }));
+            blogRoutes = posts.flatMap((post) =>
+                post.slug
+                    ? buildLocalizedEntries(`/blog/${post.slug}`, 0.7, 'monthly', post.publishedAt ?? now)
+                    : []
+            );
         }
     } catch {
         blogRoutes = [];
     }
 
-    const knowledgeHubRoutes: MetadataRoute.Sitemap = knowledgeHubTopics.map((topic) => ({
-        url: `${baseUrl}/guides/${topic.slug}`,
-        lastModified: new Date(),
-        changeFrequency: 'monthly' as const,
-        priority: 0.7,
-    }));
+    const knowledgeHubRoutes: MetadataRoute.Sitemap = knowledgeHubTopics.flatMap((topic) =>
+        buildLocalizedEntries(`/guides/${topic.slug}`, 0.7, 'monthly')
+    );
 
     return [...staticRoutes, ...knowledgeHubRoutes, ...blogRoutes];
 }

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getRequestLocale } from "@/lib/locale-server";
+import { buildAlternates, openGraphLocale } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
@@ -8,20 +9,18 @@ export async function generateMetadata(): Promise<Metadata> {
   const description = isFr
     ? "Compare les offres Aurum pour une réflexion privée guidée, plus de clarté émotionnelle et une lecture des motifs dans le temps."
     : "Compare Aurum plans for private AI-guided reflection, emotional clarity, and recurring pattern discovery.";
-  const canonical = "https://aurumdiary.com/pricing";
+  const alternates = buildAlternates("/pricing", locale);
 
   return {
     title,
     description,
-    alternates: {
-      canonical,
-    },
+    alternates,
     openGraph: {
       title,
       description,
-      url: canonical,
+      url: alternates.canonical,
       type: "website",
-      locale: isFr ? "fr_FR" : "en_US",
+      locale: openGraphLocale(locale),
     },
     twitter: {
       card: "summary_large_image",

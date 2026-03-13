@@ -6,6 +6,7 @@ import {
   knowledgeHubTopics,
 } from "@/lib/knowledge-hub";
 import { getRequestLocale } from "@/lib/locale-server";
+import { absoluteUrl, buildAlternates, openGraphLocale, schemaLanguage } from "@/lib/seo";
 
 type GuidePageProps = {
   params: {
@@ -33,21 +34,19 @@ export async function generateMetadata({
     };
   }
 
-  const canonical = `https://aurumdiary.com/guides/${topic.slug}`;
+  const alternates = buildAlternates(`/guides/${topic.slug}`, locale);
 
   return {
     title: topic.metaTitle,
     description: topic.metaDescription,
-    alternates: {
-      canonical,
-    },
+    alternates,
     openGraph: {
       title: topic.metaTitle,
       description: topic.metaDescription,
-      url: canonical,
-      siteName: "Aurum",
+      url: alternates.canonical,
+      siteName: "Aurum Diary",
       type: "article",
-      locale: isFr ? "fr_FR" : "en_US",
+      locale: openGraphLocale(locale),
     },
     twitter: {
       card: "summary_large_image",
@@ -68,8 +67,55 @@ export default async function GuidePage({ params }: GuidePageProps) {
     notFound();
   }
 
+  const pageUrl = absoluteUrl(`/guides/${topic.slug}`, locale);
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: topic.title,
+      description: topic.metaDescription,
+      url: pageUrl,
+      inLanguage: schemaLanguage(locale),
+      mainEntityOfPage: pageUrl,
+      author: {
+        "@type": "Organization",
+        name: "Aurum Diary",
+      },
+      publisher: {
+        "@type": "Organization",
+        name: "Aurum Diary",
+        logo: {
+          "@type": "ImageObject",
+          url: "https://aurumdiary.com/og-image.png",
+        },
+      },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: isFr ? "Guides Aurum" : "Aurum Guides",
+          item: absoluteUrl("/guides", locale),
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: topic.title,
+          item: pageUrl,
+        },
+      ],
+    },
+  ];
+
   return (
     <div className="bg-stone-50/50 min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <section className="py-24 md:py-32">
         <div className="container max-w-4xl mx-auto">
           <p className="text-sm uppercase tracking-[0.2em] text-amber-700/70 mb-4">

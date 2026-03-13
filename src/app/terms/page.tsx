@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getRequestLocale } from "@/lib/locale-server";
+import { buildAlternates, openGraphLocale } from "@/lib/seo";
 import type { Metadata } from "next";
 
 const copy = {
@@ -60,18 +61,18 @@ export async function generateMetadata(): Promise<Metadata> {
   const description = isFr
     ? "Conditions d'utilisation d'Aurum Sanctuary: service de réflexion privée, confidentialité, paiements et responsabilités."
     : "Aurum Sanctuary terms of use: service scope, privacy, payments, and responsibilities.";
-  const canonical = "https://aurumdiary.com/terms";
+  const alternates = buildAlternates("/terms", locale);
 
   return {
     title,
     description,
-    alternates: { canonical },
+    alternates,
     openGraph: {
       title,
       description,
-      url: canonical,
+      url: alternates.canonical,
       type: "article",
-      locale: isFr ? "fr_FR" : "en_US",
+      locale: openGraphLocale(locale),
     },
     twitter: {
       card: "summary_large_image",
