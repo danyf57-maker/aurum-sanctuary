@@ -32,6 +32,7 @@ service cloud.firestore {
       return [
         'uid',
         'email',
+        'firstName',
         'displayName',
         'photoURL',
         'createdAt',

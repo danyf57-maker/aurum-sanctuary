@@ -54,7 +54,7 @@ import { useLocalizedHref } from "@/hooks/use-localized-href";
 import { useTranslations } from "next-intl";
 import { useLocale } from "@/hooks/use-locale";
 import { useSubscription } from "@/hooks/useSubscription";
-import { resolveFirstName } from "@/lib/profile/first-name";
+import { resolveFirstName, resolveOptionalFirstName } from "@/lib/profile/first-name";
 import { registerPushReminderDevice, unregisterPushReminderDevice } from "@/lib/reminders/push";
 import { buildWritingReminderCopy } from "@/lib/reminders/writing-reminders";
 
@@ -65,7 +65,7 @@ export default function SettingsPage() {
   const locale = useLocale();
   const isFr = locale === "fr";
   const t = useTranslations("settings");
-  const { user, loading: authLoading, logout } = useAuth();
+  const { user, profileFirstName, updateFirstName, loading: authLoading, logout } = useAuth();
   const {
     subscription,
     loading: subscriptionLoading,
@@ -83,17 +83,29 @@ export default function SettingsPage() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [isOpeningAnnualUpgrade, setIsOpeningAnnualUpgrade] = useState(false);
+  const [firstNameInput, setFirstNameInput] = useState("");
+  const [isSavingFirstName, setIsSavingFirstName] = useState(false);
   const [notificationPermission, setNotificationPermission] = useState<NotificationPermission | "unsupported">("default");
   const [isSyncingReminderDevice, setIsSyncingReminderDevice] = useState(false);
   const [isSendingReminderTest, setIsSendingReminderTest] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
+  const savedFirstName = resolveOptionalFirstName({
+    firstName: profileFirstName,
+    displayName: user?.displayName,
+    email: user?.email,
+  });
+
   const firstName = resolveFirstName({
-    firstName: null,
+    firstName: profileFirstName,
     displayName: user?.displayName,
     email: user?.email,
     fallback: isFr ? "toi" : "you",
   });
+
+  useEffect(() => {
+    setFirstNameInput(savedFirstName || "");
+  }, [savedFirstName]);
 
   useEffect(() => {
     if (typeof window === "undefined" || !("Notification" in window)) {
@@ -204,6 +216,20 @@ export default function SettingsPage() {
       profile: {
         title: isFr ? "Profil" : "Profile",
         description: isFr ? "Vos informations de compte." : "Your account details.",
+        firstName: isFr ? "Prénom" : "First name",
+        firstNameHelp: isFr
+          ? "Aurum peut l'utiliser avec parcimonie dans les reflets quand cela sonne naturel."
+          : "Aurum may use it sparingly in reflections when it feels natural.",
+        saveFirstName: isFr ? "Enregistrer le prénom" : "Save first name",
+        savingFirstName: isFr ? "Enregistrement..." : "Saving...",
+        firstNameSavedTitle: isFr ? "Prénom enregistré" : "First name saved",
+        firstNameSavedDescription: isFr
+          ? "Aurum pourra maintenant personnaliser ses reflets avec plus de justesse."
+          : "Aurum can now personalize its reflections more naturally.",
+        firstNameErrorTitle: isFr ? "Prénom indisponible" : "First name unavailable",
+        firstNameErrorDescription: isFr
+          ? "Impossible d'enregistrer ce prénom pour le moment."
+          : "We could not save this first name right now.",
         email: "Email",
         displayName: isFr ? "Nom affiché" : "Display name",
       },
@@ -421,6 +447,28 @@ export default function SettingsPage() {
         variant: 'destructive',
       });
       setIsOpeningAnnualUpgrade(false);
+    }
+  };
+
+  const handleSaveFirstName = async () => {
+    if (!user) return;
+
+    setIsSavingFirstName(true);
+    try {
+      await updateFirstName(firstNameInput);
+      toast({
+        title: copy.profile.firstNameSavedTitle,
+        description: copy.profile.firstNameSavedDescription,
+      });
+    } catch (error) {
+      console.error("First name update failed:", error);
+      toast({
+        title: copy.profile.firstNameErrorTitle,
+        description: copy.profile.firstNameErrorDescription,
+        variant: "destructive",
+      });
+    } finally {
+      setIsSavingFirstName(false);
     }
   };
 
@@ -842,6 +890,32 @@ export default function SettingsPage() {
                   <Label>{copy.profile.email}</Label>
                   <Input value={user?.email || ""} readOnly disabled />
                 </div>
+                <div className="space-y-2">
+                  <Label htmlFor="firstName">{copy.profile.firstName}</Label>
+                  <Input
+                    id="firstName"
+                    value={firstNameInput}
+                    onChange={(event) => setFirstNameInput(event.target.value)}
+                    autoComplete="given-name"
+                    maxLength={40}
+                    disabled={isSavingFirstName}
+                  />
+                  <p className="text-xs text-muted-foreground">{copy.profile.firstNameHelp}</p>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleSaveFirstName}
+                    disabled={
+                      isSavingFirstName ||
+                      firstNameInput.trim().length === 0 ||
+                      firstNameInput.trim() === (savedFirstName ?? "").trim()
+                    }
+                  >
+                    {isSavingFirstName ? copy.profile.savingFirstName : copy.profile.saveFirstName}
+                  </Button>
+                </div>
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label>{copy.profile.displayName}</Label>
                   <Input value={user?.displayName || ""} readOnly disabled />

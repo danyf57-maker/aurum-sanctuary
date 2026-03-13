@@ -33,6 +33,7 @@ import {
 } from '@/lib/ai/language';
 import { buildAurumResponseContract } from '@/lib/ai/aurum-response-contract';
 import { getFreeEntryState, resolveAurumAccessState } from '@/lib/billing/aurum-access';
+import { resolveOptionalFirstName } from '@/lib/profile/first-name';
 import type { Locale } from '@/lib/locale';
 
 type AurumIntent = 'reflection' | 'conversation' | 'analysis' | 'action' | 'philosophy';
@@ -194,6 +195,11 @@ export async function POST(request: NextRequest) {
 
     const userDoc = await db.collection('users').doc(userId).get();
     const userData = userDoc.data() || {};
+    const firstName = resolveOptionalFirstName({
+      firstName: userData.firstName,
+      displayName: userData.displayName,
+      email: userData.email,
+    });
     const { hasSubscription: hasPremiumAccess } = resolveAurumAccessState(userData);
     const { entriesUsed, entriesLimit, hasReachedLimit } = getFreeEntryState(userData);
     const isConversationFollowUp = typeof userMessage === 'string' && userMessage.trim().length > 0;
@@ -256,6 +262,13 @@ export async function POST(request: NextRequest) {
         content: getSystemPromptForIntent(intent),
       },
     ];
+
+    if (firstName) {
+      messages.push({
+        role: 'system',
+        content: `User first name: ${firstName}. Use it only if it feels natural in this specific reply. At most once. Never force it. Never begin the reply with the first name automatically. Skip it entirely if it sounds intrusive, theatrical, or less natural than replying without it.`,
+      });
+    }
 
     if (patternContext) {
       messages.push({
