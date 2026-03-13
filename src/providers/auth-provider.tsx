@@ -9,6 +9,7 @@ import {
   signInWithPopup,
   signInWithRedirect,
   GoogleAuthProvider,
+  fetchSignInMethodsForEmail,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   updateProfile,
@@ -50,6 +51,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const txt = (fr: string, en: string) => (isFr ? fr : en);
   const QUIZ_STORAGE_KEY = 'aurum-quiz-data';
   const QUIZ_SYNC_KEY = 'aurum-quiz-synced-at';
+  const isInAppBrowser = () => {
+    if (typeof navigator === 'undefined') return false;
+    const ua = navigator.userAgent || '';
+    return /FBAN|FBAV|Instagram|Line|LinkedInApp|Snapchat|Twitter|GSA|WebView|wv/i.test(ua);
+  };
 
   const syncLandingQuizAssessment = async (uid: string) => {
     try {
@@ -373,11 +379,67 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       logger.errorSafe('Email Sign In Failed', error);
       if ((error as Error)?.message !== "EMAIL_NOT_VERIFIED") {
+        const authCode =
+          typeof error === 'object' &&
+          error !== null &&
+          'code' in error
+            ? String((error as { code?: unknown }).code)
+            : '';
+        const inAppBrowser = isInAppBrowser();
+        let description = txt("Email ou mot de passe incorrect.", "Invalid email or password.");
+        let errorTag: string | null = null;
+
+        if (
+          authCode === 'auth/invalid-credential' ||
+          authCode === 'auth/invalid-login-credentials' ||
+          authCode === 'auth/wrong-password' ||
+          authCode === 'auth/user-not-found'
+        ) {
+          try {
+            const methods = await fetchSignInMethodsForEmail(firebaseAuth, e);
+            const usesGoogleOnly =
+              methods.includes(GoogleAuthProvider.PROVIDER_ID) && !methods.includes('password');
+
+            if (usesGoogleOnly) {
+              errorTag = inAppBrowser ? 'ACCOUNT_USES_GOOGLE_INAPP' : 'ACCOUNT_USES_GOOGLE';
+              description = inAppBrowser
+                ? txt(
+                    "Ce compte utilise Google. Ouvre Aurum dans Safari ou Chrome, puis continue avec Google.",
+                    "This account uses Google. Open Aurum in Safari or Chrome, then continue with Google."
+                  )
+                : txt(
+                    "Ce compte utilise Google. Utilise le bouton Google pour retrouver ton espace.",
+                    "This account uses Google. Use the Google button to get back into your space."
+                  );
+            } else if (inAppBrowser) {
+              description = txt(
+                "Email ou mot de passe incorrect. Si tu utilises Google d'habitude, ouvre Aurum dans Safari ou Chrome pour continuer.",
+                "Invalid email or password. If you usually use Google, open Aurum in Safari or Chrome to continue."
+              );
+            }
+          } catch (methodsError) {
+            logger.warnSafe('Unable to inspect sign-in methods after email login failure', {
+              email: e,
+              authCode,
+              methodsError,
+            });
+            if (inAppBrowser) {
+              description = txt(
+                "Email ou mot de passe incorrect. Si tu utilises Google d'habitude, ouvre Aurum dans Safari ou Chrome pour continuer.",
+                "Invalid email or password. If you usually use Google, open Aurum in Safari or Chrome to continue."
+              );
+            }
+          }
+        }
+
         toast({
           title: txt("Erreur de connexion", "Sign-in error"),
-          description: txt("Email ou mot de passe incorrect.", "Invalid email or password."),
+          description,
           variant: "destructive",
         });
+        if (errorTag) {
+          throw new Error(errorTag);
+        }
       }
       throw error;
     }

@@ -134,8 +134,13 @@ function LoginForm() {
       });
       router.push(redirectUrl);
     } catch (error) {
-      if ((error as Error)?.message === "EMAIL_NOT_VERIFIED") {
+      const message = (error as Error)?.message;
+      if (message === "EMAIL_NOT_VERIFIED") {
         setInfo(t("emailNotVerified"));
+      } else if (message === "ACCOUNT_USES_GOOGLE_INAPP") {
+        setInfo(t("googleAccountInAppBrowser"));
+      } else if (message === "ACCOUNT_USES_GOOGLE") {
+        setInfo(t("googleAccountGoogle"));
       }
     } finally {
       setLoading(false);
