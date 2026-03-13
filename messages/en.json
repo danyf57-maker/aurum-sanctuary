@@ -407,6 +407,8 @@
     "inAppBrowser": "Google cannot sign you in here. Open Aurum in Safari or Chrome. If your account works in Safari, go back to Safari. If it works in Chrome, go back to Chrome.",
     "google": "Continue with Google",
     "or": "Or continue with",
+    "firstName": "First name",
+    "firstNamePlaceholder": "Your first name",
     "emailPlaceholder": "you@example.com",
     "password": "Password",
     "passwordHint": "At least 8 characters, 1 uppercase, 1 lowercase, 1 digit",
@@ -427,6 +429,8 @@
     "pillClarity": "Emotional clarity",
     "pillPatterns": "Patterns over time",
     "validation": {
+      "firstNameRequired": "Please enter your first name",
+      "firstNameTooLong": "First name must contain 40 characters or fewer",
       "invalidEmail": "Invalid email",
       "passwordMinLength": "Password must contain at least 8 characters",
       "passwordUppercase": "Password must contain at least one uppercase letter",

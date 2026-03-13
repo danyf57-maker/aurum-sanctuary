@@ -6,8 +6,12 @@ function cleanCandidate(value?: string | null): string | null {
   return normalized.slice(0, 40);
 }
 
+export function sanitizeFirstName(value?: string | null): string | null {
+  return cleanCandidate(value);
+}
+
 export function extractFirstName(displayName?: string | null): string | null {
-  const cleaned = cleanCandidate(displayName);
+  const cleaned = sanitizeFirstName(displayName);
   if (!cleaned) return null;
   const [firstPart] = cleaned.split(' ');
   return firstPart || null;
@@ -21,17 +25,23 @@ export function extractFirstNameFromEmail(email?: string | null): string | null 
   return cleanCandidate(firstToken);
 }
 
+export function resolveOptionalFirstName(params: {
+  firstName?: string | null;
+  displayName?: string | null;
+  email?: string | null;
+}): string | null {
+  return (
+    sanitizeFirstName(params.firstName) ||
+    extractFirstName(params.displayName) ||
+    extractFirstNameFromEmail(params.email)
+  );
+}
+
 export function resolveFirstName(params: {
   firstName?: string | null;
   displayName?: string | null;
   email?: string | null;
   fallback?: string;
 }): string {
-  return (
-    cleanCandidate(params.firstName) ||
-    extractFirstName(params.displayName) ||
-    extractFirstNameFromEmail(params.email) ||
-    params.fallback ||
-    'toi'
-  );
+  return resolveOptionalFirstName(params) || params.fallback || 'toi';
 }

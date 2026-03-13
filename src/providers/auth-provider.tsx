@@ -22,18 +22,20 @@ import {
   ensureAuthPersistence,
 } from '@/lib/firebase/web-client';
 import { logger } from '@/lib/logger/safe';
-import { resolveFirstName } from '@/lib/profile/first-name';
+import { resolveOptionalFirstName, sanitizeFirstName } from '@/lib/profile/first-name';
 import { useToast } from '@/hooks/use-toast';
 import { useLocale } from '@/hooks/use-locale';
 
 
 interface AuthContextType {
   user: User | null;
+  profileFirstName: string | null;
   loading: boolean;
   termsAccepted: boolean | null; // null = loading/unknown
   signInWithGoogle: () => Promise<void>;
   signInWithEmail: (e: string, p: string) => Promise<void>;
-  signUpWithEmail: (e: string, p: string, name: string) => Promise<void>;
+  signUpWithEmail: (e: string, p: string, firstName: string) => Promise<void>;
+  updateFirstName: (firstName: string) => Promise<void>;
   logout: () => Promise<void>;
   acceptTerms: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
@@ -43,6 +45,7 @@ const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [profileFirstName, setProfileFirstName] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [termsAccepted, setTermsAccepted] = useState<boolean | null>(null);
   const { toast } = useToast();
@@ -204,10 +207,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const userRef = doc(db, "users", finalUser.uid);
 
           let userSnap = await getDoc(userRef);
-          const inferredFirstName = resolveFirstName({
+          const inferredFirstName = resolveOptionalFirstName({
             displayName: finalUser.displayName,
             email: finalUser.email,
-            fallback: '',
           });
 
           // FALLBACK: If trigger didn't run, create doc client-side
@@ -236,6 +238,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
               logger.infoSafe("User doc created client-side", { userId: finalUser.uid });
               setTermsAccepted(false);
+              setProfileFirstName(inferredFirstName || null);
               userSnap = await getDoc(userRef);
             } catch (e) {
               logger.errorSafe("Failed to create user doc client-side", e, { userId: finalUser.uid });
@@ -244,17 +247,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
           if (userSnap.exists()) {
             const userData = userSnap.data();
+            const storedFirstName = sanitizeFirstName(userData.firstName);
+            const profilePatch: Record<string, unknown> = {};
 
-            if (
-              inferredFirstName &&
-              (userData.firstName !== inferredFirstName || userData.displayName !== finalUser.displayName)
-            ) {
+            if (!storedFirstName && inferredFirstName) {
+              profilePatch.firstName = inferredFirstName;
+            }
+
+            if ((userData.displayName ?? null) !== (finalUser.displayName ?? null)) {
+              profilePatch.displayName = finalUser.displayName ?? null;
+            }
+
+            if (Object.keys(profilePatch).length > 0) {
               await setDoc(userRef, {
-                firstName: inferredFirstName,
-                displayName: finalUser.displayName,
+                ...profilePatch,
                 updatedAt: serverTimestamp(),
               }, { merge: true });
             }
+
+            setProfileFirstName(storedFirstName || inferredFirstName || null);
 
             // User exists, check terms in settings/legal
             const legalRef = doc(db, "users", finalUser.uid, "settings", "legal");
@@ -272,6 +283,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
         } else {
           setUser(null);
+          setProfileFirstName(null);
           setTermsAccepted(null);
           // Remove cookie via API
           try {
@@ -445,10 +457,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const signUpWithEmail = async (e: string, p: string, name: string) => {
+  const signUpWithEmail = async (e: string, p: string, firstName: string) => {
     try {
+      const safeFirstName = sanitizeFirstName(firstName) || sanitizeFirstName(e.split('@')[0]) || 'Aurum';
       const cred = await createUserWithEmailAndPassword(firebaseAuth, e, p);
-      await updateProfile(cred.user, { displayName: name });
+      await updateProfile(cred.user, { displayName: safeFirstName });
+      await setDoc(doc(db, "users", cred.user.uid), {
+        uid: cred.user.uid,
+        email: cred.user.email,
+        firstName: safeFirstName,
+        displayName: safeFirstName,
+        photoURL: cred.user.photoURL,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        entryCount: 0,
+      }, { merge: true });
       await sendEmailVerification(cred.user, getEmailVerificationSettings());
       await signOut(firebaseAuth);
       toast({
@@ -478,6 +501,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
       throw error;
     }
+  };
+
+  const updateFirstName = async (firstName: string) => {
+    if (!user) {
+      throw new Error("AUTH_REQUIRED");
+    }
+
+    const nextFirstName = sanitizeFirstName(firstName);
+    if (!nextFirstName) {
+      throw new Error("INVALID_FIRST_NAME");
+    }
+
+    await setDoc(doc(db, "users", user.uid), {
+      firstName: nextFirstName,
+      updatedAt: serverTimestamp(),
+    }, { merge: true });
+
+    try {
+      await updateProfile(user, { displayName: nextFirstName });
+    } catch (error) {
+      logger.warnSafe('Unable to mirror firstName to Firebase auth displayName', {
+        userId: user.uid,
+        error,
+      });
+    }
+
+    setProfileFirstName(nextFirstName);
   };
 
   const logout = async () => {
@@ -537,11 +587,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   return (
     <AuthContext.Provider value={{
       user,
+      profileFirstName,
       loading,
       termsAccepted,
       signInWithGoogle,
       signInWithEmail,
       signUpWithEmail,
+      updateFirstName,
       logout,
       acceptTerms,
       resetPassword

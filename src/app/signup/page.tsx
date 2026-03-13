@@ -44,6 +44,11 @@ const QUIZ_SYNC_KEY = "aurum-quiz-synced-at";
 function makeSignupSchema(v: Record<string, string>) {
   return z
     .object({
+      firstName: z
+        .string()
+        .trim()
+        .min(1, v.firstNameRequired)
+        .max(40, v.firstNameTooLong),
       email: z.string().email(v.invalidEmail),
       password: z
         .string()
@@ -68,6 +73,8 @@ function SignupPage() {
   const to = (href: string) => localizeHref(href, locale);
   const tSign = useTranslations("signup");
   const signupSchema = makeSignupSchema({
+    firstNameRequired: tSign("validation.firstNameRequired"),
+    firstNameTooLong: tSign("validation.firstNameTooLong"),
     invalidEmail: tSign("validation.invalidEmail"),
     passwordMinLength: tSign("validation.passwordMinLength"),
     passwordUppercase: tSign("validation.passwordUppercase"),
@@ -80,6 +87,7 @@ function SignupPage() {
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{
+    firstName?: string;
     email?: string;
     password?: string;
     confirmPassword?: string;
@@ -171,6 +179,7 @@ function SignupPage() {
     setLoading(true);
 
     const formData = new FormData(e.currentTarget);
+    const firstName = formData.get("firstName") as string;
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
     const confirmPassword = formData.get("confirmPassword") as string;
@@ -178,6 +187,7 @@ function SignupPage() {
 
     // Validate
     const result = signupSchema.safeParse({
+      firstName,
       email,
       password,
       confirmPassword,
@@ -185,6 +195,7 @@ function SignupPage() {
     });
     if (!result.success) {
       const fieldErrors: {
+        firstName?: string;
         email?: string;
         password?: string;
         confirmPassword?: string;
@@ -200,8 +211,7 @@ function SignupPage() {
     }
 
     try {
-      const name = (email ?? "").split("@")[0];
-      await signUpWithEmail(email, password, name);
+      await signUpWithEmail(result.data.email, result.data.password, result.data.firstName);
       void trackEvent({
         name: "signup",
         params: { method: "email", source: "signup_page" },
@@ -370,6 +380,22 @@ function SignupPage() {
 
           {/* Email/Password Form */}
           <form onSubmit={handleEmailSignup} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="firstName">{tSign("firstName")}</Label>
+              <Input
+                id="firstName"
+                name="firstName"
+                type="text"
+                placeholder={tSign("firstNamePlaceholder")}
+                autoComplete="given-name"
+                required
+                disabled={loading}
+              />
+              {errors.firstName && (
+                <p className="text-sm text-destructive">{errors.firstName}</p>
+              )}
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input

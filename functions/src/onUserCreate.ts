@@ -21,6 +21,28 @@ function readTrialDays(): number {
     return parsed;
 }
 
+function sanitizeFirstName(value?: string | null): string | null {
+    if (!value) return null;
+    const trimmed = value.trim();
+    if (!trimmed) return null;
+    return trimmed.replace(/\s+/g, ' ').slice(0, 40);
+}
+
+function extractFirstName(displayName?: string | null): string | null {
+    const cleaned = sanitizeFirstName(displayName);
+    if (!cleaned) return null;
+    const [firstPart] = cleaned.split(' ');
+    return firstPart || null;
+}
+
+function extractFirstNameFromEmail(email?: string | null): string | null {
+    if (!email) return null;
+    const localPart = email.split('@')[0]?.trim();
+    if (!localPart) return null;
+    const [firstToken] = localPart.split(/[._-]+/).filter(Boolean);
+    return sanitizeFirstName(firstToken);
+}
+
 /**
  * onCreate auth trigger
  */
@@ -29,6 +51,7 @@ export const onUserCreate = functions.auth.user().onCreate(async (user) => {
     const email = user.email;
     const displayName = user.displayName;
     const photoURL = user.photoURL;
+    const firstName = extractFirstName(displayName) || extractFirstNameFromEmail(email);
 
     try {
         const batch = firestore.batch();
@@ -42,6 +65,7 @@ export const onUserCreate = functions.auth.user().onCreate(async (user) => {
         batch.set(userRef, {
             uid,
             email,
+            firstName,
             displayName,
             photoURL,
             createdAt: timestamp,
