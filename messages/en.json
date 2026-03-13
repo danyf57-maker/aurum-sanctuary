@@ -304,11 +304,19 @@
       "savedThoughtTitle": "Page secured",
       "savedThoughtSubtitle": "Encrypted, private, ready for reflection",
       "getReflection": "See what Aurum notices",
-      "getReflectionDescription": "A gentle reflection to clarify what stands out, what returns, and where the emotional center seems to be.",
+      "getReflectionDescription": "Aurum gives a first clear read on what stands out, what repeats, and where the emotional center seems to sit.",
       "revealReflection": "Reveal what Aurum notices",
-      "continueWithAurum": "Deepen this reflection",
+      "continueWithAurum": "Continue with Aurum",
+      "conversationLead": "Aurum has taken a first position. Keep going from what feels most alive, most repeated, or still unresolved.",
+      "conversationStarterLabel": "Try one of these",
+      "conversationStarters": {
+        "0": "Why does this keep coming back?",
+        "1": "What cycle do you see here?",
+        "2": "What does this say about me, concretely?",
+        "3": "Help me go further"
+      },
       "conversationLockedTitle": "Keep the conversation going",
-      "conversationLockedBody": "You reached your 5 free pages. Start your trial to keep exchanging with Aurum after each reflection.",
+      "conversationLockedBody": "You used the 8 free Aurum replies on this topic. Start your trial to keep going here and open as many new topics as you want.",
       "unlockConversation": "Unlock the full reflection exchange",
       "aurumThinking": "Aurum is reflecting...",
       "send": "Send",
@@ -318,7 +326,7 @@
         "write": "Write freely. Aurum will help you notice what returns...",
         "caption": "Add a note...",
         "tags": "Themes, moods, moments (optional)",
-        "replyToAurum": "Ask about what stands out, what repeats, or what still feels unclear..."
+        "replyToAurum": "Ask Aurum why this returns, what loop it sees, or what to dig into next..."
       },
       "toasts": {
         "signInRequiredTitle": "Sign in required",
@@ -493,6 +501,7 @@
     "ctaSecondaryAuthenticated": "See what keeps returning",
     "ctaSecondary": "Write first, no commitment",
     "trust": "100% Encrypted • AI-guided reflection • Private by design.",
+    "languages": "Write in English, French, Spanish, Italian, German, or Portuguese. Aurum responds in your language.",
     "placeholders": {
       "0": "The same conversation keeps replaying in my head...",
       "1": "I keep noticing the same tension every Monday...",
@@ -766,7 +775,7 @@
     },
     "studySection": {
       "title": "Writing helps. Aurum helps you understand what keeps returning.",
-      "subtitle": "Privacy protects your words. Aurum’s guided reflection helps turn them into emotional clarity and recurring patterns you can recognize over time.",
+      "subtitle": "Privacy protects your words. Research on expressive writing suggests that putting experience into words can support emotional processing and recovery over time. Aurum adds guided reflection so you can see recurring patterns more clearly.",
       "ctaAuthenticated": "Return to my writing space",
       "cta": "Create my account and start today"
     },
@@ -853,7 +862,7 @@
     },
     "scientificProof": {
       "title": "Writing is not only expressive. It is clarifying.",
-      "subtitle": "Research on expressive writing suggests that putting experience into words can support perspective, emotional processing, and clearer action over time.",
+      "subtitle": "Research on expressive writing suggests that putting experience into words can support emotional processing, recovery, and clearer action over time.",
       "discoveries": [
         {
           "label": "Finding #1:",

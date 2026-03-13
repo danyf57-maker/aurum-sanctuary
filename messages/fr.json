@@ -304,11 +304,19 @@
       "savedThoughtTitle": "Page sécurisée",
       "savedThoughtSubtitle": "Chiffrée, privée, prête pour un reflet",
       "getReflection": "Voir ce qu'Aurum remarque",
-      "getReflectionDescription": "Un reflet doux pour clarifier ce qui ressort, ce qui revient, et là où se situe le centre émotionnel.",
+      "getReflectionDescription": "Aurum te donne une première lecture claire de ce qui ressort, de ce qui revient, et de l'endroit où se situe le centre émotionnel.",
       "revealReflection": "Révéler ce qu'Aurum remarque",
-      "continueWithAurum": "Approfondir ce reflet",
+      "continueWithAurum": "Continuer avec Aurum",
+      "conversationLead": "Aurum a pris une première position. Continue à partir de ce qui te paraît le plus vivant, le plus répétitif, ou encore flou.",
+      "conversationStarterLabel": "Tu peux partir de là",
+      "conversationStarters": {
+        "0": "Pourquoi est-ce que ça revient autant ?",
+        "1": "Quel cycle vois-tu ici ?",
+        "2": "Qu'est-ce que ça dit de moi, concrètement ?",
+        "3": "Aide-moi à aller plus loin"
+      },
       "conversationLockedTitle": "Continuer l'échange",
-      "conversationLockedBody": "Tu as atteint tes 5 pages gratuites. Lance ton essai pour continuer à échanger avec Aurum après chaque reflet.",
+      "conversationLockedBody": "Tu as utilisé les 8 réponses gratuites d'Aurum sur ce sujet. Lance ton essai pour continuer ici et ouvrir autant de nouveaux sujets que tu veux.",
       "unlockConversation": "Débloquer l'échange complet",
       "aurumThinking": "Aurum relit...",
       "send": "Envoyer",
@@ -318,7 +326,7 @@
         "write": "Écris librement. Aurum t'aidera à remarquer ce qui revient...",
         "caption": "Ajouter une note...",
         "tags": "Thèmes, humeurs, moments (optionnel)",
-        "replyToAurum": "Demande à Aurum ce qui ressort, ce qui revient, ou ce qui reste flou..."
+        "replyToAurum": "Demande à Aurum pourquoi ça revient, quel cycle il voit, ou ce qu'il faut creuser ensuite..."
       },
       "toasts": {
         "signInRequiredTitle": "Connexion requise",
@@ -493,6 +501,7 @@
     "ctaSecondaryAuthenticated": "Voir ce qui revient",
     "ctaSecondary": "Écrire d'abord sans engagement",
     "trust": "100% Chiffré • Réflexion guidée par IA • Privé par design.",
+    "languages": "Écris en anglais, français, espagnol, italien, allemand ou portugais. Aurum te répond dans ta langue.",
     "placeholders": {
       "0": "La même conversation rejoue encore dans ma tête...",
       "1": "Je remarque la même tension chaque lundi...",
@@ -766,7 +775,7 @@
     },
     "studySection": {
       "title": "Écrire aide. Aurum aide à comprendre ce qui revient.",
-      "subtitle": "La confidentialité protège tes mots. La réflexion guidée d'Aurum aide à en faire émerger de la clarté émotionnelle et des motifs récurrents que tu peux reconnaître dans le temps.",
+      "subtitle": "La confidentialité protège tes mots. Les recherches sur l'écriture expressive suggèrent que mettre une expérience en mots peut soutenir le traitement émotionnel et une forme de réparation dans le temps. Aurum ajoute une réflexion guidée pour mieux voir les motifs qui reviennent.",
       "ctaAuthenticated": "Retrouver mon espace d'écriture",
       "cta": "Créer mon compte et commencer aujourd'hui"
     },
@@ -853,7 +862,7 @@
     },
     "scientificProof": {
       "title": "Écrire n'est pas seulement expressif. C'est clarifiant.",
-      "subtitle": "Les recherches sur l'écriture expressive suggèrent que mettre une expérience en mots peut soutenir la prise de recul, le traitement émotionnel et des choix plus clairs dans le temps.",
+      "subtitle": "Les recherches sur l'écriture expressive suggèrent que mettre une expérience en mots peut soutenir le traitement émotionnel, une forme de réparation intérieure, et des choix plus clairs dans le temps.",
       "discoveries": [
         {
           "label": "Découverte n°1 :",

@@ -244,15 +244,15 @@ export function JournalEntryForm({ onSave }: JournalEntryFormProps) {
     .endsWith("@aurumdiary.com");
 
   const progressLabel = isFr
-    ? `${entriesUsed} / ${entriesLimit} entrées gratuites utilisées`
-    : `${entriesUsed} / ${entriesLimit} free entries used`;
+    ? `${entriesUsed} / ${entriesLimit} sujets gratuits utilisés`
+    : `${entriesUsed} / ${entriesLimit} free topics used`;
   const remainingLabel = isFr
     ? remaining > 0
-      ? `Il vous reste ${remaining} entrée${remaining > 1 ? 's' : ''} gratuite${remaining > 1 ? 's' : ''}.`
-      : 'Passez au premium avec 7 jours offerts pour continuer.'
+      ? `Il vous reste ${remaining} sujet${remaining > 1 ? 's' : ''} gratuit${remaining > 1 ? 's' : ''}.`
+      : 'Passez au premium avec 7 jours offerts pour ouvrir de nouveaux sujets.'
     : remaining > 0
-      ? `${remaining} free entr${remaining > 1 ? 'ies' : 'y'} remaining.`
-      : 'Go premium with a 7-day free trial to keep writing.';
+      ? `${remaining} free topic${remaining > 1 ? 's' : ''} remaining.`
+      : 'Go premium with a 7-day free trial to open new topics.';
 
   return (
     <>

@@ -343,8 +343,8 @@ export async function saveJournalEntry(
       return {
         message: txt(
           locale,
-          `Vous avez utilisé vos ${FREE_ENTRY_LIMIT} entrées gratuites. Activez 7 jours offerts pour continuer vos reflets guidés et voir vos motifs se construire.`,
-          `You have used your ${FREE_ENTRY_LIMIT} free entries. Start your 7-day free trial to continue guided reflection and let your patterns build over time.`
+          `Vous avez utilisé vos ${FREE_ENTRY_LIMIT} sujets gratuits. Activez 7 jours offerts pour ouvrir de nouveaux sujets et continuer vos reflets guidés.`,
+          `You have used your ${FREE_ENTRY_LIMIT} free topics. Start your 7-day free trial to open new topics and continue guided reflection.`
         ),
         freeLimitReached: true,
         entriesUsed: entryCount,
