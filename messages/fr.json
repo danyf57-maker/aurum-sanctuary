@@ -59,6 +59,8 @@
     "verified": "Email vérifié. Vous pouvez vous connecter et reprendre votre réflexion privée.",
     "checkEmail": "Un email de vérification vient d'être envoyé. Merci de vérifier votre boîte de réception et vos spams pour ouvrir votre espace de réflexion privé.",
     "inAppBrowser": "Connexion Google bloquée dans ce navigateur intégré. Ouvre cette page dans Safari ou Chrome puis réessaie.",
+    "googleAccountInAppBrowser": "Ce compte utilise Google. Ouvre Aurum dans Safari ou Chrome, puis continue avec Google pour retrouver ton espace.",
+    "googleAccountGoogle": "Ce compte utilise Google. Utilise le bouton Google pour retrouver ton espace.",
     "google": "Continuer avec Google",
     "or": "Ou continuer avec",
     "emailPlaceholder": "vous@exemple.com",
