@@ -142,13 +142,18 @@ const HeroIntegrated = () => {
                 </>
               )}
             </div>
-            <div className="mt-4 space-y-2 text-center">
+            <div className="mt-4 space-y-3 text-center">
+              <div className="flex justify-center">
+                <span className="inline-flex items-center rounded-full border border-[#D4AF37]/35 bg-[#D4AF37]/10 px-4 py-2 font-body text-[11px] font-semibold uppercase tracking-[0.22em] text-stone-700">
+                  {t("languagesBadge")}
+                </span>
+              </div>
+              <p className="mx-auto max-w-2xl font-body text-sm text-stone-500">
+                {t("languages")}
+              </p>
               <span className="block font-body text-xs uppercase tracking-[0.2em] text-stone-500">
                 {t("trust")}
               </span>
-              <p className="font-body text-sm text-stone-500">
-                {t("languages")}
-              </p>
             </div>
           </div>
         </div>

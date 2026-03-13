@@ -500,8 +500,9 @@
     "cta": "Create my free account",
     "ctaSecondaryAuthenticated": "See what keeps returning",
     "ctaSecondary": "Write first, no commitment",
+    "languagesBadge": "MULTILINGUAL REFLECTION",
     "trust": "100% Encrypted • AI-guided reflection • Private by design.",
-    "languages": "Write in English, French, Spanish, Italian, German, or Portuguese. Aurum responds in your language.",
+    "languages": "Write in your language. Aurum replies in English, French, Spanish, Italian, German, or Portuguese.",
     "placeholders": {
       "0": "The same conversation keeps replaying in my head...",
       "1": "I keep noticing the same tension every Monday...",
