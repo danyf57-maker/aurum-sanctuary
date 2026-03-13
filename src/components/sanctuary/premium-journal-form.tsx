@@ -25,12 +25,14 @@ import { NeuroBreadcrumbs } from './neuro-breadcrumbs';
 import { AuthDialog } from '@/components/auth/auth-dialog';
 import { PaywallModal } from '@/components/paywall/PaywallModal';
 import { motion, AnimatePresence } from 'framer-motion';
-import { app } from '@/lib/firebase/web-client';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { app, firestore } from '@/lib/firebase/web-client';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useEncryption } from '@/hooks/useEncryption';
 import { useSearchParams } from 'next/navigation';
 import { useLocale } from '@/hooks/use-locale';
 import { useFreeEntryLimit } from '@/hooks/use-free-entry-limit';
+import { FREE_AURUM_REPLY_LIMIT } from '@/lib/billing/config';
 
 type DraftImage = {
   id: string;
@@ -77,6 +79,7 @@ export function PremiumJournalForm() {
   const { entriesUsed, entriesLimit, remaining, isPremium, isLimitReached } = useFreeEntryLimit();
   const formRef = useRef<HTMLFormElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const conversationTextareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -95,12 +98,20 @@ export function PremiumJournalForm() {
   const [isPaywallOpen, setIsPaywallOpen] = useState(false);
   const [conversationTurns, setConversationTurns] = useState<ConversationTurn[]>([]);
   const [conversationInput, setConversationInput] = useState('');
+  const [aurumRepliesUsed, setAurumRepliesUsed] = useState(0);
   const [reflection, setReflection] = useState<{
     text: string;
     patternsUsed: number;
   } | null>(null);
   const isFocusMode = draftContent.trim().length > 0 && isActivelyTyping;
-  const isConversationLocked = isLimitReached && !isPremium;
+  const isConversationLocked = !isPremium && aurumRepliesUsed >= FREE_AURUM_REPLY_LIMIT;
+  const conversationRepliesRemaining = Math.max(0, FREE_AURUM_REPLY_LIMIT - aurumRepliesUsed);
+  const conversationSuggestions = [
+    t('conversationStarters.0'),
+    t('conversationStarters.1'),
+    t('conversationStarters.2'),
+    t('conversationStarters.3'),
+  ];
 
   const setTypingActivity = () => {
     setIsActivelyTyping(true);
@@ -399,7 +410,13 @@ export function PremiumJournalForm() {
     content: string,
     onToken: (partial: string) => void,
     options?: { entryId?: string | null; userMessage?: string },
-  ): Promise<string> => {
+  ): Promise<{
+    text: string;
+    meta: {
+      conversationRepliesUsed?: number | null;
+      conversationRepliesLimit?: number | null;
+    } | null;
+  }> => {
     if (!user) throw new Error(t('errors.signInRequired'));
 
     const callReflect = (idToken: string) =>
@@ -425,7 +442,10 @@ export function PremiumJournalForm() {
 
     if (!response.ok) {
       const error = await response.json().catch(() => ({}));
-      if (response.status === 402 && error?.freeLimitReached) {
+      if (response.status === 402 && (error?.freeLimitReached || error?.conversationLimitReached)) {
+        if (typeof error?.repliesUsed === 'number') {
+          setAurumRepliesUsed(error.repliesUsed);
+        }
         setIsPaywallOpen(true);
       }
       if (response.status === 401) {
@@ -439,6 +459,10 @@ export function PremiumJournalForm() {
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
     let fullText = '';
+    let meta: {
+      conversationRepliesUsed?: number | null;
+      conversationRepliesLimit?: number | null;
+    } | null = null;
 
     while (true) {
       const { done, value } = await reader.read();
@@ -458,6 +482,15 @@ export function PremiumJournalForm() {
             // Anti-meta sanitized replacement
             fullText = data.replace;
             onToken(fullText);
+          } else if (data.done) {
+            meta = {
+              conversationRepliesUsed: typeof data.conversationRepliesUsed === 'number'
+                ? data.conversationRepliesUsed
+                : null,
+              conversationRepliesLimit: typeof data.conversationRepliesLimit === 'number'
+                ? data.conversationRepliesLimit
+                : null,
+            };
           }
           // data.done = true → stream ended, metadata available
         } catch {
@@ -466,7 +499,7 @@ export function PremiumJournalForm() {
       }
     }
 
-    return fullText;
+    return { text: fullText, meta };
   };
 
   const handleRequestReflection = async () => {
@@ -474,7 +507,7 @@ export function PremiumJournalForm() {
 
     setIsGeneratingReflection(true);
     try {
-      const text = await streamReflection(
+      const result = await streamReflection(
         savedContent,
         (partial) => {
           setReflection({ text: partial, patternsUsed: 0 });
@@ -484,11 +517,15 @@ export function PremiumJournalForm() {
         },
         { entryId: savedEntryId },
       );
+      const text = result.text;
       // Final state with complete text
       setReflection({ text, patternsUsed: 0 });
       setConversationTurns([
         { id: `aurum-${Date.now()}`, role: 'aurum', text },
       ]);
+      if (typeof result.meta?.conversationRepliesUsed === 'number') {
+        setAurumRepliesUsed(result.meta.conversationRepliesUsed);
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : t('errors.generic');
       toast({ title: t('toasts.errorTitle'), description: message, variant: 'destructive' });
@@ -532,7 +569,7 @@ export function PremiumJournalForm() {
       ].join('\n');
 
       const aurumTurnId = `aurum-${Date.now()}`;
-      const text = await streamReflection(
+      const result = await streamReflection(
         conversationalInput,
         (partial) => {
           setConversationTurns((prev) => {
@@ -545,10 +582,14 @@ export function PremiumJournalForm() {
         },
         { entryId: savedEntryId, userMessage: prompt },
       );
+      const text = result.text;
       // Ensure final text is set
       setConversationTurns((prev) =>
         prev.map((t) => t.id === aurumTurnId ? { ...t, text } : t)
       );
+      if (typeof result.meta?.conversationRepliesUsed === 'number') {
+        setAurumRepliesUsed(result.meta.conversationRepliesUsed);
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : t('errors.generic');
       toast({ title: t('toasts.errorTitle'), description: message, variant: 'destructive' });
@@ -566,6 +607,7 @@ export function PremiumJournalForm() {
     setReflection(null);
     setConversationTurns([]);
     setConversationInput('');
+    setAurumRepliesUsed(0);
     setIsActivelyTyping(false);
     if (formRef.current) formRef.current.reset();
 
@@ -600,6 +642,21 @@ export function PremiumJournalForm() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!user || !savedEntryId) {
+      setAurumRepliesUsed(0);
+      return;
+    }
+
+    const entryRef = doc(firestore, 'users', user.uid, 'entries', savedEntryId);
+    const unsubscribe = onSnapshot(entryRef, (snapshot) => {
+      const data = snapshot.data();
+      setAurumRepliesUsed(typeof data?.aurumReplyCount === 'number' ? data.aurumReplyCount : 0);
+    });
+
+    return () => unsubscribe();
+  }, [savedEntryId, user]);
+
   const handleInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
     const target = e.currentTarget;
     target.style.height = 'auto';
@@ -621,16 +678,34 @@ export function PremiumJournalForm() {
     fileInputRef.current?.click();
   };
 
+  const handleSelectConversationStarter = (starter: string) => {
+    setConversationInput(starter);
+    requestAnimationFrame(() => {
+      conversationTextareaRef.current?.focus();
+      conversationTextareaRef.current?.setSelectionRange(starter.length, starter.length);
+    });
+  };
+
   const progressLabel = isFr
-    ? `${entriesUsed} / ${entriesLimit} pages gratuites utilisées`
-    : `${entriesUsed} / ${entriesLimit} free pages used`;
+    ? `${entriesUsed} / ${entriesLimit} sujets gratuits utilisés`
+    : `${entriesUsed} / ${entriesLimit} free topics used`;
   const remainingLabel = isFr
     ? remaining > 0
-      ? `Il te reste ${remaining} page${remaining > 1 ? 's' : ''} gratuite${remaining > 1 ? 's' : ''} avant l'expérience complète de réflexion.`
-      : 'Passe au premium avec 7 jours offerts pour continuer les reflets guidés.'
+      ? `Il te reste ${remaining} sujet${remaining > 1 ? 's' : ''} gratuit${remaining > 1 ? 's' : ''} avant l'expérience complète.`
+      : 'Passe au premium avec 7 jours offerts pour ouvrir de nouveaux sujets.'
     : remaining > 0
-      ? `${remaining} free page${remaining > 1 ? 's' : ''} left before the full reflection experience.`
-      : 'Go premium with a 7-day free trial to continue guided reflection.';
+      ? `${remaining} free topic${remaining > 1 ? 's' : ''} left before the full experience.`
+      : 'Go premium with a 7-day free trial to open new topics.';
+  const conversationProgressLabel = isFr
+    ? `${aurumRepliesUsed} / ${FREE_AURUM_REPLY_LIMIT} réponses d'Aurum utilisées sur ce sujet`
+    : `${aurumRepliesUsed} / ${FREE_AURUM_REPLY_LIMIT} Aurum replies used on this topic`;
+  const conversationRemainingLabel = isFr
+    ? conversationRepliesRemaining > 0
+      ? `Il te reste ${conversationRepliesRemaining} réponse${conversationRepliesRemaining > 1 ? 's' : ''} d'Aurum sur ce sujet.`
+      : `Tu as utilisé les ${FREE_AURUM_REPLY_LIMIT} réponses gratuites d'Aurum sur ce sujet.`
+    : conversationRepliesRemaining > 0
+      ? `${conversationRepliesRemaining} Aurum repl${conversationRepliesRemaining > 1 ? 'ies' : 'y'} left on this topic.`
+      : `You used the ${FREE_AURUM_REPLY_LIMIT} free Aurum replies on this topic.`;
 
   return (
     <>
@@ -932,6 +1007,21 @@ export function PremiumJournalForm() {
                       {t('continueWithAurum')}
                     </h4>
                   </div>
+                  <div className="space-y-2 rounded-2xl border border-stone-200/80 bg-white/70 px-4 py-3">
+                    <p className="text-sm text-stone-700">
+                      {t('conversationLead')}
+                    </p>
+                    {!isPremium && (
+                      <div className="space-y-1">
+                        <p className="text-xs font-medium uppercase tracking-[0.16em] text-stone-500">
+                          {conversationProgressLabel}
+                        </p>
+                        <p className="text-sm text-stone-500">
+                          {conversationRemainingLabel}
+                        </p>
+                      </div>
+                    )}
+                  </div>
 
                   {conversationTurns.length > 1 && (
                     <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
@@ -971,7 +1061,25 @@ export function PremiumJournalForm() {
                     </div>
                   ) : (
                     <div className="space-y-3">
+                      <div className="space-y-2">
+                        <p className="text-xs font-medium uppercase tracking-[0.16em] text-stone-500">
+                          {t('conversationStarterLabel')}
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {conversationSuggestions.map((starter) => (
+                            <button
+                              key={starter}
+                              type="button"
+                              onClick={() => handleSelectConversationStarter(starter)}
+                              className="rounded-full border border-stone-200 bg-white/75 px-3 py-1.5 text-sm text-stone-700 transition-colors hover:border-[#C5A059]/40 hover:bg-[#C5A059]/8 hover:text-stone-900"
+                            >
+                              {starter}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
                       <Textarea
+                        ref={conversationTextareaRef}
                         value={conversationInput}
                         onChange={(event) => setConversationInput(event.currentTarget.value)}
                         placeholder={t('placeholders.replyToAurum')}

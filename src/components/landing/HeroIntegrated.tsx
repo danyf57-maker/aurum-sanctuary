@@ -141,9 +141,14 @@ const HeroIntegrated = () => {
                   </Link>
                 </>
               )}
-              <span className="font-body text-xs uppercase tracking-[0.2em] text-stone-500">
+            </div>
+            <div className="mt-4 space-y-2 text-center">
+              <span className="block font-body text-xs uppercase tracking-[0.2em] text-stone-500">
                 {t("trust")}
               </span>
+              <p className="font-body text-sm text-stone-500">
+                {t("languages")}
+              </p>
             </div>
           </div>
         </div>

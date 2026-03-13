@@ -18,6 +18,7 @@ export const STRIPE_TRIAL_DAYS = readIntEnv('STRIPE_TRIAL_DAYS', 7);
 export const STRIPE_TRIAL_REMINDER_DAYS = 3;
 
 export const FREE_ENTRY_LIMIT = 5;
+export const FREE_AURUM_REPLY_LIMIT = 8;
 export const ANNUAL_UPGRADE_ELIGIBILITY_DAYS = 90;
 
 export const PUBLIC_PRICING = {

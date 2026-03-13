@@ -32,7 +32,11 @@ import {
   resolveReplyLanguage,
 } from '@/lib/ai/language';
 import { buildAurumResponseContract } from '@/lib/ai/aurum-response-contract';
-import { getFreeEntryState, resolveAurumAccessState } from '@/lib/billing/aurum-access';
+import {
+  getFreeAurumConversationState,
+  getFreeEntryState,
+  resolveAurumAccessState,
+} from '@/lib/billing/aurum-access';
 import { resolveOptionalFirstName } from '@/lib/profile/first-name';
 import type { Locale } from '@/lib/locale';
 
@@ -141,6 +145,9 @@ export async function POST(request: NextRequest) {
   try {
     const { content, idToken, entryId, userMessage, locale } = await request.json();
     const requestedLocale = normalizeRequestedLocale(locale);
+    const normalizedEntryId = typeof entryId === 'string' && entryId.trim().length > 0
+      ? entryId.trim()
+      : null;
 
     if (!content) {
       return NextResponse.json({ error: 'Le contenu est requis' }, { status: 400 });
@@ -207,21 +214,54 @@ export async function POST(request: NextRequest) {
     const { hasSubscription: hasPremiumAccess } = resolveAurumAccessState(userData);
     const { entriesUsed, entriesLimit, hasReachedLimit } = getFreeEntryState(userData);
     const isConversationFollowUp = typeof userMessage === 'string' && userMessage.trim().length > 0;
+    const entryRef = normalizedEntryId
+      ? db.collection('users').doc(userId).collection('entries').doc(normalizedEntryId)
+      : null;
 
-    if (isConversationFollowUp && !hasPremiumAccess && hasReachedLimit) {
-      const errorMessage = requestedLocale === 'fr'
-        ? `Tu as utilisé tes ${entriesLimit} pages gratuites. Passe au premium pour continuer l'échange avec Aurum.`
-        : `You have used your ${entriesLimit} free pages. Start your trial to keep the conversation with Aurum going.`;
-
+    if (isConversationFollowUp && !normalizedEntryId) {
       return NextResponse.json(
         {
-          error: errorMessage,
-          freeLimitReached: true,
-          entriesUsed,
-          entriesLimit,
+          error: requestedLocale === 'fr'
+            ? 'Impossible de poursuivre cet échange sans sujet associé.'
+            : 'Unable to continue this exchange without a linked topic.',
         },
-        { status: 402 },
+        { status: 400 },
       );
+    }
+
+    let conversationState: ReturnType<typeof getFreeAurumConversationState> | null = null;
+    if (entryRef && !hasPremiumAccess) {
+      const entrySnap = await entryRef.get();
+      if (!entrySnap.exists) {
+        return NextResponse.json(
+          {
+            error: requestedLocale === 'fr'
+              ? 'Ce sujet est introuvable. Recharge la page puis réessaie.'
+              : 'This topic could not be found. Reload the page and try again.',
+          },
+          { status: 404 },
+        );
+      }
+
+      conversationState = getFreeAurumConversationState(entrySnap.data() || {});
+      if (conversationState.hasReachedLimit) {
+        const errorMessage = requestedLocale === 'fr'
+          ? `Tu as déjà utilisé les ${conversationState.repliesLimit} réponses gratuites d'Aurum sur ce sujet. Lance ton essai pour continuer ici.`
+          : `You have already used the ${conversationState.repliesLimit} free Aurum replies on this topic. Start your trial to keep going here.`;
+
+        return NextResponse.json(
+          {
+            error: errorMessage,
+            conversationLimitReached: true,
+            repliesUsed: conversationState.repliesUsed,
+            repliesLimit: conversationState.repliesLimit,
+            entriesUsed,
+            entriesLimit,
+            freeLimitReached: hasReachedLimit,
+          },
+          { status: 402 },
+        );
+      }
     }
 
     // 1. Detect intent (instant, no API call)
@@ -381,6 +421,8 @@ export async function POST(request: NextRequest) {
             skill_used: skillId,
             patterns_detected: detectionResult ? detectionResult.themes.length : 0,
             patterns_used: injectedPatterns ? injectedPatterns.patterns.length : 0,
+            conversationRepliesUsed: conversationState ? conversationState.repliesUsed + 1 : null,
+            conversationRepliesLimit: conversationState?.repliesLimit ?? null,
           })}\n\n`));
 
           ctrl.close();
@@ -398,13 +440,8 @@ export async function POST(request: NextRequest) {
         }
 
         // Persist conversation turns
-        if (entryId && typeof entryId === 'string') {
-          const conversationRef = db
-            .collection('users')
-            .doc(userId)
-            .collection('entries')
-            .doc(entryId)
-            .collection('aurumConversation');
+        if (entryRef) {
+          const conversationRef = entryRef.collection('aurumConversation');
 
           if (userMessage && typeof userMessage === 'string') {
             conversationRef.add({
@@ -422,6 +459,21 @@ export async function POST(request: NextRequest) {
             createdAt: new Date(),
             intent,
             skillId,
+          }).catch(() => {});
+
+          db.runTransaction(async (transaction) => {
+            const currentEntrySnap = await transaction.get(entryRef);
+            const currentData = currentEntrySnap.data() || {};
+            const currentReplyCount = typeof currentData.aurumReplyCount === 'number'
+              ? currentData.aurumReplyCount
+              : 0;
+
+            transaction.set(entryRef, {
+              aurumReplyCount: currentReplyCount + 1,
+              aurumReplyLimit: conversationState?.repliesLimit ?? null,
+              lastAurumReplyAt: new Date(),
+              updatedAt: new Date(),
+            }, { merge: true });
           }).catch(() => {});
         }
       },

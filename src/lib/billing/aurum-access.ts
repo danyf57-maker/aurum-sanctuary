@@ -1,5 +1,6 @@
 import { firestore as db } from '@/lib/firebase/admin';
-import { FREE_ENTRY_LIMIT, PAYMENTS_PAUSED } from '@/lib/billing/config';
+import { PAYMENTS_PAUSED } from '@/lib/billing/config';
+import { getFreeAurumConversationState, getFreeEntryState } from '@/lib/billing/free-limits';
 
 const ACTIVE_SUBSCRIPTION_STATUSES = new Set(['active', 'trialing']);
 
@@ -79,16 +80,4 @@ export function resolveAurumAccessState(userData: UserBillingSnapshot): {
   };
 }
 
-export function getFreeEntryState(userData: Pick<UserBillingSnapshot, 'entryCount'>): {
-  entriesUsed: number;
-  entriesLimit: number;
-  hasReachedLimit: boolean;
-} {
-  const entriesUsed = typeof userData.entryCount === 'number' ? userData.entryCount : 0;
-
-  return {
-    entriesUsed,
-    entriesLimit: FREE_ENTRY_LIMIT,
-    hasReachedLimit: entriesUsed >= FREE_ENTRY_LIMIT,
-  };
-}
+export { getFreeAurumConversationState, getFreeEntryState };
