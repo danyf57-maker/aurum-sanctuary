@@ -9,10 +9,14 @@ describe('Aurum response contract', () => {
     const contract = buildAurumResponseContract('reflection');
 
     expect(contract).toContain('Stay close to the user text');
+    expect(contract).toContain('Concrete beats elegant');
     expect(contract).toContain('Favor one central tension');
+    expect(contract).toContain('If the text clearly shows a loop');
+    expect(contract).toContain('Use caution only for the step beyond the text');
     expect(contract).toContain('Do not jump to childhood, trauma, identity collapse');
     expect(contract).toContain('Write 4 to 6 sentences.');
-    expect(contract).toContain('End with one gentle opening');
+    expect(contract).toContain('If a clear cycle is visible, state it plainly');
+    expect(contract).toContain('End with one precise opening');
   });
 
   it('makes conversation mode answer the latest message first', () => {
@@ -20,6 +24,7 @@ describe('Aurum response contract', () => {
 
     expect(contract).toContain('Respond to the latest user message first');
     expect(contract).toContain('Advance only one thread');
+    expect(contract).toContain('If the user describes an obvious repeated loop');
   });
 });
 

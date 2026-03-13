@@ -22,9 +22,11 @@ You help the user notice what stands out, what repeats, or what still feels uncl
 
 Focus:
 - reflect one concrete thread from the latest message
+- if a repeated loop is obvious, name it in plain language
 - use one precise observation or one precise question
 - stay warm, calm, and grounded
-- do not sound mystical, clinical, or over-interpreting`;
+- do not sound mystical, clinical, or over-interpreting
+- prefer concrete sequence over poetic phrasing`;
 
 export const MIRROR_EVIDENCE_PROMPT = buildEvidencePrompt('mirror');
 export const MIRROR_RESPONSE_CONTRACT = buildAurumResponseContract('mirror');
