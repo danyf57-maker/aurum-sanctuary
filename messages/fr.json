@@ -500,8 +500,9 @@
     "cta": "Créer mon compte gratuitement",
     "ctaSecondaryAuthenticated": "Voir ce qui revient",
     "ctaSecondary": "Écrire d'abord sans engagement",
+    "languagesBadge": "RÉFLEXION MULTILINGUE",
     "trust": "100% Chiffré • Réflexion guidée par IA • Privé par design.",
-    "languages": "Écris en anglais, français, espagnol, italien, allemand ou portugais. Aurum te répond dans ta langue.",
+    "languages": "Écris dans ta langue. Aurum te répond en anglais, français, espagnol, italien, allemand ou portugais.",
     "placeholders": {
       "0": "La même conversation rejoue encore dans ma tête...",
       "1": "Je remarque la même tension chaque lundi...",
