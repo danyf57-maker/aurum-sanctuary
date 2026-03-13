@@ -11,6 +11,7 @@ import { CookieConsent } from '@/components/legal/CookieConsent';
 import { TermsModal } from '@/components/auth/TermsModal';
 import { getRequestLocale } from '@/lib/locale-server';
 import { PUBLIC_PRICING } from '@/lib/billing/config';
+import { buildAlternates, openGraphLocale, SITE_URL } from '@/lib/seo';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 
@@ -39,6 +40,7 @@ const dawning = Dawning_of_a_New_Day({
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
   const isFr = locale === "fr";
+  const alternates = buildAlternates("/", locale);
 
   const title = isFr
     ? "Aurum Diary | Réflexion privée guidée pour plus de clarté émotionnelle"
@@ -73,7 +75,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: ogTitle,
       description: ogDescription,
-      url: "https://aurumdiary.com",
+      url: alternates.canonical,
       siteName: "Aurum Diary",
       images: [
         {
@@ -83,7 +85,7 @@ export async function generateMetadata(): Promise<Metadata> {
           alt: "Aurum Diary",
         },
       ],
-      locale: isFr ? "fr_FR" : "en_US",
+      locale: openGraphLocale(locale),
       type: "website",
     },
     twitter: {
@@ -94,14 +96,8 @@ export async function generateMetadata(): Promise<Metadata> {
         : "Private AI-guided reflection for emotional clarity and recurring inner patterns.",
       images: ["/og-image.png"],
     },
-    alternates: {
-      canonical: "https://aurumdiary.com",
-      languages: {
-        en: "https://aurumdiary.com",
-        fr: "https://aurumdiary.com/fr",
-      },
-    },
-    metadataBase: new URL("https://aurumdiary.com"),
+    alternates,
+    metadataBase: new URL(SITE_URL),
   };
 }
 

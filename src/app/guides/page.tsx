@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getKnowledgeHubTopics } from "@/lib/knowledge-hub";
 import { getRequestLocale } from "@/lib/locale-server";
+import { buildAlternates, openGraphLocale, schemaLanguage, SITE_URL } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
@@ -12,19 +13,19 @@ export async function generateMetadata(): Promise<Metadata> {
   const description = isFr
     ? "Ressources Aurum en format question-réponse: clarté émotionnelle, réflexion guidée, écriture privée et motifs qui reviennent dans le temps."
     : "Aurum resources in clear Q&A format: emotional clarity, guided reflection, private writing, and recurring patterns over time.";
-  const canonical = "https://aurumdiary.com/guides";
+  const alternates = buildAlternates("/guides", locale);
 
   return {
     title,
     description,
-    alternates: { canonical },
+    alternates,
     openGraph: {
       title,
       description,
-      url: canonical,
-      siteName: "Aurum",
+      url: alternates.canonical,
+      siteName: "Aurum Diary",
       type: "website",
-      locale: isFr ? "fr_FR" : "en_US",
+      locale: openGraphLocale(locale),
     },
     twitter: {
       card: "summary_large_image",
@@ -39,9 +40,24 @@ export default async function GuidesPage() {
   const locale = await getRequestLocale();
   const isFr = locale === "fr";
   const topics = getKnowledgeHubTopics(locale);
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: isFr ? "Guides Aurum" : "Aurum Guides",
+    description: isFr
+      ? "Des réponses concrètes pour mieux comprendre ce que tu ressens et ce qui revient."
+      : "Practical answers to understand emotions, patterns, and guided reflection more clearly.",
+    url: buildAlternates("/guides", locale).canonical,
+    inLanguage: schemaLanguage(locale),
+    isPartOf: SITE_URL,
+  };
 
   return (
     <div className="bg-stone-50/50 min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <section className="py-24 md:py-32">
         <div className="container max-w-4xl mx-auto">
           <h1 className="text-4xl md:text-5xl font-headline font-bold tracking-tight mb-6">
@@ -50,7 +66,7 @@ export default async function GuidesPage() {
           <p className="text-lg text-muted-foreground mb-10">
             {isFr
               ? "Réponses claires et concrètes pour mieux comprendre ce que tu ressens et ce qui revient."
-              : "Clear and practical answers to better understand what you feel."}
+              : "Clear and practical answers to better understand what you feel and what keeps repeating."}
           </p>
 
           <div className="grid gap-4">
