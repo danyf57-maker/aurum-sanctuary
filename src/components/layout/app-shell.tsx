@@ -21,7 +21,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="flex min-h-screen h-screen overflow-hidden bg-background supports-[height:100dvh]:min-h-dvh supports-[height:100dvh]:h-dvh">
       <PushReminderBootstrap />
       {/* Sidebar for Desktop */}
       <AppSidebar />
