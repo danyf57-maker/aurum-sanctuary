@@ -1007,21 +1007,16 @@ export function PremiumJournalForm() {
                       {t('continueWithAurum')}
                     </h4>
                   </div>
-                  <div className="space-y-2 rounded-2xl border border-stone-200/80 bg-white/70 px-4 py-3">
-                    <p className="text-sm text-stone-700">
-                      {t('conversationLead')}
-                    </p>
-                    {!isPremium && (
-                      <div className="space-y-1">
-                        <p className="text-xs font-medium uppercase tracking-[0.16em] text-stone-500">
-                          {conversationProgressLabel}
-                        </p>
-                        <p className="text-sm text-stone-500">
-                          {conversationRemainingLabel}
-                        </p>
-                      </div>
-                    )}
-                  </div>
+                  {!isPremium && (
+                    <div className="space-y-1">
+                      <p className="text-xs font-medium uppercase tracking-[0.16em] text-stone-500">
+                        {conversationProgressLabel}
+                      </p>
+                      <p className="text-sm text-stone-500">
+                        {conversationRemainingLabel}
+                      </p>
+                    </div>
+                  )}
 
                   {!isPremium && (
                     <div className="rounded-2xl border border-[#C5A059]/18 bg-[#C5A059]/7 px-4 py-3">
