@@ -103,3 +103,7 @@ env:
     secret: ONBOARDING_BOUNCE_SECRET
     availability:
       - RUNTIME
+  - variable: ANALYTICS_EXPORT_SECRET
+    secret: ANALYTICS_EXPORT_SECRET
+    availability:
+      - RUNTIME
