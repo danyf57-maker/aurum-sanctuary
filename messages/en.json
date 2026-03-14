@@ -309,9 +309,9 @@
       "revealReflection": "Reveal what Aurum notices",
       "continueWithAurum": "Continue with Aurum",
       "scienceCue": {
-        "title": "In the studies",
-        "body": "A review by Baikie & Wilhelm (2005) describes a common expressive writing protocol: write for 15 to 20 minutes on 3 to 5 occasions about a personally significant experience.",
-        "source": "Clinical review: Baikie & Wilhelm, 2005"
+        "title": "What research shows",
+        "body": "In expressive writing studies, writing for 15 to 20 minutes on 3 to 5 occasions often helps people better organize what they feel and make the experience easier to understand.",
+        "source": "Baikie & Wilhelm, clinical review, 2005"
       },
       "conversationStarters": {
         "0": "The most concrete detail is...",

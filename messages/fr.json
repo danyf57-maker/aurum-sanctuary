@@ -309,9 +309,9 @@
       "revealReflection": "Révéler ce qu'Aurum remarque",
       "continueWithAurum": "Continuer avec Aurum",
       "scienceCue": {
-        "title": "Dans les études",
-        "body": "Une revue de Baikie & Wilhelm (2005) décrit un protocole fréquent d'écriture expressive : écrire 15 à 20 minutes, à 3 à 5 reprises, sur une expérience personnelle importante.",
-        "source": "Revue clinique : Baikie & Wilhelm, 2005"
+        "title": "Ce que montre la recherche",
+        "body": "Dans les études sur l'écriture expressive, écrire 15 à 20 minutes, à 3 à 5 reprises, aide souvent à mieux organiser ce que l'on ressent et à rendre l'expérience plus claire.",
+        "source": "Baikie & Wilhelm, revue clinique, 2005"
       },
       "conversationStarters": {
         "0": "Le détail le plus concret, c'est...",
