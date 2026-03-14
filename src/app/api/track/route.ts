@@ -6,9 +6,6 @@ import { TRACKED_EVENTS, type TrackedEventName } from '@/lib/analytics/types';
 import { logger } from '@/lib/logger/safe';
 import { getActiveEmailAttribution, EMAIL_ATTRIBUTION_WINDOW_HOURS } from '@/lib/onboarding/email-attribution';
 
-const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_ID;
-const GA_API_SECRET = process.env.GA_MEASUREMENT_PROTOCOL_API_SECRET;
-
 export async function POST(request: NextRequest) {
   try {
     const { clientId, name, params, path } = await request.json();
@@ -64,31 +61,9 @@ export async function POST(request: NextRequest) {
       occurredAt: new Date(),
     });
 
-    if (!GA_TRACKING_ID || !GA_API_SECRET || GA_API_SECRET === 'your_secret_here') {
-      return NextResponse.json({ success: true, message: "Tracked locally. GA not configured." });
-    }
-
-    const body = {
-      client_id: clientId,
-      events: [{
-        name: eventName,
-        params: {
-            ...params,
-            // The Measurement Protocol requires a session_id and engagement_time_msec
-            // For simplicity, we are using static values here. This can be enhanced later.
-            session_id: '12345', 
-            engagement_time_msec: '100',
-        },
-      }],
-    };
-
-    // Forward event to Google Analytics Measurement Protocol
-    await fetch(`https://www.google-analytics.com/mp/collect?measurement_id=${GA_TRACKING_ID}&api_secret=${GA_API_SECRET}`, {
-      method: 'POST',
-      body: JSON.stringify(body),
-    });
-
-    return NextResponse.json({ success: true });
+    // GTM is now the only Google-managed tracking entrypoint on the site.
+    // We keep the internal event log for product analytics and attribution.
+    return NextResponse.json({ success: true, message: "Tracked locally." });
 
   } catch (error) {
     logger.errorSafe('Error in /api/track', error);
