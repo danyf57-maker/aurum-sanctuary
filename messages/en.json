@@ -309,16 +309,15 @@
       "revealReflection": "Reveal what Aurum notices",
       "continueWithAurum": "Continue with Aurum",
       "scienceCue": {
-        "title": "What research suggests",
-        "body": "In expressive writing research, a common protocol is to write for 15 to 20 minutes on 3 to 5 occasions. Putting experience into words can help organize what still feels diffuse.",
-        "source": "Source: Baikie & Wilhelm, 2005"
+        "title": "In the studies",
+        "body": "A review by Baikie & Wilhelm (2005) describes a common expressive writing protocol: write for 15 to 20 minutes on 3 to 5 occasions about a personally significant experience.",
+        "source": "Clinical review: Baikie & Wilhelm, 2005"
       },
-      "conversationStarterLabel": "Try one of these",
       "conversationStarters": {
-        "0": "Why does this keep coming back?",
-        "1": "What cycle do you see here?",
-        "2": "What does this say about me, concretely?",
-        "3": "Help me go further"
+        "0": "The most concrete detail is...",
+        "1": "What keeps coming back most is...",
+        "2": "What still feels unclear is...",
+        "3": "If I write it plainly: ..."
       },
       "conversationLockedTitle": "Keep the conversation going",
       "conversationLockedBody": "You used the 8 free Aurum replies on this topic. Start your trial to keep going here and open as many new topics as you want.",
@@ -331,7 +330,7 @@
         "write": "Write freely. Aurum will help you notice what returns...",
         "caption": "Add a note...",
         "tags": "Themes, moods, moments (optional)",
-        "replyToAurum": "Ask Aurum why this returns, what loop it sees, or what to dig into next..."
+        "replyToAurum": "Write what you want to clarify, detail, or add..."
       },
       "toasts": {
         "signInRequiredTitle": "Sign in required",
