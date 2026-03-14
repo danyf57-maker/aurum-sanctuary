@@ -61,7 +61,7 @@ export function AppSidebar() {
       initial={false}
       animate={{ width: isCollapsed ? 80 : 280 }}
       className={cn(
-        "relative hidden lg:flex h-screen flex-col border-r border-stone-200/80 bg-gradient-to-b from-stone-50 to-white text-stone-900 transition-all duration-300 ease-in-out z-40 overflow-hidden",
+        "relative hidden lg:flex h-screen flex-col border-r border-stone-200/80 bg-gradient-to-b from-stone-50 to-white text-stone-900 transition-all duration-300 ease-in-out z-40 overflow-hidden supports-[height:100dvh]:h-dvh",
         isCollapsed ? "w-20" : "w-[280px]"
       )}
     >
