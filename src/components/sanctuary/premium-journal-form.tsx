@@ -1023,6 +1023,20 @@ export function PremiumJournalForm() {
                     )}
                   </div>
 
+                  {!isPremium && (
+                    <div className="rounded-2xl border border-[#C5A059]/18 bg-[#C5A059]/7 px-4 py-3">
+                      <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-stone-500">
+                        {t('scienceCue.title')}
+                      </p>
+                      <p className="mt-2 text-sm leading-relaxed text-stone-700">
+                        {t('scienceCue.body')}
+                      </p>
+                      <p className="mt-2 text-xs text-stone-500">
+                        {t('scienceCue.source')}
+                      </p>
+                    </div>
+                  )}
+
                   {conversationTurns.length > 1 && (
                     <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
                       {conversationTurns.slice(1).map((turn) => (

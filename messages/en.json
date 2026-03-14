@@ -309,6 +309,11 @@
       "revealReflection": "Reveal what Aurum notices",
       "continueWithAurum": "Continue with Aurum",
       "conversationLead": "Aurum has taken a first position. Keep going from what feels most alive, most repeated, or still unresolved.",
+      "scienceCue": {
+        "title": "What research suggests",
+        "body": "In expressive writing research, a common protocol is to write for 15 to 20 minutes on 3 to 5 occasions. Putting experience into words can help organize what still feels diffuse.",
+        "source": "Source: Baikie & Wilhelm, 2005"
+      },
       "conversationStarterLabel": "Try one of these",
       "conversationStarters": {
         "0": "Why does this keep coming back?",
