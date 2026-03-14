@@ -73,6 +73,7 @@
     "signingIn": "Connexion...",
     "signIn": "Se connecter",
     "existingAccountInfo": "Ce compte existe déjà. Connectez-vous pour retrouver votre espace de réflexion privé.",
+    "languagePolicy": "Lors de votre première visite, Aurum s'ouvre dans la langue de votre navigateur. Ensuite, il garde la langue que vous choisissez. Aurum répond dans la langue dans laquelle vous écrivez.",
     "noAccount": "Pas encore de compte ?",
     "signUp": "S'inscrire"
   },
@@ -432,6 +433,7 @@
     "signIn": "Se connecter",
     "checkEmail": "Vérifiez votre boîte de réception pour activer votre espace de réflexion privé.",
     "loading": "Chargement...",
+    "languagePolicy": "Lors de votre première visite, Aurum s'ouvre dans la langue de votre navigateur. Ensuite, il garde la langue que vous choisissez. Aurum répond dans la langue dans laquelle vous écrivez.",
     "pillPrivate": "Privé par conception",
     "pillGuided": "Reflet guidé",
     "pillClarity": "Clarté émotionnelle",
@@ -501,8 +503,9 @@
     "ctaSecondaryAuthenticated": "Voir ce qui revient",
     "ctaSecondary": "Écrire d'abord sans engagement",
     "languagesBadge": "RÉFLEXION MULTILINGUE",
+    "interfaceLanguage": "Lors de ta première visite, Aurum s'ouvre dans la langue de ton navigateur. Ensuite, il garde la langue que tu choisis.",
     "trust": "100% Chiffré • Réflexion guidée par IA • Privé par design.",
-    "languages": "Écris dans ta langue. Aurum te répond en anglais, français, espagnol, italien, allemand ou portugais.",
+    "languages": "Écris en anglais, français, espagnol, italien, allemand ou portugais. Aurum répond dans la langue dans laquelle tu écris.",
     "placeholders": {
       "0": "La même conversation rejoue encore dans ma tête...",
       "1": "Je remarque la même tension chaque lundi...",

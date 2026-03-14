@@ -73,6 +73,7 @@
     "signingIn": "Signing in...",
     "signIn": "Sign in",
     "existingAccountInfo": "This account already exists. Sign in to return to your private reflection space.",
+    "languagePolicy": "Aurum opens in your browser language the first time. After that, it remembers the language you choose. Aurum replies in the language you write in.",
     "noAccount": "Don't have an account yet?",
     "signUp": "Sign up"
   },
@@ -432,6 +433,7 @@
     "signIn": "Sign in",
     "checkEmail": "Check your inbox to activate your private reflection space.",
     "loading": "Loading...",
+    "languagePolicy": "Aurum opens in your browser language the first time. After that, it remembers the language you choose. Aurum replies in the language you write in.",
     "pillPrivate": "Private by design",
     "pillGuided": "Guided reflection",
     "pillClarity": "Emotional clarity",
@@ -501,8 +503,9 @@
     "ctaSecondaryAuthenticated": "See what keeps returning",
     "ctaSecondary": "Write first, no commitment",
     "languagesBadge": "MULTILINGUAL REFLECTION",
+    "interfaceLanguage": "Aurum opens in your browser language the first time. After that, it remembers the language you choose.",
     "trust": "100% Encrypted • AI-guided reflection • Private by design.",
-    "languages": "Write in your language. Aurum replies in English, French, Spanish, Italian, German, or Portuguese.",
+    "languages": "Write in English, French, Spanish, Italian, German, or Portuguese. Aurum replies in the language you write in.",
     "placeholders": {
       "0": "The same conversation keeps replaying in my head...",
       "1": "I keep noticing the same tension every Monday...",

@@ -208,6 +208,9 @@ function LoginForm() {
               </span>
             ))}
           </div>
+          <div className="mt-4 rounded-lg border border-stone-200 bg-stone-50 px-3 py-3 text-sm text-stone-700">
+            {t("languagePolicy")}
+          </div>
         </CardHeader>
         <CardContent className="space-y-4">
           {verified && (

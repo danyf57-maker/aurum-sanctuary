@@ -148,6 +148,9 @@ const HeroIntegrated = () => {
                   {t("languagesBadge")}
                 </span>
               </div>
+              <p className="mx-auto max-w-2xl font-body text-sm text-stone-600">
+                {t("interfaceLanguage")}
+              </p>
               <p className="mx-auto max-w-2xl font-body text-sm text-stone-500">
                 {t("languages")}
               </p>

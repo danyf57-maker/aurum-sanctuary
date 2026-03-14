@@ -130,8 +130,8 @@ export default function SettingsPage() {
       language: {
         title: isFr ? "Langue et région" : "Language and region",
         description: isFr
-          ? "Personnalisez votre langue et vos préférences horaires."
-          : "Adjust your language and time preferences.",
+          ? "Lors de votre première visite, Aurum s'ouvre dans la langue de votre navigateur. Ensuite, il garde la langue que vous choisissez ici."
+          : "Aurum opens in your browser language the first time. After that, it remembers what you choose here.",
         label: isFr ? "Langue" : "Language",
         placeholder: isFr ? "Choisir une langue" : "Choose a language",
         english: isFr ? "Anglais (US)" : "English (US)",
@@ -141,6 +141,9 @@ export default function SettingsPage() {
           ? "Choisir un fuseau horaire"
           : "Choose a time zone",
         local: isFr ? "Local" : "Local",
+        replyRule: isFr
+          ? "Les réponses d'Aurum suivent la langue dans laquelle vous écrivez, même si l'interface reste dans une autre langue."
+          : "Aurum replies in the language you write in, even if the interface stays in another language.",
       },
       appearance: {
         title: isFr ? "Apparence" : "Appearance",
@@ -696,6 +699,10 @@ export default function SettingsPage() {
                     </SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+
+              <div className="rounded-xl border border-stone-200 bg-stone-50/80 px-4 py-3 text-sm text-stone-700">
+                {copy.language.replyRule}
               </div>
             </CardContent>
           </Card>
