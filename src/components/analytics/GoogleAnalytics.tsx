@@ -1,10 +1,8 @@
 
 'use client'
 
-import { usePathname, useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
 import Script from 'next/script'
-import { pageview, GA_TRACKING_ID } from '@/lib/gtag'
 import { useAuth } from '@/providers/auth-provider';
 import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 import { auth as firebaseAuth } from '@/lib/firebase/config';
@@ -12,20 +10,9 @@ import { useToast } from '@/hooks/use-toast';
 
 
 export default function GoogleAnalytics() {
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
   const { user } = useAuth();
   const { toast } = useToast();
   const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
-
-
-  useEffect(() => {
-    if (!GA_TRACKING_ID) {
-      return;
-    }
-    const url = pathname + searchParams.toString()
-    pageview(new URL(url, window.location.origin))
-  }, [pathname, searchParams])
 
   useEffect(() => {
     // If user is already logged in, don't show One Tap
@@ -86,29 +73,6 @@ export default function GoogleAnalytics() {
     <>
       {GOOGLE_CLIENT_ID && (
         <Script src="https://accounts.google.com/gsi/client" async defer />
-      )}
-
-      {GA_TRACKING_ID && (
-        <>
-          <Script
-            strategy="afterInteractive"
-            src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
-          />
-          <Script
-            id="gtag-init"
-            strategy="afterInteractive"
-            dangerouslySetInnerHTML={{
-              __html: `
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', '${GA_TRACKING_ID}', {
-                  page_path: window.location.pathname,
-                });
-              `,
-            }}
-          />
-        </>
       )}
     </>
   )
