@@ -309,16 +309,15 @@
       "revealReflection": "Révéler ce qu'Aurum remarque",
       "continueWithAurum": "Continuer avec Aurum",
       "scienceCue": {
-        "title": "Ce que montre la recherche",
-        "body": "Dans la recherche sur l'écriture expressive, un protocole fréquent consiste à écrire 15 à 20 minutes, à 3 à 5 reprises. Mettre une expérience en mots peut aider à organiser ce qui restait encore diffus.",
-        "source": "Source : Baikie & Wilhelm, 2005"
+        "title": "Dans les études",
+        "body": "Une revue de Baikie & Wilhelm (2005) décrit un protocole fréquent d'écriture expressive : écrire 15 à 20 minutes, à 3 à 5 reprises, sur une expérience personnelle importante.",
+        "source": "Revue clinique : Baikie & Wilhelm, 2005"
       },
-      "conversationStarterLabel": "Tu peux partir de là",
       "conversationStarters": {
-        "0": "Pourquoi est-ce que ça revient autant ?",
-        "1": "Quel cycle vois-tu ici ?",
-        "2": "Qu'est-ce que ça dit de moi, concrètement ?",
-        "3": "Aide-moi à aller plus loin"
+        "0": "Le détail le plus concret, c'est...",
+        "1": "Ce qui revient le plus, c'est...",
+        "2": "Ce qui reste flou pour moi, c'est...",
+        "3": "Si je l'écris simplement : ..."
       },
       "conversationLockedTitle": "Continuer l'échange",
       "conversationLockedBody": "Tu as utilisé les 8 réponses gratuites d'Aurum sur ce sujet. Lance ton essai pour continuer ici et ouvrir autant de nouveaux sujets que tu veux.",
@@ -331,7 +330,7 @@
         "write": "Écris librement. Aurum t'aidera à remarquer ce qui revient...",
         "caption": "Ajouter une note...",
         "tags": "Thèmes, humeurs, moments (optionnel)",
-        "replyToAurum": "Demande à Aurum pourquoi ça revient, quel cycle il voit, ou ce qu'il faut creuser ensuite..."
+        "replyToAurum": "Écris ce que tu veux préciser, détailler ou ajouter..."
       },
       "toasts": {
         "signInRequiredTitle": "Connexion requise",

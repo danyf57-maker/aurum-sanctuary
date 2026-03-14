@@ -1070,22 +1070,17 @@ export function PremiumJournalForm() {
                     </div>
                   ) : (
                     <div className="space-y-3">
-                      <div className="space-y-2">
-                        <p className="text-xs font-medium uppercase tracking-[0.16em] text-stone-500">
-                          {t('conversationStarterLabel')}
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                          {conversationSuggestions.map((starter) => (
-                            <button
-                              key={starter}
-                              type="button"
-                              onClick={() => handleSelectConversationStarter(starter)}
-                              className="rounded-full border border-stone-200 bg-white/75 px-3 py-1.5 text-sm text-stone-700 transition-colors hover:border-[#C5A059]/40 hover:bg-[#C5A059]/8 hover:text-stone-900"
-                            >
-                              {starter}
-                            </button>
-                          ))}
-                        </div>
+                      <div className="flex flex-wrap gap-2">
+                        {conversationSuggestions.map((starter) => (
+                          <button
+                            key={starter}
+                            type="button"
+                            onClick={() => handleSelectConversationStarter(starter)}
+                            className="rounded-full border border-stone-200 bg-white/75 px-3 py-1.5 text-sm text-stone-700 transition-colors hover:border-[#C5A059]/40 hover:bg-[#C5A059]/8 hover:text-stone-900"
+                          >
+                            {starter}
+                          </button>
+                        ))}
                       </div>
                       <Textarea
                         ref={conversationTextareaRef}
