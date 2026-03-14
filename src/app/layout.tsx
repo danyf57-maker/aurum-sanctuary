@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/providers/auth-provider';
 import { Suspense } from 'react';
+import Script from 'next/script';
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
 import ProductEventTracker from '@/components/analytics/ProductEventTracker';
 import { CookieConsent } from '@/components/legal/CookieConsent';
@@ -36,6 +37,8 @@ const dawning = Dawning_of_a_New_Day({
   variable: '--font-dawning',
   display: 'swap',
 });
+
+const GTM_CONTAINER_ID = 'GTM-WNDQPP94';
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
@@ -152,6 +155,15 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning={true}>
       <head>
+        <Script id="gtm-init" strategy="beforeInteractive">
+          {`
+            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','${GTM_CONTAINER_ID}');
+          `}
+        </Script>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -168,6 +180,15 @@ export default async function RootLayout({
         )}
         suppressHydrationWarning={true}
       >
+        <noscript>
+          <iframe
+            title="Google Tag Manager"
+            src={`https://www.googletagmanager.com/ns.html?id=${GTM_CONTAINER_ID}`}
+            height="0"
+            width="0"
+            style={{ display: 'none', visibility: 'hidden' }}
+          />
+        </noscript>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <AuthProvider>
             <TermsModal />
