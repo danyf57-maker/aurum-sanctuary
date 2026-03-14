@@ -43,6 +43,7 @@ This checklist prevents cross-environment leakage between `dev`, `staging`, and 
 - `STRIPE_SECRET_KEY` (must be `sk_live_...`)
 - `NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY` (live USD monthly price)
 - `NEXT_PUBLIC_STRIPE_PRICE_ID_YEARLY` (live USD yearly price)
+- `ANALYTICS_EXPORT_SECRET` (shared with GitHub Actions for scheduled analytics CSV emails)
 - other production secrets already used by App Hosting
 
 ## Guardrails
@@ -50,3 +51,4 @@ This checklist prevents cross-environment leakage between `dev`, `staging`, and 
 - Never reuse `sk_live_...` outside prod.
 - Never point `NEXT_PUBLIC_FIREBASE_PROJECT_ID` from `develop`/`staging` to prod.
 - Keep OAuth client IDs domain-scoped per environment.
+- Mirror `ANALYTICS_EXPORT_SECRET` into the GitHub repository secret of the same name when scheduled analytics emails are enabled.

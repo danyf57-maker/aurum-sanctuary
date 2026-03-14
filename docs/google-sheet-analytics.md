@@ -105,6 +105,25 @@ Pour Apps Script, utiliser le header HTTP:
 Recommande:
 - refresh quotidien a 07:00 Europe/Paris
 
+## Email automatique tous les 15 jours
+
+Le pack CSV bihebdomadaire peut etre envoye automatiquement a `contact@aurumdiary.com`.
+
+Pieces jointes envoyees:
+- `analytics-overview-...csv`
+- `analytics-events-by-day-...csv`
+- `analytics-email-funnel-...csv`
+- `analytics-reminder-funnel-...csv`
+- `analytics-revenue-summary-...csv`
+- `analytics-users-snapshot-...csv`
+
+Mise en place:
+- route securisee: `/api/admin/analytics/report-email`
+- auth: header `Authorization: Bearer <ANALYTICS_EXPORT_SECRET>`
+- automation GitHub: `.github/workflows/analytics-report-email.yml`
+
+La route applique une cadence de 15 jours et evite les doublons. `?force=1` permet un envoi manuel de test.
+
 ## Decision produit
 
 Le KPI central reste:
