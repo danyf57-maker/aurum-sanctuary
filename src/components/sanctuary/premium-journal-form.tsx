@@ -1152,14 +1152,9 @@ export function PremiumJournalForm() {
                 type="button"
                 className="group w-full rounded-[28px] border border-dashed border-[#C5A059]/25 bg-[linear-gradient(180deg,rgba(255,255,255,0.6),rgba(248,244,234,0.4))] hover:border-[#C5A059]/40 hover:bg-[linear-gradient(180deg,rgba(255,255,255,0.85),rgba(248,244,234,0.7))] transition-all duration-500 p-8 md:p-10 text-center cursor-pointer"
               >
-                <div className="space-y-3">
-                  <p className="font-headline text-xl md:text-2xl text-stone-400 group-hover:text-stone-600 transition-colors duration-500 tracking-tight">
-                    {t('anythingElse')}
-                  </p>
-                  <p className="text-sm text-stone-300 group-hover:text-stone-500 transition-colors duration-500">
-                    {t('openNewWritingSpace')}
-                  </p>
-                </div>
+                <p className="font-headline text-xl md:text-2xl text-stone-400 group-hover:text-stone-600 transition-colors duration-500 tracking-tight">
+                  {t('anythingElse')}
+                </p>
               </button>
             </motion.div>
           </motion.div>
