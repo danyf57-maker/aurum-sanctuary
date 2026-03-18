@@ -305,19 +305,19 @@
       "savedThoughtTitle": "Page sécurisée",
       "savedThoughtSubtitle": "Chiffrée, privée, prête pour un reflet",
       "getReflection": "Voir ce qu'Aurum remarque",
-      "getReflectionDescription": "Aurum te donne une première lecture claire de ce qui ressort, de ce qui revient, et de l'endroit où se situe le centre émotionnel.",
+      "getReflectionDescription": "Un premier reflet, concret et guidé, pour voir plus clairement ce qui se joue ici.",
       "revealReflection": "Révéler ce qu'Aurum remarque",
       "continueWithAurum": "Continuer avec Aurum",
       "scienceCue": {
         "title": "Ce que montre la recherche",
-        "body": "Dans les études sur l'écriture expressive, écrire 15 à 20 minutes, à 3 à 5 reprises, aide souvent à mieux organiser ce que l'on ressent et à rendre l'expérience plus claire.",
+        "body": "Dans les études sur l'écriture expressive, écrire 15 à 20 minutes, à 3 à 5 reprises, aide souvent à structurer l'expérience vécue et à clarifier ce que l'on ressent.",
         "source": "Baikie & Wilhelm, revue clinique, 2005"
       },
       "conversationStarters": {
-        "0": "Le détail le plus concret, c'est...",
-        "1": "Ce qui revient le plus, c'est...",
-        "2": "Ce qui reste flou pour moi, c'est...",
-        "3": "Si je l'écris simplement : ..."
+        "0": "Le fait le plus concret, c'est...",
+        "1": "Ce qui revient, c'est...",
+        "2": "Ce que je n'arrive pas encore à nommer, c'est...",
+        "3": "Si je le dis sans détour : ..."
       },
       "conversationLockedTitle": "Continuer l'échange",
       "conversationLockedBody": "Tu as utilisé les 8 réponses gratuites d'Aurum sur ce sujet. Lance ton essai pour continuer ici et ouvrir autant de nouveaux sujets que tu veux.",
@@ -330,7 +330,7 @@
         "write": "Écris librement. Aurum t'aidera à remarquer ce qui revient...",
         "caption": "Ajouter une note...",
         "tags": "Thèmes, humeurs, moments (optionnel)",
-        "replyToAurum": "Écris ce que tu veux préciser, détailler ou ajouter..."
+        "replyToAurum": "Écris la question ou la suite que tu veux creuser avec Aurum..."
       },
       "toasts": {
         "signInRequiredTitle": "Connexion requise",
