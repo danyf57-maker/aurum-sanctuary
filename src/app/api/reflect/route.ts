@@ -80,6 +80,37 @@ function normalizeRequestedLocale(value: unknown): SupportedLocale | null {
   return null;
 }
 
+function countWords(value: string): number {
+  return value
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean).length;
+}
+
+function isVeryShortFollowUp(value: string): boolean {
+  const trimmed = value.trim();
+  if (!trimmed) return false;
+  return trimmed.length <= 24 || countWords(trimmed) <= 4;
+}
+
+function buildShortFollowUpInstruction(language: ReturnType<typeof resolvePromptLanguage>): string {
+  switch (language) {
+    case 'fr':
+      return "La dernière relance de l'utilisateur est très courte. Ne la surinterprète pas. Réponds en 1 ou 2 phrases courtes, au plus près de ce qui est littéralement dit, puis invite doucement à préciser d'un pas concret.";
+    case 'es':
+      return 'El ultimo mensaje del usuario es muy corto. No lo sobreinterpretes. Responde en 1 o 2 frases breves, mantente cerca de lo dicho literalmente y luego invita suavemente a precisar con un paso concreto.';
+    case 'it':
+      return "L'ultimo messaggio dell'utente e molto breve. Non sovrainterpretarlo. Rispondi in 1 o 2 frasi brevi, resta vicino a cio che viene detto letteralmente e poi invita con delicatezza a precisare con un passo concreto.";
+    case 'de':
+      return 'Die letzte Nachricht des Nutzers ist sehr kurz. Interpretiere sie nicht ueber. Antworte in 1 oder 2 kurzen Saetzen, bleib nah am wörtlich Gesagten und lade dann sanft zu einer konkreten Praezisierung ein.';
+    case 'pt':
+      return 'A ultima mensagem do utilizador e muito curta. Nao a interpretes em excesso. Responde em 1 ou 2 frases curtas, fica perto do que foi dito literalmente e depois convida com suavidade a esclarecer com um passo concreto.';
+    case 'en':
+    default:
+      return 'The latest user follow-up is very short. Do not over-interpret it. Reply in 1 or 2 short sentences, stay close to what was literally said, then gently invite one concrete clarification.';
+  }
+}
+
 /**
  * POST /api/reflect
  * Body: { content: string, idToken: string }
@@ -87,6 +118,7 @@ function normalizeRequestedLocale(value: unknown): SupportedLocale | null {
 export async function POST(request: NextRequest) {
   try {
     const { content, idToken, entryId, userMessage, locale } = await request.json();
+    const normalizedUserMessage = typeof userMessage === 'string' ? userMessage.trim() : '';
     const requestedLocale = normalizeRequestedLocale(locale);
     const normalizedEntryId = typeof entryId === 'string' && entryId.trim().length > 0
       ? entryId.trim()
@@ -156,7 +188,7 @@ export async function POST(request: NextRequest) {
     });
     const { hasSubscription: hasPremiumAccess } = resolveAurumAccessState(userData);
     const { entriesUsed, entriesLimit, hasReachedLimit } = getFreeEntryState(userData);
-    const isConversationFollowUp = typeof userMessage === 'string' && userMessage.trim().length > 0;
+    const isConversationFollowUp = normalizedUserMessage.length > 0;
     const entryRef = normalizedEntryId
       ? db.collection('users').doc(userId).collection('entries').doc(normalizedEntryId)
       : null;
@@ -208,16 +240,20 @@ export async function POST(request: NextRequest) {
     }
 
     // 1. Detect intent (instant, no API call)
-    const intent = detectAurumIntent(typeof userMessage === 'string' && userMessage.trim() ? userMessage : content);
+    const detectedIntent = detectAurumIntent(normalizedUserMessage || content);
+    const intent = isConversationFollowUp && detectedIntent === 'reflection'
+      ? 'conversation'
+      : detectedIntent;
     const skillId = getSkillIdForIntent(intent);
-    const userLanguage = resolveReplyLanguage(userMessage || content, requestedLocale, content);
+    const userLanguage = resolveReplyLanguage(normalizedUserMessage || content, requestedLocale, content);
     const promptLanguage = resolvePromptLanguage(userLanguage, requestedLocale);
+    const shortFollowUp = isConversationFollowUp && isVeryShortFollowUp(normalizedUserMessage);
 
     // 2. Detect patterns + get existing patterns IN PARALLEL
     logger.infoSafe('Detecting patterns (parallel)', { userId });
     const [detectionResult, existingPatterns] = await Promise.all([
-      detectPatterns(content),
-      getUserPatterns(userId),
+      shortFollowUp ? Promise.resolve(null) : detectPatterns(content),
+      shortFollowUp ? Promise.resolve([]) : getUserPatterns(userId),
     ]);
 
     // 3. Select patterns for injection (max 2)
@@ -227,7 +263,7 @@ export async function POST(request: NextRequest) {
     );
 
     // 4. Format pattern context
-    const patternContext = injectedPatterns
+    const patternContext = !shortFollowUp && injectedPatterns
       ? formatPatternsForContext(injectedPatterns)
       : '';
 
@@ -247,6 +283,13 @@ export async function POST(request: NextRequest) {
       messages.push({
         role: 'system',
         content: `User first name: ${firstName}. Use it only if it feels natural in this specific reply. At most once. Never force it. Never begin the reply with the first name automatically. Skip it entirely if it sounds intrusive, theatrical, or less natural than replying without it.`,
+      });
+    }
+
+    if (shortFollowUp) {
+      messages.push({
+        role: 'system',
+        content: buildShortFollowUpInstruction(promptLanguage),
       });
     }
 
@@ -278,7 +321,7 @@ export async function POST(request: NextRequest) {
         model: 'deepseek-chat',
         messages,
         temperature: 1.0,
-        max_tokens: 500,
+        max_tokens: shortFollowUp ? 180 : 500,
         stream: true,
       }),
       signal: controller.signal,
@@ -379,10 +422,10 @@ export async function POST(request: NextRequest) {
         if (entryRef) {
           const conversationRef = entryRef.collection('aurumConversation');
 
-          if (userMessage && typeof userMessage === 'string') {
+          if (normalizedUserMessage) {
             conversationRef.add({
               role: 'user',
-              text: userMessage.trim(),
+              text: normalizedUserMessage,
               createdAt: new Date(),
               intent,
               skillId,
