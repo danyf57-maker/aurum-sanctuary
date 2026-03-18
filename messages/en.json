@@ -309,14 +309,14 @@
       "revealReflection": "Reveal what Aurum notices",
       "continueWithAurum": "Continue with Aurum",
       "scienceCue": {
-        "title": "What research shows",
-        "body": "In expressive writing studies, writing for 15 to 20 minutes on 3 to 5 occasions often helps people structure lived experience and clarify what they feel.",
+        "title": "In the studies",
+        "body": "In expressive writing studies, writing for 15 to 20 minutes on 3 to 5 occasions is associated with clearer emotional wording and lower perceived tension in some participants.",
         "source": "Baikie & Wilhelm, clinical review, 2005"
       },
       "conversationStarters": {
         "0": "The clearest fact is...",
-        "1": "What keeps repeating is...",
-        "2": "What I still can't quite name is...",
+        "1": "What I feel most is...",
+        "2": "What keeps repeating is...",
         "3": "If I say it plainly: ..."
       },
       "conversationLockedTitle": "Keep the conversation going",

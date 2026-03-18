@@ -38,6 +38,7 @@ describe('Aurum response contract', () => {
     expect(contract).toContain('Contrat de réponse Aurum');
     expect(contract).toContain('Reste au plus près du texte');
     expect(contract).toContain('Écris 4 à 6 phrases');
+    expect(contract).toContain("corrige toute faute de grammaire");
   });
 });
 
@@ -70,6 +71,7 @@ describe('Reply language rules', () => {
     expect(instruction).toContain('interamente in italiano');
     expect(instruction).toContain('formulazione idiomatica');
     expect(instruction).toContain('traduzione letterale');
+    expect(instruction).toContain('correggi ogni errore di grammatica o sintassi');
   });
 
   it('can issue a strict Portuguese language rule', () => {

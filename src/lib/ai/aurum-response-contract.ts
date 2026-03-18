@@ -27,6 +27,7 @@ const EN_RULES: LocalizedRules = {
     'Open with the lived experience, not with theory, greeting, or meta commentary.',
     'Do not invent poetic images, symbols, or metaphors that are not already in the writing.',
     'Prefer idiomatic native phrasing over literal translation.',
+    'Before sending, silently reread the final answer and fix any grammar, agreement, or syntax issue. If a sentence sounds awkward, simplify it.',
   ],
   modes: {
     reflection: [
@@ -83,6 +84,7 @@ const FR_RULES: LocalizedRules = {
     "Ouvre par le vécu, pas par la théorie, une salutation ou un commentaire méta.",
     "N'invente pas d'images poétiques, de symboles ou de métaphores absents du texte.",
     "Préfère une formulation française idiomatique à une traduction littérale.",
+    "Avant d'envoyer la réponse, relis-la mentalement et corrige toute faute de grammaire, d'accord ou de syntaxe. Si une phrase sonne mal, simplifie-la.",
   ],
   modes: {
     reflection: [
@@ -139,6 +141,7 @@ const ES_RULES: LocalizedRules = {
     'Abre desde la experiencia vivida, no desde teoría, saludo o comentario meta.',
     'No inventes imágenes poéticas, símbolos o metáforas que no estén ya en el texto.',
     'Prefiere una formulación idiomática en la lengua meta antes que una traducción literal.',
+    'Antes de responder, relee mentalmente el texto final y corrige cualquier error de gramática o sintaxis. Si una frase suena forzada, simplifícala.',
   ],
   modes: {
     reflection: [
@@ -195,6 +198,7 @@ const IT_RULES: LocalizedRules = {
     'Apri dal vissuto, non dalla teoria, da un saluto o da un commento meta.',
     'Non inventare immagini poetiche, simboli o metafore che non siano gia nel testo.',
     'Preferisci una formulazione idiomatica naturale a una traduzione letterale.',
+    "Prima di inviare la risposta, rileggila mentalmente e correggi ogni errore di grammatica o sintassi. Se una frase suona male, semplificala.",
   ],
   modes: {
     reflection: [
@@ -251,6 +255,7 @@ const DE_RULES: LocalizedRules = {
     'Beginne beim Erleben, nicht bei Theorie, Begrüßung oder Meta-Kommentar.',
     'Erfinde keine poetischen Bilder, Symbole oder Metaphern, die im Text nicht schon vorhanden sind.',
     'Bevorzuge idiomatische natürliche Formulierungen statt wörtlicher Übersetzung.',
+    'Lies die Antwort vor dem Senden innerlich noch einmal und korrigiere jeden Grammatik-, Beugungs- oder Syntaxfehler. Wenn ein Satz holprig klingt, vereinfache ihn.',
   ],
   modes: {
     reflection: [
@@ -307,6 +312,7 @@ const PT_RULES: LocalizedRules = {
     'Abre pelo vivido, não por teoria, saudação ou comentário meta.',
     'Não inventes imagens poéticas, símbolos ou metáforas que não estejam já no texto.',
     'Prefere uma formulação idiomática natural a uma tradução literal.',
+    'Antes de enviar a resposta, relê mentalmente o texto final e corrige qualquer erro de gramática ou sintaxe. Se uma frase soar estranha, simplifica-a.',
   ],
   modes: {
     reflection: [

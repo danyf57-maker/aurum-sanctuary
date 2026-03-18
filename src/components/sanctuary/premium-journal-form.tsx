@@ -998,35 +998,42 @@ export function PremiumJournalForm() {
                 />
 
                 {/* Conversation continuation */}
-                <div className="rounded-[28px] bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(248,244,234,0.82))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] p-6 md:p-8 space-y-4">
-                  <div className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-full bg-gradient-to-br from-[#D4AF37]/20 to-[#C5A059]/20 flex items-center justify-center">
-                      <Eye className="h-3.5 w-3.5 text-[#C5A059]" />
+                <div className="rounded-[24px] bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(248,244,234,0.82))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] p-4 md:rounded-[28px] md:p-8 space-y-3 md:space-y-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex min-w-0 items-center gap-3">
+                      <div className="h-8 w-8 shrink-0 rounded-full bg-gradient-to-br from-[#D4AF37]/20 to-[#C5A059]/20 flex items-center justify-center">
+                        <Eye className="h-3.5 w-3.5 text-[#C5A059]" />
+                      </div>
+                      <h4 className="truncate font-headline text-base text-stone-900 md:text-lg">
+                        {t('continueWithAurum')}
+                      </h4>
                     </div>
-                    <h4 className="font-headline text-lg text-stone-900">
-                      {t('continueWithAurum')}
-                    </h4>
+                    {!isPremium && (
+                      <div className="shrink-0 rounded-full border border-stone-200 bg-white/75 px-2.5 py-1 text-[11px] font-medium tracking-[0.08em] text-stone-500">
+                        {aurumRepliesUsed}/{FREE_AURUM_REPLY_LIMIT}
+                      </div>
+                    )}
                   </div>
                   {!isPremium && (
                     <div className="space-y-1">
-                      <p className="text-xs font-medium uppercase tracking-[0.16em] text-stone-500">
+                      <p className="hidden text-xs font-medium uppercase tracking-[0.16em] text-stone-500 md:block">
                         {conversationProgressLabel}
                       </p>
-                      <p className="text-sm text-stone-500">
+                      <p className="text-xs text-stone-500 md:text-sm">
                         {conversationRemainingLabel}
                       </p>
                     </div>
                   )}
 
                   {!isPremium && (
-                    <div className="rounded-2xl border border-[#C5A059]/18 bg-[#C5A059]/7 px-4 py-3">
-                      <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-stone-500">
+                    <div className="rounded-2xl border border-[#C5A059]/18 bg-[#C5A059]/7 px-3 py-3 md:px-4">
+                      <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-stone-500 md:text-[11px]">
                         {t('scienceCue.title')}
                       </p>
-                      <p className="mt-2 text-sm leading-relaxed text-stone-700">
+                      <p className="mt-1.5 text-xs leading-relaxed text-stone-700 md:text-sm">
                         {t('scienceCue.body')}
                       </p>
-                      <p className="mt-2 text-xs text-stone-500">
+                      <p className="mt-1.5 text-[11px] text-stone-500">
                         {t('scienceCue.source')}
                       </p>
                     </div>
@@ -1070,13 +1077,13 @@ export function PremiumJournalForm() {
                     </div>
                   ) : (
                     <div className="space-y-3">
-                      <div className="flex flex-wrap gap-2">
+                      <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 md:mx-0 md:flex-wrap md:overflow-visible md:px-0">
                         {conversationSuggestions.map((starter) => (
                           <button
                             key={starter}
                             type="button"
                             onClick={() => handleSelectConversationStarter(starter)}
-                            className="rounded-full border border-stone-200 bg-white/75 px-3 py-1.5 text-sm text-stone-700 transition-colors hover:border-[#C5A059]/40 hover:bg-[#C5A059]/8 hover:text-stone-900"
+                            className="shrink-0 whitespace-nowrap rounded-full border border-stone-200 bg-white/75 px-3 py-1.5 text-[13px] text-stone-700 transition-colors hover:border-[#C5A059]/40 hover:bg-[#C5A059]/8 hover:text-stone-900 md:text-sm"
                           >
                             {starter}
                           </button>
