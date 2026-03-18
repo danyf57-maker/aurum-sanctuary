@@ -706,6 +706,13 @@ export function PremiumJournalForm() {
     : conversationRepliesRemaining > 0
       ? `${conversationRepliesRemaining} Aurum repl${conversationRepliesRemaining > 1 ? 'ies' : 'y'} left on this topic.`
       : `You used the ${FREE_AURUM_REPLY_LIMIT} free Aurum replies on this topic.`;
+  const conversationRemainingCompactLabel = isFr
+    ? conversationRepliesRemaining > 0
+      ? `${conversationRepliesRemaining} réponse${conversationRepliesRemaining > 1 ? 's' : ''} restante${conversationRepliesRemaining > 1 ? 's' : ''} sur ce sujet.`
+      : `${FREE_AURUM_REPLY_LIMIT} / ${FREE_AURUM_REPLY_LIMIT} utilisées sur ce sujet.`
+    : conversationRepliesRemaining > 0
+      ? `${conversationRepliesRemaining} repl${conversationRepliesRemaining > 1 ? 'ies' : 'y'} left on this topic.`
+      : `${FREE_AURUM_REPLY_LIMIT} / ${FREE_AURUM_REPLY_LIMIT} used on this topic.`;
 
   return (
     <>
@@ -998,7 +1005,7 @@ export function PremiumJournalForm() {
                 />
 
                 {/* Conversation continuation */}
-                <div className="rounded-[24px] bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(248,244,234,0.82))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] p-4 md:rounded-[28px] md:p-8 space-y-3 md:space-y-4">
+                <div className="rounded-[24px] bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(248,244,234,0.82))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] p-4 md:rounded-[28px] md:p-8 space-y-4">
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex min-w-0 items-center gap-3">
                       <div className="h-8 w-8 shrink-0 rounded-full bg-gradient-to-br from-[#D4AF37]/20 to-[#C5A059]/20 flex items-center justify-center">
@@ -1019,22 +1026,11 @@ export function PremiumJournalForm() {
                       <p className="hidden text-xs font-medium uppercase tracking-[0.16em] text-stone-500 md:block">
                         {conversationProgressLabel}
                       </p>
-                      <p className="text-xs text-stone-500 md:text-sm">
+                      <p className="text-xs text-stone-500 md:hidden">
+                        {conversationRemainingCompactLabel}
+                      </p>
+                      <p className="hidden text-sm text-stone-500 md:block">
                         {conversationRemainingLabel}
-                      </p>
-                    </div>
-                  )}
-
-                  {!isPremium && (
-                    <div className="rounded-2xl border border-[#C5A059]/18 bg-[#C5A059]/7 px-3 py-3 md:px-4">
-                      <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-stone-500 md:text-[11px]">
-                        {t('scienceCue.title')}
-                      </p>
-                      <p className="mt-1.5 text-xs leading-relaxed text-stone-700 md:text-sm">
-                        {t('scienceCue.body')}
-                      </p>
-                      <p className="mt-1.5 text-[11px] text-stone-500">
-                        {t('scienceCue.source')}
                       </p>
                     </div>
                   )}
@@ -1077,25 +1073,25 @@ export function PremiumJournalForm() {
                     </div>
                   ) : (
                     <div className="space-y-3">
-                      <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 md:mx-0 md:flex-wrap md:overflow-visible md:px-0">
-                        {conversationSuggestions.map((starter) => (
-                          <button
-                            key={starter}
-                            type="button"
-                            onClick={() => handleSelectConversationStarter(starter)}
-                            className="shrink-0 whitespace-nowrap rounded-full border border-stone-200 bg-white/75 px-3 py-1.5 text-[13px] text-stone-700 transition-colors hover:border-[#C5A059]/40 hover:bg-[#C5A059]/8 hover:text-stone-900 md:text-sm"
-                          >
-                            {starter}
-                          </button>
-                        ))}
-                      </div>
                       <Textarea
                         ref={conversationTextareaRef}
                         value={conversationInput}
                         onChange={(event) => setConversationInput(event.currentTarget.value)}
                         placeholder={t('placeholders.replyToAurum')}
-                        className="min-h-[88px] resize-y rounded-2xl border-stone-200 bg-white/60 [font-family:var(--font-cormorant)] text-lg text-stone-800 placeholder:text-stone-400 focus:border-[#C5A059]/30 focus:ring-[#C5A059]/10"
+                        className="min-h-[72px] resize-y rounded-2xl border-stone-200 bg-white/60 [font-family:var(--font-cormorant)] px-4 py-3 text-base text-stone-800 placeholder:text-stone-400 focus:border-[#C5A059]/30 focus:ring-[#C5A059]/10 md:min-h-[88px] md:text-lg"
                       />
+                      <div className="flex flex-wrap gap-2">
+                        {conversationSuggestions.map((starter) => (
+                          <button
+                            key={starter}
+                            type="button"
+                            onClick={() => handleSelectConversationStarter(starter)}
+                            className="rounded-full border border-stone-200 bg-white/75 px-3 py-1.5 text-[13px] text-stone-700 transition-colors hover:border-[#C5A059]/40 hover:bg-[#C5A059]/8 hover:text-stone-900 md:text-sm"
+                          >
+                            {starter}
+                          </button>
+                        ))}
+                      </div>
                       <div className="flex justify-end">
                         <Button
                           type="button"
@@ -1113,6 +1109,19 @@ export function PremiumJournalForm() {
                           )}
                         </Button>
                       </div>
+                      {!isPremium && (
+                        <div className="border-t border-stone-200/80 pt-3">
+                          <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-stone-500 md:text-[11px]">
+                            {t('scienceCue.title')}
+                          </p>
+                          <p className="mt-1 text-xs leading-relaxed text-stone-700 md:text-sm">
+                            {t('scienceCue.body')}
+                          </p>
+                          <p className="mt-1 text-[11px] text-stone-500">
+                            {t('scienceCue.source')}
+                          </p>
+                        </div>
+                      )}
                       <AnimatePresence>
                         {isContinuingConversation && (
                           <motion.div
