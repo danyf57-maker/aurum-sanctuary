@@ -696,9 +696,6 @@ export function PremiumJournalForm() {
     : remaining > 0
       ? `${remaining} free topic${remaining > 1 ? 's' : ''} left before the full experience.`
       : 'Go premium with a 7-day free trial to open new topics.';
-  const conversationProgressLabel = isFr
-    ? `${aurumRepliesUsed} / ${FREE_AURUM_REPLY_LIMIT} réponses d'Aurum utilisées sur ce sujet`
-    : `${aurumRepliesUsed} / ${FREE_AURUM_REPLY_LIMIT} Aurum replies used on this topic`;
   const conversationRemainingLabel = isFr
     ? conversationRepliesRemaining > 0
       ? `Il te reste ${conversationRepliesRemaining} réponse${conversationRepliesRemaining > 1 ? 's' : ''} d'Aurum sur ce sujet.`
@@ -713,6 +710,11 @@ export function PremiumJournalForm() {
     : conversationRepliesRemaining > 0
       ? `${conversationRepliesRemaining} repl${conversationRepliesRemaining > 1 ? 'ies' : 'y'} left on this topic.`
       : `${FREE_AURUM_REPLY_LIMIT} / ${FREE_AURUM_REPLY_LIMIT} used on this topic.`;
+  const threadTurns = conversationTurns.length > 0
+    ? conversationTurns
+    : reflection
+      ? [{ id: 'aurum-initial', role: 'aurum' as const, text: reflection.text }]
+      : [];
 
   return (
     <>
@@ -997,24 +999,42 @@ export function PremiumJournalForm() {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
-                className="space-y-6"
+                className="space-y-4 md:space-y-6"
               >
-                <ReflectionResponse
-                  reflection={reflection.text}
-                  patternsUsed={reflection.patternsUsed}
-                />
+                <div className="space-y-3 md:space-y-4">
+                  {threadTurns.map((turn, index) => {
+                    if (turn.role === 'aurum' && index === 0) {
+                      return (
+                        <ReflectionResponse
+                          key={turn.id}
+                          reflection={turn.text}
+                          patternsUsed={reflection.patternsUsed}
+                        />
+                      );
+                    }
+
+                    return (
+                      <motion.div
+                        key={turn.id}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className={turn.role === 'user'
+                          ? 'ml-auto max-w-[88%] rounded-2xl bg-stone-900 px-4 py-3 text-sm leading-relaxed text-stone-50'
+                          : 'mr-auto max-w-[88%] rounded-2xl border border-[#C5A059]/15 bg-[#C5A059]/8 px-4 py-3 text-sm leading-relaxed text-stone-800'}
+                      >
+                        {turn.text}
+                      </motion.div>
+                    );
+                  })}
+                </div>
 
                 {/* Conversation continuation */}
-                <div className="rounded-[24px] bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(248,244,234,0.82))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] p-4 md:rounded-[28px] md:p-8 space-y-4">
+                <div className="rounded-[24px] bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(248,244,234,0.82))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] p-4 md:rounded-[28px] md:p-6 space-y-3 md:space-y-4">
                   <div className="flex items-center justify-between gap-3">
-                    <div className="flex min-w-0 items-center gap-3">
-                      <div className="h-8 w-8 shrink-0 rounded-full bg-gradient-to-br from-[#D4AF37]/20 to-[#C5A059]/20 flex items-center justify-center">
-                        <Eye className="h-3.5 w-3.5 text-[#C5A059]" />
-                      </div>
-                      <h4 className="truncate font-headline text-base text-stone-900 md:text-lg">
-                        {t('continueWithAurum')}
-                      </h4>
-                    </div>
+                    <h4 className="truncate font-headline text-base text-stone-900 md:text-lg">
+                      {t('continueWithAurum')}
+                    </h4>
                     {!isPremium && (
                       <div className="shrink-0 rounded-full border border-stone-200 bg-white/75 px-2.5 py-1 text-[11px] font-medium tracking-[0.08em] text-stone-500">
                         {aurumRepliesUsed}/{FREE_AURUM_REPLY_LIMIT}
@@ -1022,34 +1042,13 @@ export function PremiumJournalForm() {
                     )}
                   </div>
                   {!isPremium && (
-                    <div className="space-y-1">
-                      <p className="hidden text-xs font-medium uppercase tracking-[0.16em] text-stone-500 md:block">
-                        {conversationProgressLabel}
-                      </p>
+                    <div>
                       <p className="text-xs text-stone-500 md:hidden">
                         {conversationRemainingCompactLabel}
                       </p>
                       <p className="hidden text-sm text-stone-500 md:block">
                         {conversationRemainingLabel}
                       </p>
-                    </div>
-                  )}
-
-                  {conversationTurns.length > 1 && (
-                    <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
-                      {conversationTurns.slice(1).map((turn) => (
-                        <motion.div
-                          key={turn.id}
-                          initial={{ opacity: 0, y: 8 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.3 }}
-                          className={turn.role === 'user'
-                            ? 'ml-auto max-w-[88%] rounded-2xl bg-stone-900 text-stone-50 px-4 py-3 text-sm leading-relaxed'
-                            : 'mr-auto max-w-[88%] rounded-2xl bg-[#C5A059]/8 text-stone-800 px-4 py-3 text-sm leading-relaxed border border-[#C5A059]/15'}
-                        >
-                          {turn.text}
-                        </motion.div>
-                      ))}
                     </div>
                   )}
 
@@ -1080,13 +1079,13 @@ export function PremiumJournalForm() {
                         placeholder={t('placeholders.replyToAurum')}
                         className="min-h-[72px] resize-y rounded-2xl border-stone-200 bg-white/60 [font-family:var(--font-cormorant)] px-4 py-3 text-base text-stone-800 placeholder:text-stone-400 focus:border-[#C5A059]/30 focus:ring-[#C5A059]/10 md:min-h-[88px] md:text-lg"
                       />
-                      <div className="flex flex-wrap gap-2">
+                      <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
                         {conversationSuggestions.map((starter) => (
                           <button
                             key={starter}
                             type="button"
                             onClick={() => handleSelectConversationStarter(starter)}
-                            className="rounded-full border border-stone-200 bg-white/75 px-3 py-1.5 text-[13px] text-stone-700 transition-colors hover:border-[#C5A059]/40 hover:bg-[#C5A059]/8 hover:text-stone-900 md:text-sm"
+                            className="w-full rounded-2xl border border-stone-200 bg-white/75 px-3 py-2 text-left text-[13px] text-stone-700 transition-colors hover:border-[#C5A059]/40 hover:bg-[#C5A059]/8 hover:text-stone-900 md:text-sm"
                           >
                             {starter}
                           </button>
@@ -1110,7 +1109,7 @@ export function PremiumJournalForm() {
                         </Button>
                       </div>
                       {!isPremium && (
-                        <div className="border-t border-stone-200/80 pt-3">
+                        <div className="rounded-2xl bg-stone-50/80 px-3 py-3">
                           <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-stone-500 md:text-[11px]">
                             {t('scienceCue.title')}
                           </p>
@@ -1150,9 +1149,9 @@ export function PremiumJournalForm() {
               <button
                 onClick={handleNewEntry}
                 type="button"
-                className="group w-full rounded-[28px] border border-dashed border-[#C5A059]/25 bg-[linear-gradient(180deg,rgba(255,255,255,0.6),rgba(248,244,234,0.4))] hover:border-[#C5A059]/40 hover:bg-[linear-gradient(180deg,rgba(255,255,255,0.85),rgba(248,244,234,0.7))] transition-all duration-500 p-8 md:p-10 text-center cursor-pointer"
+                className="group w-full rounded-2xl border border-stone-200 bg-white/70 px-4 py-4 text-center transition-colors duration-300 hover:border-[#C5A059]/35 hover:bg-[#C5A059]/5"
               >
-                <p className="font-headline text-xl md:text-2xl text-stone-400 group-hover:text-stone-600 transition-colors duration-500 tracking-tight">
+                <p className="font-headline text-lg text-stone-500 transition-colors duration-300 group-hover:text-stone-700 md:text-xl">
                   {t('anythingElse')}
                 </p>
               </button>
