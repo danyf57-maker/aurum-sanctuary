@@ -3,7 +3,12 @@ import { logger } from '@/lib/logger/safe';
 import { requireUserIdFromRequest, UserGuardError } from '@/lib/api/require-user-id';
 import { buildEvidencePrompt } from '@/lib/ai/evidence/prompt-policy';
 import { buildAurumResponseContract } from '@/lib/ai/aurum-response-contract';
-import { buildStrictReplyLanguageInstruction, resolveReplyLanguage } from '@/lib/ai/language';
+import {
+  buildStrictReplyLanguageInstruction,
+  resolvePromptLanguage,
+  resolveReplyLanguage,
+} from '@/lib/ai/language';
+import { buildAurumSystemPrompt } from '@/lib/ai/aurum-system-prompts';
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,6 +16,7 @@ export async function POST(request: NextRequest) {
     await requireUserIdFromRequest(request, body);
     const { content } = body as { content?: string };
     const replyLanguage = resolveReplyLanguage(content || '', null);
+    const promptLanguage = resolvePromptLanguage(replyLanguage, null);
 
     if (!content) {
       return NextResponse.json(
@@ -42,7 +48,7 @@ export async function POST(request: NextRequest) {
         messages: [
           {
             role: 'system',
-            content: `You are Aurum in entry-analysis mode. Analyze the writing and return ONLY a valid JSON object with this exact shape: {"sentiment": "positive/negative/neutral", "mood": "calm/anxious/joyful/sad/etc", "insight": "one short, careful, non-clinical sentence about what seems present here"}\n\n${buildEvidencePrompt('entryAnalysis')}\n\n${buildAurumResponseContract('entryAnalysis')}`
+            content: `${buildAurumSystemPrompt('entryAnalysis', promptLanguage)}\n\nReturn ONLY a valid JSON object with this exact shape: {"sentiment": "positive/negative/neutral", "mood": "calm/anxious/joyful/sad/etc", "insight": "one short, careful, non-clinical sentence about what seems present here"}\n\n${buildEvidencePrompt('entryAnalysis', promptLanguage)}\n\n${buildAurumResponseContract('entryAnalysis', promptLanguage)}`
           },
           {
             role: 'system',

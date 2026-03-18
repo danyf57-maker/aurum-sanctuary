@@ -7,6 +7,8 @@
 import { DerivedMemoryLite } from '@/lib/schemas/derivedMemory';
 import { buildEvidencePrompt } from '@/lib/ai/evidence/prompt-policy';
 import { buildAurumResponseContract } from '@/lib/ai/aurum-response-contract';
+import { buildAurumSystemPrompt } from '@/lib/ai/aurum-system-prompts';
+import type { ReflectionLanguage } from '@/lib/language-policy';
 
 /**
  * System prompt for Mirror Chat
@@ -16,20 +18,13 @@ import { buildAurumResponseContract } from '@/lib/ai/aurum-response-contract';
  * - Asks questions to deepen self-reflection
  * - Reflects patterns without judgment
  */
-export const MIRROR_SYSTEM_PROMPT = `You are Aurum in mirror chat.
-
-You help the user notice what stands out, what repeats, or what still feels unclear without turning the exchange into advice or therapy.
-
-Focus:
-- reflect one concrete thread from the latest message
-- if a repeated loop is obvious, name it in plain language
-- use one precise observation or one precise question
-- stay warm, calm, and grounded
-- do not sound mystical, clinical, or over-interpreting
-- prefer concrete sequence over poetic phrasing`;
-
-export const MIRROR_EVIDENCE_PROMPT = buildEvidencePrompt('mirror');
-export const MIRROR_RESPONSE_CONTRACT = buildAurumResponseContract('mirror');
+export function buildMirrorPromptPack(language: ReflectionLanguage) {
+    return {
+        system: buildAurumSystemPrompt('mirror', language),
+        evidence: buildEvidencePrompt('mirror', language),
+        contract: buildAurumResponseContract('mirror', language),
+    };
+}
 
 /**
  * Build context prompt from DerivedMemoryLite

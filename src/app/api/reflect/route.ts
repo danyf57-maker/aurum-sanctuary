@@ -16,7 +16,6 @@ import { detectPatterns, detectionToStorageFormat } from '@/lib/patterns/detect'
 import { selectPatternsForInjection, formatPatternsForContext } from '@/lib/patterns/inject';
 import {
   PSYCHOLOGIST_ANALYST_SKILL_ID,
-  PSYCHOLOGIST_ANALYST_SYSTEM_PROMPT,
 } from '@/lib/skills/psychologist-analyst';
 import {
   PHILOSOPHY_SKILL_ID,
@@ -29,9 +28,11 @@ import { rateLimit, RateLimitPresets } from '@/lib/rate-limit';
 import { buildEvidencePrompt } from '@/lib/ai/evidence/prompt-policy';
 import {
   buildStrictReplyLanguageInstruction,
+  resolvePromptLanguage,
   resolveReplyLanguage,
 } from '@/lib/ai/language';
 import { buildAurumResponseContract } from '@/lib/ai/aurum-response-contract';
+import { buildAurumSystemPrompt } from '@/lib/ai/aurum-system-prompts';
 import {
   getFreeAurumConversationState,
   getFreeEntryState,
@@ -43,74 +44,31 @@ import type { Locale } from '@/lib/locale';
 type AurumIntent = 'reflection' | 'conversation' | 'analysis' | 'action' | 'philosophy';
 type SupportedLocale = Locale;
 
-/**
- * System prompt for reflection (with implicit pattern awareness)
- */
-const REFLECTION_SYSTEM_PROMPT = `You are Aurum in reflection mode.
-
-Your role is to help the user see more clearly what is already present in their writing.
-
-Focus:
-- Notice one central tension, contrast, or emotional movement.
-- Stay grounded in the exact wording and concrete sequence from the text.
-- If a pattern is obvious, name it plainly instead of softening it too much.
-- If you go deeper, do it carefully and tentatively.
-- Keep the reply warm, direct, and alive.
-- Prefer concrete sequence over poetic image.
-
-If there is immediate risk:
-- stay calm and supportive
-- encourage the user to contact local emergency help or a trusted person right now
-- do not minimize and do not dramatize`;
-
-const CONVERSATION_SYSTEM_PROMPT = `You are Aurum in conversation mode.
-
-Keep the same warmth and depth as the first reflection, but answer the user's latest message first.
-
-Focus:
-- pick one thread and move it forward
-- stay concrete
-- if the user shows a visible loop, name the loop directly
-- prefer one sharp observation or one good question over a broad interpretation
-- keep the exchange human, calm, and precise`;
-
-const ANALYSIS_SYSTEM_PROMPT = PSYCHOLOGIST_ANALYST_SYSTEM_PROMPT;
 const PHILOSOPHY_MODE_SYSTEM_PROMPT = PHILOSOPHY_SYSTEM_PROMPT;
-
-const ACTION_SYSTEM_PROMPT = `You are Aurum in action mode.
-
-The user asked for a next step. Stay reflective before being practical.
-
-Focus:
-- begin with one short mirrored observation grounded in the text
-- if the pattern is clear, say it plainly before suggesting any next step
-- offer one or two gentle invitations maximum
-- keep every next step small, optional, and emotionally coherent
-- never sound directive, clinical, or productivity-driven`;
 
 function detectAurumIntent(content: string): AurumIntent {
   const text = content.toLowerCase();
-  if (/(que faire|que puis-je faire|plan|prochaine etape|prochaine étape|action|aide moi a agir|aide-moi a agir)/.test(text)) {
+  if (/(que faire|que puis-je faire|plan|prochaine etape|prochaine étape|action|aide moi a agir|aide-moi a agir|what should i do|what can i do|next step|what now|que hago|qué hago|que puedo hacer|qué puedo hacer|que devo fazer|o que faço|o que faco|o que posso fazer|cosa posso fare|cosa dovrei fare|che faccio|was soll ich tun|was kann ich tun|nächster schritt|naechster schritt)/.test(text)) {
     return 'action';
   }
-  if (/(philosophie|philosophique|epistemologie|épistémologie|metaphysique|métaphysique|ethique|éthique|platon|aristote|kant|nietzsche|stoicisme|stoïcisme|existentialisme)/.test(text)) {
+  if (/(philosophie|philosophique|epistemologie|épistémologie|metaphysique|métaphysique|ethique|éthique|philosophy|philosophical|epistemology|metaphysics|ethics|filosofia|filosófico|filosofico|epistemologia|metafisica|etica|filosofia|filosofica|epistemologia|metafisica|ética|filosofia|filosófica|epistemología|metafísica|ethik|philosophisch|epistemologie|metaphysik|platon|aristote|kant|nietzsche|stoicisme|stoïcisme|stoicism|estoicismo|stoizismus|existentialisme|existentialism|existencialismo|existenzialismus)/.test(text)) {
     return 'philosophy';
   }
-  if (/(analyse|analyse-moi|explique|clarifie|clarifier|comprendre|pourquoi)/.test(text)) {
+  if (/(analyse|analyse-moi|explique|clarifie|clarifier|comprendre|pourquoi|analyze|analyse this|explain|clarify|understand|why|analiza|analise|explica|aclara|comprender|por que|por qué|analizza|spiega|chiarisci|capire|perché|porque|analysiere|erkläre|erklaere|kläre|klaere|verstehen|warum)/.test(text)) {
     return 'analysis';
   }
-  if (/(conversation en cours|utilisateur:|aurum:|reponds|réponds|continuer l'echange|continuer l'échange)/.test(text)) {
+  if (/(conversation en cours|utilisateur:|aurum:|reponds|réponds|continuer l'echange|continuer l'échange|reply|respond|keep going|continue the conversation|responde|segue|continua|antworten|weiter)/.test(text)) {
     return 'conversation';
   }
   return 'reflection';
 }
 
-function getSystemPromptForIntent(intent: AurumIntent): string {
-  if (intent === 'conversation') return CONVERSATION_SYSTEM_PROMPT;
-  if (intent === 'analysis') return ANALYSIS_SYSTEM_PROMPT;
-  if (intent === 'action') return ACTION_SYSTEM_PROMPT;
+function getSystemPromptForIntent(intent: AurumIntent, language: ReturnType<typeof resolvePromptLanguage>): string {
+  if (intent === 'conversation') return buildAurumSystemPrompt('conversation', language);
+  if (intent === 'analysis') return buildAurumSystemPrompt('analysis', language);
+  if (intent === 'action') return buildAurumSystemPrompt('action', language);
   if (intent === 'philosophy') return PHILOSOPHY_MODE_SYSTEM_PROMPT;
-  return REFLECTION_SYSTEM_PROMPT;
+  return buildAurumSystemPrompt('reflection', language);
 }
 
 function getSkillIdForIntent(intent: AurumIntent): string | null {
@@ -265,9 +223,10 @@ export async function POST(request: NextRequest) {
     }
 
     // 1. Detect intent (instant, no API call)
-    const intent = detectAurumIntent(content);
+    const intent = detectAurumIntent(typeof userMessage === 'string' && userMessage.trim() ? userMessage : content);
     const skillId = getSkillIdForIntent(intent);
     const userLanguage = resolveReplyLanguage(userMessage || content, requestedLocale, content);
+    const promptLanguage = resolvePromptLanguage(userLanguage, requestedLocale);
 
     // 2. Detect patterns + get existing patterns IN PARALLEL
     logger.infoSafe('Detecting patterns (parallel)', { userId });
@@ -295,15 +254,15 @@ export async function POST(request: NextRequest) {
       },
       {
         role: 'system',
-        content: buildEvidencePrompt(getEvidencePromptModeForIntent(intent)),
+        content: buildEvidencePrompt(getEvidencePromptModeForIntent(intent), promptLanguage),
       },
       {
         role: 'system',
-        content: buildAurumResponseContract(getResponseContractModeForIntent(intent)),
+        content: buildAurumResponseContract(getResponseContractModeForIntent(intent), promptLanguage),
       },
       {
         role: 'system',
-        content: getSystemPromptForIntent(intent),
+        content: getSystemPromptForIntent(intent, promptLanguage),
       },
     ];
 

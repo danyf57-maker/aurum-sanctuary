@@ -7,12 +7,14 @@
 
 import { DerivedMemoryLite } from '@/lib/schemas/derivedMemory';
 import {
-    MIRROR_EVIDENCE_PROMPT,
-    MIRROR_RESPONSE_CONTRACT,
-    MIRROR_SYSTEM_PROMPT,
+    buildMirrorPromptPack,
     buildContextPrompt,
 } from './prompts';
-import { buildStrictReplyLanguageInstruction, resolveReplyLanguage } from '@/lib/ai/language';
+import {
+    buildStrictReplyLanguageInstruction,
+    resolvePromptLanguage,
+    resolveReplyLanguage,
+} from '@/lib/ai/language';
 
 /**
  * DeepSeek API configuration
@@ -52,6 +54,8 @@ export async function callDeepSeek(
     // Build full prompt with context
     const contextPrompt = buildContextPrompt(context);
     const replyLanguage = resolveReplyLanguage(userMessage, null);
+    const promptLanguage = resolvePromptLanguage(replyLanguage, null);
+    const promptPack = buildMirrorPromptPack(promptLanguage);
     const fullPrompt = contextPrompt
         ? `${contextPrompt}\n\nUser: ${userMessage}`
         : userMessage;
@@ -69,9 +73,9 @@ export async function callDeepSeek(
             body: JSON.stringify({
                 model: 'deepseek-chat',
                 messages: [
-                    { role: 'system', content: MIRROR_SYSTEM_PROMPT },
-                    { role: 'system', content: MIRROR_EVIDENCE_PROMPT },
-                    { role: 'system', content: MIRROR_RESPONSE_CONTRACT },
+                    { role: 'system', content: promptPack.system },
+                    { role: 'system', content: promptPack.evidence },
+                    { role: 'system', content: promptPack.contract },
                     { role: 'system', content: buildStrictReplyLanguageInstruction(replyLanguage, null) },
                     { role: 'user', content: fullPrompt },
                 ],

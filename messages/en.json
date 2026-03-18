@@ -305,19 +305,19 @@
       "savedThoughtTitle": "Page secured",
       "savedThoughtSubtitle": "Encrypted, private, ready for reflection",
       "getReflection": "See what Aurum notices",
-      "getReflectionDescription": "Aurum gives a first clear read on what stands out, what repeats, and where the emotional center seems to sit.",
+      "getReflectionDescription": "A first guided reflection, grounded in what is actually happening here.",
       "revealReflection": "Reveal what Aurum notices",
       "continueWithAurum": "Continue with Aurum",
       "scienceCue": {
         "title": "What research shows",
-        "body": "In expressive writing studies, writing for 15 to 20 minutes on 3 to 5 occasions often helps people better organize what they feel and make the experience easier to understand.",
+        "body": "In expressive writing studies, writing for 15 to 20 minutes on 3 to 5 occasions often helps people structure lived experience and clarify what they feel.",
         "source": "Baikie & Wilhelm, clinical review, 2005"
       },
       "conversationStarters": {
-        "0": "The most concrete detail is...",
-        "1": "What keeps coming back most is...",
-        "2": "What still feels unclear is...",
-        "3": "If I write it plainly: ..."
+        "0": "The clearest fact is...",
+        "1": "What keeps repeating is...",
+        "2": "What I still can't quite name is...",
+        "3": "If I say it plainly: ..."
       },
       "conversationLockedTitle": "Keep the conversation going",
       "conversationLockedBody": "You used the 8 free Aurum replies on this topic. Start your trial to keep going here and open as many new topics as you want.",
@@ -330,7 +330,7 @@
         "write": "Write freely. Aurum will help you notice what returns...",
         "caption": "Add a note...",
         "tags": "Themes, moods, moments (optional)",
-        "replyToAurum": "Write what you want to clarify, detail, or add..."
+        "replyToAurum": "Write the question or next thought you want to explore with Aurum..."
       },
       "toasts": {
         "signInRequiredTitle": "Sign in required",
