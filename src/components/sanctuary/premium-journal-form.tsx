@@ -108,9 +108,7 @@ export function PremiumJournalForm() {
   const conversationRepliesRemaining = Math.max(0, FREE_AURUM_REPLY_LIMIT - aurumRepliesUsed);
   const conversationSuggestions = [
     t('conversationStarters.0'),
-    t('conversationStarters.1'),
     t('conversationStarters.2'),
-    t('conversationStarters.3'),
   ];
 
   const setTypingActivity = () => {
@@ -705,11 +703,11 @@ export function PremiumJournalForm() {
       : `You used the ${FREE_AURUM_REPLY_LIMIT} free Aurum replies on this topic.`;
   const conversationRemainingCompactLabel = isFr
     ? conversationRepliesRemaining > 0
-      ? `${conversationRepliesRemaining} réponse${conversationRepliesRemaining > 1 ? 's' : ''} restante${conversationRepliesRemaining > 1 ? 's' : ''} sur ce sujet.`
-      : `${FREE_AURUM_REPLY_LIMIT} / ${FREE_AURUM_REPLY_LIMIT} utilisées sur ce sujet.`
+      ? `${conversationRepliesRemaining} réponse${conversationRepliesRemaining > 1 ? 's' : ''} restante${conversationRepliesRemaining > 1 ? 's' : ''}.`
+      : `${FREE_AURUM_REPLY_LIMIT} / ${FREE_AURUM_REPLY_LIMIT} utilisées.`
     : conversationRepliesRemaining > 0
-      ? `${conversationRepliesRemaining} repl${conversationRepliesRemaining > 1 ? 'ies' : 'y'} left on this topic.`
-      : `${FREE_AURUM_REPLY_LIMIT} / ${FREE_AURUM_REPLY_LIMIT} used on this topic.`;
+      ? `${conversationRepliesRemaining} repl${conversationRepliesRemaining > 1 ? 'ies' : 'y'} left.`
+      : `${FREE_AURUM_REPLY_LIMIT} / ${FREE_AURUM_REPLY_LIMIT} used.`;
   const threadTurns = conversationTurns.length > 0
     ? conversationTurns
     : reflection
@@ -1030,7 +1028,7 @@ export function PremiumJournalForm() {
                 </div>
 
                 {/* Conversation continuation */}
-                <div className="rounded-[24px] bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(248,244,234,0.82))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] p-4 md:rounded-[28px] md:p-6 space-y-3 md:space-y-4">
+                <div className="rounded-[24px] bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(248,244,234,0.82))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] p-4 md:rounded-[28px] md:p-6 space-y-3">
                   <div className="flex items-center justify-between gap-3">
                     <h4 className="truncate font-headline text-base text-stone-900 md:text-lg">
                       {t('continueWithAurum')}
@@ -1042,11 +1040,11 @@ export function PremiumJournalForm() {
                     )}
                   </div>
                   {!isPremium && (
-                    <div>
-                      <p className="text-xs text-stone-500 md:hidden">
+                    <div className="border-b border-stone-200/70 pb-2">
+                      <p className="text-[11px] text-stone-500 md:hidden">
                         {conversationRemainingCompactLabel}
                       </p>
-                      <p className="hidden text-sm text-stone-500 md:block">
+                      <p className="hidden text-xs text-stone-500 md:block">
                         {conversationRemainingLabel}
                       </p>
                     </div>
@@ -1077,15 +1075,15 @@ export function PremiumJournalForm() {
                         value={conversationInput}
                         onChange={(event) => setConversationInput(event.currentTarget.value)}
                         placeholder={t('placeholders.replyToAurum')}
-                        className="min-h-[72px] resize-y rounded-2xl border-stone-200 bg-white/60 [font-family:var(--font-cormorant)] px-4 py-3 text-base text-stone-800 placeholder:text-stone-400 focus:border-[#C5A059]/30 focus:ring-[#C5A059]/10 md:min-h-[88px] md:text-lg"
+                        className="min-h-[76px] resize-y rounded-2xl border-stone-200 bg-white/60 [font-family:var(--font-cormorant)] px-4 py-3 text-base text-stone-800 placeholder:text-stone-400 focus:border-[#C5A059]/30 focus:ring-[#C5A059]/10 md:min-h-[88px] md:text-lg"
                       />
-                      <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                         {conversationSuggestions.map((starter) => (
                           <button
                             key={starter}
                             type="button"
                             onClick={() => handleSelectConversationStarter(starter)}
-                            className="w-full rounded-2xl border border-stone-200 bg-white/75 px-3 py-2 text-left text-[13px] text-stone-700 transition-colors hover:border-[#C5A059]/40 hover:bg-[#C5A059]/8 hover:text-stone-900 md:text-sm"
+                            className="w-full rounded-2xl border border-stone-200 bg-white/75 px-3 py-2.5 text-left text-[13px] text-stone-700 transition-colors hover:border-[#C5A059]/40 hover:bg-[#C5A059]/8 hover:text-stone-900 md:text-sm"
                           >
                             {starter}
                           </button>
@@ -1109,15 +1107,9 @@ export function PremiumJournalForm() {
                         </Button>
                       </div>
                       {!isPremium && (
-                        <div className="rounded-2xl bg-stone-50/80 px-3 py-3">
-                          <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-stone-500 md:text-[11px]">
-                            {t('scienceCue.title')}
-                          </p>
-                          <p className="mt-1 text-xs leading-relaxed text-stone-700 md:text-sm">
-                            {t('scienceCue.body')}
-                          </p>
-                          <p className="mt-1 text-[11px] text-stone-500">
-                            {t('scienceCue.source')}
+                        <div className="pt-1">
+                          <p className="text-[11px] leading-relaxed text-stone-500 md:text-xs">
+                            {t('scienceCue.body')} {t('scienceCue.source')}
                           </p>
                         </div>
                       )}
