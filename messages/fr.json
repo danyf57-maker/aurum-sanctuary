@@ -309,14 +309,14 @@
       "revealReflection": "Révéler ce qu'Aurum remarque",
       "continueWithAurum": "Continuer avec Aurum",
       "scienceCue": {
-        "title": "Ce que montre la recherche",
-        "body": "Dans les études sur l'écriture expressive, écrire 15 à 20 minutes, à 3 à 5 reprises, aide souvent à structurer l'expérience vécue et à clarifier ce que l'on ressent.",
+        "title": "Dans les études",
+        "body": "Dans les études sur l'écriture expressive, écrire 15 à 20 minutes, à 3 à 5 reprises, est associé à une mise en mots plus claire de l'expérience et à une baisse de la tension ressentie chez une partie des participants.",
         "source": "Baikie & Wilhelm, revue clinique, 2005"
       },
       "conversationStarters": {
         "0": "Le fait le plus concret, c'est...",
-        "1": "Ce qui revient, c'est...",
-        "2": "Ce que je n'arrive pas encore à nommer, c'est...",
+        "1": "Ce que je ressens le plus, c'est...",
+        "2": "Ce qui revient, c'est...",
         "3": "Si je le dis sans détour : ..."
       },
       "conversationLockedTitle": "Continuer l'échange",

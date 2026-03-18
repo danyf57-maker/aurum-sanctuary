@@ -300,7 +300,7 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify({
         model: 'deepseek-chat',
         messages,
-        temperature: 0.95,
+        temperature: 0.9,
         max_tokens: 500,
         stream: true,
       }),
