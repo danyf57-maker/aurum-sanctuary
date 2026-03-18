@@ -5,8 +5,6 @@
  */
 
 import { DerivedMemoryLite } from '@/lib/schemas/derivedMemory';
-import { buildEvidencePrompt } from '@/lib/ai/evidence/prompt-policy';
-import { buildAurumResponseContract } from '@/lib/ai/aurum-response-contract';
 import { buildAurumSystemPrompt } from '@/lib/ai/aurum-system-prompts';
 import type { ReflectionLanguage } from '@/lib/language-policy';
 
@@ -21,8 +19,6 @@ import type { ReflectionLanguage } from '@/lib/language-policy';
 export function buildMirrorPromptPack(language: ReflectionLanguage) {
     return {
         system: buildAurumSystemPrompt('mirror', language),
-        evidence: buildEvidencePrompt('mirror', language),
-        contract: buildAurumResponseContract('mirror', language),
     };
 }
 
