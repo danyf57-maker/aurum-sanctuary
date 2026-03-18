@@ -25,13 +25,11 @@ import {
   validateResponse,
 } from '@/lib/patterns/anti-meta';
 import { rateLimit, RateLimitPresets } from '@/lib/rate-limit';
-import { buildEvidencePrompt } from '@/lib/ai/evidence/prompt-policy';
 import {
   buildStrictReplyLanguageInstruction,
   resolvePromptLanguage,
   resolveReplyLanguage,
 } from '@/lib/ai/language';
-import { buildAurumResponseContract } from '@/lib/ai/aurum-response-contract';
 import { buildAurumSystemPrompt } from '@/lib/ai/aurum-system-prompts';
 import {
   getFreeAurumConversationState,
@@ -75,19 +73,6 @@ function getSkillIdForIntent(intent: AurumIntent): string | null {
   if (intent === 'analysis') return PSYCHOLOGIST_ANALYST_SKILL_ID;
   if (intent === 'philosophy') return PHILOSOPHY_SKILL_ID;
   return null;
-}
-
-function getEvidencePromptModeForIntent(intent: AurumIntent): 'reflect' | 'mirror' {
-  if (intent === 'conversation') return 'mirror';
-  return 'reflect';
-}
-
-function getResponseContractModeForIntent(intent: AurumIntent): Parameters<typeof buildAurumResponseContract>[0] {
-  if (intent === 'conversation') return 'conversation';
-  if (intent === 'analysis') return 'analysis';
-  if (intent === 'action') return 'action';
-  if (intent === 'philosophy') return 'reflection';
-  return 'reflection';
 }
 
 function normalizeRequestedLocale(value: unknown): SupportedLocale | null {
@@ -254,14 +239,6 @@ export async function POST(request: NextRequest) {
       },
       {
         role: 'system',
-        content: buildEvidencePrompt(getEvidencePromptModeForIntent(intent), promptLanguage),
-      },
-      {
-        role: 'system',
-        content: buildAurumResponseContract(getResponseContractModeForIntent(intent), promptLanguage),
-      },
-      {
-        role: 'system',
         content: getSystemPromptForIntent(intent, promptLanguage),
       },
     ];
@@ -300,7 +277,7 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify({
         model: 'deepseek-chat',
         messages,
-        temperature: 0.9,
+        temperature: 1.0,
         max_tokens: 500,
         stream: true,
       }),

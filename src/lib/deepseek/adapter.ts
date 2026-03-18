@@ -48,7 +48,7 @@ export async function callDeepSeek(
     const {
         timeout = DEFAULT_TIMEOUT,
         maxTokens = DEFAULT_MAX_TOKENS,
-        temperature = 0.9,
+        temperature = 1.0,
     } = options;
 
     // Build full prompt with context
@@ -74,8 +74,6 @@ export async function callDeepSeek(
                 model: 'deepseek-chat',
                 messages: [
                     { role: 'system', content: promptPack.system },
-                    { role: 'system', content: promptPack.evidence },
-                    { role: 'system', content: promptPack.contract },
                     { role: 'system', content: buildStrictReplyLanguageInstruction(replyLanguage, null) },
                     { role: 'user', content: fullPrompt },
                 ],
