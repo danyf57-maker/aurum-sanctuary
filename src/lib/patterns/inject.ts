@@ -84,9 +84,9 @@ export function formatPatternsForContext(injected: InjectedPatterns): string {
   return `Context (pour toi uniquement, NE JAMAIS mentionner explicitement) :
 ${contextLines.join('\n')}
 
-Règle critique : ces patterns informent la PROFONDEUR de ton reflet, jamais sa surface.
-Ne dis JAMAIS : "je reconnais", "déjà", "avant", "souvent", "encore", "comme les autres fois", "récurrent", "d'habitude".
-Parle uniquement du présent. Utilise le conditionnel pour les nuances ("il y a peut-être...").`;
+Règle critique : ces patterns servent seulement à choisir OÙ creuser aujourd'hui.
+Ne parle jamais d'une session passée, d'un souvenir de conversation, ni de la langue utilisée.
+Si tu t'appuies sur ce contexte, transforme-le en hypothèse au présent, ancrée dans le texte du jour.`;
 }
 
 /**
