@@ -13,19 +13,14 @@ import { logger } from '@/lib/logger/safe';
 const FORBIDDEN_PHRASES = [
   'je reconnais',
   'je me souviens',
-  'déjà',
-  'avant',
-  'souvent',
-  "d'habitude",
-  'encore',
   'la semaine dernière',
   'la dernière fois',
   'comme les autres fois',
-  'récurrent',
-  'récurrente',
   'comme avant',
-  'tu as déjà',
-  'tu avais',
+  'tu as déjà parlé',
+  'tu m’as déjà dit',
+  'tu m as déjà dit',
+  'tu avais déjà',
   'précédemment',
   'antérieurement',
   'tu as écrit en',
@@ -33,6 +28,9 @@ const FORBIDDEN_PHRASES = [
   'écrit en français',
   'écrit en anglais',
   'escreveu em',
+  'you already said',
+  'you mentioned before',
+  'last time you said',
   'wrote in',
   'written in',
 ];
@@ -89,7 +87,7 @@ export function getCorrectionPrompt(originalResponse: string): string {
 "${originalResponse}"
 
 Réécris cette réponse en respectant ces règles STRICTES :
-1. Ne JAMAIS mentionner : "je reconnais", "déjà", "avant", "souvent", "encore", "comme les autres fois"
+1. Ne JAMAIS mentionner un souvenir de session, une conversation passée, ou la langue utilisée par la personne
 2. Parle uniquement du PRÉSENT (ce qui est écrit aujourd'hui)
 3. Utilise le conditionnel pour les nuances : "il y a peut-être...", "on dirait que..."
 4. La reconnaissance doit être IMPLICITE, tissée dans la profondeur du reflet
@@ -112,19 +110,17 @@ export function sanitizeMetaReferences(text: string): string {
   const replacements: Record<string, string> = {
     'je reconnais': 'je sens',
     'je me souviens': 'je perçois',
-    déjà: '',
-    avant: '',
-    souvent: 'parfois',
-    "d'habitude": '',
-    encore: '',
     'la semaine dernière': 'récemment',
     'la dernière fois': '',
     'comme les autres fois': '',
-    récurrent: '',
-    récurrente: '',
     'comme avant': '',
-    'tu as déjà': 'tu',
-    'tu avais': 'tu as',
+    'tu as déjà parlé': 'tu parles ici',
+    'tu m’as déjà dit': 'tu dis ici',
+    'tu m as déjà dit': 'tu dis ici',
+    'tu avais déjà': 'tu as',
+    'you already said': 'you say here',
+    'you mentioned before': 'you mention here',
+    'last time you said': 'here you say',
     précédemment: '',
     antérieurement: '',
   };

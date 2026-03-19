@@ -96,18 +96,41 @@ function isVeryShortFollowUp(value: string): boolean {
 function buildShortFollowUpInstruction(language: ReturnType<typeof resolvePromptLanguage>): string {
   switch (language) {
     case 'fr':
-      return "La dernière relance de l'utilisateur est très courte. Ne la surinterprète pas. Réponds en 1 ou 2 phrases courtes, au plus près de ce qui est littéralement dit, puis invite doucement à préciser d'un pas concret.";
+      return "La dernière relance de l'utilisateur est très courte. Ne la gonfle pas artificiellement. Reste au plus près de ce qui est dit, mais si ce bref message montre clairement une hésitation, un retrait ou un blocage, tu peux le nommer en une ligne. Réponds en 1 à 3 phrases courtes maximum.";
     case 'es':
-      return 'El ultimo mensaje del usuario es muy corto. No lo sobreinterpretes. Responde en 1 o 2 frases breves, mantente cerca de lo dicho literalmente y luego invita suavemente a precisar con un paso concreto.';
+      return 'El ultimo mensaje del usuario es muy corto. No lo infles artificialmente. Mantente cerca de lo dicho, pero si ese mensaje breve muestra con claridad una vacilacion, una retirada o un bloqueo, puedes nombrarlo en una linea. Responde en 1 a 3 frases breves como maximo.';
     case 'it':
-      return "L'ultimo messaggio dell'utente e molto breve. Non sovrainterpretarlo. Rispondi in 1 o 2 frasi brevi, resta vicino a cio che viene detto letteralmente e poi invita con delicatezza a precisare con un passo concreto.";
+      return "L'ultimo messaggio dell'utente e molto breve. Non gonfiarlo artificialmente. Resta vicino a cio che viene detto, ma se quel messaggio breve mostra chiaramente un'esitazione, un ritiro o un blocco, puoi nominarlo in una riga. Rispondi in 1 a 3 frasi brevi al massimo.";
     case 'de':
-      return 'Die letzte Nachricht des Nutzers ist sehr kurz. Interpretiere sie nicht ueber. Antworte in 1 oder 2 kurzen Saetzen, bleib nah am wörtlich Gesagten und lade dann sanft zu einer konkreten Praezisierung ein.';
+      return 'Die letzte Nachricht des Nutzers ist sehr kurz. Blaese sie nicht kuenstlich auf. Bleib nah am Gesagten, aber wenn diese kurze Nachricht klar Zoegern, Rueckzug oder Blockade zeigt, kannst du das in einer Zeile benennen. Antworte in hoechstens 1 bis 3 kurzen Saetzen.';
     case 'pt':
-      return 'A ultima mensagem do utilizador e muito curta. Nao a interpretes em excesso. Responde em 1 ou 2 frases curtas, fica perto do que foi dito literalmente e depois convida com suavidade a esclarecer com um passo concreto.';
+      return 'A ultima mensagem do utilizador e muito curta. Nao a infles artificialmente. Fica perto do que foi dito, mas se esta mensagem curta mostrar claramente hesitacao, retraimento ou bloqueio, podes nomea-lo numa linha. Responde em no maximo 1 a 3 frases curtas.';
     case 'en':
     default:
-      return 'The latest user follow-up is very short. Do not over-interpret it. Reply in 1 or 2 short sentences, stay close to what was literally said, then gently invite one concrete clarification.';
+      return 'The latest user follow-up is very short. Do not inflate it artificially. Stay close to what was said, but if that brief reply clearly shows hesitation, retreat, or blockage, you may name that in one line. Reply in 1 to 3 short sentences at most.';
+  }
+}
+
+function buildConversationPriorityInstruction(
+  language: ReturnType<typeof resolvePromptLanguage>,
+  latestUserMessage: string,
+): string {
+  const quotedMessage = latestUserMessage.replace(/\s+/g, ' ').trim();
+
+  switch (language) {
+    case 'fr':
+      return `Dernier message de la personne, à traiter en premier : "${quotedMessage}". Réponds d'abord à cela. Le reste de la conversation n'est qu'un arrière-plan. Si ce dernier message déplace, ferme ou contredit quelque chose, pars de là.`;
+    case 'es':
+      return `Ultimo mensaje de la persona, que debes tratar primero: "${quotedMessage}". Responde primero a eso. El resto de la conversacion es solo contexto de fondo. Si este ultimo mensaje desplaza, cierra o contradice algo, parte de ahi.`;
+    case 'it':
+      return `Ultimo messaggio della persona, da trattare per primo: "${quotedMessage}". Rispondi prima a questo. Il resto della conversazione e solo sfondo. Se quest'ultimo messaggio sposta, chiude o contraddice qualcosa, parti da li.`;
+    case 'de':
+      return `Letzte Nachricht der Person, die du zuerst behandeln sollst: "${quotedMessage}". Antworte zuerst darauf. Der Rest des Gespraechs ist nur Hintergrund. Wenn diese letzte Nachricht etwas verschiebt, schliesst oder widerspricht, setze dort an.`;
+    case 'pt':
+      return `Ultima mensagem da pessoa, a tratar primeiro: "${quotedMessage}". Responde primeiro a isso. O resto da conversa e apenas contexto de fundo. Se esta ultima mensagem desloca, fecha ou contradiz algo, parte dai.`;
+    case 'en':
+    default:
+      return `Latest user message, to be handled first: "${quotedMessage}". Respond to that first. The rest of the conversation is background only. If this latest message shifts, closes down, or contradicts something, start there.`;
   }
 }
 
@@ -279,6 +302,13 @@ export async function POST(request: NextRequest) {
       },
     ];
 
+    if (isConversationFollowUp && normalizedUserMessage) {
+      messages.push({
+        role: 'system',
+        content: buildConversationPriorityInstruction(promptLanguage, normalizedUserMessage),
+      });
+    }
+
     if (firstName) {
       messages.push({
         role: 'system',
@@ -320,7 +350,7 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify({
         model: 'deepseek-chat',
         messages,
-        temperature: 1.0,
+        temperature: 1.15,
         max_tokens: shortFollowUp ? 180 : 500,
         stream: true,
       }),
