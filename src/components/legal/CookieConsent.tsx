@@ -45,9 +45,9 @@ export function CookieConsent() {
           <Cookie className="h-5 w-5 mt-1 text-primary flex-shrink-0" />
           <p className="text-sm text-muted-foreground">
             {isFr
-              ? "Nous utilisons des cookies essentiels pour assurer le bon fonctionnement du site, comme la gestion de votre session de connexion. En continuant, vous acceptez notre "
-              : "We use essential cookies to keep the site running, including your authenticated session. By continuing, you accept our "}
-            <Link href={to("/legal/privacy")} className="underline hover:text-foreground">
+              ? "Nous utilisons des cookies essentiels et certaines technologies d'analyse pour faire fonctionner Aurum Diary, sécuriser votre session et mesurer l'usage du service. En continuant, vous acceptez notre "
+              : "We use essential cookies and certain analytics technologies to run Aurum Diary, secure your session, and measure product usage. By continuing, you accept our "}
+            <Link href={to("/privacy")} className="underline hover:text-foreground">
               {isFr ? "Politique de Confidentialité" : "Privacy Policy"}
             </Link>.
           </p>
