@@ -7,6 +7,7 @@ import { LanguageSwitch } from "@/components/layout/language-switch";
 import { useLocale, useTranslations } from "next-intl";
 import { useLocalizedHref } from "@/hooks/use-localized-href";
 import { useAuth } from "@/providers/auth-provider";
+import { resolveMessage } from "@/lib/i18n/resolve-message";
 
 const HeroIntegrated = () => {
   const locale = useLocale();
@@ -14,12 +15,102 @@ const HeroIntegrated = () => {
   const to = useLocalizedHref();
   const { user, loading } = useAuth();
 
-  const placeholders = [t("placeholders.0"), t("placeholders.1"), t("placeholders.2")];
+  const fallbackContent = locale === "fr"
+    ? {
+        badge: "REFLEXION PRIVEE GUIDEE",
+        title: "Ecris en prive. Vois ce qui revient en toi.",
+        subtitle:
+          "Aurum t'aide a ecrire librement, clarifier ce que tu ressens, et faire emerger les motifs interieurs qui reviennent.",
+        cta: "Creer mon compte gratuitement",
+        ctaSecondary: "Ecrire d'abord, sans engagement",
+        ctaAuthenticated: "Continuer a ecrire",
+        ctaSecondaryAuthenticated: "Ouvrir mon journal",
+        ctaLoading: "Ouverture...",
+        languagesBadge: "Reflexion multilingue",
+        interfaceLanguage:
+          "Au premier chargement, Aurum suit la langue de ton navigateur. Ensuite, il garde la langue que tu choisis.",
+        languages:
+          "Tu peux ecrire en francais, anglais, espagnol, italien, allemand ou portugais. Aurum te repond dans ta langue.",
+        trust: "Chiffre par defaut • Reflexion guidee • Prive par conception.",
+        placeholders: [
+          "Je n'arrive pas a dormir, mon cerveau tourne en boucle sur la reunion de demain...",
+          "Je me sens completement submerge par ma liste de taches aujourd'hui...",
+          "J'ai juste besoin de vider ma tete avant d'exploser...",
+        ],
+        quotes: [
+          {
+            hint: "Ecris sans te filtrer. Retrouve de la clarte grace a une reflexion douce.",
+            detail: "Ecris simplement ce que tu as en tete, sans filtre.",
+            quote: "Ecrire, c'est une facon de parler sans etre interrompu.",
+            author: "Jules Renard",
+          },
+          {
+            hint: "Quand tu rumines, ecris ce qui tourne en boucle.",
+            detail: "Mettre les mots dehors aide ton mental a ralentir.",
+            quote: "J'ecris pour decouvrir ce que je pense.",
+            author: "Joan Didion",
+          },
+          {
+            hint: "Si tu portes trop, depose tout ici, ligne apres ligne.",
+            detail: "Tu n'as pas besoin d'ecrire parfaitement, juste d'ecrire vrai.",
+            quote: "Il n'y a pas de plus grande agonie que de porter une histoire non racontee en soi.",
+            author: "Maya Angelou",
+          },
+        ],
+      }
+    : {
+        badge: "PRIVATE GUIDED REFLECTION",
+        title: "Write in private. See what keeps returning.",
+        subtitle:
+          "Aurum helps you write freely, clarify what you feel, and uncover recurring inner patterns.",
+        cta: "Create my free account",
+        ctaSecondary: "Write first, no commitment",
+        ctaAuthenticated: "Continue writing",
+        ctaSecondaryAuthenticated: "Open my journal",
+        ctaLoading: "Loading...",
+        languagesBadge: "Multilingual reflection",
+        interfaceLanguage:
+          "On your first visit, Aurum opens in your browser language. After that, it keeps the language you choose.",
+        languages:
+          "You can write in English, French, Spanish, Italian, German, or Portuguese. Aurum replies in your language.",
+        trust: "Encrypted by default • Guided reflection • Private by design.",
+        placeholders: [
+          "I can't sleep, my mind keeps replaying tomorrow's meeting...",
+          "I feel completely overwhelmed by my to-do list today...",
+          "I just need to clear my head before I explode...",
+        ],
+        quotes: [
+          {
+            hint: "Write without filtering. Regain clarity with gentle reflection.",
+            detail: "Just write what's on your mind, without filtering.",
+            quote: "Writing is a way of talking without being interrupted.",
+            author: "Jules Renard",
+          },
+          {
+            hint: "When you're ruminating, write down what keeps looping.",
+            detail: "Getting words out helps your mind slow down.",
+            quote: "I write to find out what I think.",
+            author: "Joan Didion",
+          },
+          {
+            hint: "If you're carrying too much, set it all down here, line by line.",
+            detail: "You don't need to write perfectly, just write honestly.",
+            quote: "There is no greater agony than bearing an untold story inside you.",
+            author: "Maya Angelou",
+          },
+        ],
+      };
+
+  const placeholders = [
+    resolveMessage(t("placeholders.0"), fallbackContent.placeholders[0]),
+    resolveMessage(t("placeholders.1"), fallbackContent.placeholders[1]),
+    resolveMessage(t("placeholders.2"), fallbackContent.placeholders[2]),
+  ];
   const rotatingQuotes = Array.from({ length: 8 }, (_, i) => ({
-    hint: t(`quotes.${i}.hint`),
-    detail: t(`quotes.${i}.detail`),
-    quote: t(`quotes.${i}.quote`),
-    author: t(`quotes.${i}.author`),
+    hint: resolveMessage(t(`quotes.${i}.hint`), fallbackContent.quotes[i % fallbackContent.quotes.length].hint),
+    detail: resolveMessage(t(`quotes.${i}.detail`), fallbackContent.quotes[i % fallbackContent.quotes.length].detail),
+    quote: resolveMessage(t(`quotes.${i}.quote`), fallbackContent.quotes[i % fallbackContent.quotes.length].quote),
+    author: resolveMessage(t(`quotes.${i}.author`), fallbackContent.quotes[i % fallbackContent.quotes.length].author),
   }));
   const [thought, setThought] = useState("");
   const [placeholderText, setPlaceholderText] = useState("");
@@ -80,13 +171,13 @@ const HeroIntegrated = () => {
         <div className="mx-auto flex max-w-4xl flex-col items-center gap-10 text-center">
           <div className="space-y-4">
             <p className="font-body text-xs uppercase tracking-[0.35em] text-[#D4AF37] font-semibold">
-              {t("badge")}
+              {resolveMessage(t("badge"), fallbackContent.badge)}
             </p>
             <h1 className="font-headline text-4xl md:text-6xl text-stone-900">
-              {t("title")}
+              {resolveMessage(t("title"), fallbackContent.title)}
             </h1>
             <p className="font-body text-lg md:text-xl text-stone-600">
-              {t("subtitle")}
+              {resolveMessage(t("subtitle"), fallbackContent.subtitle)}
             </p>
           </div>
 
@@ -117,13 +208,13 @@ const HeroIntegrated = () => {
             </div>
 
             <div className="mt-6 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-              {loading ? (
+                  {loading ? (
                 <Button
                   size="lg"
                   disabled
                   className="h-12 md:h-14 px-8 rounded-xl bg-[#D4AF37] text-stone-900"
                 >
-                  {t("ctaLoading")}
+                  {resolveMessage(t("ctaLoading"), fallbackContent.ctaLoading)}
                 </Button>
               ) : (
                 <>
@@ -133,11 +224,15 @@ const HeroIntegrated = () => {
                     className="h-12 md:h-14 px-8 rounded-xl bg-[#D4AF37] text-stone-900 hover:bg-[#D4AF37]/90"
                   >
                     <Link href={primaryHref}>
-                      {user ? t("ctaAuthenticated") : t("cta")}
+                      {user
+                        ? resolveMessage(t("ctaAuthenticated"), fallbackContent.ctaAuthenticated)
+                        : resolveMessage(t("cta"), fallbackContent.cta)}
                     </Link>
                   </Button>
                   <Link href={secondaryHref} className="font-body text-sm text-stone-600 hover:text-stone-900 transition-colors">
-                    {user ? t("ctaSecondaryAuthenticated") : t("ctaSecondary")}
+                    {user
+                      ? resolveMessage(t("ctaSecondaryAuthenticated"), fallbackContent.ctaSecondaryAuthenticated)
+                      : resolveMessage(t("ctaSecondary"), fallbackContent.ctaSecondary)}
                   </Link>
                 </>
               )}
@@ -145,17 +240,17 @@ const HeroIntegrated = () => {
             <div className="mt-4 space-y-3 text-center">
               <div className="flex justify-center">
                 <span className="inline-flex items-center rounded-full border border-[#D4AF37]/35 bg-[#D4AF37]/10 px-4 py-2 font-body text-[11px] font-semibold uppercase tracking-[0.22em] text-stone-700">
-                  {t("languagesBadge")}
+                  {resolveMessage(t("languagesBadge"), fallbackContent.languagesBadge)}
                 </span>
               </div>
               <p className="mx-auto max-w-2xl font-body text-sm text-stone-600">
-                {t("interfaceLanguage")}
+                {resolveMessage(t("interfaceLanguage"), fallbackContent.interfaceLanguage)}
               </p>
               <p className="mx-auto max-w-2xl font-body text-sm text-stone-500">
-                {t("languages")}
+                {resolveMessage(t("languages"), fallbackContent.languages)}
               </p>
               <span className="block font-body text-xs uppercase tracking-[0.2em] text-stone-500">
-                {t("trust")}
+                {resolveMessage(t("trust"), fallbackContent.trust)}
               </span>
             </div>
           </div>

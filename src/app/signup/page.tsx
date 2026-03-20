@@ -31,6 +31,7 @@ import { firestore as db } from "@/lib/firebase/web-client";
 import { localizeHref } from "@/lib/i18n/path";
 import { useLocale } from "@/hooks/use-locale";
 import { useTranslations } from "next-intl";
+import { resolveMessage } from "@/lib/i18n/resolve-message";
 
 interface QuizData {
   answers: string[];
@@ -115,6 +116,33 @@ function SignupPage() {
     tSign("pillPatterns"),
   ];
   const loginHref = to("/login");
+  const signupFallback = locale === "fr"
+    ? {
+        title: "Creer un compte",
+        description:
+          "Cree ton espace de reflexion prive. Ecris librement, recois des reflets guides, et remarque les motifs recurrents dans le temps.",
+        encrypted: "Chiffre par defaut et prive par conception",
+        languagePolicy:
+          "Lors de ta premiere visite, Aurum s'ouvre dans la langue de ton navigateur. Ensuite, il garde la langue que tu choisis. Les reponses suivent la langue dans laquelle tu ecris.",
+        existingAccountBannerTitle: "Vous avez deja un compte ?",
+        existingAccountBannerBody:
+          "Ouvre cette page dans Safari ou dans Chrome, puis connecte-toi la-bas. Si ton compte marche dans Safari, retourne dans Safari. S'il marche dans Chrome, retourne dans Chrome.",
+        existingAccountBannerCta: "Aller a la connexion",
+        firstName: "Prenom",
+      }
+    : {
+        title: "Create an account",
+        description:
+          "Create your private reflection space. Write freely, receive guided reflection, and notice recurring patterns over time.",
+        encrypted: "Encrypted by default and private by design",
+        languagePolicy:
+          "On your first visit, Aurum opens in your browser language. After that, it keeps the language you choose. Aurum replies in the language you write in.",
+        existingAccountBannerTitle: "Already have an account?",
+        existingAccountBannerBody:
+          "Open this page in Safari or Chrome, then sign in there. If your account works in Safari, go back to Safari. If it works in Chrome, go back to Chrome.",
+        existingAccountBannerCta: "Go to sign in",
+        firstName: "First name",
+      };
 
   useEffect(() => {
     if (!user || !quizComplete || !quizData?.profile || quizSyncInProgressRef.current) return;
@@ -282,8 +310,10 @@ function SignupPage() {
     <div className="flex min-h-screen items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>{tSign("title")}</CardTitle>
-          <CardDescription>{tSign("description")}</CardDescription>
+          <CardTitle>{resolveMessage(tSign("title"), signupFallback.title)}</CardTitle>
+          <CardDescription>
+            {resolveMessage(tSign("description"), signupFallback.description)}
+          </CardDescription>
 
           {/* Quiz Teaser */}
           {showQuizTeaser && quizData?.profile && (
@@ -307,7 +337,7 @@ function SignupPage() {
           <div className="flex items-center gap-2 mt-3 px-3 py-2 bg-emerald-50 dark:bg-emerald-950/30 rounded-lg border border-emerald-200 dark:border-emerald-800">
             <Shield className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
             <p className="text-sm text-emerald-700 dark:text-emerald-300 font-medium">
-              {tSign("encrypted")}
+              {resolveMessage(tSign("encrypted"), signupFallback.encrypted)}
             </p>
           </div>
 
@@ -322,7 +352,7 @@ function SignupPage() {
             ))}
           </div>
           <div className="mt-4 rounded-lg border border-stone-200 bg-stone-50 px-3 py-3 text-sm text-stone-700">
-            {tSign("languagePolicy")}
+            {resolveMessage(tSign("languagePolicy"), signupFallback.languagePolicy)}
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -333,10 +363,16 @@ function SignupPage() {
           )}
           {isInAppBrowser && (
             <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-3 text-sm text-amber-900">
-              <p className="font-medium">{tSign("existingAccountBannerTitle")}</p>
-              <p className="mt-1 text-amber-800">{tSign("existingAccountBannerBody")}</p>
+              <p className="font-medium">
+                {resolveMessage(tSign("existingAccountBannerTitle"), signupFallback.existingAccountBannerTitle)}
+              </p>
+              <p className="mt-1 text-amber-800">
+                {resolveMessage(tSign("existingAccountBannerBody"), signupFallback.existingAccountBannerBody)}
+              </p>
               <Button asChild variant="secondary" className="mt-3 w-full">
-                <Link href={loginHref}>{tSign("existingAccountBannerCta")}</Link>
+                <Link href={loginHref}>
+                  {resolveMessage(tSign("existingAccountBannerCta"), signupFallback.existingAccountBannerCta)}
+                </Link>
               </Button>
               <p className="mt-3 text-amber-800">{tSign("inAppBrowser")}</p>
             </div>
@@ -384,7 +420,9 @@ function SignupPage() {
           {/* Email/Password Form */}
           <form onSubmit={handleEmailSignup} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="firstName">{tSign("firstName")}</Label>
+              <Label htmlFor="firstName">
+                {resolveMessage(tSign("firstName"), signupFallback.firstName)}
+              </Label>
               <Input
                 id="firstName"
                 name="firstName"

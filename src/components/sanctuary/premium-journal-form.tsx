@@ -33,6 +33,7 @@ import { useSearchParams } from 'next/navigation';
 import { useLocale } from '@/hooks/use-locale';
 import { useFreeEntryLimit } from '@/hooks/use-free-entry-limit';
 import { FREE_AURUM_REPLY_LIMIT } from '@/lib/billing/config';
+import { resolveMessage } from '@/lib/i18n/resolve-message';
 
 type DraftImage = {
   id: string;
@@ -106,9 +107,32 @@ export function PremiumJournalForm() {
   const isFocusMode = draftContent.trim().length > 0 && isActivelyTyping;
   const isConversationLocked = !isPremium && aurumRepliesUsed >= FREE_AURUM_REPLY_LIMIT;
   const conversationRepliesRemaining = Math.max(0, FREE_AURUM_REPLY_LIMIT - aurumRepliesUsed);
+  const premiumFormFallback = isFr
+    ? {
+        continueWithAurum: 'Approfondir avec Aurum',
+        openNewWritingSpace: 'Ouvrir une nouvelle page',
+        replyToAurum: 'Ecris la suite ou la question que tu veux creuser avec Aurum...',
+        conversationStarters: [
+          "Le fait le plus concret, c'est...",
+          "Ce que je n'ai pas encore ecrit, c'est...",
+        ],
+        scienceCue:
+          "Dans les etudes sur l'ecriture expressive, ecrire 15 a 20 minutes, a 3 a 5 reprises, est associe a une mise en mots plus claire de l'experience. Baikie & Wilhelm, revue clinique, 2005.",
+      }
+    : {
+        continueWithAurum: 'Continue with Aurum',
+        openNewWritingSpace: 'Open a new page',
+        replyToAurum: 'Write the next question or line you want to explore with Aurum...',
+        conversationStarters: [
+          'The most concrete part is...',
+          "What I haven't written yet is...",
+        ],
+        scienceCue:
+          'In studies on expressive writing, writing for 15 to 20 minutes across 3 to 5 sessions is associated with clearer wording of the experience. Baikie & Wilhelm, clinical review, 2005.',
+      };
   const conversationSuggestions = [
-    t('conversationStarters.0'),
-    t('conversationStarters.2'),
+    resolveMessage(t('conversationStarters.0'), premiumFormFallback.conversationStarters[0]),
+    resolveMessage(t('conversationStarters.2'), premiumFormFallback.conversationStarters[1]),
   ];
 
   const setTypingActivity = () => {
@@ -1031,7 +1055,7 @@ export function PremiumJournalForm() {
                 <div className="rounded-[24px] bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(248,244,234,0.82))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] p-4 md:rounded-[28px] md:p-6 space-y-3">
                   <div className="flex items-center justify-between gap-3">
                     <h4 className="truncate font-headline text-base text-stone-900 md:text-lg">
-                      {t('continueWithAurum')}
+                      {resolveMessage(t('continueWithAurum'), premiumFormFallback.continueWithAurum)}
                     </h4>
                     {!isPremium && (
                       <div className="shrink-0 rounded-full border border-stone-200 bg-white/75 px-2.5 py-1 text-[11px] font-medium tracking-[0.08em] text-stone-500">
@@ -1074,7 +1098,10 @@ export function PremiumJournalForm() {
                         ref={conversationTextareaRef}
                         value={conversationInput}
                         onChange={(event) => setConversationInput(event.currentTarget.value)}
-                        placeholder={t('placeholders.replyToAurum')}
+                        placeholder={resolveMessage(
+                          t('placeholders.replyToAurum'),
+                          premiumFormFallback.replyToAurum
+                        )}
                         className="min-h-[76px] resize-y rounded-2xl border-stone-200 bg-white/60 [font-family:var(--font-cormorant)] px-4 py-3 text-base text-stone-800 placeholder:text-stone-400 focus:border-[#C5A059]/30 focus:ring-[#C5A059]/10 md:min-h-[88px] md:text-lg"
                       />
                       <div className="space-y-2">
@@ -1109,7 +1136,10 @@ export function PremiumJournalForm() {
                       {!isPremium && (
                         <div className="pt-1">
                           <p className="text-[11px] leading-relaxed text-stone-500 md:text-xs">
-                            {t('scienceCue.body')} {t('scienceCue.source')}
+                            {resolveMessage(
+                              `${t('scienceCue.body')} ${t('scienceCue.source')}`.trim(),
+                              premiumFormFallback.scienceCue
+                            )}
                           </p>
                         </div>
                       )}
@@ -1144,7 +1174,7 @@ export function PremiumJournalForm() {
                 className="group w-full rounded-2xl border border-stone-200 bg-white/70 px-4 py-4 text-center transition-colors duration-300 hover:border-[#C5A059]/35 hover:bg-[#C5A059]/5"
               >
                 <p className="font-headline text-lg text-stone-500 transition-colors duration-300 group-hover:text-stone-700 md:text-xl">
-                  {t('openNewWritingSpace')}
+                  {resolveMessage(t('openNewWritingSpace'), premiumFormFallback.openNewWritingSpace)}
                 </p>
               </button>
             </motion.div>
