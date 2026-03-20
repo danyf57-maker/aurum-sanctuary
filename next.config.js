@@ -85,18 +85,109 @@ const nextConfig = {
 const createNextIntlPlugin = require("next-intl/plugin");
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
+const runtimeCaching = [
+    {
+        urlPattern: /^https?:\/\/.*\/api\/.*/i,
+        handler: "NetworkOnly",
+        method: "GET",
+    },
+    {
+        urlPattern: /^https:\/\/fonts\.(?:gstatic)\.com\/.*/i,
+        handler: "CacheFirst",
+        options: {
+            cacheName: "google-fonts-webfonts",
+            expiration: {
+                maxEntries: 4,
+                maxAgeSeconds: 60 * 60 * 24 * 365,
+            },
+        },
+    },
+    {
+        urlPattern: /^https:\/\/fonts\.(?:googleapis)\.com\/.*/i,
+        handler: "StaleWhileRevalidate",
+        options: {
+            cacheName: "google-fonts-stylesheets",
+            expiration: {
+                maxEntries: 4,
+                maxAgeSeconds: 60 * 60 * 24 * 7,
+            },
+        },
+    },
+    {
+        urlPattern: /\/_next\/static\/.+\.(?:js|css)$/i,
+        handler: "CacheFirst",
+        options: {
+            cacheName: "next-static-assets",
+            expiration: {
+                maxEntries: 64,
+                maxAgeSeconds: 60 * 60 * 24,
+            },
+        },
+    },
+    {
+        urlPattern: /\/_next\/image\?url=.+$/i,
+        handler: "StaleWhileRevalidate",
+        options: {
+            cacheName: "next-image-assets",
+            expiration: {
+                maxEntries: 64,
+                maxAgeSeconds: 60 * 60 * 24,
+            },
+        },
+    },
+    {
+        urlPattern: /\.(?:png|jpg|jpeg|gif|svg|ico|webp)$/i,
+        handler: "StaleWhileRevalidate",
+        options: {
+            cacheName: "static-image-assets",
+            expiration: {
+                maxEntries: 64,
+                maxAgeSeconds: 60 * 60 * 24 * 30,
+            },
+        },
+    },
+    {
+        urlPattern: /\.(?:woff|woff2|ttf|otf)$/i,
+        handler: "CacheFirst",
+        options: {
+            cacheName: "static-font-assets",
+            expiration: {
+                maxEntries: 16,
+                maxAgeSeconds: 60 * 60 * 24 * 30,
+            },
+        },
+    },
+    {
+        urlPattern: /\.(?:json|xml|csv)$/i,
+        handler: "NetworkFirst",
+        options: {
+            cacheName: "static-data-assets",
+            expiration: {
+                maxEntries: 32,
+                maxAgeSeconds: 60 * 60 * 24,
+            },
+        },
+    },
+    {
+        urlPattern: ({ sameOrigin, url }) =>
+            sameOrigin &&
+            !url.pathname.startsWith("/api/") &&
+            !url.pathname.startsWith("/_next/"),
+        handler: "NetworkOnly",
+        method: "GET",
+    },
+];
+
 const withPWA = require("@ducanh2912/next-pwa").default({
     dest: "public",
     disable: process.env.NODE_ENV === "development",
     register: true,
     skipWaiting: true,
-    runtimeCaching: [
-        {
-            urlPattern: /^https?:\/\/.*\/api\/.*/i,
-            handler: "NetworkOnly",
-            method: "GET",
-        },
-    ],
+    dynamicStartUrl: false,
+    extendDefaultRuntimeCaching: false,
+    workboxOptions: {
+        runtimeCaching,
+    },
 });
 
 module.exports = withPWA(withNextIntl(nextConfig));
