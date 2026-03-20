@@ -1077,24 +1077,24 @@ export function PremiumJournalForm() {
                         placeholder={t('placeholders.replyToAurum')}
                         className="min-h-[76px] resize-y rounded-2xl border-stone-200 bg-white/60 [font-family:var(--font-cormorant)] px-4 py-3 text-base text-stone-800 placeholder:text-stone-400 focus:border-[#C5A059]/30 focus:ring-[#C5A059]/10 md:min-h-[88px] md:text-lg"
                       />
-                      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                      <div className="space-y-2">
                         {conversationSuggestions.map((starter) => (
                           <button
                             key={starter}
                             type="button"
                             onClick={() => handleSelectConversationStarter(starter)}
-                            className="w-full rounded-2xl border border-stone-200 bg-white/75 px-3 py-2.5 text-left text-[13px] text-stone-700 transition-colors hover:border-[#C5A059]/40 hover:bg-[#C5A059]/8 hover:text-stone-900 md:text-sm"
+                            className="w-full rounded-2xl border border-stone-200 bg-white/75 px-3 py-2.5 text-left text-[13px] leading-snug text-stone-700 transition-colors hover:border-[#C5A059]/40 hover:bg-[#C5A059]/8 hover:text-stone-900 md:text-sm"
                           >
                             {starter}
                           </button>
                         ))}
                       </div>
-                      <div className="flex justify-end">
+                      <div className="flex justify-stretch sm:justify-end">
                         <Button
                           type="button"
                           onClick={handleContinueConversation}
                           disabled={isContinuingConversation || !conversationInput.trim()}
-                          className="bg-gradient-to-r from-[#D4AF37] to-[#C5A059] text-stone-900 hover:from-[#C5A059] hover:to-[#D4AF37] rounded-xl px-6 font-semibold shadow-[0_6px_18px_rgba(212,175,55,0.2)] transition-all duration-300 hover:shadow-[0_8px_24px_rgba(212,175,55,0.3)]"
+                          className="w-full bg-gradient-to-r from-[#D4AF37] to-[#C5A059] text-stone-900 hover:from-[#C5A059] hover:to-[#D4AF37] rounded-xl px-6 font-semibold shadow-[0_6px_18px_rgba(212,175,55,0.2)] transition-all duration-300 hover:shadow-[0_8px_24px_rgba(212,175,55,0.3)] sm:w-auto"
                         >
                           {isContinuingConversation ? (
                             <>
