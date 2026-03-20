@@ -772,10 +772,17 @@
       "cta": "Créer mon compte",
       "label": "Sans engagement • Privé"
     },
+    "returningUser": {
+      "checkingCta": "Ouverture...",
+      "checkingCtaArrow": "Ouverture...",
+      "writeCta": "Continuer à écrire",
+      "writeCtaArrow": "Continuer à écrire"
+    },
     "studySection": {
       "title": "Écrire aide. Aurum aide à comprendre ce qui revient.",
       "subtitle": "La confidentialité protège tes mots. La réflexion guidée d'Aurum aide à en faire émerger de la clarté émotionnelle et des motifs récurrents que tu peux reconnaître dans le temps.",
-      "cta": "Créer mon compte et commencer aujourd'hui"
+      "cta": "Créer mon compte et commencer aujourd'hui",
+      "ctaAuthenticated": "Continuer à écrire"
     },
     "studyCards": [
       {
@@ -881,21 +888,21 @@
       "body": "Écrire en privé donne à tes pensées un endroit où se poser. Aurum ajoute une réflexion guidée douce pour laisser émerger la clarté et les motifs récurrents dans le temps."
     },
     "trust": {
-      "eyebrow": "Ton intégrité, notre priorité",
-      "title": "Un sanctuaire où tu es le seul maître.",
-      "subtitle": "Nous avons conçu Aurum autour d'une idée simple : ton monde intérieur ne regarde que toi. Pas même nous.",
+      "eyebrow": "Confiance",
+      "title": "Un espace privé, protégé, et sous ton contrôle.",
+      "subtitle": "Aurum protège tes pages, limite l'accès au contenu lisible aux traitements nécessaires au service, et ne vend pas tes données.",
       "cards": [
         {
-          "title": "Confidentialité absolue",
-          "body": "Tes pensées sont chiffrées (AES-256) directement sur ton appareil. Même nous ne pouvons pas lire tes secrets."
+          "title": "Chiffré par défaut",
+          "body": "Tes pages sont chiffrées avant stockage et restent dans un espace privé conçu pour la réflexion."
         },
         {
-          "title": "Anonymat garanti",
-          "body": "Aucune donnée personnelle n'est liée à tes écrits. Le moteur d'analyse Aurum opère en local sur ton appareil."
+          "title": "Accès limité",
+          "body": "L'accès au contenu lisible est restreint aux traitements nécessaires pour fournir les reflets et le service."
         },
         {
-          "title": "Droit à l'oubli",
-          "body": "Tu restes propriétaire de tes données à 100%. Exporte tes journaux ou supprime ton compte en un clic, sans délai."
+          "title": "Tes données, ton choix",
+          "body": "Tu peux exporter tes pages ou demander la suppression de ton compte."
         }
       ],
       "manifestoTitle": "Notre manifeste de confiance",
@@ -904,7 +911,8 @@
     },
     "finalCta": {
       "button": "Créer mon sanctuaire maintenant",
-      "note": "Sans engagement • Chiffrement de bout en bout",
+      "buttonAuthenticated": "Continuer à écrire",
+      "note": "Sans engagement • Espace privé",
       "subtitle": "Tu entres dans un espace de réflexion privée conçu pour écrire régulièrement, comprendre ce qui revient et retrouver de la clarté dans le temps.",
       "cards": [
         {
@@ -933,7 +941,7 @@
     "faqs": [
       {
         "question": "Qui peut lire mes données ?",
-        "answer": "Personne. Nous utilisons une architecture « Admin-Blind » avec chiffrement AES-256 côté client. Tes entrées sont chiffrées avec ta clé privée avant d'être envoyées. Techniquement, même avec un accès total à nos serveurs, il est impossible de déchiffrer tes écrits sans ton mot de passe."
+        "answer": "Tes pages restent dans un espace privé chiffré. L'accès au contenu lisible est limité aux traitements nécessaires pour fournir les reflets et faire fonctionner le service."
       },
       {
         "question": "Comment l'écriture privée aide-t-elle à retrouver de la clarté le soir ?",
@@ -953,7 +961,7 @@
       },
       {
         "question": "Quelle app de réflexion privée protège vraiment mes écrits ?",
-        "answer": "Choisis une app de réflexion privée chiffrée de bout en bout, sans publicité, où tes écrits ne sont pas exposés publiquement. Sur Aurum, tes mots restent dans un espace privé conçu pour la clarté et les motifs récurrents."
+        "answer": "Choisis une app de réflexion privée qui protège tes écrits par défaut, ne vend pas tes données, et garde tes pages hors de tout espace public. Sur Aurum, tes mots restent dans un espace privé conçu pour la clarté et les motifs récurrents."
       },
       {
         "question": "Combien coûte Aurum ?",

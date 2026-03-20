@@ -772,10 +772,17 @@
       "cta": "Create my account",
       "label": "No commitment • Private"
     },
+    "returningUser": {
+      "checkingCta": "Opening...",
+      "checkingCtaArrow": "Opening...",
+      "writeCta": "Continue writing",
+      "writeCtaArrow": "Continue writing"
+    },
     "studySection": {
       "title": "Writing helps. Aurum helps you understand what keeps returning.",
       "subtitle": "Privacy protects your words. Aurum’s guided reflection helps turn them into emotional clarity and recurring patterns you can recognize over time.",
-      "cta": "Create my account and start today"
+      "cta": "Create my account and start today",
+      "ctaAuthenticated": "Continue writing"
     },
     "studyCards": [
       {
@@ -881,21 +888,21 @@
       "body": "Private writing gives your thoughts somewhere to land. Aurum adds gentle guided reflection so clarity and recurring patterns can emerge over time."
     },
     "trust": {
-      "eyebrow": "Your integrity, our priority",
-      "title": "A sanctuary where you remain in control.",
-      "subtitle": "Aurum was designed around one simple idea: your inner world belongs to you alone. Not even to us.",
+      "eyebrow": "Trust",
+      "title": "A private space, protected and under your control.",
+      "subtitle": "Aurum protects your pages, limits readable access to the processing needed to run the service, and does not sell your data.",
       "cards": [
         {
-          "title": "Absolute privacy",
-          "body": "Your thoughts are encrypted (AES-256) directly on your device. Even we cannot read your private notes."
+          "title": "Encrypted by default",
+          "body": "Your pages are encrypted before storage and stay in a private space built for reflection."
         },
         {
-          "title": "Guaranteed anonymity",
-          "body": "No personal identity is tied to your writing. Aurum's analysis engine operates locally on your device."
+          "title": "Limited access",
+          "body": "Readable access to content is restricted to the processing needed to provide reflections and run the service."
         },
         {
-          "title": "Right to be forgotten",
-          "body": "You remain the 100% owner of your data. Export your journals or delete your account in one click, without delay."
+          "title": "Your data, your choice",
+          "body": "You can export your pages or request account deletion."
         }
       ],
       "manifestoTitle": "Our trust manifesto",
@@ -904,7 +911,8 @@
     },
     "finalCta": {
       "button": "Create my sanctuary now",
-      "note": "No commitment • End-to-end encryption",
+      "buttonAuthenticated": "Continue writing",
+      "note": "No commitment • Private space",
       "subtitle": "You enter a private reflection space designed to help you write regularly, understand what keeps returning, and regain clarity over time.",
       "cards": [
         {
@@ -933,7 +941,7 @@
     "faqs": [
       {
         "question": "Who can read my data?",
-        "answer": "No one. We use an “Admin-Blind” architecture with client-side AES-256 encryption. Your entries are encrypted with your private key before being sent. Technically, even with total server access, your writing cannot be decrypted without your password."
+        "answer": "Your pages stay in an encrypted private space. Readable access is limited to the processing needed to provide reflections and run the service."
       },
       {
         "question": "How can private writing help me regain clarity at night?",
@@ -953,7 +961,7 @@
       },
       {
         "question": "What private reflection app actually protects my writing?",
-        "answer": "Choose a reflection app with end-to-end encryption, no advertising, and no public exposure of your writing. On Aurum, your words stay in a private space built for clarity and pattern discovery."
+        "answer": "Choose a private reflection app that protects your writing by default, does not sell your data, and keeps your pages out of any public feed. On Aurum, your words stay in a private space built for clarity and pattern discovery."
       },
       {
         "question": "How much does Aurum cost?",
