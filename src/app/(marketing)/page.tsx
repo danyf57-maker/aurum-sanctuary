@@ -368,25 +368,12 @@ const FloatingCTA = ({
 };
 export default function Home() {
     const [showCTA, setShowCTA] = useState(false);
-    const { user, loading: authLoading } = useAuth();
+    const { user } = useAuth();
     const to = useLocalizedHref();
     const t = useTranslations('marketingPage');
-    const loadingHref = to('/login?callbackUrl=/sanctuary/write');
-    const primaryCtaHref = authLoading
-        ? loadingHref
-        : user
-            ? to('/sanctuary/write')
-            : to('/signup');
-    const primaryCtaLabel = authLoading
-        ? t('returningUser.checkingCta')
-        : user
-            ? t('returningUser.writeCta')
-            : null;
-    const primaryCtaLabelArrow = authLoading
-        ? t('returningUser.checkingCtaArrow')
-        : user
-            ? t('returningUser.writeCtaArrow')
-            : null;
+    const primaryCtaHref = user ? to('/sanctuary/write') : to('/signup');
+    const primaryCtaLabel = user ? t('returningUser.writeCta') : null;
+    const primaryCtaLabelArrow = user ? t('returningUser.writeCtaArrow') : null;
 
     useEffect(() => {
         const handleScroll = () => {
@@ -498,17 +485,11 @@ export default function Home() {
                         ))}
                     </div>
                     <div className="mt-8 text-center">
-                        {authLoading ? (
-                            <Button size="lg" disabled className="h-12 px-8 rounded-xl">
-                                {t('returningUser.checkingCta')}
-                            </Button>
-                        ) : (
-                            <Button asChild size="lg" className="h-12 px-8 rounded-xl">
-                                <Link href={primaryCtaHref}>
-                                    {user ? t('studySection.ctaAuthenticated') : t('studySection.cta')}
-                                </Link>
-                            </Button>
-                        )}
+                        <Button asChild size="lg" className="h-12 px-8 rounded-xl">
+                            <Link href={primaryCtaHref}>
+                                {user ? t('studySection.ctaAuthenticated') : t('studySection.cta')}
+                            </Link>
+                        </Button>
                     </div>
                 </div>
             </section>
@@ -651,17 +632,11 @@ export default function Home() {
 
                 {/* SECTION 7: CTA Final */}
                 <section className="container py-24 md:py-32 text-center border-t border-black/5">
-                    {authLoading ? (
-                        <Button size="lg" disabled className="h-14 px-12 text-base">
-                            {t('returningUser.checkingCta')}
-                        </Button>
-                    ) : (
-                        <Button asChild size="lg" className="h-14 px-12 text-base">
-                            <Link href={primaryCtaHref}>
-                                {user ? t('finalCta.buttonAuthenticated') : t('finalCta.button')}
-                            </Link>
-                        </Button>
-                    )}
+                    <Button asChild size="lg" className="h-14 px-12 text-base">
+                        <Link href={primaryCtaHref}>
+                            {user ? t('finalCta.buttonAuthenticated') : t('finalCta.button')}
+                        </Link>
+                    </Button>
                     <div className="mt-6">
                         <span className="text-xs text-stone-400 font-light">{t('finalCta.note')}</span>
                     </div>
@@ -727,7 +702,7 @@ export default function Home() {
                 visible={showCTA}
                 href={primaryCtaHref}
                 label={primaryCtaLabel ?? t('floatingCta.cta')}
-                disabled={authLoading}
+                disabled={false}
             />
             <ExitIntent />
         </main>

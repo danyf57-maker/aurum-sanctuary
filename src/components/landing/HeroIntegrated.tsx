@@ -13,7 +13,7 @@ const HeroIntegrated = () => {
   const locale = useLocale();
   const t = useTranslations("hero");
   const to = useLocalizedHref();
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
 
   const fallbackContent = locale === "fr"
     ? {
@@ -27,7 +27,6 @@ const HeroIntegrated = () => {
         ctaSecondary: "Ecrire une premiere page",
         ctaAuthenticated: "Continuer a ecrire",
         ctaSecondaryAuthenticated: "Ouvrir mon journal",
-        ctaLoading: "Ouverture...",
         languagesBadge: "Reflexion multilingue",
         interfaceLanguage:
           "Au premier chargement, Aurum suit la langue de ton navigateur. Ensuite, il garde la langue que tu choisis.",
@@ -51,7 +50,6 @@ const HeroIntegrated = () => {
         ctaSecondary: "Write a first page",
         ctaAuthenticated: "Continue writing",
         ctaSecondaryAuthenticated: "Open my journal",
-        ctaLoading: "Loading...",
         languagesBadge: "Multilingual reflection",
         interfaceLanguage:
           "On your first visit, Aurum opens in your browser language. After that, it keeps the language you choose.",
@@ -146,34 +144,24 @@ const HeroIntegrated = () => {
             </div>
 
             <div className="mt-6 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-                  {loading ? (
+              <>
                 <Button
+                  asChild
                   size="lg"
-                  disabled
-                  className="h-12 md:h-14 px-8 rounded-xl bg-[#D4AF37] text-stone-900"
+                  className="h-12 md:h-14 px-8 rounded-xl bg-[#D4AF37] text-stone-900 hover:bg-[#D4AF37]/90"
                 >
-                  {resolveMessage(t("ctaLoading"), fallbackContent.ctaLoading)}
-                </Button>
-              ) : (
-                <>
-                  <Button
-                    asChild
-                    size="lg"
-                    className="h-12 md:h-14 px-8 rounded-xl bg-[#D4AF37] text-stone-900 hover:bg-[#D4AF37]/90"
-                  >
-                    <Link href={primaryHref}>
-                      {user
-                        ? resolveMessage(t("ctaAuthenticated"), fallbackContent.ctaAuthenticated)
-                        : resolveMessage(t("cta"), fallbackContent.cta)}
-                    </Link>
-                  </Button>
-                  <Link href={secondaryHref} className="font-body text-sm text-stone-600 hover:text-stone-900 transition-colors">
+                  <Link href={primaryHref}>
                     {user
-                      ? resolveMessage(t("ctaSecondaryAuthenticated"), fallbackContent.ctaSecondaryAuthenticated)
-                      : resolveMessage(t("ctaSecondary"), fallbackContent.ctaSecondary)}
+                      ? resolveMessage(t("ctaAuthenticated"), fallbackContent.ctaAuthenticated)
+                      : resolveMessage(t("cta"), fallbackContent.cta)}
                   </Link>
-                </>
-              )}
+                </Button>
+                <Link href={secondaryHref} className="font-body text-sm text-stone-600 hover:text-stone-900 transition-colors">
+                  {user
+                    ? resolveMessage(t("ctaSecondaryAuthenticated"), fallbackContent.ctaSecondaryAuthenticated)
+                    : resolveMessage(t("ctaSecondary"), fallbackContent.ctaSecondary)}
+                </Link>
+              </>
             </div>
             <div className="mt-4 space-y-3 text-center">
               <div className="flex justify-center">
