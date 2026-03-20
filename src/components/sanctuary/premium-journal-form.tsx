@@ -1144,7 +1144,7 @@ export function PremiumJournalForm() {
                 className="group w-full rounded-2xl border border-stone-200 bg-white/70 px-4 py-4 text-center transition-colors duration-300 hover:border-[#C5A059]/35 hover:bg-[#C5A059]/5"
               >
                 <p className="font-headline text-lg text-stone-500 transition-colors duration-300 group-hover:text-stone-700 md:text-xl">
-                  {t('anythingElse')}
+                  {t('openNewWritingSpace')}
                 </p>
               </button>
             </motion.div>
