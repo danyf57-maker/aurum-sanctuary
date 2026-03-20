@@ -497,9 +497,10 @@
   "hero": {
     "badge": "RÉFLEXION PRIVÉE GUIDÉE",
     "title": "Écris en privé. Vois ce qui revient en toi.",
-    "subtitle": "Aurum t'aide à écrire librement, clarifier ce que tu ressens, et faire émerger les motifs intérieurs qui reviennent grâce à une réflexion privée guidée.",
-    "cta": "Créer mon compte gratuitement",
-    "ctaSecondary": "Écrire d'abord sans engagement",
+    "subtitle": "Aurum est un espace de réflexion privée guidée par l'IA. Écris franchement, reçois un reflet clair, et vois ce qui revient dans le temps.",
+    "helper": "Écris une première phrase ici. Aurum l'ouvrira dans ta page privée.",
+    "cta": "Commencer gratuitement",
+    "ctaSecondary": "Écrire une première page",
     "ctaAuthenticated": "Continuer à écrire",
     "ctaSecondaryAuthenticated": "Ouvrir mon journal",
     "ctaLoading": "Ouverture...",
@@ -769,7 +770,7 @@
       }
     },
     "floatingCta": {
-      "cta": "Créer mon compte",
+      "cta": "Commencer gratuitement",
       "label": "Sans engagement • Privé"
     },
     "returningUser": {
@@ -779,35 +780,59 @@
       "writeCtaArrow": "Continuer à écrire"
     },
     "studySection": {
-      "title": "Écrire aide. Aurum aide à comprendre ce qui revient.",
-      "subtitle": "La confidentialité protège tes mots. La réflexion guidée d'Aurum aide à en faire émerger de la clarté émotionnelle et des motifs récurrents que tu peux reconnaître dans le temps.",
-      "cta": "Créer mon compte et commencer aujourd'hui",
+      "title": "Ce que montre la recherche sur le fait d'écrire",
+      "subtitle": "Dans les études sur l'écriture expressive, des sessions courtes et répétées sont associées à une expérience émotionnelle plus claire, moins de rumination, et une tension plus basse chez une partie des participants.",
+      "cta": "Commencer gratuitement",
       "ctaAuthenticated": "Continuer à écrire"
     },
     "studyCards": [
       {
-        "eyebrow": "Sais-tu que...",
-        "title": "écrire un stress vécu peut réduire des symptômes physiques ?",
-        "body": "Dans une étude fondatrice, les personnes qui écrivaient sur un événement difficile ont montré de meilleurs indicateurs de santé.",
-        "example": "Exemple concret : 10 minutes le soir pour poser ce qui te pèse au lieu de ruminer au lit."
+        "eyebrow": "Dans les études",
+        "title": "Les formats les plus étudiés sont courts et répétés",
+        "body": "Un protocole fréquent consiste à écrire 15 à 20 minutes, à 3 à 5 reprises, autour d'une expérience difficile.",
+        "example": "À tester : 10 minutes ce soir, puis quelques reprises cette semaine."
       },
       {
-        "eyebrow": "Sais-tu que...",
-        "title": "mettre tes émotions en mots peut améliorer ton rebond ?",
-        "body": "Une étude sur des personnes en période de perte d'emploi a trouvé un meilleur retour à l'action chez celles qui écrivaient.",
-        "example": "Exemple concret : écrire 3 fois par semaine ce que tu ressens, puis ton prochain pas réaliste."
+        "eyebrow": "Dans les études",
+        "title": "Mettre les émotions en mots aide à mieux organiser l'expérience",
+        "body": "Les travaux sur l'écriture expressive suggèrent que nommer ce que l'on ressent peut rendre l'expérience intérieure plus lisible.",
+        "example": "À tester : écris ce qui s'est passé, ce que tu as ressenti, puis ce dont tu as besoin."
       },
       {
-        "eyebrow": "Sais-tu que...",
-        "title": "les revues systématiques confirment un gain de bien-être ?",
-        "body": "Les synthèses récentes montrent un effet positif du journaling sur le stress et le bien-être psychologique.",
-        "example": "Exemple concret : une routine de 5 minutes par jour peut déjà changer ton niveau de clarté."
+        "eyebrow": "Dans les études",
+        "title": "Les effets apparaissent avec la répétition, pas avec une page parfaite",
+        "body": "Les synthèses récentes suggèrent que l'écriture agit surtout comme une pratique régulière, pas comme une performance ponctuelle.",
+        "example": "À tester : cinq minutes honnêtes, trois fois cette semaine."
       }
     ],
+    "exampleSection": {
+      "eyebrow": "Ce qu'Aurum te renvoie",
+      "title": "Après une page, Aurum aide à voir le cycle plus clairement",
+      "subtitle": "Aurum ne résume pas seulement. Il te renvoie ce qui ressort, ce qui se répète, et ce qui mérite peut-être une autre page.",
+      "entryLabel": "Ce que tu écris",
+      "entry": "Je dis oui à tout le monde, puis je me sens envahi, agacé, et coupable d'être agacé.",
+      "reflectionLabel": "Ce qu'Aurum peut te renvoyer",
+      "reflection": "Tu n'es pas seulement fatigué. Un cycle net apparaît : oui automatique, surcharge intérieure, irritation, puis culpabilité. La pression semble venir moins d'une seule demande que de la vitesse à laquelle tu t'éloignes de ce dont tu as besoin.",
+      "highlights": [
+        {
+          "title": "Concret, pas générique",
+          "body": "Aurum part de ce que tu as vraiment écrit, pas d'un discours motivationnel plaqué."
+        },
+        {
+          "title": "Dans ta langue",
+          "body": "Écris dans la langue qui te vient naturellement. Aurum répond dans la même langue."
+        },
+        {
+          "title": "Pensé pour la continuité",
+          "body": "Dans le temps, Aurum aide à rendre plus visibles les émotions, situations et besoins qui reviennent."
+        }
+      ]
+    },
     "useCases": {
-      "title": "Moments fréquents où l'écriture peut ramener de la clarté",
-      "subtitle": "Des exemples concrets pour démêler ce que tu ressens, alléger la surcharge intérieure et faire apparaître ce qui revient.",
-      "note": "Ancré dans des recherches récentes sur l'écriture expressive et le bien-être psychologique",
+      "title": "Moments fréquents où écrire aide vraiment",
+      "subtitle": "Pars d'un moment réel : pensées en boucle, pression intérieure, conflit, fatigue de décision. Aurum t'aide à en faire quelque chose de plus clair.",
+      "note": "Ancré dans la recherche sur l'écriture expressive et dans les motifs intérieurs qui deviennent plus visibles avec le temps",
+      "cta": "Commencer gratuitement",
       "cards": [
         {
           "badge": "Insomnie",
@@ -866,16 +891,16 @@
       ]
     },
     "scientificProof": {
-      "title": "Ce n'est pas de la magie, c'est un phénomène observé.",
-      "subtitle": "Des chercheurs se sont penchés sur le pouvoir de l'écriture. Dans leurs études, ils ont fait des découvertes surprenantes :",
+      "title": "Ce que montrent les données",
+      "subtitle": "L'écriture expressive est étudiée depuis des décennies. Certains résultats sont particulièrement utiles pour comprendre la logique d'Aurum :",
       "discoveries": [
         {
           "label": "Découverte n°1 :",
-          "body": "Les participants qui prenaient le temps d'écrire sur leurs soucis ont vu leurs visites chez le médecin diminuer de moitié"
+          "body": "Dans une étude fondatrice, les participants qui écrivaient sur une expérience difficile ont ensuite déclaré moins de visites en centre de santé"
         },
         {
           "label": "Découverte n°2 :",
-          "body": "Dans une autre étude sur des personnes ayant perdu leur emploi, celles qui écrivaient sur leurs émotions avaient deux fois plus de chances de retrouver un travail que les autres"
+          "body": "Dans une étude sur la perte d'emploi, les personnes qui écrivaient sur leurs émotions avaient davantage de chances de reprendre un travail"
         }
       ]
     },
@@ -910,10 +935,10 @@
       "seal": "Sceau de confiance"
     },
     "finalCta": {
-      "button": "Créer mon sanctuaire maintenant",
+      "button": "Commencer gratuitement",
       "buttonAuthenticated": "Continuer à écrire",
-      "note": "Sans engagement • Espace privé",
-      "subtitle": "Tu entres dans un espace de réflexion privée conçu pour écrire régulièrement, comprendre ce qui revient et retrouver de la clarté dans le temps.",
+      "note": "7 jours gratuits • Espace privé",
+      "subtitle": "Ouvre un espace privé pour écrire, recevoir des reflets guidés, et suivre ce qui revient dans le temps.",
       "cards": [
         {
           "title": "writing",

@@ -496,10 +496,11 @@
   },
   "hero": {
     "badge": "PRIVATE GUIDED REFLECTION",
-    "title": "Write in private. Understand what keeps returning.",
-    "subtitle": "Aurum helps you write freely, clarify what you feel, and uncover recurring inner patterns through private guided reflection.",
-    "cta": "Create my free account",
-    "ctaSecondary": "Write first, no commitment",
+    "title": "Write in private. See what keeps returning.",
+    "subtitle": "Aurum is a private AI-guided reflection space. Write honestly, get clear reflections, and see what keeps returning over time.",
+    "helper": "Try a first line here. Aurum will open it inside your private page.",
+    "cta": "Start for free",
+    "ctaSecondary": "Write a first page",
     "ctaAuthenticated": "Continue writing",
     "ctaSecondaryAuthenticated": "Open my journal",
     "ctaLoading": "Loading...",
@@ -769,7 +770,7 @@
       }
     },
     "floatingCta": {
-      "cta": "Create my account",
+      "cta": "Start for free",
       "label": "No commitment • Private"
     },
     "returningUser": {
@@ -779,35 +780,59 @@
       "writeCtaArrow": "Continue writing"
     },
     "studySection": {
-      "title": "Writing helps. Aurum helps you understand what keeps returning.",
-      "subtitle": "Privacy protects your words. Aurum’s guided reflection helps turn them into emotional clarity and recurring patterns you can recognize over time.",
-      "cta": "Create my account and start today",
+      "title": "What research shows about writing things down",
+      "subtitle": "Across expressive writing studies, short repeated writing sessions are linked to clearer emotional processing, less rumination, and lower tension for some participants.",
+      "cta": "Start for free",
       "ctaAuthenticated": "Continue writing"
     },
     "studyCards": [
       {
-        "eyebrow": "Did you know...",
-        "title": "writing about a stressful event can reduce physical symptoms?",
-        "body": "In a foundational study, people who wrote about a difficult event showed better health indicators.",
-        "example": "Practical example: 10 minutes at night to put down what weighs on you instead of ruminating in bed."
+        "eyebrow": "Research finding",
+        "title": "Short repeated sessions are the format studied most often",
+        "body": "A common protocol is 15 to 20 minutes of writing, repeated 3 to 5 times around one difficult experience.",
+        "example": "Try this: 10 minutes tonight, then repeat it a few times this week."
       },
       {
-        "eyebrow": "Did you know...",
-        "title": "putting emotions into words can improve your rebound?",
-        "body": "A study on people facing job loss found a stronger return to action among those who wrote regularly.",
-        "example": "Practical example: write three times a week about what you feel, then define the next realistic step."
+        "eyebrow": "Research finding",
+        "title": "Putting feelings into words can make experience easier to process",
+        "body": "Studies on expressive writing suggest that naming emotions can make inner experience more organized and easier to understand.",
+        "example": "Try this: write what happened, what you felt, and what you needed."
       },
       {
-        "eyebrow": "Did you know...",
-        "title": "systematic reviews confirm gains in well-being?",
-        "body": "Recent syntheses show a positive effect of journaling on stress and psychological well-being.",
-        "example": "Practical example: a five-minute daily routine can already change your level of clarity."
+        "eyebrow": "Research finding",
+        "title": "Benefits appear through repetition, not one perfect page",
+        "body": "Systematic reviews suggest that writing works best as a repeated practice, not as a one-off performance.",
+        "example": "Try this: five honest minutes, three times this week."
       }
     ],
+    "exampleSection": {
+      "eyebrow": "What Aurum gives back",
+      "title": "After one page, Aurum helps you see the pattern more clearly",
+      "subtitle": "It does more than summarize. It reflects back what stands out, what repeats, and what may deserve another page.",
+      "entryLabel": "What you write",
+      "entry": "I keep saying yes to everyone, then I feel overwhelmed and angry, and then guilty for feeling angry.",
+      "reflectionLabel": "What Aurum may reflect back",
+      "reflection": "You are not only tired. A clear cycle is showing up: automatic yes, inner overload, irritation, then guilt. The pressure seems to come less from one request than from how quickly you move away from what you need.",
+      "highlights": [
+        {
+          "title": "Concrete, not generic",
+          "body": "Aurum works from what you actually wrote, not from a motivational script."
+        },
+        {
+          "title": "In your own language",
+          "body": "Write in the language that comes naturally. Aurum answers in the same language."
+        },
+        {
+          "title": "Built for continuity",
+          "body": "Over time, Aurum helps recurring emotions, situations, and needs become easier to recognize."
+        }
+      ]
+    },
     "useCases": {
-      "title": "Common moments when writing can restore clarity",
-      "subtitle": "Concrete ways private reflection can untangle what you feel, reduce inner overload, and reveal what keeps returning.",
-      "note": "Grounded in research on expressive writing and psychological well-being",
+      "title": "Common moments when writing helps most",
+      "subtitle": "Start from a real moment: looping thoughts, inner pressure, conflict, decision fatigue. Aurum helps you turn it into something clearer.",
+      "note": "Grounded in expressive writing research and real inner patterns that become easier to spot over time",
+      "cta": "Start for free",
       "cards": [
         {
           "badge": "Insomnia",
@@ -866,16 +891,16 @@
       ]
     },
     "scientificProof": {
-      "title": "This is not magic. It is an observed effect.",
-      "subtitle": "Researchers have examined the power of writing. Their studies surfaced some striking findings:",
+      "title": "What the data shows",
+      "subtitle": "Expressive writing has been studied for decades. Some findings are especially relevant to what Aurum is built for:",
       "discoveries": [
         {
           "label": "Finding #1:",
-          "body": "Participants who took time to write about their worries saw their medical visits drop significantly"
+          "body": "In one foundational study, participants who wrote about a difficult experience later reported fewer health-center visits"
         },
         {
           "label": "Finding #2:",
-          "body": "In another study on people who had lost their jobs, those who wrote about their emotions were twice as likely to find work again"
+          "body": "In a study of job loss, participants who wrote about their emotions were more likely to return to work"
         }
       ]
     },
@@ -910,10 +935,10 @@
       "seal": "Trust seal"
     },
     "finalCta": {
-      "button": "Create my sanctuary now",
+      "button": "Start for free",
       "buttonAuthenticated": "Continue writing",
-      "note": "No commitment • Private space",
-      "subtitle": "You enter a private reflection space designed to help you write regularly, understand what keeps returning, and regain clarity over time.",
+      "note": "7 days free • Private space",
+      "subtitle": "Open a private space to write, receive guided reflection, and follow what keeps returning over time.",
       "cards": [
         {
           "title": "writing",

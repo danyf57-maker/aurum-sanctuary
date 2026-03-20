@@ -20,9 +20,11 @@ const HeroIntegrated = () => {
         badge: "REFLEXION PRIVEE GUIDEE",
         title: "Ecris en prive. Vois ce qui revient en toi.",
         subtitle:
-          "Aurum t'aide a ecrire librement, clarifier ce que tu ressens, et faire emerger les motifs interieurs qui reviennent.",
-        cta: "Creer mon compte gratuitement",
-        ctaSecondary: "Ecrire d'abord, sans engagement",
+          "Aurum est un espace de reflexion privee guidee par l'IA. Ecris franchement, recois un reflet clair, et vois ce qui revient dans le temps.",
+        helper:
+          "Ecris une premiere phrase ici. Aurum l'ouvrira dans ta page privee.",
+        cta: "Commencer gratuitement",
+        ctaSecondary: "Ecrire une premiere page",
         ctaAuthenticated: "Continuer a ecrire",
         ctaSecondaryAuthenticated: "Ouvrir mon journal",
         ctaLoading: "Ouverture...",
@@ -37,34 +39,16 @@ const HeroIntegrated = () => {
           "Je me sens completement submerge par ma liste de taches aujourd'hui...",
           "J'ai juste besoin de vider ma tete avant d'exploser...",
         ],
-        quotes: [
-          {
-            hint: "Ecris sans te filtrer. Retrouve de la clarte grace a une reflexion douce.",
-            detail: "Ecris simplement ce que tu as en tete, sans filtre.",
-            quote: "Ecrire, c'est une facon de parler sans etre interrompu.",
-            author: "Jules Renard",
-          },
-          {
-            hint: "Quand tu rumines, ecris ce qui tourne en boucle.",
-            detail: "Mettre les mots dehors aide ton mental a ralentir.",
-            quote: "J'ecris pour decouvrir ce que je pense.",
-            author: "Joan Didion",
-          },
-          {
-            hint: "Si tu portes trop, depose tout ici, ligne apres ligne.",
-            detail: "Tu n'as pas besoin d'ecrire parfaitement, juste d'ecrire vrai.",
-            quote: "Il n'y a pas de plus grande agonie que de porter une histoire non racontee en soi.",
-            author: "Maya Angelou",
-          },
-        ],
       }
     : {
         badge: "PRIVATE GUIDED REFLECTION",
         title: "Write in private. See what keeps returning.",
         subtitle:
-          "Aurum helps you write freely, clarify what you feel, and uncover recurring inner patterns.",
-        cta: "Create my free account",
-        ctaSecondary: "Write first, no commitment",
+          "Aurum is a private AI-guided reflection space. Write honestly, get clear reflections, and see what keeps returning over time.",
+        helper:
+          "Try a first line here. Aurum will open it inside your private page.",
+        cta: "Start for free",
+        ctaSecondary: "Write a first page",
         ctaAuthenticated: "Continue writing",
         ctaSecondaryAuthenticated: "Open my journal",
         ctaLoading: "Loading...",
@@ -79,26 +63,6 @@ const HeroIntegrated = () => {
           "I feel completely overwhelmed by my to-do list today...",
           "I just need to clear my head before I explode...",
         ],
-        quotes: [
-          {
-            hint: "Write without filtering. Regain clarity with gentle reflection.",
-            detail: "Just write what's on your mind, without filtering.",
-            quote: "Writing is a way of talking without being interrupted.",
-            author: "Jules Renard",
-          },
-          {
-            hint: "When you're ruminating, write down what keeps looping.",
-            detail: "Getting words out helps your mind slow down.",
-            quote: "I write to find out what I think.",
-            author: "Joan Didion",
-          },
-          {
-            hint: "If you're carrying too much, set it all down here, line by line.",
-            detail: "You don't need to write perfectly, just write honestly.",
-            quote: "There is no greater agony than bearing an untold story inside you.",
-            author: "Maya Angelou",
-          },
-        ],
       };
 
   const placeholders = [
@@ -106,18 +70,11 @@ const HeroIntegrated = () => {
     resolveMessage(t("placeholders.1"), fallbackContent.placeholders[1]),
     resolveMessage(t("placeholders.2"), fallbackContent.placeholders[2]),
   ];
-  const rotatingQuotes = Array.from({ length: 8 }, (_, i) => ({
-    hint: resolveMessage(t(`quotes.${i}.hint`), fallbackContent.quotes[i % fallbackContent.quotes.length].hint),
-    detail: resolveMessage(t(`quotes.${i}.detail`), fallbackContent.quotes[i % fallbackContent.quotes.length].detail),
-    quote: resolveMessage(t(`quotes.${i}.quote`), fallbackContent.quotes[i % fallbackContent.quotes.length].quote),
-    author: resolveMessage(t(`quotes.${i}.author`), fallbackContent.quotes[i % fallbackContent.quotes.length].author),
-  }));
   const [thought, setThought] = useState("");
   const [placeholderText, setPlaceholderText] = useState("");
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [quoteIndex, setQuoteIndex] = useState(0);
   const guestWriteHref =
     thought.trim().length > 0
       ? to(`/sanctuary/write?initial=${encodeURIComponent(thought)}`)
@@ -130,7 +87,6 @@ const HeroIntegrated = () => {
     setPlaceholderIndex(0);
     setCharIndex(0);
     setIsDeleting(false);
-    setQuoteIndex(0);
   }, [locale]);
 
   useEffect(() => {
@@ -153,14 +109,6 @@ const HeroIntegrated = () => {
 
     return () => clearTimeout(timeout);
   }, [charIndex, isDeleting, placeholderIndex, placeholders]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setQuoteIndex((value) => (value + 1) % rotatingQuotes.length);
-    }, 4200);
-
-    return () => clearInterval(interval);
-  }, [rotatingQuotes.length]);
 
   return (
     <section className="bg-stone-50 py-24 md:py-32">
@@ -190,18 +138,8 @@ const HeroIntegrated = () => {
                 className="h-44 w-full resize-none bg-transparent text-lg md:text-xl font-body text-stone-800 placeholder:text-stone-400 focus:outline-none"
               />
               <div className="mt-3 border-t border-[#D4AF37]/20 pt-3 text-center">
-                <p
-                  key={quoteIndex}
-                  className="font-body text-sm text-stone-700 transition-opacity duration-500"
-                >
-                  {rotatingQuotes[quoteIndex].hint}
-                </p>
-                <p className="mt-1 font-body text-xs text-stone-500 transition-opacity duration-500">
-                  {rotatingQuotes[quoteIndex].detail}
-                </p>
-                <p className="mt-2 font-body text-xs italic text-stone-500 transition-opacity duration-500">
-                  &ldquo;{rotatingQuotes[quoteIndex].quote}&rdquo;{" "}
-                  <span className="not-italic">- {rotatingQuotes[quoteIndex].author}</span>
+                <p className="font-body text-sm text-stone-600">
+                  {resolveMessage(t("helper"), fallbackContent.helper)}
                 </p>
               </div>
               <div className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-[#D4AF37]/15" />
