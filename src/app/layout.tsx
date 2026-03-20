@@ -10,6 +10,7 @@ import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
 import ProductEventTracker from '@/components/analytics/ProductEventTracker';
 import { CookieConsent } from '@/components/legal/CookieConsent';
 import { TermsModal } from '@/components/auth/TermsModal';
+import ServiceWorkerRefresh from '@/components/pwa/ServiceWorkerRefresh';
 import { getRequestLocale } from '@/lib/locale-server';
 import { PUBLIC_PRICING } from '@/lib/billing/config';
 import { buildAlternates, openGraphLocale, SITE_URL } from '@/lib/seo';
@@ -196,6 +197,7 @@ export default async function RootLayout({
               <GoogleAnalytics />
               <ProductEventTracker />
             </Suspense>
+            <ServiceWorkerRefresh />
             {children}
             <Toaster />
             <CookieConsent />
