@@ -36,6 +36,11 @@ type MarketingStudyCard = {
     example: string;
 };
 
+type MarketingExampleHighlight = {
+    title: string;
+    body: string;
+};
+
 type MarketingQuizQuestion = {
     q: string;
     options: Array<{
@@ -398,6 +403,7 @@ export default function Home() {
 
     const faqs = t.raw('faqs') as MarketingFaq[];
     const studyCards = t.raw('studyCards') as MarketingStudyCard[];
+    const exampleHighlights = t.raw('exampleSection.highlights') as MarketingExampleHighlight[];
     const useCaseCards = t.raw('useCases.cards') as MarketingCard[];
     const trustCards = t.raw('trust.cards') as MarketingCard[];
     const featureCards = t.raw('finalCta.cards') as MarketingCard[];
@@ -416,6 +422,47 @@ export default function Home() {
                     <PricingOfferBlock className="mx-auto" pagePath="/" />
                 </div>
             </section>
+            <section className="bg-stone-50/60 py-16 md:py-20 border-y border-stone-200/70">
+                <div className="container">
+                    <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+                        <div className="text-center lg:text-left">
+                            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-stone-500">
+                                {t('exampleSection.eyebrow')}
+                            </p>
+                            <h2 className="mb-4 text-3xl md:text-4xl font-headline text-stone-900">
+                                {t('exampleSection.title')}
+                            </h2>
+                            <p className="text-lg font-light text-stone-600">
+                                {t('exampleSection.subtitle')}
+                            </p>
+                            <div className="mt-6 grid gap-4">
+                                {exampleHighlights.map((item) => (
+                                    <div key={item.title} className="rounded-2xl border border-stone-200 bg-white px-5 py-4 text-left shadow-sm">
+                                        <p className="text-sm font-semibold text-stone-900">{item.title}</p>
+                                        <p className="mt-1 text-sm font-light leading-relaxed text-stone-600">{item.body}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="rounded-[2rem] border border-stone-200 bg-white p-6 md:p-8 shadow-sm">
+                            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-stone-500">
+                                {t('exampleSection.entryLabel')}
+                            </p>
+                            <p className="mt-3 rounded-2xl bg-stone-900 px-5 py-4 text-lg font-light leading-relaxed text-white">
+                                {t('exampleSection.entry')}
+                            </p>
+                            <div className="mt-5 rounded-2xl border border-[#D4AF37]/25 bg-[#D4AF37]/8 px-5 py-4">
+                                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-stone-500">
+                                    {t('exampleSection.reflectionLabel')}
+                                </p>
+                                <p className="mt-3 text-lg font-light leading-relaxed text-stone-800">
+                                    {t('exampleSection.reflection')}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
             <section className="py-14 md:py-16 bg-white border-y border-stone-200/70">
                 <div className="container">
                     <div className="max-w-4xl mx-auto text-center mb-8">
@@ -432,7 +479,7 @@ export default function Home() {
                                 <p className="text-[11px] uppercase tracking-[0.14em] text-stone-500 mb-3 font-semibold">{card.eyebrow}</p>
                                 <h3 className="text-xl font-headline text-stone-900 mb-2">{card.title}</h3>
                                 <p className="text-sm text-stone-600 font-light leading-relaxed mb-3">{card.body}</p>
-                                <p className="text-xs text-stone-500 font-light">
+                                <p className="text-xs text-stone-500 font-light leading-relaxed">
                                     {card.example}
                                     {index === 0 && (
                                         <sup><a href={to('/etudes-scientifiques#etude-1')} aria-label={t('references.aria1')} className="no-underline font-semibold text-stone-700"> 1</a></sup>
@@ -492,7 +539,7 @@ export default function Home() {
                                 <h3 className="text-2xl font-headline text-stone-900 mb-3">{card.title}</h3>
                                 <p className="text-stone-600 font-light leading-relaxed mb-6">{card.body}</p>
                                 <Link href={primaryCtaHref} className="mt-auto text-primary font-medium hover:underline">
-                                    {primaryCtaLabelArrow ?? card.cta}
+                                    {primaryCtaLabelArrow ?? t('useCases.cta')}
                                 </Link>
                             </article>
                         ))}
