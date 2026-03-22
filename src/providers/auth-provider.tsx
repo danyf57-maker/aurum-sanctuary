@@ -35,6 +35,7 @@ interface AuthContextType {
   signInWithGoogle: () => Promise<void>;
   signInWithEmail: (e: string, p: string) => Promise<void>;
   signUpWithEmail: (e: string, p: string, firstName: string) => Promise<void>;
+  resendVerificationEmail: (email: string) => Promise<void>;
   updateFirstName: (firstName: string) => Promise<void>;
   logout: () => Promise<void>;
   acceptTerms: () => Promise<void>;
@@ -108,6 +109,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     firebaseAuth.languageCode = isFr ? "fr" : "en";
   }, [isFr]);
+
+  const sendVerificationEmailServer = async (email: string) => {
+    const response = await fetch("/api/auth/send-verification-email", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: email.trim().toLowerCase(),
+        locale: isFr ? "fr" : "en",
+      }),
+    });
+
+    if (!response.ok) {
+      const errorBody = (await response.json().catch(() => null)) as { error?: string } | null;
+      throw new Error(errorBody?.error || "VERIFICATION_EMAIL_SEND_FAILED");
+    }
+  };
+
+  const sendVerificationEmailWithFallback = async (email: string, currentUser?: User | null) => {
+    try {
+      await sendVerificationEmailServer(email);
+      return;
+    } catch (serverError) {
+      logger.warnSafe("Server verification email send failed; falling back to Firebase client email", {
+        email,
+        serverError:
+          serverError instanceof Error ? serverError.message : String(serverError),
+      });
+
+      if (currentUser) {
+        await sendEmailVerification(currentUser, getEmailVerificationSettings());
+        return;
+      }
+
+      throw serverError;
+    }
+  };
 
   useEffect(() => {
     logger.infoSafe('AuthProvider mounted');
@@ -330,14 +369,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const cred = await signInWithEmailAndPassword(firebaseAuth, e, p);
       if (!cred.user.emailVerified) {
-        await sendEmailVerification(cred.user, getEmailVerificationSettings());
+        let resendFailed = false;
+        try {
+          await sendVerificationEmailWithFallback(e, cred.user);
+        } catch (resendError) {
+          resendFailed = true;
+          logger.errorSafe('Unable to resend verification email during login', resendError, { email: e });
+        }
         await signOut(firebaseAuth);
         toast({
           title: txt("Email non vérifié", "Email not verified"),
-          description: txt(
-            "Nous venons de renvoyer un email de vérification. Vérifiez votre boîte de réception pour ouvrir votre espace de réflexion privé.",
-            "We sent a new verification email. Please check your inbox to unlock your private reflection space."
-          ),
+          description: resendFailed
+            ? txt(
+                "Votre email n'est pas encore vérifié. Utilisez le bouton de renvoi pour demander un nouveau mail de vérification.",
+                "Your email is not verified yet. Use the resend button to request a new verification email."
+              )
+            : txt(
+                "Nous venons de renvoyer un email de vérification. Vérifiez votre boîte de réception pour ouvrir votre espace de réflexion privé.",
+                "We sent a new verification email. Please check your inbox to unlock your private reflection space."
+              ),
           variant: "destructive",
         });
         throw new Error("EMAIL_NOT_VERIFIED");
@@ -426,14 +476,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         updatedAt: serverTimestamp(),
         entryCount: 0,
       }, { merge: true });
-      await sendEmailVerification(cred.user, getEmailVerificationSettings());
+      let verificationSent = true;
+      try {
+        await sendVerificationEmailWithFallback(e, cred.user);
+      } catch (verificationError) {
+        verificationSent = false;
+        logger.errorSafe('Unable to send verification email after signup', verificationError, { email: e });
+      }
       await signOut(firebaseAuth);
       toast({
-        title: txt("Vérifiez votre email", "Check your email"),
-        description: txt(
-          "Un message de vérification vient d'être envoyé pour activer votre espace de réflexion privé.",
-          "A verification email has just been sent to activate your private reflection space."
-        ),
+        title: verificationSent
+          ? txt("Vérifiez votre email", "Check your email")
+          : txt("Compte créé", "Account created"),
+        description: verificationSent
+          ? txt(
+              "Un message de vérification vient d'être envoyé pour activer votre espace de réflexion privé.",
+              "A verification email has just been sent to activate your private reflection space."
+            )
+          : txt(
+              "Le compte a bien été créé, mais le mail de vérification n'a pas pu partir tout de suite. Utilise l'écran de connexion pour renvoyer le mail.",
+              "Your account was created, but the verification email could not be sent right away. Use the sign-in page to send it again."
+            ),
+        variant: verificationSent ? "default" : "destructive",
       });
     } catch (error) {
       logger.errorSafe('Sign Up Failed', error);
@@ -451,6 +515,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               "This email already has an account. Sign in to return to your space."
             )
           : txt("Impossible de créer le compte.", "Unable to create your account."),
+        variant: "destructive",
+      });
+      throw error;
+    }
+  };
+
+  const resendVerificationEmail = async (email: string) => {
+    try {
+      await sendVerificationEmailServer(email);
+      toast({
+        title: txt("Email renvoyé", "Email sent again"),
+        description: txt(
+          "Un nouveau mail de vérification vient d'être envoyé. Vérifiez aussi vos spams.",
+          "A new verification email has been sent. Please check your spam folder too."
+        ),
+      });
+    } catch (error) {
+      logger.errorSafe('Resend verification email failed', error, { email });
+      toast({
+        title: txt("Envoi impossible", "Unable to send"),
+        description: txt(
+          "Impossible de renvoyer le mail de vérification pour le moment. Réessaie dans quelques minutes.",
+          "We couldn't resend the verification email right now. Please try again in a few minutes."
+        ),
         variant: "destructive",
       });
       throw error;
@@ -547,6 +635,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       signInWithGoogle,
       signInWithEmail,
       signUpWithEmail,
+      resendVerificationEmail,
       updateFirstName,
       logout,
       acceptTerms,

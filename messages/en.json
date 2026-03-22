@@ -58,6 +58,8 @@
     "quizText": "Your reflection profile is ready. Sign in to view your personalized result.",
     "verified": "Email verified. You can sign in now and continue your private reflection.",
     "checkEmail": "A verification email has just been sent. Please check your inbox and spam folder to unlock your private reflection space.",
+    "resendVerification": "Send it again",
+    "resendingVerification": "Sending...",
     "inAppBrowser": "Google sign-in is blocked in this in-app browser. Open this page in Safari or Chrome and try again.",
     "google": "Continue with Google",
     "or": "OR CONTINUE WITH",
