@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import HeroIntegrated from '@/components/landing/HeroIntegrated';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Compass, ArrowRight, ShieldCheck, Lock, Fingerprint, X, Brain, Moon, Flame, CircleHelp, Wind, ListChecks } from 'lucide-react';
+import { Compass, ArrowRight, ShieldCheck, Lock, Fingerprint, Brain, Moon, Flame, CircleHelp, Wind, ListChecks } from 'lucide-react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/providers/auth-provider';
@@ -54,70 +54,7 @@ type MarketingProfile = {
     description: string;
 };
 
-const ExitIntent = () => {
-    const [show, setShow] = useState(false);
-    const [dismissed, setDismissed] = useState(false);
-    const t = useTranslations('marketingPage.exitIntent');
-
-    useEffect(() => {
-        const handleMouseLeave = (e: MouseEvent) => {
-            if (e.clientY <= 0 && !dismissed) {
-                setShow(true);
-            }
-        };
-
-        document.addEventListener('mouseleave', handleMouseLeave);
-        return () => document.removeEventListener('mouseleave', handleMouseLeave);
-    }, [dismissed]);
-
-    if (!show) return null;
-
-    return (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-md">
-            <motion.div
-                initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                className="bg-white rounded-[2.5rem] p-10 md:p-16 max-w-2xl w-full relative shadow-2xl border border-stone-200"
-            >
-                <button
-                    onClick={() => { setShow(false); setDismissed(true); }}
-                    className="absolute top-6 right-6 p-2 text-stone-400 hover:text-stone-900 transition-colors"
-                >
-                    <X className="w-6 h-6" />
-                </button>
-
-                <div className="text-center">
-                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-8 text-primary">
-                        <Compass className="w-8 h-8" />
-                    </div>
-                    <h3 className="text-3xl md:text-4xl font-headline mb-6 text-stone-900">{t('title')}</h3>
-                    <p className="text-stone-500 text-lg mb-10 leading-relaxed font-light">
-                        {t('description')}
-                    </p>
-                    <div className="flex flex-col gap-4 items-center">
-                        <Button
-                            onClick={() => {
-                                setShow(false);
-                                setDismissed(true);
-                                document.getElementById('evaluation')?.scrollIntoView({ behavior: 'smooth' });
-                            }}
-                            size="lg"
-                            className="h-16 px-12 text-lg rounded-2xl w-full sm:w-auto"
-                        >
-                            {t('cta')}
-                        </Button>
-                        <button
-                            onClick={() => { setShow(false); setDismissed(true); }}
-                            className="text-stone-400 text-sm hover:underline font-light"
-                        >
-                            {t('dismiss')}
-                        </button>
-                    </div>
-                </div>
-            </motion.div>
-        </div>
-    );
-};
+const ExitIntent = () => null;
 
 const QuizSection = () => {
     const { user } = useAuth();

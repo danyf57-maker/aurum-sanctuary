@@ -17,22 +17,22 @@ const HeroIntegrated = () => {
 
   const fallbackContent = locale === "fr"
     ? {
-        badge: "REFLEXION PRIVEE GUIDEE",
-        title: "Ecris en prive. Vois ce qui revient en toi.",
+        badge: "ECRITURE PRIVEE • REFLET PRECIS",
+        title: "Ecris en prive. Vois plus clair en toi.",
         subtitle:
-          "Aurum est un espace de reflexion privee guidee par l'IA. Ecris franchement, recois un reflet clair, et vois ce qui revient dans le temps.",
+          "Aurum est un journal prive pour les personnes qui portent beaucoup interieurement. Tu ecris franchement. Aurum te renvoie l'emotion, la contradiction, ou le mouvement interieur reellement visible dans tes mots.",
         helper:
-          "Ecris une premiere phrase ici. Aurum l'ouvrira dans ta page privee.",
+          "Ecris une ligne honnete. Aurum l'ouvre dans ta page privee.",
         cta: "Commencer gratuitement",
         ctaSecondary: "Ecrire une premiere page",
         ctaAuthenticated: "Continuer a ecrire",
         ctaSecondaryAuthenticated: "Ouvrir mon journal",
-        languagesBadge: "Reflexion multilingue",
+        languagesBadge: "Aurum te repond dans ta langue",
         interfaceLanguage:
           "Au premier chargement, Aurum suit la langue de ton navigateur. Ensuite, il garde la langue que tu choisis.",
         languages:
-          "Tu peux ecrire en francais, anglais, espagnol, italien, allemand ou portugais. Aurum te repond dans ta langue.",
-        trust: "Chiffre par defaut • Reflexion guidee • Prive par conception.",
+          "Ecris en francais, anglais, espagnol, italien, allemand ou portugais.",
+        trust: "7 jours gratuits • Prive par conception • Resiliable a tout moment.",
         placeholders: [
           "Je n'arrive pas a dormir, mon cerveau tourne en boucle sur la reunion de demain...",
           "Je me sens completement submerge par ma liste de taches aujourd'hui...",
@@ -40,22 +40,22 @@ const HeroIntegrated = () => {
         ],
       }
     : {
-        badge: "PRIVATE GUIDED REFLECTION",
-        title: "Write in private. See what keeps returning.",
+        badge: "PRIVATE WRITING • SHARP REFLECTION",
+        title: "Write in private. See yourself more clearly.",
         subtitle:
-          "Aurum is a private AI-guided reflection space. Write honestly, get clear reflections, and see what keeps returning over time.",
+          "Aurum is a private journal for people who carry a lot internally. You write honestly. Aurum gives back the emotion, contradiction, or inner movement that is actually visible in your words.",
         helper:
-          "Try a first line here. Aurum will open it inside your private page.",
+          "Write one honest line. Aurum opens it inside your private page.",
         cta: "Start for free",
         ctaSecondary: "Write a first page",
         ctaAuthenticated: "Continue writing",
         ctaSecondaryAuthenticated: "Open my journal",
-        languagesBadge: "Multilingual reflection",
+        languagesBadge: "Aurum replies in your language",
         interfaceLanguage:
           "On your first visit, Aurum opens in your browser language. After that, it keeps the language you choose.",
         languages:
-          "You can write in English, French, Spanish, Italian, German, or Portuguese. Aurum replies in your language.",
-        trust: "Encrypted by default • Guided reflection • Private by design.",
+          "Write in English, French, Spanish, Italian, German, or Portuguese.",
+        trust: "7 days free • Private by design • Cancel anytime.",
         placeholders: [
           "I can't sleep, my mind keeps replaying tomorrow's meeting...",
           "I feel completely overwhelmed by my to-do list today...",
@@ -169,9 +169,6 @@ const HeroIntegrated = () => {
                   {resolveMessage(t("languagesBadge"), fallbackContent.languagesBadge)}
                 </span>
               </div>
-              <p className="mx-auto max-w-2xl font-body text-sm text-stone-600">
-                {resolveMessage(t("interfaceLanguage"), fallbackContent.interfaceLanguage)}
-              </p>
               <p className="mx-auto max-w-2xl font-body text-sm text-stone-500">
                 {resolveMessage(t("languages"), fallbackContent.languages)}
               </p>

@@ -96,7 +96,7 @@
       "line1": "Cet espace privé est le tien.",
       "line2": "Écris sans te filtrer. Aurum te renvoie ce qui ressort, ce qui revient, et là où plus de clarté t'attend peut-être.",
       "line3": "Avec le temps, tes pages commencent à révéler des motifs émotionnels récurrents que tu peux reconnaître plus facilement.",
-      "badge": "Réflexion privée guidée par IA"
+      "badge": "Réflexion privée"
     },
     "personalityQuestionnaire": {
       "fallbackArchetype": "Le Décideur",
@@ -459,7 +459,7 @@
     "checkoutNoUrl": "Aucune URL de paiement reçue.",
     "offerPending": "Offre en préparation. Contacte-nous sur aurumdiary.com pour être prévenu.",
     "title": "Choisissez votre formule",
-    "subtitle": "Un espace d’écriture chiffré, des reflets guidés par IA, et des motifs intérieurs qui émergent dans le temps.",
+    "subtitle": "Un espace d’écriture chiffré, des reflets psychologiquement précis, et des motifs intérieurs qui émergent dans le temps.",
     "recommended": "Recommandé",
     "stripeNote": "Les abonnements sont gérés via Stripe. Résiliation possible à tout moment.",
     "currentPlan": "Plan actuel",
@@ -467,7 +467,7 @@
     "monthly": {
       "name": "Mensuel",
       "period": "/mois",
-      "description": "L’expérience Aurum complète, guidée par l’IA, facturée au mois.",
+      "description": "L’expérience Aurum complète, avec écriture privée et reflets psychologiquement précis, facturée au mois.",
       "cta": "Choisir mensuel"
     },
     "yearly": {
@@ -478,7 +478,7 @@
     },
     "features": {
       "entries": "Écriture privée et chiffrée illimitée",
-      "conversations": "Réflexions guidées illimitées avec Aurum",
+      "conversations": "Reflets illimités avec Aurum",
       "history": "Mémoire complète de tes pages et de leur évolution",
       "export": "Export de tes écrits et reflets",
       "reflections": "Motifs récurrents et reflets approfondis"
@@ -495,19 +495,19 @@
     }
   },
   "hero": {
-    "badge": "RÉFLEXION PRIVÉE GUIDÉE",
-    "title": "Écris en privé. Vois ce qui revient en toi.",
-    "subtitle": "Aurum est un espace de réflexion privée guidée par l'IA. Écris franchement, reçois un reflet clair, et vois ce qui revient dans le temps.",
-    "helper": "Écris une première phrase ici. Aurum l'ouvrira dans ta page privée.",
+    "badge": "ÉCRITURE PRIVÉE • REFLET PRÉCIS",
+    "title": "Écris en privé. Vois plus clair en toi.",
+    "subtitle": "Aurum est un journal privé pour les personnes qui portent beaucoup intérieurement. Tu écris franchement. Aurum te renvoie l'émotion, la contradiction, ou le mouvement intérieur réellement visible dans tes mots.",
+    "helper": "Écris une ligne honnête. Aurum l'ouvre dans ta page privée.",
     "cta": "Commencer gratuitement",
     "ctaSecondary": "Écrire une première page",
     "ctaAuthenticated": "Continuer à écrire",
     "ctaSecondaryAuthenticated": "Ouvrir mon journal",
     "ctaLoading": "Ouverture...",
-    "languagesBadge": "Réflexion multilingue",
+    "languagesBadge": "Aurum te répond dans ta langue",
     "interfaceLanguage": "Au premier chargement, Aurum suit la langue de ton navigateur. Ensuite, il garde la langue que tu choisis.",
-    "languages": "Tu peux écrire en français, anglais, espagnol, italien, allemand ou portugais. Aurum te répond dans ta langue.",
-    "trust": "Chiffré par défaut • Réflexion guidée • Privé par conception.",
+    "languages": "Écris en français, anglais, espagnol, italien, allemand ou portugais.",
+    "trust": "7 jours gratuits • Privé par conception • Résiliable à tout moment.",
     "placeholders": {
       "0": "Je n'arrive pas à dormir, mon cerveau tourne en boucle sur la réunion de demain...",
       "1": "Je me sens complètement submergé par ma liste de tâches aujourd'hui...",
@@ -780,58 +780,58 @@
       "writeCtaArrow": "Continuer à écrire"
     },
     "studySection": {
-      "title": "Ce que montre la recherche sur le fait d'écrire",
-      "subtitle": "Dans les études sur l'écriture expressive, des sessions courtes et répétées sont associées à une expérience émotionnelle plus claire, moins de rumination, et une tension plus basse chez une partie des participants.",
+      "title": "Ce que montre la recherche",
+      "subtitle": "Les travaux sur l'écriture expressive relient des sessions courtes et répétées à une expérience émotionnelle plus claire et à moins de rumination chez une partie des participants.",
       "cta": "Commencer gratuitement",
       "ctaAuthenticated": "Continuer à écrire"
     },
     "studyCards": [
       {
         "eyebrow": "Dans les études",
-        "title": "Les formats les plus étudiés sont courts et répétés",
-        "body": "Un protocole fréquent consiste à écrire 15 à 20 minutes, à 3 à 5 reprises, autour d'une expérience difficile.",
-        "example": "À tester : 10 minutes ce soir, puis quelques reprises cette semaine."
+        "title": "Le format le plus étudié est court et répété",
+        "body": "Un protocole fréquent consiste à écrire 15 à 20 minutes, à 3 à 5 reprises, autour d'une expérience importante ou difficile.",
+        "example": "À tester : 10 minutes ce soir, puis quelques retours cette semaine."
       },
       {
         "eyebrow": "Dans les études",
-        "title": "Mettre les émotions en mots aide à mieux organiser l'expérience",
-        "body": "Les travaux sur l'écriture expressive suggèrent que nommer ce que l'on ressent peut rendre l'expérience intérieure plus lisible.",
-        "example": "À tester : écris ce qui s'est passé, ce que tu as ressenti, puis ce dont tu as besoin."
+        "title": "Mettre l'expérience en mots aide à mieux la traiter",
+        "body": "Les études suggèrent que décrire ce qui s'est passé et nommer les émotions rend l'expérience intérieure plus structurée.",
+        "example": "À tester : ce qui s'est passé, ce que tu as ressenti, ce dont tu avais besoin."
       },
       {
         "eyebrow": "Dans les études",
-        "title": "Les effets apparaissent avec la répétition, pas avec une page parfaite",
-        "body": "Les synthèses récentes suggèrent que l'écriture agit surtout comme une pratique régulière, pas comme une performance ponctuelle.",
+        "title": "La valeur vient de la répétition, pas d'une page parfaite",
+        "body": "Les synthèses suggèrent que les effets apparaissent surtout avec une pratique répétée, pas avec une seule page exceptionnelle.",
         "example": "À tester : cinq minutes honnêtes, trois fois cette semaine."
       }
     ],
     "exampleSection": {
       "eyebrow": "Ce qu'Aurum te renvoie",
-      "title": "Après une page, Aurum aide à voir le cycle plus clairement",
-      "subtitle": "Aurum ne résume pas seulement. Il te renvoie ce qui ressort, ce qui se répète, et ce qui mérite peut-être une autre page.",
+      "title": "Après une page, Aurum nomme mieux ce qui se passe",
+      "subtitle": "Aurum ne résume pas seulement. Il renvoie le cycle, la contradiction ou la pression réellement visibles dans ton écriture.",
       "entryLabel": "Ce que tu écris",
       "entry": "Je dis oui à tout le monde, puis je me sens envahi, agacé, et coupable d'être agacé.",
       "reflectionLabel": "Ce qu'Aurum peut te renvoyer",
-      "reflection": "Tu n'es pas seulement fatigué. Un cycle net apparaît : oui automatique, surcharge intérieure, irritation, puis culpabilité. La pression semble venir moins d'une seule demande que de la vitesse à laquelle tu t'éloignes de ce dont tu as besoin.",
+      "reflection": "Tu n'es pas seulement débordé. Un rôle apparaît : tu deviens d'abord celui qui tient, et tu remarques trop tard ta propre limite. La culpabilité arrive après, mais le mouvement commence plus tôt : tu t'éloignes de ton besoin dès que quelqu'un a besoin de toi.",
       "highlights": [
         {
-          "title": "Concret, pas générique",
-          "body": "Aurum part de ce que tu as vraiment écrit, pas d'un discours motivationnel plaqué."
+          "title": "Plus analytique, moins générique",
+          "body": "Aurum lit la séquence émotionnelle sous la page, pas seulement le sujet en surface."
         },
         {
           "title": "Dans ta langue",
           "body": "Écris dans la langue qui te vient naturellement. Aurum répond dans la même langue."
         },
         {
-          "title": "Pensé pour la continuité",
-          "body": "Dans le temps, Aurum aide à rendre plus visibles les émotions, situations et besoins qui reviennent."
+          "title": "Pensé pour durer",
+          "body": "Quand les pages s'accumulent, les mêmes conflits, besoins et réactions deviennent plus visibles."
         }
       ]
     },
     "useCases": {
-      "title": "Moments fréquents où écrire aide vraiment",
-      "subtitle": "Pars d'un moment réel : pensées en boucle, pression intérieure, conflit, fatigue de décision. Aurum t'aide à en faire quelque chose de plus clair.",
-      "note": "Ancré dans la recherche sur l'écriture expressive et dans les motifs intérieurs qui deviennent plus visibles avec le temps",
+      "title": "Des moments réels pour commencer",
+      "subtitle": "Insomnie, pression intérieure, conflit, fatigue de décision. Pars d'un moment réel et écris-le simplement.",
+      "note": "L'écriture aide déjà. Aurum ajoute le reflet qui rend le motif plus net.",
       "cta": "Commencer gratuitement",
       "cards": [
         {
@@ -844,19 +844,19 @@
           "badge": "Self-talk",
           "title": "Tu te parles trop durement",
           "body": "Quand la petite voix dit \"je suis nul\", écris une version plus juste: \"j'avance petit à petit\". Ça aide à reprendre confiance.",
-          "cta": "Créer mon compte →"
+          "cta": "Commencer gratuitement →"
         },
         {
           "badge": "Overthinking",
           "title": "Tout est confus dans ta tête",
           "body": "Écris une idée par ligne. Tu transformes la confusion mentale en points clairs, puis tu choisis un seul petit pas pour aujourd'hui.",
-          "cta": "Je veux essayer →"
+          "cta": "Commencer gratuitement →"
         },
         {
           "badge": "Pression",
           "title": "Tu gardes tout, puis tu exploses",
           "body": "Quelques lignes régulières valent mieux qu'une longue session rare. Tu décompresses avant saturation et tu retrouves plus de calme.",
-          "cta": "Je commence maintenant →"
+          "cta": "Commencer gratuitement →"
         },
         {
           "badge": "Démarrage",
@@ -906,11 +906,11 @@
     },
     "problem": {
       "title": "À quoi ressemble la surcharge intérieure ?",
-      "body": "Les pensées tournent, les émotions se mélangent, et il devient plus difficile de voir ce qui compte vraiment. L'écriture rend ces signaux plus lisibles."
+      "body": "Les pensées tournent, les émotions se mélangent, et les mêmes situations reviennent sans devenir plus claires."
     },
     "solution": {
-      "title": "L'écriture ralentit assez pour voir clair.",
-      "body": "Écrire en privé donne à tes pensées un endroit où se poser. Aurum ajoute une réflexion guidée douce pour laisser émerger la clarté et les motifs récurrents dans le temps."
+      "title": "L'écriture donne à l'expérience un endroit où se poser.",
+      "body": "Aurum ajoute un reflet psychologiquement précis, pour rendre plus visibles ce qui revient, se contredit, ou reste sans se dire."
     },
     "trust": {
       "eyebrow": "Confiance",
@@ -937,8 +937,8 @@
     "finalCta": {
       "button": "Commencer gratuitement",
       "buttonAuthenticated": "Continuer à écrire",
-      "note": "7 jours gratuits • Espace privé",
-      "subtitle": "Ouvre un espace privé pour écrire, recevoir des reflets guidés, et suivre ce qui revient dans le temps.",
+      "note": "7 jours gratuits • Juge par toi-même la qualité des reflets",
+      "subtitle": "Écris quelques pages honnêtes, lis ce qu'Aurum te renvoie, et vois si la clarté est différente de ce que tu as déjà essayé.",
       "cards": [
         {
           "title": "writing",
@@ -948,7 +948,7 @@
         {
           "title": "analysis",
           "eyebrow": "Réflexion",
-          "body": "Des repères guidés pour voir émerger tes thèmes récurrents, tes rythmes émotionnels et tes besoins."
+          "body": "Un reflet psychologiquement précis, qui nomme la boucle, la tension ou la contradiction visible dans tes mots."
         },
         {
           "title": "privacy",
@@ -958,7 +958,7 @@
         {
           "title": "continuity",
           "eyebrow": "Continuité",
-          "body": "Ta réflexion s'approfondit dans le temps, page après page, sans perdre le fil."
+          "body": "Quand tu continues à écrire, Aurum aide les motifs récurrents à devenir plus visibles."
         }
       ]
     },

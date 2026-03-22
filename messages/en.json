@@ -96,7 +96,7 @@
       "line1": "This private space is yours.",
       "line2": "Write without filtering. Aurum reflects back what stands out, what keeps returning, and where more clarity may be waiting.",
       "line3": "Over time, your pages begin to reveal recurring emotional patterns you can recognize more easily.",
-      "badge": "Private AI-guided reflection"
+      "badge": "Private reflection"
     },
     "personalityQuestionnaire": {
       "fallbackArchetype": "The Decider",
@@ -459,7 +459,7 @@
     "checkoutNoUrl": "No payment URL received.",
     "offerPending": "Offer in preparation. Contact us at aurumdiary.com to be notified.",
     "title": "Choose your plan",
-    "subtitle": "Write without self-censorship, receive gentle AI-guided reflection, and uncover recurring inner patterns over time.",
+    "subtitle": "Write without self-censorship, receive psychologically sharp reflection, and uncover recurring inner patterns over time.",
     "recommended": "Recommended",
     "stripeNote": "Subscriptions are handled by Stripe. Cancel anytime.",
     "currentPlan": "Current plan",
@@ -467,7 +467,7 @@
     "monthly": {
       "name": "Monthly",
       "period": "/month",
-      "description": "Private AI-guided reflection and emotional clarity, billed monthly.",
+      "description": "Private writing, psychologically sharp reflection, and emotional clarity, billed monthly.",
       "cta": "Choose monthly"
     },
     "yearly": {
@@ -478,7 +478,7 @@
     },
     "features": {
       "entries": "Unlimited private encrypted writing",
-      "conversations": "Unlimited AI-guided reflection with Aurum",
+      "conversations": "Unlimited reflection with Aurum",
       "history": "Your full history and how it evolves over time",
       "export": "Export your writing and reflections",
       "reflections": "Recurring patterns and in-depth reflections"
@@ -495,19 +495,19 @@
     }
   },
   "hero": {
-    "badge": "PRIVATE GUIDED REFLECTION",
-    "title": "Write in private. See what keeps returning.",
-    "subtitle": "Aurum is a private AI-guided reflection space. Write honestly, get clear reflections, and see what keeps returning over time.",
-    "helper": "Try a first line here. Aurum will open it inside your private page.",
+    "badge": "PRIVATE WRITING • SHARP REFLECTION",
+    "title": "Write in private. See yourself more clearly.",
+    "subtitle": "Aurum is a private journal for people who carry a lot internally. You write honestly. Aurum gives back the emotion, contradiction, or inner movement that is actually visible in your words.",
+    "helper": "Write one honest line. Aurum opens it inside your private page.",
     "cta": "Start for free",
     "ctaSecondary": "Write a first page",
     "ctaAuthenticated": "Continue writing",
     "ctaSecondaryAuthenticated": "Open my journal",
     "ctaLoading": "Loading...",
-    "languagesBadge": "Multilingual reflection",
+    "languagesBadge": "Aurum replies in your language",
     "interfaceLanguage": "On your first visit, Aurum opens in your browser language. After that, it keeps the language you choose.",
-    "languages": "You can write in English, French, Spanish, Italian, German, or Portuguese. Aurum replies in your language.",
-    "trust": "Encrypted by default • Guided reflection • Private by design.",
+    "languages": "Write in English, French, Spanish, Italian, German, or Portuguese.",
+    "trust": "7 days free • Private by design • Cancel anytime.",
     "placeholders": {
       "0": "I can't sleep, my mind keeps replaying tomorrow's meeting...",
       "1": "I feel completely overwhelmed by my to-do list today...",
@@ -780,43 +780,43 @@
       "writeCtaArrow": "Continue writing"
     },
     "studySection": {
-      "title": "What research shows about writing things down",
-      "subtitle": "Across expressive writing studies, short repeated writing sessions are linked to clearer emotional processing, less rumination, and lower tension for some participants.",
+      "title": "What research shows",
+      "subtitle": "Expressive writing research links short repeated writing sessions with clearer emotional processing and lower rumination in some participants.",
       "cta": "Start for free",
       "ctaAuthenticated": "Continue writing"
     },
     "studyCards": [
       {
         "eyebrow": "Research finding",
-        "title": "Short repeated sessions are the format studied most often",
-        "body": "A common protocol is 15 to 20 minutes of writing, repeated 3 to 5 times around one difficult experience.",
-        "example": "Try this: 10 minutes tonight, then repeat it a few times this week."
+        "title": "Short repeated writing is the format studied most often",
+        "body": "A common protocol is 15 to 20 minutes of writing, repeated 3 to 5 times around one meaningful or difficult experience.",
+        "example": "Try this: 10 minutes tonight, then a few returns this week."
       },
       {
         "eyebrow": "Research finding",
-        "title": "Putting feelings into words can make experience easier to process",
-        "body": "Studies on expressive writing suggest that naming emotions can make inner experience more organized and easier to understand.",
-        "example": "Try this: write what happened, what you felt, and what you needed."
+        "title": "Putting experience into words can make it easier to process",
+        "body": "Studies suggest that describing events and naming emotions can make inner experience more structured and easier to understand.",
+        "example": "Try this: what happened, what you felt, what you needed."
       },
       {
         "eyebrow": "Research finding",
-        "title": "Benefits appear through repetition, not one perfect page",
-        "body": "Systematic reviews suggest that writing works best as a repeated practice, not as a one-off performance.",
+        "title": "The value comes from repetition, not from writing perfectly",
+        "body": "Reviews suggest that benefits appear through repeated sessions, not through one exceptional page.",
         "example": "Try this: five honest minutes, three times this week."
       }
     ],
     "exampleSection": {
       "eyebrow": "What Aurum gives back",
-      "title": "After one page, Aurum helps you see the pattern more clearly",
-      "subtitle": "It does more than summarize. It reflects back what stands out, what repeats, and what may deserve another page.",
+      "title": "After one page, Aurum names what is actually happening",
+      "subtitle": "Aurum does not just summarize. It reflects the loop, contradiction, or pressure that is visible in your writing.",
       "entryLabel": "What you write",
       "entry": "I keep saying yes to everyone, then I feel overwhelmed and angry, and then guilty for feeling angry.",
       "reflectionLabel": "What Aurum may reflect back",
-      "reflection": "You are not only tired. A clear cycle is showing up: automatic yes, inner overload, irritation, then guilt. The pressure seems to come less from one request than from how quickly you move away from what you need.",
+      "reflection": "You are not only overloaded. A role appears: you become the reliable one first, and only notice your own limit afterward. The guilt comes late, but the movement starts much earlier: you move away from what you need the moment someone else needs something from you.",
       "highlights": [
         {
-          "title": "Concrete, not generic",
-          "body": "Aurum works from what you actually wrote, not from a motivational script."
+          "title": "Psychologically sharper",
+          "body": "Aurum reads the emotional sequence underneath the page, not just the topic on the surface."
         },
         {
           "title": "In your own language",
@@ -824,14 +824,14 @@
         },
         {
           "title": "Built for continuity",
-          "body": "Over time, Aurum helps recurring emotions, situations, and needs become easier to recognize."
+          "body": "As pages accumulate, the same conflicts, needs, and reactions become easier to recognize."
         }
       ]
     },
     "useCases": {
-      "title": "Common moments when writing helps most",
-      "subtitle": "Start from a real moment: looping thoughts, inner pressure, conflict, decision fatigue. Aurum helps you turn it into something clearer.",
-      "note": "Grounded in expressive writing research and real inner patterns that become easier to spot over time",
+      "title": "Real moments to start from",
+      "subtitle": "Insomnia, inner pressure, conflict, decision fatigue. Start from a real moment and write it down plainly.",
+      "note": "Private writing helps. Aurum adds the reflection that makes the pattern clearer.",
       "cta": "Start for free",
       "cards": [
         {
@@ -844,19 +844,19 @@
           "badge": "Self-talk",
           "title": "You speak to yourself too harshly",
           "body": "When the inner voice says “I am useless,” write a fairer version: “I am moving forward step by step.” It helps rebuild confidence.",
-          "cta": "Create my account →"
+          "cta": "Start for free →"
         },
         {
           "badge": "Overthinking",
           "title": "Everything feels tangled in your head",
           "body": "Write one idea per line. You turn mental confusion into clear points, then pick one small step for today.",
-          "cta": "I want to try →"
+          "cta": "Start for free →"
         },
         {
           "badge": "Pressure",
           "title": "You keep it all in until you explode",
           "body": "A few regular lines are better than one rare long session. You decompress before saturation and regain calm.",
-          "cta": "I am starting now →"
+          "cta": "Start for free →"
         },
         {
           "badge": "Starting",
@@ -906,11 +906,11 @@
     },
     "problem": {
       "title": "What does inner overload feel like?",
-      "body": "Thoughts keep circling, feelings blur together, and it becomes harder to see what matters. Writing makes those signals easier to notice."
+      "body": "Thoughts loop, emotions blur, and the same situations keep returning without becoming clearer."
     },
     "solution": {
-      "title": "Writing slows things down enough to be seen.",
-      "body": "Private writing gives your thoughts somewhere to land. Aurum adds gentle guided reflection so clarity and recurring patterns can emerge over time."
+      "title": "Writing gives the experience a place to land.",
+      "body": "Aurum adds a psychologically sharp reflection, so what repeats, conflicts, or stays unspoken becomes easier to see."
     },
     "trust": {
       "eyebrow": "Trust",
@@ -937,8 +937,8 @@
     "finalCta": {
       "button": "Start for free",
       "buttonAuthenticated": "Continue writing",
-      "note": "7 days free • Private space",
-      "subtitle": "Open a private space to write, receive guided reflection, and follow what keeps returning over time.",
+      "note": "7 days free • Judge the reflection quality for yourself",
+      "subtitle": "Write a few honest pages, read what Aurum gives back, and see whether the clarity feels different from anything else you have tried.",
       "cards": [
         {
           "title": "writing",
@@ -948,7 +948,7 @@
         {
           "title": "reflection",
           "eyebrow": "Reflection",
-          "body": "Guided reflection that helps recurring themes, emotional rhythms, and unmet needs become visible over time."
+          "body": "Psychologically sharp reflection that names the loop, tension, or contradiction visible in your words."
         },
         {
           "title": "privacy",
@@ -958,7 +958,7 @@
         {
           "title": "continuity",
           "eyebrow": "Continuity",
-          "body": "Your reflection deepens over time, page after page, without losing continuity."
+          "body": "As you keep writing, Aurum helps recurring patterns become easier to recognize."
         }
       ]
     },
