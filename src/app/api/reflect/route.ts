@@ -44,18 +44,37 @@ type SupportedLocale = Locale;
 
 const PHILOSOPHY_MODE_SYSTEM_PROMPT = PHILOSOPHY_SYSTEM_PROMPT;
 
-function detectAurumIntent(content: string): AurumIntent {
-  const text = content.toLowerCase();
-  if (/(que faire|que puis-je faire|plan|prochaine etape|prochaine étape|action|aide moi a agir|aide-moi a agir|what should i do|what can i do|next step|what now|que hago|qué hago|que puedo hacer|qué puedo hacer|que devo fazer|o que faço|o que faco|o que posso fazer|cosa posso fare|cosa dovrei fare|che faccio|was soll ich tun|was kann ich tun|nächster schritt|naechster schritt)/.test(text)) {
+const ACTION_INTENT_REGEX = /(que faire|que puis-je faire|plan|prochaine etape|prochaine étape|action|aide moi a agir|aide-moi a agir|what should i do|what can i do|next step|what now|que hago|qué hago|que puedo hacer|qué puedo hacer|que devo fazer|o que faço|o que faco|o que posso fazer|cosa posso fare|cosa dovrei fare|che faccio|was soll ich tun|was kann ich tun|nächster schritt|naechster schritt)/;
+const PHILOSOPHY_INTENT_REGEX = /(philosophie|philosophique|epistemologie|épistémologie|metaphysique|métaphysique|ethique|éthique|philosophy|philosophical|epistemology|metaphysics|ethics|filosofia|filosófico|filosofico|epistemologia|metafisica|etica|filosofia|filosofica|epistemologia|metafisica|ética|filosofia|filosófica|epistemología|metafísica|ethik|philosophisch|epistemologie|metaphysik|platon|aristote|kant|nietzsche|stoicisme|stoïcisme|stoicism|estoicismo|stoizismus|existentialisme|existentialism|existencialismo|existenzialismus)/;
+const ANALYSIS_INTENT_REGEX = /(analyse|analyse-moi|explique|clarifie|clarifier|comprendre|pourquoi|analyze|analyse this|explain|clarify|understand|why|analiza|analise|explica|aclara|comprender|por que|por qué|analizza|spiega|chiarisci|capire|perché|porque|analysiere|erkläre|erklaere|kläre|klaere|verstehen|warum)/;
+const CONVERSATION_INTENT_REGEX = /(conversation en cours|utilisateur:|aurum:|reponds|réponds|continuer l'echange|continuer l'échange|reply|respond|keep going|continue the conversation|responde|segue|continua|antworten|weiter)/;
+
+function detectAurumIntent(content: string, userMessage?: string): AurumIntent {
+  const latestText = (userMessage || content).toLowerCase();
+  const fullText = content.toLowerCase();
+  const isConversationFollowUp = typeof userMessage === 'string' && userMessage.trim().length > 0;
+
+  if (isConversationFollowUp) {
+    if (PHILOSOPHY_INTENT_REGEX.test(latestText)) {
+      return 'philosophy';
+    }
+    if (ACTION_INTENT_REGEX.test(latestText)) {
+      return 'action';
+    }
+    return 'conversation';
+  }
+
+  const text = fullText;
+  if (ACTION_INTENT_REGEX.test(text)) {
     return 'action';
   }
-  if (/(philosophie|philosophique|epistemologie|épistémologie|metaphysique|métaphysique|ethique|éthique|philosophy|philosophical|epistemology|metaphysics|ethics|filosofia|filosófico|filosofico|epistemologia|metafisica|etica|filosofia|filosofica|epistemologia|metafisica|ética|filosofia|filosófica|epistemología|metafísica|ethik|philosophisch|epistemologie|metaphysik|platon|aristote|kant|nietzsche|stoicisme|stoïcisme|stoicism|estoicismo|stoizismus|existentialisme|existentialism|existencialismo|existenzialismus)/.test(text)) {
+  if (PHILOSOPHY_INTENT_REGEX.test(text)) {
     return 'philosophy';
   }
-  if (/(analyse|analyse-moi|explique|clarifie|clarifier|comprendre|pourquoi|analyze|analyse this|explain|clarify|understand|why|analiza|analise|explica|aclara|comprender|por que|por qué|analizza|spiega|chiarisci|capire|perché|porque|analysiere|erkläre|erklaere|kläre|klaere|verstehen|warum)/.test(text)) {
+  if (ANALYSIS_INTENT_REGEX.test(text)) {
     return 'analysis';
   }
-  if (/(conversation en cours|utilisateur:|aurum:|reponds|réponds|continuer l'echange|continuer l'échange|reply|respond|keep going|continue the conversation|responde|segue|continua|antworten|weiter)/.test(text)) {
+  if (CONVERSATION_INTENT_REGEX.test(text)) {
     return 'conversation';
   }
   return 'reflection';
@@ -263,10 +282,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 1. Detect intent (instant, no API call)
-    const detectedIntent = detectAurumIntent(normalizedUserMessage || content);
-    const intent = isConversationFollowUp && detectedIntent === 'reflection'
-      ? 'conversation'
-      : detectedIntent;
+    const intent = detectAurumIntent(content, normalizedUserMessage || undefined);
     const skillId = getSkillIdForIntent(intent);
     const userLanguage = resolveReplyLanguage(normalizedUserMessage || content, requestedLocale, content);
     const promptLanguage = resolvePromptLanguage(userLanguage, requestedLocale);
