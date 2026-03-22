@@ -48,6 +48,7 @@ const ACTION_INTENT_REGEX = /(que faire|que puis-je faire|plan|prochaine etape|p
 const PHILOSOPHY_INTENT_REGEX = /(philosophie|philosophique|epistemologie|épistémologie|metaphysique|métaphysique|ethique|éthique|philosophy|philosophical|epistemology|metaphysics|ethics|filosofia|filosófico|filosofico|epistemologia|metafisica|etica|filosofia|filosofica|epistemologia|metafisica|ética|filosofia|filosófica|epistemología|metafísica|ethik|philosophisch|epistemologie|metaphysik|platon|aristote|kant|nietzsche|stoicisme|stoïcisme|stoicism|estoicismo|stoizismus|existentialisme|existentialism|existencialismo|existenzialismus)/;
 const ANALYSIS_INTENT_REGEX = /(analyse|analyse-moi|explique|clarifie|clarifier|comprendre|pourquoi|analyze|analyse this|explain|clarify|understand|why|analiza|analise|explica|aclara|comprender|por que|por qué|analizza|spiega|chiarisci|capire|perché|porque|analysiere|erkläre|erklaere|kläre|klaere|verstehen|warum)/;
 const CONVERSATION_INTENT_REGEX = /(conversation en cours|utilisateur:|aurum:|reponds|réponds|continuer l'echange|continuer l'échange|reply|respond|keep going|continue the conversation|responde|segue|continua|antworten|weiter)/;
+const LIGHT_ACKNOWLEDGEMENT_REGEX = /^(ok|okay|ok merci|merci|merci beaucoup|d'accord|dac|ça va|ca va|oui|non|peut-etre|peut-être|je ne sais pas|jsp|maybe|yes|no|thanks|thank you|i don't know|idk|vale|gracias|si|sí|no se|no sé|obrigado|obrigada|talvez|nao sei|não sei|grazie|forse|ich weiss nicht|ich weiß nicht|danke)$/;
 
 function detectAurumIntent(content: string, userMessage?: string): AurumIntent {
   const latestText = (userMessage || content).toLowerCase();
@@ -61,7 +62,13 @@ function detectAurumIntent(content: string, userMessage?: string): AurumIntent {
     if (ACTION_INTENT_REGEX.test(latestText)) {
       return 'action';
     }
-    return 'conversation';
+    if (LIGHT_ACKNOWLEDGEMENT_REGEX.test(latestText) || CONVERSATION_INTENT_REGEX.test(latestText)) {
+      return 'conversation';
+    }
+    if (ANALYSIS_INTENT_REGEX.test(latestText)) {
+      return 'analysis';
+    }
+    return 'analysis';
   }
 
   const text = fullText;
@@ -366,8 +373,8 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify({
         model: 'deepseek-chat',
         messages,
-        temperature: 1.15,
-        max_tokens: shortFollowUp ? 180 : 500,
+        temperature: shortFollowUp ? 1.0 : 1.05,
+        max_tokens: shortFollowUp ? 220 : 850,
         stream: true,
       }),
       signal: controller.signal,
