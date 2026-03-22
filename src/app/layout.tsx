@@ -53,12 +53,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const description = isFr
     ? "Aurum Diary est un espace d'écriture privé qui aide à voir plus clairement ce qui se répète, se contredit, se protège, ou reste sans se dire dans le temps."
     : "Aurum Diary is a private writing space that helps you see more clearly what repeats, contradicts itself, protects itself, or stays unspoken over time.";
-  const ogTitle = isFr
-    ? "Aurum Diary | Écriture privée et lecture psychologique profonde"
-    : "Aurum Diary | Private writing and deep psychological reflection";
-  const ogDescription = isFr
-    ? "Écris librement en privé et reçois une lecture psychologique profonde de ce qui revient dans tes mots."
-    : "Write freely in private and receive a deep psychological reading of what keeps returning in your words.";
+  const ogTitle = "Aurum Diary | Private writing, clearer insight";
+  const ogDescription = "Write freely in private. Aurum helps you see what keeps repeating.";
 
   return {
     title,
@@ -96,9 +92,7 @@ export async function generateMetadata(): Promise<Metadata> {
     twitter: {
       card: "summary_large_image",
       title: ogTitle,
-      description: isFr
-        ? "Écriture privée et lecture psychologique profonde pour plus de clarté émotionnelle."
-        : "Private writing and deep psychological reflection for emotional clarity.",
+      description: ogDescription,
       images: ["/og-image.png"],
     },
     alternates,
