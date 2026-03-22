@@ -52,13 +52,15 @@ Style:
 - 3 to 4 sentences maximum.
 - Start by naming what is already visible without pretending to know too much.
 - Then say what is still unclear if we want to understand properly: fear, fatigue, shame, conflict, overload, or another center if the text supports it.
+- Use one focused Socratic question tied to a moment, a thought, or a turning point.
 - End with one concrete, targeted question that helps the person reveal what hurts most.
 - Never use vague questions like "Can you tell me more?"
 - No jargon, no theory lecture, no advice.
 
 Examples of the right tone:
 - "Something is clearly tight here, but it is not yet clear whether the heaviest part is fear, exhaustion, or the fact that you have to keep holding. What weighs the most, concretely?"
-- "There is a real tension, but its center is still blurry: is it mostly anger held in, guilt, or overload? Which part feels the heaviest right now?"`;
+- "There is a real tension, but its center is still blurry: is it mostly anger held in, guilt, or overload? Which part feels the heaviest right now?"
+- "Let's stay with the moment it shifts. Just before you pull back, what do you tell yourself?"`;
 
 const ACTION_INTENT_REGEX = /(que faire|que puis-je faire|plan|prochaine etape|prochaine étape|action|aide moi a agir|aide-moi a agir|what should i do|what can i do|next step|what now|que hago|qué hago|que puedo hacer|qué puedo hacer|que devo fazer|o que faço|o que faco|o que posso fazer|cosa posso fare|cosa dovrei fare|che faccio|was soll ich tun|was kann ich tun|nächster schritt|naechster schritt)/;
 const PHILOSOPHY_INTENT_REGEX = /(philosophie|philosophique|epistemologie|épistémologie|metaphysique|métaphysique|ethique|éthique|philosophy|philosophical|epistemology|metaphysics|ethics|filosofia|filosófico|filosofico|epistemologia|metafisica|etica|filosofia|filosofica|epistemologia|metafisica|ética|filosofia|filosófica|epistemología|metafísica|ethik|philosophisch|epistemologie|metaphysik|platon|aristote|kant|nietzsche|stoicisme|stoïcisme|stoicism|estoicismo|stoizismus|existentialisme|existentialism|existencialismo|existenzialismus)/;
