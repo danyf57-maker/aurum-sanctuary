@@ -103,7 +103,7 @@ function SignupPage() {
     ? {
         title: "Creer un compte",
         description:
-          "Cree ton espace de reflexion prive. Ecris librement, recois des reflets guides, et remarque les motifs recurrents dans le temps.",
+          "Cree ton espace d'ecriture prive. Ecris librement, recois une lecture psychologique profonde, et remarque les motifs recurrents dans le temps.",
         encrypted: "Chiffre par defaut et prive par conception",
         languagePolicy:
           "Lors de ta premiere visite, Aurum s'ouvre dans la langue de ton navigateur. Ensuite, il garde la langue que tu choisis. Les reponses suivent la langue dans laquelle tu ecris.",
@@ -116,7 +116,7 @@ function SignupPage() {
     : {
         title: "Create an account",
         description:
-          "Create your private reflection space. Write freely, receive guided reflection, and notice recurring patterns over time.",
+          "Create your private writing space. Write freely, receive deep psychological reflection, and notice recurring patterns over time.",
         encrypted: "Encrypted by default and private by design",
         languagePolicy:
           "On your first visit, Aurum opens in your browser language. After that, it keeps the language you choose. Aurum replies in the language you write in.",

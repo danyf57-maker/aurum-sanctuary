@@ -20,7 +20,7 @@ const HeroIntegrated = () => {
         badge: "ECRITURE PRIVEE • REFLET PRECIS",
         title: "Ecris en prive. Vois plus clair en toi.",
         subtitle:
-          "Aurum est un journal prive pour les personnes qui portent beaucoup interieurement. Tu ecris franchement. Aurum te renvoie l'emotion, la contradiction, ou le mouvement interieur reellement visible dans tes mots.",
+          "Aurum est un espace d'ecriture prive pour les personnes qui portent beaucoup interieurement. Tu ecris franchement. Aurum te renvoie une lecture psychologique profonde de ce qui se repete, se contredit, se protege, ou reste encore sans se dire dans tes mots.",
         helper:
           "Ecris une ligne honnete. Aurum l'ouvre dans ta page privee.",
         cta: "Commencer gratuitement",
@@ -43,7 +43,7 @@ const HeroIntegrated = () => {
         badge: "PRIVATE WRITING • SHARP REFLECTION",
         title: "Write in private. See yourself more clearly.",
         subtitle:
-          "Aurum is a private journal for people who carry a lot internally. You write honestly. Aurum gives back the emotion, contradiction, or inner movement that is actually visible in your words.",
+          "Aurum is a private writing space for people who carry a lot internally. You write honestly. Aurum gives back a deep psychological reading of what repeats, contradicts itself, protects itself, or stays unspoken in your words.",
         helper:
           "Write one honest line. Aurum opens it inside your private page.",
         cta: "Start for free",

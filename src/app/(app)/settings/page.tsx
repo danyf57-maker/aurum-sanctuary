@@ -256,8 +256,8 @@ export default function SettingsPage() {
           ? "Passe à l'annuel sans casser ton fil de réflexion"
           : "Move to yearly without breaking your reflection thread",
         annualOfferBody: isFr
-          ? "Si Aurum fait déjà partie de ta manière d'écrire, de recevoir des reflets guidés, et de voir ce qui revient, le forfait annuel t'offre 2 mois."
-          : "If Aurum is already part of how you write, receive guided reflection, and notice what keeps returning, the yearly plan gives you 2 months free.",
+          ? "Si Aurum fait déjà partie de ta manière d'écrire, de recevoir une lecture psychologique profonde, et de voir ce qui revient, le forfait annuel t'offre 2 mois."
+          : "If Aurum is already part of how you write, receive deep psychological reflection, and notice what keeps returning, the yearly plan gives you 2 months free.",
         annualOfferMeta: isFr
           ? "Proposé après 3 mois d'abonnement mensuel, directement dans votre espace de facturation Stripe."
           : "Shown after 3 months on monthly billing, directly inside your Stripe billing space.",

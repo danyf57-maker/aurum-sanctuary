@@ -6,11 +6,11 @@ export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
   const isFr = locale === "fr";
   const title = isFr
-    ? "Manifeste Aurum | Confidentialité, réflexion guidée et clarté émotionnelle"
-    : "Aurum Manifesto | Privacy, guided reflection, and emotional clarity";
+    ? "Manifeste Aurum | Confidentialité, lecture psychologique et clarté émotionnelle"
+    : "Aurum Manifesto | Privacy, psychological reflection, and emotional clarity";
   const description = isFr
-    ? "Le manifeste d'Aurum: un espace privé, sans publicité, centré sur la réflexion guidée, la clarté émotionnelle et la confidentialité."
-    : "The Aurum manifesto: a private, ad-free reflection space built around guided reflection, emotional clarity, and trust.";
+    ? "Le manifeste d'Aurum: un espace privé, sans publicité, centré sur la lecture psychologique, la clarté émotionnelle et la confidentialité."
+    : "The Aurum manifesto: a private, ad-free reflection space built around psychological reflection, emotional clarity, and trust.";
   const alternates = buildAlternates("/manifeste", locale);
 
   return {
@@ -44,8 +44,8 @@ export default async function ManifestePage() {
       "@type": "WebPage",
       name: isFr ? "Notre Manifeste de Confiance" : "Our Trust Manifesto",
       description: isFr
-        ? "Le manifeste d'Aurum autour de la confidentialité, de la réflexion guidée et de la clarté émotionnelle."
-        : "Aurum's manifesto around privacy, guided reflection, and emotional clarity.",
+        ? "Le manifeste d'Aurum autour de la confidentialité, de la lecture psychologique et de la clarté émotionnelle."
+        : "Aurum's manifesto around privacy, psychological reflection, and emotional clarity.",
       url: pageUrl,
       inLanguage: schemaLanguage(locale),
       isPartOf: "https://aurumdiary.com",

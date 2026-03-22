@@ -8,11 +8,11 @@ export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
   const isFr = locale === "fr";
   const title = isFr
-    ? "Guides Aurum | Clarté émotionnelle, réflexion guidée et motifs récurrents"
-    : "Aurum Guides | Emotional clarity, guided reflection, and recurring patterns";
+    ? "Guides Aurum | Clarté émotionnelle, lecture psychologique et motifs récurrents"
+    : "Aurum Guides | Emotional clarity, psychological reflection, and recurring patterns";
   const description = isFr
-    ? "Ressources Aurum en format question-réponse: clarté émotionnelle, réflexion guidée, écriture privée et motifs qui reviennent dans le temps."
-    : "Aurum resources in clear Q&A format: emotional clarity, guided reflection, private writing, and recurring patterns over time.";
+    ? "Ressources Aurum en format question-réponse: clarté émotionnelle, lecture psychologique, écriture privée et motifs qui reviennent dans le temps."
+    : "Aurum resources in clear Q&A format: emotional clarity, psychological reflection, private writing, and recurring patterns over time.";
   const alternates = buildAlternates("/guides", locale);
 
   return {
@@ -46,7 +46,7 @@ export default async function GuidesPage() {
     name: isFr ? "Guides Aurum" : "Aurum Guides",
     description: isFr
       ? "Des réponses concrètes pour mieux comprendre ce que tu ressens et ce qui revient."
-      : "Practical answers to understand emotions, patterns, and guided reflection more clearly.",
+      : "Practical answers to understand emotions, patterns, and psychological reflection more clearly.",
     url: buildAlternates("/guides", locale).canonical,
     inLanguage: schemaLanguage(locale),
     isPartOf: SITE_URL,

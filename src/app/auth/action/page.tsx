@@ -74,8 +74,8 @@ function AuthActionContent() {
       setStatus('success');
       setMessage(
         txt(
-          "Votre email est vérifié. Connectez-vous pour commencer votre réflexion privée guidée et voir ce qui revient dans le temps.",
-          "Your email is verified. Sign in to begin your private guided reflection and notice what keeps returning over time."
+          "Votre email est vérifié. Connectez-vous pour commencer votre écriture privée et voir ce qui revient dans le temps.",
+          "Your email is verified. Sign in to begin your private writing and notice what keeps returning over time."
         )
       );
 

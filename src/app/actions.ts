@@ -347,8 +347,8 @@ export async function saveJournalEntry(
       return {
         message: txt(
           locale,
-          `Vous avez utilisé vos ${FREE_ENTRY_LIMIT} sujets gratuits. Activez 7 jours offerts pour ouvrir de nouveaux sujets et continuer vos reflets guidés.`,
-          `You have used your ${FREE_ENTRY_LIMIT} free topics. Start your 7-day free trial to open new topics and continue guided reflection.`
+          `Vous avez utilisé vos ${FREE_ENTRY_LIMIT} sujets gratuits. Activez 7 jours offerts pour ouvrir de nouveaux sujets et continuer vos lectures psychologiques avec Aurum.`,
+          `You have used your ${FREE_ENTRY_LIMIT} free topics. Start your 7-day free trial to open new topics and continue your psychological reflections with Aurum.`
         ),
         freeLimitReached: true,
         entriesUsed: entryCount,
