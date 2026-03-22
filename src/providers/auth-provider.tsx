@@ -15,7 +15,7 @@ import {
   updateProfile,
   signOut
 } from 'firebase/auth';
-import { addDoc, collection, doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import {
   auth as firebaseAuth,
   firestore as db,
@@ -52,55 +52,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const locale = useLocale();
   const isFr = locale === 'fr';
   const txt = (fr: string, en: string) => (isFr ? fr : en);
-  const QUIZ_STORAGE_KEY = 'aurum-quiz-data';
-  const QUIZ_SYNC_KEY = 'aurum-quiz-synced-at';
   const isInAppBrowser = () => {
     if (typeof navigator === 'undefined') return false;
     const ua = navigator.userAgent || '';
     return /FBAN|FBAV|Instagram|Line|LinkedInApp|Snapchat|Twitter|GSA|WebView|wv/i.test(ua);
-  };
-
-  const syncLandingQuizAssessment = async (uid: string) => {
-    try {
-      const raw = localStorage.getItem(QUIZ_STORAGE_KEY);
-      if (!raw) return;
-
-      const quiz = JSON.parse(raw) as {
-        answers?: unknown;
-        profile?: unknown;
-        completedAt?: unknown;
-      };
-
-      const profile = String(quiz.profile || 'MIXTE');
-      const answers = Array.isArray(quiz.answers) ? quiz.answers.map((entry) => String(entry)) : [];
-      const completedAt = typeof quiz.completedAt === 'string' ? quiz.completedAt : new Date().toISOString();
-
-      const alreadySyncedAt = localStorage.getItem(QUIZ_SYNC_KEY);
-      if (alreadySyncedAt === completedAt) return;
-
-      const profileTitleMap: Record<string, string> = {
-        D: 'Le Pionnier',
-        I: 'Le Connecteur',
-        S: "L'Ancre",
-        C: "L'Architecte",
-        MIXTE: "Profil mixte • L'Équilibriste",
-      };
-
-      await addDoc(collection(db, 'users', uid, 'assessments'), {
-        source: 'landing-quiz',
-        profile,
-        profileTitle: profileTitleMap[profile] || 'Profil personnel',
-        answers,
-        completedAt,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-      });
-
-      localStorage.setItem(QUIZ_SYNC_KEY, completedAt);
-      logger.infoSafe('Landing quiz assessment synced after auth', { uid });
-    } catch (error) {
-      logger.errorSafe('Failed to sync landing quiz assessment after auth', error);
-    }
   };
 
   const resolveAppUrl = () => {
@@ -201,7 +156,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           // Use a type assertion or helper if needed, but for now just pass firebaseUser
           const finalUser = firebaseUser;
           setUser(finalUser);
-          await syncLandingQuizAssessment(finalUser.uid);
 
           // Listen to user document (created by server-side trigger)
           const userRef = doc(db, "users", finalUser.uid);

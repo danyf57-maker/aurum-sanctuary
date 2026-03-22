@@ -6,8 +6,8 @@
 
 "use client";
 
-import { useState, useEffect, Suspense, useRef, useMemo } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect, Suspense, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/providers/auth-provider";
 import { z } from "zod";
@@ -23,24 +23,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Eye, EyeOff, Shield, Sparkles } from "lucide-react";
-import { motion } from "framer-motion";
+import { Eye, EyeOff, Shield } from "lucide-react";
 import { trackEvent } from "@/lib/analytics/client";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { firestore as db } from "@/lib/firebase/web-client";
 import { localizeHref } from "@/lib/i18n/path";
 import { useLocale } from "@/hooks/use-locale";
 import { useTranslations } from "next-intl";
 import { resolveMessage } from "@/lib/i18n/resolve-message";
-
-interface QuizData {
-  answers: string[];
-  completedAt: string;
-  profile: string | null;
-}
-
-const QUIZ_STORAGE_KEY = "aurum-quiz-data";
-const QUIZ_SYNC_KEY = "aurum-quiz-synced-at";
 
 function makeSignupSchema(v: Record<string, string>) {
   return z
@@ -85,7 +73,6 @@ function SignupPage() {
     passwordsMismatch: tSign("validation.passwordsMismatch"),
   });
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{
     firstName?: string;
@@ -97,8 +84,6 @@ function SignupPage() {
   const [info, setInfo] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [quizData, setQuizData] = useState<QuizData | null>(null);
-  const [showQuizTeaser, setShowQuizTeaser] = useState(false);
   const isInAppBrowser = useMemo(() => {
     if (typeof navigator === "undefined") return false;
     const ua = navigator.userAgent || "";
@@ -106,9 +91,7 @@ function SignupPage() {
       ua
     );
   }, []);
-  const quizSyncInProgressRef = useRef(false);
-  const quizComplete = searchParams.get("quiz") === "complete";
-  const redirectAfterGoogle = quizComplete ? "/sanctuary/magazine" : "/sanctuary/write";
+  const redirectAfterGoogle = "/sanctuary/write";
   const onboardingPills = [
     tSign("pillPrivate"),
     tSign("pillGuided"),
@@ -145,61 +128,10 @@ function SignupPage() {
       };
 
   useEffect(() => {
-    if (!user || !quizComplete || !quizData?.profile || quizSyncInProgressRef.current) return;
-
-    const syncedAt = localStorage.getItem(QUIZ_SYNC_KEY);
-    if (syncedAt && syncedAt === quizData.completedAt) return;
-
-    quizSyncInProgressRef.current = true;
-    const profileTitleMap: Record<string, string> = {
-      D: "Le Pionnier",
-      I: "Le Connecteur",
-      S: "L'Ancre",
-      C: "L'Architecte",
-      MIXTE: "Profil mixte • L'Équilibriste",
-    };
-
-    void addDoc(collection(db, "users", user.uid, "assessments"), {
-      source: "landing-quiz",
-      profile: quizData.profile,
-      profileTitle: profileTitleMap[quizData.profile] || "Profil personnel",
-      answers: quizData.answers || [],
-      completedAt: quizData.completedAt,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-    })
-      .then(() => {
-        localStorage.setItem(QUIZ_SYNC_KEY, quizData.completedAt);
-      })
-      .catch((error) => {
-        console.error("Failed to sync quiz data after signup:", error);
-      })
-      .finally(() => {
-        quizSyncInProgressRef.current = false;
-      });
-  }, [quizComplete, quizData, user]);
-
-  useEffect(() => {
     if (!authLoading && user) {
       router.replace(redirectAfterGoogle);
     }
   }, [authLoading, redirectAfterGoogle, router, user]);
-
-  // Check for quiz completion
-  useEffect(() => {
-    if (quizComplete) {
-      const saved = localStorage.getItem(QUIZ_STORAGE_KEY);
-      if (saved) {
-        try {
-          const data: QuizData = JSON.parse(saved);
-          setQuizData(data);
-          setShowQuizTeaser(true);
-        } catch {
-          // Invalid quiz data, ignore
-        }
-      }
-    }
-  }, [quizComplete, searchParams]);
 
   const handleEmailSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -244,12 +176,6 @@ function SignupPage() {
         name: "signup",
         params: { method: "email", source: "signup_page" },
       });
-      if (showQuizTeaser && quizData?.profile) {
-        void trackEvent({
-          name: "signup_with_quiz",
-          params: { method: "email", profile_result: quizData.profile },
-        });
-      }
       router.push(to("/login?check_email=1"));
     } catch (error) {
       const errorCode =
@@ -281,12 +207,6 @@ function SignupPage() {
         name: "signup",
         params: { method: "google", source: "signup_page" },
       });
-      if (showQuizTeaser && quizData?.profile) {
-        void trackEvent({
-          name: "signup_with_quiz",
-          params: { method: "google", profile_result: quizData.profile },
-        });
-      }
       router.push(redirectAfterGoogle);
     } catch (error) {
       // Error toast shown by AuthProvider
@@ -314,25 +234,6 @@ function SignupPage() {
           <CardDescription>
             {resolveMessage(tSign("description"), signupFallback.description)}
           </CardDescription>
-
-          {/* Quiz Teaser */}
-          {showQuizTeaser && quizData?.profile && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mt-4 p-4 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 rounded-xl border border-amber-200 dark:border-amber-800"
-            >
-              <div className="flex items-center gap-2 mb-2">
-                <Sparkles className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-                <span className="text-xs font-semibold uppercase tracking-wider text-amber-700 dark:text-amber-300">
-                  {tSign("quizBadge")}
-                </span>
-              </div>
-              <p className="text-sm text-amber-800 dark:text-amber-200">
-                {tSign("quizText")}
-              </p>
-            </motion.div>
-          )}
 
           <div className="flex items-center gap-2 mt-3 px-3 py-2 bg-emerald-50 dark:bg-emerald-950/30 rounded-lg border border-emerald-200 dark:border-emerald-800">
             <Shield className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />

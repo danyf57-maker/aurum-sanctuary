@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import HeroIntegrated from '@/components/landing/HeroIntegrated';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -8,9 +8,6 @@ import { Compass, ArrowRight, ShieldCheck, Lock, Fingerprint, Brain, Moon, Flame
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/providers/auth-provider';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
-import { firestore as db } from '@/lib/firebase/web-client';
-import { trackEvent } from '@/lib/analytics/client';
 import { useLocalizedHref } from '@/hooks/use-localized-href';
 import { useTranslations } from 'next-intl';
 import { PricingOfferBlock } from '@/components/marketing/pricing-offer-block';
@@ -41,220 +38,7 @@ type MarketingExampleHighlight = {
     body: string;
 };
 
-type MarketingQuizQuestion = {
-    q: string;
-    options: Array<{
-        label: string;
-        text: string;
-    }>;
-};
-
-type MarketingProfile = {
-    title: string;
-    description: string;
-};
-
 const ExitIntent = () => null;
-
-const QuizSection = () => {
-    const { user } = useAuth();
-    const to = useLocalizedHref();
-    const t = useTranslations('marketingPage.quiz');
-    const [step, setStep] = useState(0);
-    const [answers, setAnswers] = useState<string[]>([]);
-    const quizStartedAtRef = useRef<number | null>(null);
-    const stepStartedAtRef = useRef<number>(Date.now());
-    const hasTrackedStartRef = useRef(false);
-    const hasTrackedResultRef = useRef(false);
-
-    const questions = t.raw('questions') as MarketingQuizQuestion[];
-
-    type ProfileKey = "D" | "I" | "S" | "C" | "MIXTE";
-
-    const profileMap = t.raw('profiles') as Record<ProfileKey, MarketingProfile>;
-
-    const getProfile = (currentAnswers: string[]): ProfileKey => {
-        const counts = { D: 0, I: 0, S: 0, C: 0 };
-        currentAnswers.forEach((a) => {
-            if (a in counts) counts[a as keyof typeof counts] += 1;
-        });
-        const max = Math.max(counts.D, counts.I, counts.S, counts.C);
-        const winners = (Object.keys(counts) as Array<keyof typeof counts>).filter(
-            (key) => counts[key] === max
-        );
-        return winners.length === 1 ? winners[0] : "MIXTE";
-    };
-
-    const persistQuizResult = async (profile: string, profileTitle: string, currentAnswers: string[]) => {
-        if (!user) return;
-        try {
-            await addDoc(collection(db, "users", user.uid, "assessments"), {
-                source: "landing-quiz",
-                profile,
-                profileTitle,
-                answers: currentAnswers,
-                completedAt: new Date().toISOString(),
-                createdAt: serverTimestamp(),
-                updatedAt: serverTimestamp(),
-            });
-        } catch (error) {
-            console.error("Failed to save landing quiz result:", error);
-        }
-    };
-
-    useEffect(() => {
-        if (step === questions.length && !hasTrackedResultRef.current) {
-            hasTrackedResultRef.current = true;
-            void trackEvent({
-                name: "quiz_result_viewed",
-                params: {
-                    profile_result: getProfile(answers),
-                    total_steps: questions.length,
-                },
-            });
-        }
-    }, [answers, questions.length, step]);
-
-    const handleAnswer = (option: string) => {
-        const now = Date.now();
-        if (!hasTrackedStartRef.current) {
-            hasTrackedStartRef.current = true;
-            quizStartedAtRef.current = now;
-            stepStartedAtRef.current = now;
-            void trackEvent({
-                name: "quiz_started",
-                params: {
-                    source_page: "landing",
-                },
-            });
-        }
-
-        const timeSpentMs = Math.max(0, now - stepStartedAtRef.current);
-        void trackEvent({
-            name: "quiz_step_completed",
-            params: {
-                step_number: step + 1,
-                answer_letter: option,
-                time_spent_ms: timeSpentMs,
-            },
-        });
-
-        const nextAnswers = [...answers, option];
-        setAnswers(nextAnswers);
-
-        const nextStep = step + 1;
-        if (nextStep === questions.length) {
-            const profile = getProfile(nextAnswers);
-            const profileTitle = profileMap[profile].title;
-            const totalTimeMs =
-                quizStartedAtRef.current != null
-                    ? Math.max(0, now - quizStartedAtRef.current)
-                    : null;
-            void trackEvent({
-                name: "quiz_complete",
-                params: {
-                    profile_result: profile,
-                    total_time_ms: totalTimeMs,
-                    total_steps: questions.length,
-                },
-            });
-            const quizData = {
-                answers: nextAnswers,
-                completedAt: new Date().toISOString(),
-                profile,
-            };
-            try {
-                localStorage.setItem("aurum-quiz-data", JSON.stringify(quizData));
-            } catch {
-                // No-op if storage is unavailable
-            }
-            void persistQuizResult(profile, profileTitle, nextAnswers);
-        }
-        stepStartedAtRef.current = Date.now();
-        setStep(nextStep);
-    };
-
-    const finalProfile = getProfile(answers);
-    const profile = profileMap[finalProfile];
-
-    return (
-        <section className="py-24 md:py-40 bg-stone-50/50">
-            <div className="container max-w-4xl">
-                <div className="bg-white border border-stone-200 rounded-[2.5rem] p-8 md:p-20 relative overflow-hidden shadow-sm">
-                    <AnimatePresence mode="wait">
-                        {step < questions.length ? (
-                            <motion.div
-                                key={step}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -20 }}
-                                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                                className="text-center"
-                            >
-                                <span className="text-primary/60 text-[10px] uppercase tracking-widest mb-6 block font-bold">
-                                    {t('stepBadge', { current: step + 1, total: questions.length })}
-                                </span>
-                                <h3 className="text-3xl md:text-5xl font-headline mb-12 text-stone-900">{questions[step].q}</h3>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    {questions[step].options.map((option) => (
-                                        <button
-                                            key={option.text}
-                                            onClick={() => handleAnswer(option.label)}
-                                            className="p-6 rounded-2xl bg-stone-50 border border-stone-100 hover:border-primary/40 hover:bg-primary/5 transition-all text-left text-stone-700 shadow-sm hover:shadow-md active:scale-[0.98]"
-                                        >
-                                            <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-primary/10 text-primary text-xs font-bold mr-2">
-                                                {option.label}
-                                            </span>
-                                            <span className="text-base font-light">{option.text}</span>
-                                        </button>
-                                    ))}
-                                </div>
-                            </motion.div>
-                        ) : (
-                            <motion.div
-                                key="result"
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                transition={{ duration: 0.6, ease: "easeOut" }}
-                                className="text-center"
-                            >
-                                <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-8 text-primary">
-                                    <ShieldCheck className="w-10 h-10" />
-                                </div>
-                                <h3 className="text-3xl md:text-5xl font-headline mb-6 text-stone-900">{t('resultTitle')}</h3>
-                                <p className="text-stone-500 text-lg mb-12 max-w-xl mx-auto leading-relaxed">
-                                    <span className="font-medium text-stone-700">{profile.title}</span>
-                                    <br />
-                                    {profile.description}
-                                </p>
-                                <Button size="lg" className="h-16 px-16 text-lg rounded-2xl shadow-xl hover:shadow-2xl transition-all" asChild>
-                                    <Link
-                                        href={user ? to('/sanctuary/magazine') : to(`/signup?quiz=complete&profile=${finalProfile}`)}
-                                        onClick={() =>
-                                            void trackEvent({
-                                                name: "quiz_cta_clicked",
-                                                params: {
-                                                    profile_result: finalProfile,
-                                                    cta_location: "quiz_result",
-                                                    destination: user ? "magazine" : "signup",
-                                                },
-                                            })
-                                        }
-                                    >
-                                        {user ? t('resultCtaLoggedIn') : t('resultCtaGuest')}
-                                    </Link>
-                                </Button>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-3xl rounded-full -translate-y-1/2 translate-x-1/2"></div>
-                    <div className="absolute bottom-0 left-0 w-32 h-32 bg-primary/5 blur-3xl rounded-full translate-y-1/2 -translate-x-1/2"></div>
-                </div>
-            </div>
-        </section>
-    );
-};
 
 const FloatingCTA = ({
     visible,
@@ -591,11 +375,6 @@ export default function Home() {
                         </div>
                     </div>
                 </section>
-
-                {/* SECTION 8: Interactive personality quiz (moved above FAQ) */}
-                <div id="evaluation">
-                    <QuizSection />
-                </div>
 
                 <section className="container max-w-3xl pb-24 md:pb-32">
                     <h2 className="text-4xl font-headline text-center mb-12">

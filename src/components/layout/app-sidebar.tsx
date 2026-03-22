@@ -6,7 +6,6 @@ import { cn } from "@/lib/utils";
 import {
   PenSquare,
   BookOpenText,
-  BarChart3,
   Settings,
   LogOut,
   LogIn,
@@ -24,7 +23,6 @@ import { useTranslations } from "next-intl";
 const NAV_ITEMS = [
   { key: "write",     descKey: "writeDesc",     href: "/sanctuary/write", icon: PenSquare },
   { key: "journal",   descKey: "journalDesc",   href: "/sanctuary", icon: BookOpenText },
-  { key: "magazine",  descKey: "magazineDesc",  href: "/sanctuary/magazine", icon: BarChart3 },
   { key: "settings",  descKey: "settingsDesc",  href: "/settings", icon: Settings },
 ] as const;
 

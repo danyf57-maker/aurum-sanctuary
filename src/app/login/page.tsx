@@ -22,20 +22,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Sparkles } from "lucide-react";
-import { motion } from "framer-motion";
 import { trackEvent } from "@/lib/analytics/client";
 import { localizeHref } from "@/lib/i18n/path";
 import { useLocale } from "@/hooks/use-locale";
 import { useTranslations } from "next-intl";
-
-interface QuizData {
-  answers: string[];
-  completedAt: string;
-  profile: string | null;
-}
-
-const QUIZ_STORAGE_KEY = "aurum-quiz-data";
 
 function LoginForm() {
   const { user, signInWithEmail, signInWithGoogle, loading: authLoading } = useAuth();
@@ -47,8 +37,6 @@ function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [info, setInfo] = useState<string | null>(null);
-  const [quizData, setQuizData] = useState<QuizData | null>(null);
-  const [showQuizTeaser, setShowQuizTeaser] = useState(false);
   const isInAppBrowser = useMemo(() => {
     if (typeof navigator === "undefined") return false;
     const ua = navigator.userAgent || "";
@@ -82,22 +70,6 @@ function LoginForm() {
       router.replace(redirectUrl);
     }
   }, [authLoading, redirectUrl, router, user]);
-
-  useEffect(() => {
-    const quizComplete = searchParams.get("quiz") === "complete";
-    if (quizComplete) {
-      const saved = localStorage.getItem(QUIZ_STORAGE_KEY);
-      if (saved) {
-        try {
-          const data: QuizData = JSON.parse(saved);
-          setQuizData(data);
-          setShowQuizTeaser(true);
-        } catch {
-          // Invalid quiz data, ignore
-        }
-      }
-    }
-  }, [searchParams]);
 
   const handleEmailLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -181,22 +153,6 @@ function LoginForm() {
         <CardHeader>
           <CardTitle>{t("title")}</CardTitle>
           <CardDescription>{t("description")}</CardDescription>
-
-          {showQuizTeaser && quizData?.profile && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mt-4 p-4 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 rounded-xl border border-amber-200 dark:border-amber-800"
-            >
-              <div className="flex items-center gap-2 mb-2">
-                <Sparkles className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-                <span className="text-xs font-semibold uppercase tracking-wider text-amber-700 dark:text-amber-300">
-                  {t("quizBadge")}
-                </span>
-              </div>
-              <p className="text-sm text-amber-800 dark:text-amber-200">{t("quizText")}</p>
-            </motion.div>
-          )}
 
           <div className="mt-4 flex flex-wrap gap-2">
             {onboardingPills.map((pill) => (

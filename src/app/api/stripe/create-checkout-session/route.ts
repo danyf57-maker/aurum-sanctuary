@@ -133,7 +133,7 @@ export async function POST(req: NextRequest) {
             ],
             mode: 'subscription',
             success_url: `${process.env.NEXT_PUBLIC_APP_URL}/sanctuary/write?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/sanctuary/magazine`,
+            cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/sanctuary/write`,
             metadata: {
                 userId,
                 firebaseUid: userId,

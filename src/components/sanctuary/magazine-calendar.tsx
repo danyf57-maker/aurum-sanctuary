@@ -248,7 +248,7 @@ export function MagazineCalendar({ issues, favorites }: MagazineCalendarProps) {
               return (
                 <Link
                   key={issue.id}
-                  href={`/sanctuary/magazine/${issue.id}`}
+                  href={`/sanctuary/entry/${issue.id}`}
                   className="block"
                 >
                   <article className="rounded-2xl border border-stone-200 bg-white p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
