@@ -112,10 +112,6 @@ export function PremiumJournalForm() {
         continueWithAurum: 'Approfondir avec Aurum',
         openNewWritingSpace: 'Ouvrir une nouvelle page',
         replyToAurum: 'Ecris la suite ou la question que tu veux creuser avec Aurum...',
-        conversationStarters: [
-          "Le fait le plus concret, c'est...",
-          "Ce que je n'ai pas encore ecrit, c'est...",
-        ],
         scienceCue:
           "Dans les etudes sur l'ecriture expressive, ecrire 15 a 20 minutes, a 3 a 5 reprises, est associe a une mise en mots plus claire de l'experience. Baikie & Wilhelm, revue clinique, 2005.",
       }
@@ -123,17 +119,9 @@ export function PremiumJournalForm() {
         continueWithAurum: 'Continue with Aurum',
         openNewWritingSpace: 'Open a new page',
         replyToAurum: 'Write the next question or line you want to explore with Aurum...',
-        conversationStarters: [
-          'The most concrete part is...',
-          "What I haven't written yet is...",
-        ],
         scienceCue:
           'In studies on expressive writing, writing for 15 to 20 minutes across 3 to 5 sessions is associated with clearer wording of the experience. Baikie & Wilhelm, clinical review, 2005.',
       };
-  const conversationSuggestions = [
-    resolveMessage(t('conversationStarters.0'), premiumFormFallback.conversationStarters[0]),
-    resolveMessage(t('conversationStarters.2'), premiumFormFallback.conversationStarters[1]),
-  ];
 
   const setTypingActivity = () => {
     setIsActivelyTyping(true);
@@ -700,14 +688,6 @@ export function PremiumJournalForm() {
     fileInputRef.current?.click();
   };
 
-  const handleSelectConversationStarter = (starter: string) => {
-    setConversationInput(starter);
-    requestAnimationFrame(() => {
-      conversationTextareaRef.current?.focus();
-      conversationTextareaRef.current?.setSelectionRange(starter.length, starter.length);
-    });
-  };
-
   const progressLabel = isFr
     ? `${entriesUsed} / ${entriesLimit} sujets gratuits utilisés`
     : `${entriesUsed} / ${entriesLimit} free topics used`;
@@ -1104,18 +1084,6 @@ export function PremiumJournalForm() {
                         )}
                         className="min-h-[76px] resize-y rounded-2xl border-stone-200 bg-white/60 [font-family:var(--font-cormorant)] px-4 py-3 text-base text-stone-800 placeholder:text-stone-400 focus:border-[#C5A059]/30 focus:ring-[#C5A059]/10 md:min-h-[88px] md:text-lg"
                       />
-                      <div className="space-y-2">
-                        {conversationSuggestions.map((starter) => (
-                          <button
-                            key={starter}
-                            type="button"
-                            onClick={() => handleSelectConversationStarter(starter)}
-                            className="w-full rounded-2xl border border-stone-200 bg-white/75 px-3 py-2.5 text-left text-[13px] leading-snug text-stone-700 transition-colors hover:border-[#C5A059]/40 hover:bg-[#C5A059]/8 hover:text-stone-900 md:text-sm"
-                          >
-                            {starter}
-                          </button>
-                        ))}
-                      </div>
                       <div className="flex justify-stretch sm:justify-end">
                         <Button
                           type="button"
