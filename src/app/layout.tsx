@@ -10,6 +10,7 @@ import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
 import ProductEventTracker from '@/components/analytics/ProductEventTracker';
 import { CookieConsent } from '@/components/legal/CookieConsent';
 import { TermsModal } from '@/components/auth/TermsModal';
+import { ThemeSync } from '@/components/theme/ThemeSync';
 import ServiceWorkerRefresh from '@/components/pwa/ServiceWorkerRefresh';
 import { getRequestLocale } from '@/lib/locale-server';
 import { PUBLIC_PRICING } from '@/lib/billing/config';
@@ -192,6 +193,7 @@ export default async function RootLayout({
         </noscript>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <AuthProvider>
+            <ThemeSync />
             <TermsModal />
             <Suspense fallback={null}>
               <GoogleAnalytics />
