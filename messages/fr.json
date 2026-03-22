@@ -58,6 +58,8 @@
     "quizText": "Votre profil de réflexion est prêt ! Connectez-vous pour découvrir votre résultat personnalisé.",
     "verified": "Email vérifié. Vous pouvez vous connecter et reprendre votre réflexion privée.",
     "checkEmail": "Un email de vérification vient d'être envoyé. Merci de vérifier votre boîte de réception et vos spams pour ouvrir votre espace de réflexion privé.",
+    "resendVerification": "Renvoyer le mail",
+    "resendingVerification": "Envoi...",
     "inAppBrowser": "Connexion Google bloquée dans ce navigateur intégré. Ouvre cette page dans Safari ou Chrome puis réessaie.",
     "google": "Continuer avec Google",
     "or": "Ou continuer avec",

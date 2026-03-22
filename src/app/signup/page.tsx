@@ -176,7 +176,7 @@ function SignupPage() {
         name: "signup",
         params: { method: "email", source: "signup_page" },
       });
-      router.push(to("/login?check_email=1"));
+      router.push(to(`/login?check_email=1&email=${encodeURIComponent(result.data.email)}`));
     } catch (error) {
       const errorCode =
         typeof error === "object" && error !== null && "code" in error

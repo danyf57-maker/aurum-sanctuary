@@ -28,13 +28,14 @@ import { useLocale } from "@/hooks/use-locale";
 import { useTranslations } from "next-intl";
 
 function LoginForm() {
-  const { user, signInWithEmail, signInWithGoogle, loading: authLoading } = useAuth();
+  const { user, signInWithEmail, signInWithGoogle, resendVerificationEmail, loading: authLoading } = useAuth();
   const locale = useLocale();
   const t = useTranslations("login");
   const to = (href: string) => localizeHref(href, locale);
   const router = useRouter();
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
+  const [resendingVerification, setResendingVerification] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [info, setInfo] = useState<string | null>(null);
   const isInAppBrowser = useMemo(() => {
@@ -136,6 +137,17 @@ function LoginForm() {
     }
   };
 
+  const handleResendVerification = async () => {
+    if (!prefilledEmail) return;
+    setResendingVerification(true);
+    try {
+      await resendVerificationEmail(prefilledEmail);
+      setInfo(t("checkEmail"));
+    } finally {
+      setResendingVerification(false);
+    }
+  };
+
   if (authLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -177,6 +189,19 @@ function LoginForm() {
           {checkEmail && (
             <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
               {t("checkEmail")}
+              {prefilledEmail && (
+                <div className="mt-3">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleResendVerification}
+                    disabled={loading || resendingVerification}
+                  >
+                    {resendingVerification ? t("resendingVerification") : t("resendVerification")}
+                  </Button>
+                </div>
+              )}
             </div>
           )}
           {existingAccount && (
@@ -187,6 +212,19 @@ function LoginForm() {
           {info && (
             <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
               {info}
+              {prefilledEmail && (
+                <div className="mt-3">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleResendVerification}
+                    disabled={loading || resendingVerification}
+                  >
+                    {resendingVerification ? t("resendingVerification") : t("resendVerification")}
+                  </Button>
+                </div>
+              )}
             </div>
           )}
           {isInAppBrowser && (
