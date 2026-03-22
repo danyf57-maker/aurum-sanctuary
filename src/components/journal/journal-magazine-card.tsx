@@ -8,6 +8,7 @@ import { JournalEntry } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLocale } from "@/hooks/use-locale";
+import { useLocalizedHref } from "@/hooks/use-localized-href";
 
 interface JournalMagazineCardProps {
   entry: JournalEntry;
@@ -129,6 +130,7 @@ export function JournalMagazineCard({
   exchangePreview,
 }: JournalMagazineCardProps) {
   const locale = useLocale();
+  const to = useLocalizedHref();
   const safeLocale = locale === "fr" ? "fr" : "en";
   const { day, time } = formatDate(entry.createdAt, safeLocale);
   const title = generateTitle(entry.content, entry.encryptedContent, safeLocale, entry.title);
@@ -144,7 +146,7 @@ export function JournalMagazineCard({
       transition={{ duration: 0.4, delay: index * 0.05 }}
     >
       <Link
-        href={`/sanctuary/magazine/${entry.id}`}
+        href={to(`/sanctuary/entry/${entry.id}`)}
         className="group block h-full"
       >
         <Card

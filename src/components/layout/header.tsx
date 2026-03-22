@@ -34,8 +34,6 @@ export function Header() {
   const isAppPage = normalizedPath.startsWith('/sanctuary') || normalizedPath.startsWith('/settings');
   const currentSection = normalizedPath.startsWith('/sanctuary/write')
     ? tNav('write')
-    : normalizedPath.startsWith('/sanctuary/magazine')
-    ? tNav('magazine')
     : normalizedPath.startsWith('/sanctuary')
     ? tNav('journal')
     : normalizedPath.startsWith('/settings')
@@ -90,12 +88,6 @@ export function Header() {
                 className="transition-colors hover:text-foreground/80 text-foreground/60"
               >
                 {tHeader('journal')}
-              </Link>
-              <Link
-                href={to('/sanctuary/magazine')}
-                className="transition-colors hover:text-foreground/80 text-foreground/60"
-              >
-                {tHeader('magazine')}
               </Link>
             </nav>
           </div>

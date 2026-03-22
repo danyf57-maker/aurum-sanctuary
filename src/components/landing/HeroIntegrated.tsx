@@ -78,7 +78,7 @@ const HeroIntegrated = () => {
       ? to(`/sanctuary/write?initial=${encodeURIComponent(thought)}`)
       : to("/sanctuary/write");
   const primaryHref = user ? to("/sanctuary/write") : to("/signup");
-  const secondaryHref = user ? to("/sanctuary/magazine") : guestWriteHref;
+  const secondaryHref = user ? to("/sanctuary") : guestWriteHref;
 
   useEffect(() => {
     setPlaceholderText("");

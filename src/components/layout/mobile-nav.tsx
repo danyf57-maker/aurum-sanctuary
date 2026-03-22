@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Link, { LinkProps } from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Menu, PenSquare, BookOpenText, BarChart3, Settings } from 'lucide-react';
+import { Menu, PenSquare, BookOpenText, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
@@ -21,7 +21,6 @@ const Logo = (props: React.SVGProps<SVGSVGElement>) => (
 const mobileNavItems = [
   { href: '/sanctuary/write', key: 'write', helperKey: 'newPage', icon: PenSquare },
   { href: '/sanctuary', key: 'journal', helperKey: 'yourEntries', icon: BookOpenText },
-  { href: '/sanctuary/magazine', key: 'magazine', helperKey: 'profilesProgress', icon: BarChart3 },
   { href: '/settings', key: 'settings', helperKey: 'accountData', icon: Settings },
 ] as const;
 

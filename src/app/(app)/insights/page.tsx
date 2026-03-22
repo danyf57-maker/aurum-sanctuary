@@ -2,5 +2,5 @@
 import { redirect } from 'next/navigation';
 
 export default function InsightsPage() {
-    redirect('/sanctuary/magazine');
+    redirect('/sanctuary');
 }

@@ -149,7 +149,7 @@ export function MagazineEntryEditor({
         title: "Entrée supprimée",
         description: "L'entrée a été retirée du journal.",
       });
-      router.push(to("/sanctuary/magazine"));
+      router.push(to("/sanctuary"));
       router.refresh();
     } finally {
       setIsDeleting(false);

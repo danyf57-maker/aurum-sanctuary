@@ -459,7 +459,7 @@ export async function saveJournalEntry(
     }
     revalidatePath("/sanctuary/write");
     revalidatePath("/sanctuary");
-    revalidatePath("/sanctuary/magazine");
+    revalidatePath("/sanctuary/entry/[entryId]", "page");
 
   } catch (error) {
     logger.errorSafe("Error saving entry", error);
@@ -598,8 +598,8 @@ export async function updateJournalEntry(
         { merge: true }
       );
 
-    revalidatePath("/sanctuary/magazine");
-    revalidatePath(`/sanctuary/magazine/${entryId}`);
+    revalidatePath("/sanctuary");
+    revalidatePath(`/sanctuary/entry/${entryId}`);
     revalidatePath("/sanctuary/write");
     return { message: txt(locale, "Entrée mise à jour.", "Entry updated.") };
   } catch (error) {
@@ -634,8 +634,8 @@ export async function deleteJournalEntry(entryId: string): Promise<EntryMutation
       .doc(entryId)
       .delete();
 
-    revalidatePath("/sanctuary/magazine");
-    revalidatePath(`/sanctuary/magazine/${entryId}`);
+    revalidatePath("/sanctuary");
+    revalidatePath(`/sanctuary/entry/${entryId}`);
     revalidatePath("/sanctuary/write");
     return { message: txt(locale, "Entrée supprimée.", "Entry deleted.") };
   } catch (error) {
