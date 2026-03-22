@@ -37,6 +37,10 @@ type ConversationTurn = {
   createdAt?: Date;
 };
 
+type PendingConversationTurn = ConversationTurn & {
+  pending?: boolean;
+};
+
 interface MagazineEntryEditorProps {
   entryId: string;
   initialContent: string;
@@ -71,8 +75,9 @@ export function MagazineEntryEditor({
   const [isDeleting, setIsDeleting] = useState(false);
   const [question, setQuestion] = useState("");
   const [isAskingAurum, setIsAskingAurum] = useState(false);
-  const [streamingReply, setStreamingReply] = useState<string | null>(null);
   const [conversation, setConversation] = useState<ConversationTurn[]>([]);
+  const [pendingUserTurn, setPendingUserTurn] = useState<PendingConversationTurn | null>(null);
+  const [pendingAurumTurn, setPendingAurumTurn] = useState<PendingConversationTurn | null>(null);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -88,7 +93,7 @@ export function MagazineEntryEditor({
   // Auto-scroll on new messages or streaming
   useEffect(() => {
     scrollToBottom();
-  }, [conversation, streamingReply, scrollToBottom]);
+  }, [conversation, pendingUserTurn, pendingAurumTurn, scrollToBottom]);
 
   // Auto-resize textarea
   const handleTextareaChange = useCallback(
@@ -163,9 +168,26 @@ export function MagazineEntryEditor({
     const cleanQuestion = question.trim();
     if (!cleanQuestion) return;
 
+    const now = new Date();
+    const optimisticUserTurn: PendingConversationTurn = {
+      id: `pending-user-${Date.now()}`,
+      role: "user",
+      text: cleanQuestion,
+      createdAt: now,
+      pending: true,
+    };
+    const optimisticAurumTurn: PendingConversationTurn = {
+      id: `pending-aurum-${Date.now()}`,
+      role: "aurum",
+      text: "",
+      createdAt: now,
+      pending: true,
+    };
+
+    setPendingUserTurn(optimisticUserTurn);
+    setPendingAurumTurn(optimisticAurumTurn);
     setQuestion("");
     setIsAskingAurum(true);
-    setStreamingReply("");
 
     // Reset textarea height
     if (textareaRef.current) {
@@ -218,18 +240,30 @@ export function MagazineEntryEditor({
             const evt = JSON.parse(line.slice(6));
             if (evt.token) {
               fullText += evt.token;
-              setStreamingReply(fullText);
+              setPendingAurumTurn((current) =>
+                current
+                  ? {
+                      ...current,
+                      text: fullText,
+                    }
+                  : current
+              );
             } else if (evt.replace) {
               fullText = evt.replace;
-              setStreamingReply(fullText);
+              setPendingAurumTurn((current) =>
+                current
+                  ? {
+                      ...current,
+                      text: fullText,
+                    }
+                  : current
+              );
             }
           } catch {
             // skip malformed
           }
         }
       }
-
-      setStreamingReply(null);
     } catch (error) {
       toast({
         title: "Erreur",
@@ -239,7 +273,9 @@ export function MagazineEntryEditor({
             : "Aurum n'a pas pu répondre.",
         variant: "destructive",
       });
-      setStreamingReply(null);
+      setQuestion(cleanQuestion);
+      setPendingUserTurn(null);
+      setPendingAurumTurn(null);
     } finally {
       setIsAskingAurum(false);
     }
@@ -290,8 +326,53 @@ export function MagazineEntryEditor({
     return () => unsubscribe();
   }, [entryId, user]);
 
+  useEffect(() => {
+    if (
+      pendingUserTurn &&
+      conversation.some(
+        (turn) => turn.role === "user" && turn.text.trim() === pendingUserTurn.text.trim()
+      )
+    ) {
+      setPendingUserTurn(null);
+    }
+
+    if (
+      pendingAurumTurn &&
+      pendingAurumTurn.text.trim().length > 0 &&
+      conversation.some(
+        (turn) => turn.role === "aurum" && turn.text.trim() === pendingAurumTurn.text.trim()
+      )
+    ) {
+      setPendingAurumTurn(null);
+    }
+  }, [conversation, pendingUserTurn, pendingAurumTurn]);
+
+  const displayedConversation = useMemo(() => {
+    const turns: PendingConversationTurn[] = [...conversation];
+
+    if (
+      pendingUserTurn &&
+      !turns.some(
+        (turn) => turn.role === "user" && turn.text.trim() === pendingUserTurn.text.trim()
+      )
+    ) {
+      turns.push(pendingUserTurn);
+    }
+
+    if (
+      pendingAurumTurn &&
+      !turns.some(
+        (turn) => turn.role === "aurum" && turn.text.trim() === pendingAurumTurn.text.trim()
+      )
+    ) {
+      turns.push(pendingAurumTurn);
+    }
+
+    return turns;
+  }, [conversation, pendingUserTurn, pendingAurumTurn]);
+
   const hasConversation =
-    conversation.length > 0 || streamingReply !== null || isAskingAurum;
+    displayedConversation.length > 0 || isAskingAurum;
 
   return (
     <div className="space-y-8">
@@ -451,7 +532,7 @@ export function MagazineEntryEditor({
 
           <div className="space-y-4">
             <AnimatePresence initial={false}>
-              {conversation.map((turn) => (
+              {displayedConversation.map((turn) => (
                 <motion.div
                   key={turn.id}
                   initial={{ opacity: 0, y: 8 }}
@@ -470,7 +551,21 @@ export function MagazineEntryEditor({
                         : "rounded-2xl rounded-bl-md bg-gradient-to-br from-amber-100 to-amber-50 border border-amber-300/70 text-stone-900 shadow-sm"
                     )}
                   >
-                    {turn.text}
+                    {turn.role === "aurum" && turn.pending && !turn.text ? (
+                      <span className="inline-flex items-center gap-1.5 text-amber-600">
+                        <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
+                        <span
+                          className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse"
+                          style={{ animationDelay: "0.2s" }}
+                        />
+                        <span
+                          className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse"
+                          style={{ animationDelay: "0.4s" }}
+                        />
+                      </span>
+                    ) : (
+                      turn.text
+                    )}
                   </div>
                   {turn.createdAt && (
                     <span className="mt-1 px-1 text-[10px] text-stone-500">
@@ -480,32 +575,6 @@ export function MagazineEntryEditor({
                 </motion.div>
               ))}
             </AnimatePresence>
-
-            {/* Streaming reply */}
-            {streamingReply !== null && (
-              <motion.div
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-                className="flex flex-col items-start"
-              >
-                <div className="max-w-[92%] md:max-w-[85%] px-4 py-3 text-[15px] leading-7 whitespace-pre-wrap rounded-2xl rounded-bl-md bg-gradient-to-br from-amber-100 to-amber-50 border border-amber-300/70 text-stone-900 shadow-sm">
-                  {streamingReply || (
-                    <span className="inline-flex items-center gap-1.5 text-amber-600">
-                      <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
-                      <span
-                        className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse"
-                        style={{ animationDelay: "0.2s" }}
-                      />
-                      <span
-                        className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse"
-                        style={{ animationDelay: "0.4s" }}
-                      />
-                    </span>
-                  )}
-                </div>
-              </motion.div>
-            )}
           </div>
 
           <div ref={chatEndRef} />
