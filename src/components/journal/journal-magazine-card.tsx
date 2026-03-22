@@ -86,6 +86,24 @@ function generateExcerpt(
   return `${plain.slice(0, 150).trim()}...`;
 }
 
+function normalizeExcerptComparison(value: string): string {
+  return value.replace(/\.\.\.$/, "").replace(/\s+/g, " ").trim().toLowerCase();
+}
+
+function removeTitleLeadFromExcerpt(title: string, excerpt: string): string {
+  if (!title || !excerpt) return excerpt;
+  const normalizedTitle = normalizeExcerptComparison(title);
+  const normalizedExcerpt = excerpt.replace(/\s+/g, " ").trim();
+  const comparisonExcerpt = normalizedExcerpt.toLowerCase();
+
+  if (!normalizedTitle || !comparisonExcerpt.startsWith(normalizedTitle)) {
+    return excerpt;
+  }
+
+  const trimmed = normalizedExcerpt.slice(normalizedTitle.length).trimStart();
+  return trimmed.replace(/^[,.:;!?-]+\s*/, "");
+}
+
 function getMoodColor(mood?: string): string {
   switch (mood?.toLowerCase()) {
     case "joyeux":
@@ -114,7 +132,8 @@ export function JournalMagazineCard({
   const safeLocale = locale === "fr" ? "fr" : "en";
   const { day, time } = formatDate(entry.createdAt, safeLocale);
   const title = generateTitle(entry.content, entry.encryptedContent, safeLocale, entry.title);
-  const excerpt = generateExcerpt(entry.content, entry.encryptedContent, safeLocale, entry.excerpt);
+  const rawExcerpt = generateExcerpt(entry.content, entry.encryptedContent, safeLocale, entry.excerpt);
+  const excerpt = removeTitleLeadFromExcerpt(title, rawExcerpt);
   const coverImage = entry.images?.[0]?.url;
   const [imageError, setImageError] = useState(false);
   const moodBorder = getMoodColor(entry.mood);

@@ -124,8 +124,12 @@ function stripImageMarkdown(content: string) {
 function generateExcerpt(content: string, maxLength = 170) {
   const plain = stripImageMarkdown(content);
   if (!plain) return "";
-  if (plain.length <= maxLength) return plain;
-  return `${plain.slice(0, maxLength).trim()}...`;
+  const titleLead = generateTitle(plain).replace(/\.\.\.$/, "").trim();
+  const withoutTitleLead = plain.toLowerCase().startsWith(titleLead.toLowerCase())
+    ? plain.slice(titleLead.length).trimStart().replace(/^[,.:;!?-]+\s*/, "")
+    : plain;
+  if (withoutTitleLead.length <= maxLength) return withoutTitleLead;
+  return `${withoutTitleLead.slice(0, maxLength).trim()}...`;
 }
 
 function toDate(value: unknown): Date | null {
