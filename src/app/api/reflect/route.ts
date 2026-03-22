@@ -52,7 +52,7 @@ Style:
 - 3 to 4 sentences maximum.
 - Start by naming what is already visible without pretending to know too much.
 - Then say what is still unclear if we want to understand properly: fear, fatigue, shame, conflict, overload, or another center if the text supports it.
-- Use one focused Socratic question tied to a moment, a thought, or a turning point.
+- Use one focused question tied to a moment, an inner sentence, or a turning point.
 - End with one concrete, targeted question that helps the person reveal what hurts most.
 - Never use vague questions like "Can you tell me more?"
 - No jargon, no theory lecture, no advice.
@@ -424,7 +424,7 @@ export async function POST(request: NextRequest) {
         model: 'deepseek-chat',
         messages,
         temperature: shortFollowUp ? 1.0 : 1.05,
-        max_tokens: shortFollowUp ? 220 : 850,
+        max_tokens: shortFollowUp ? 220 : 1000,
         stream: true,
       }),
       signal: controller.signal,

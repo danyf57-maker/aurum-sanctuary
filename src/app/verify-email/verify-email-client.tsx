@@ -54,8 +54,8 @@ export default function VerifyEmailClient() {
           </CardTitle>
           <CardDescription>
             {txt(
-              'Ouvrez votre espace de réflexion privé pour écrire librement, recevoir des reflets guidés, et voir ce qui revient dans le temps.',
-              'Open your private reflection space to write freely, receive guided reflection, and notice what keeps returning over time.'
+              "Ouvrez votre espace d'écriture privé pour écrire librement et recevoir une lecture psychologique profonde de ce qui revient dans le temps.",
+              'Open your private writing space to write freely and receive a deep psychological reading of what keeps returning over time.'
             )}
           </CardDescription>
         </CardHeader>
@@ -69,8 +69,8 @@ export default function VerifyEmailClient() {
             <>
               <p className="text-sm text-stone-700">
                 {txt(
-                  'Votre email est vérifié. Vous pouvez maintenant vous connecter et commencer votre réflexion privée guidée.',
-                  'Your email is verified. You can now sign in and begin your private guided reflection.'
+                  "Votre email est vérifié. Vous pouvez maintenant vous connecter et commencer votre écriture privée avec Aurum.",
+                  'Your email is verified. You can now sign in and begin your private writing with Aurum.'
                 )}
               </p>
               <Button onClick={() => router.push(to('/login?verified=1'))} className="w-full">

@@ -53,7 +53,7 @@
     "emailNotVerified": "Your email is not verified yet. We sent a new message. Please check your inbox and spam folder to unlock your private reflection space.",
     "loading": "Loading...",
     "title": "Sign in",
-    "description": "Return to your private reflection space. Pick up your writing, guided reflection, and recurring patterns.",
+    "description": "Return to your private writing space. Pick up your pages, your psychological reflections, and the patterns that are becoming clearer.",
     "quizBadge": "Your profile is waiting",
     "quizText": "Your reflection profile is ready. Sign in to view your personalized result.",
     "verified": "Email verified. You can sign in now and continue your private reflection.",
@@ -409,7 +409,7 @@
   },
   "signup": {
     "title": "Create an account",
-    "description": "Create your private reflection space. Write freely, receive guided reflection, and notice recurring patterns over time.",
+    "description": "Create your private writing space. Write freely, receive deep psychological reflection, and notice recurring patterns over time.",
     "quizBadge": "Your profile is waiting",
     "quizText": "Your reflection profile is ready! Create your account to discover your personalized result and begin your experience.",
     "encrypted": "Encrypted by default and private by design",
@@ -461,7 +461,7 @@
     "checkoutNoUrl": "No payment URL received.",
     "offerPending": "Offer in preparation. Contact us at aurumdiary.com to be notified.",
     "title": "Choose your plan",
-    "subtitle": "Write without self-censorship, receive psychologically sharp reflection, and uncover recurring inner patterns over time.",
+    "subtitle": "Private writing, deep psychological reading, and inner patterns that become clearer over time.",
     "recommended": "Recommended",
     "stripeNote": "Subscriptions are handled by Stripe. Cancel anytime.",
     "currentPlan": "Current plan",
@@ -469,7 +469,7 @@
     "monthly": {
       "name": "Monthly",
       "period": "/month",
-      "description": "Private writing, psychologically sharp reflection, and emotional clarity, billed monthly.",
+      "description": "Private writing, deep psychological reading, and emotional clarity, billed monthly.",
       "cta": "Choose monthly"
     },
     "yearly": {
@@ -480,7 +480,7 @@
     },
     "features": {
       "entries": "Unlimited private encrypted writing",
-      "conversations": "Unlimited reflection with Aurum",
+      "conversations": "Unlimited psychological readings with Aurum",
       "history": "Your full history and how it evolves over time",
       "export": "Export your writing and reflections",
       "reflections": "Recurring patterns and in-depth reflections"
@@ -499,7 +499,7 @@
   "hero": {
     "badge": "PRIVATE WRITING • SHARP REFLECTION",
     "title": "Write in private. See yourself more clearly.",
-    "subtitle": "Aurum is a private journal for people who carry a lot internally. You write honestly. Aurum gives back the emotion, contradiction, or inner movement that is actually visible in your words.",
+    "subtitle": "Aurum is a private writing space for people who carry a lot internally. You write honestly. Aurum gives back a deep psychological reading of what repeats, contradicts itself, protects itself, or stays unspoken in your words.",
     "helper": "Write one honest line. Aurum opens it inside your private page.",
     "cta": "Start for free",
     "ctaSecondary": "Write a first page",
@@ -912,7 +912,7 @@
     },
     "solution": {
       "title": "Writing gives the experience a place to land.",
-      "body": "Aurum adds a psychologically sharp reflection, so what repeats, conflicts, or stays unspoken becomes easier to see."
+      "body": "Aurum adds a deep psychological reading, so what repeats, conflicts, protects itself, or stays unspoken becomes easier to see."
     },
     "trust": {
       "eyebrow": "Trust",
@@ -1042,7 +1042,7 @@
       "privateBadge": "Private space",
       "titleLine1": "Your sanctuary",
       "titleLine2": "is waiting",
-      "description": "An encrypted private space to write freely, receive guided reflection, and begin seeing recurring emotional patterns over time.",
+      "description": "An encrypted private space to write freely, receive deep psychological reflection, and begin seeing recurring emotional patterns over time.",
       "featurePrivate": "100% Private",
       "featureEncrypted": "Encrypted",
       "featureAi": "Guided reflection",
@@ -1137,15 +1137,15 @@
   },
   "trialOffer": {
     "badge": "7 DAYS FREE",
-    "title": "Start with 7 days of private guided reflection.",
-    "body": "Write without self-censorship, receive guided reflection after each page, and notice recurring emotional patterns before your first charge.",
+    "title": "Start with 7 days of private psychological reflection.",
+    "body": "Write without self-censorship, receive deep psychological reflection after each page, and notice recurring emotional patterns before your first charge.",
     "cta": "View plans"
   },
   "paywall": {
     "close": "Close",
     "title": "Keep your reflections unfolding",
     "intro": "Continue with the full Aurum reflection experience:",
-    "benefit1": "Receive guided reflection after each entry",
+    "benefit1": "Receive deep psychological reflection after each entry",
     "benefit2": "See recurring themes and emotional patterns become easier to recognize over time",
     "benefit3": "Keep your private reflection history and clarity map growing",
     "reassurance": "Private by design. No ads, no data sale, no pressure.",

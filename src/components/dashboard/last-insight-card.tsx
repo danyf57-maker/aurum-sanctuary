@@ -37,8 +37,8 @@ export function LastInsightCard({ entry }: LastInsightCardProps) {
           <p className="text-stone-700 italic leading-relaxed line-clamp-3 pl-4 border-l-2 border-stone-200">
             {entry.insight ||
               (isFr
-                ? "Aucun reflet guidé n'est encore lié à cette page. Écris une nouvelle page privée pour commencer à voir ce qu'Aurum remarque."
-                : "No guided reflection is linked to this page yet. Write a new private page to start seeing what Aurum notices.")}
+                ? "Aucune lecture psychologique n'est encore liée à cette page. Écris une nouvelle page privée pour commencer à voir ce qu'Aurum remarque."
+                : "No psychological reflection is linked to this page yet. Write a new private page to start seeing what Aurum notices.")}
           </p>
         </div>
 

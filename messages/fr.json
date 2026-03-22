@@ -409,7 +409,7 @@
   },
   "signup": {
     "title": "Créer un compte",
-    "description": "Crée ton espace de réflexion privé. Écris librement, reçois des reflets guidés, et remarque les motifs récurrents dans le temps.",
+    "description": "Crée ton espace d'écriture privé. Écris librement, reçois une lecture psychologique profonde, et remarque les motifs récurrents dans le temps.",
     "quizBadge": "Votre profil vous attend",
     "quizText": "Votre profil de réflexion est prêt ! Créez votre compte pour découvrir votre résultat personnalisé et commencer votre expérience.",
     "encrypted": "Chiffré par défaut et privé par conception",
@@ -461,7 +461,7 @@
     "checkoutNoUrl": "Aucune URL de paiement reçue.",
     "offerPending": "Offre en préparation. Contacte-nous sur aurumdiary.com pour être prévenu.",
     "title": "Choisissez votre formule",
-    "subtitle": "Un espace d’écriture chiffré, des reflets psychologiquement précis, et des motifs intérieurs qui émergent dans le temps.",
+    "subtitle": "Une écriture privée, une lecture psychologique profonde, et des motifs intérieurs qui deviennent plus lisibles dans le temps.",
     "recommended": "Recommandé",
     "stripeNote": "Les abonnements sont gérés via Stripe. Résiliation possible à tout moment.",
     "currentPlan": "Plan actuel",
@@ -469,7 +469,7 @@
     "monthly": {
       "name": "Mensuel",
       "period": "/mois",
-      "description": "L’expérience Aurum complète, avec écriture privée et reflets psychologiquement précis, facturée au mois.",
+      "description": "L’expérience Aurum complète, avec écriture privée et lecture psychologique profonde, facturée au mois.",
       "cta": "Choisir mensuel"
     },
     "yearly": {
@@ -480,7 +480,7 @@
     },
     "features": {
       "entries": "Écriture privée et chiffrée illimitée",
-      "conversations": "Reflets illimités avec Aurum",
+      "conversations": "Lectures psychologiques illimitées avec Aurum",
       "history": "Mémoire complète de tes pages et de leur évolution",
       "export": "Export de tes écrits et reflets",
       "reflections": "Motifs récurrents et reflets approfondis"
@@ -499,7 +499,7 @@
   "hero": {
     "badge": "ÉCRITURE PRIVÉE • REFLET PRÉCIS",
     "title": "Écris en privé. Vois plus clair en toi.",
-    "subtitle": "Aurum est un journal privé pour les personnes qui portent beaucoup intérieurement. Tu écris franchement. Aurum te renvoie l'émotion, la contradiction, ou le mouvement intérieur réellement visible dans tes mots.",
+    "subtitle": "Aurum est un espace d’écriture privé pour les personnes qui portent beaucoup intérieurement. Tu écris franchement. Aurum te renvoie une lecture psychologique profonde de ce qui se répète, se contredit, se protège, ou reste encore sans se dire dans tes mots.",
     "helper": "Écris une ligne honnête. Aurum l'ouvre dans ta page privée.",
     "cta": "Commencer gratuitement",
     "ctaSecondary": "Écrire une première page",
@@ -912,7 +912,7 @@
     },
     "solution": {
       "title": "L'écriture donne à l'expérience un endroit où se poser.",
-      "body": "Aurum ajoute un reflet psychologiquement précis, pour rendre plus visibles ce qui revient, se contredit, ou reste sans se dire."
+      "body": "Aurum ajoute une lecture psychologique profonde, pour rendre plus visibles ce qui revient, se contredit, se protège, ou reste sans se dire."
     },
     "trust": {
       "eyebrow": "Confiance",
@@ -1042,7 +1042,7 @@
       "privateBadge": "Espace privé",
       "titleLine1": "Ton sanctuaire",
       "titleLine2": "t'attend",
-      "description": "Un espace privé et chiffré pour écrire librement, recevoir un reflet guidé, et commencer à voir les motifs émotionnels qui reviennent dans le temps.",
+      "description": "Un espace privé et chiffré pour écrire librement, recevoir une lecture psychologique profonde, et commencer à voir les motifs émotionnels qui reviennent dans le temps.",
       "featurePrivate": "100% privé",
       "featureEncrypted": "Chiffré",
       "featureAi": "Reflet guidé",
@@ -1137,15 +1137,15 @@
   },
   "trialOffer": {
     "badge": "7 JOURS OFFERTS",
-    "title": "Commence avec 7 jours de réflexion guidée privée.",
-    "body": "Écris sans te censurer, reçois un reflet guidé après chaque page, et commence à voir tes motifs émotionnels récurrents avant la première facturation.",
+    "title": "Commence avec 7 jours de lecture psychologique privée.",
+    "body": "Écris sans te censurer, reçois une lecture psychologique profonde après chaque page, et commence à voir tes motifs émotionnels récurrents avant la première facturation.",
     "cta": "Voir l'offre"
   },
   "paywall": {
     "close": "Fermer",
     "title": "Laisse tes reflets continuer à se déployer",
     "intro": "Continue avec l'expérience complète de réflexion Aurum :",
-    "benefit1": "Recevoir un reflet guidé après chaque page",
+    "benefit1": "Recevoir une lecture psychologique profonde après chaque page",
     "benefit2": "Voir les thèmes récurrents et les motifs émotionnels devenir plus reconnaissables dans le temps",
     "benefit3": "Continuer à faire grandir ton historique privé et ta carte de clarté",
     "reassurance": "Privé par conception. Pas de publicité, pas de vente de données, pas de pression.",

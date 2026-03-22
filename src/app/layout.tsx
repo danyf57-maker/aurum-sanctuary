@@ -48,17 +48,17 @@ export async function generateMetadata(): Promise<Metadata> {
   const alternates = buildAlternates("/", locale);
 
   const title = isFr
-    ? "Aurum Diary | Réflexion privée guidée pour plus de clarté émotionnelle"
-    : "Aurum Diary | Private AI-guided reflection for emotional clarity";
+    ? "Aurum Diary | Écriture privée et lecture psychologique profonde"
+    : "Aurum Diary | Private writing and deep psychological reflection";
   const description = isFr
-    ? "Aurum Diary est un compagnon de réflexion privée guidée par IA pour écrire librement, clarifier tes émotions et faire émerger les motifs intérieurs qui reviennent dans le temps."
-    : "Aurum Diary is a private AI-guided reflection companion that helps you write freely, clarify emotions, and uncover recurring inner patterns over time.";
+    ? "Aurum Diary est un espace d'écriture privé qui aide à voir plus clairement ce qui se répète, se contredit, se protège, ou reste sans se dire dans le temps."
+    : "Aurum Diary is a private writing space that helps you see more clearly what repeats, contradicts itself, protects itself, or stays unspoken over time.";
   const ogTitle = isFr
-    ? "Aurum Diary | Un compagnon privé de réflexion pour plus de clarté émotionnelle"
-    : "Aurum Diary | A private AI reflection companion for emotional clarity";
+    ? "Aurum Diary | Écriture privée et lecture psychologique profonde"
+    : "Aurum Diary | Private writing and deep psychological reflection";
   const ogDescription = isFr
-    ? "Écris librement en privé, reçois une réflexion guidée par IA, et remarque les motifs intérieurs qui reviennent."
-    : "Write freely in private, receive AI-guided reflection, and notice recurring inner patterns over time.";
+    ? "Écris librement en privé et reçois une lecture psychologique profonde de ce qui revient dans tes mots."
+    : "Write freely in private and receive a deep psychological reading of what keeps returning in your words.";
 
   return {
     title,
@@ -97,8 +97,8 @@ export async function generateMetadata(): Promise<Metadata> {
       card: "summary_large_image",
       title: ogTitle,
       description: isFr
-        ? "Réflexion privée guidée par IA pour plus de clarté émotionnelle et des motifs récurrents."
-        : "Private AI-guided reflection for emotional clarity and recurring inner patterns.",
+        ? "Écriture privée et lecture psychologique profonde pour plus de clarté émotionnelle."
+        : "Private writing and deep psychological reflection for emotional clarity.",
       images: ["/og-image.png"],
     },
     alternates,
@@ -128,8 +128,8 @@ export default async function RootLayout({
     '@type': 'SoftwareApplication',
     name: 'Aurum',
     description: isFr
-      ? "Un compagnon de réflexion privée guidée par IA pour écrire librement, clarifier ses émotions et faire émerger des motifs intérieurs récurrents."
-      : "A private AI-guided reflection companion that helps users write freely, clarify emotions, and uncover recurring inner patterns over time.",
+      ? "Un espace d'écriture privé qui aide à voir plus clairement ce qui se répète, se contredit, se protège, ou reste sans se dire."
+      : "A private writing space that helps users see more clearly what repeats, contradicts itself, protects itself, or stays unspoken.",
     applicationCategory: ['LifestyleApplication', 'ProductivityApplication'],
     operatingSystem: 'Web, iOS, Android',
     offers: {
@@ -140,14 +140,14 @@ export default async function RootLayout({
     featureList: isFr
       ? [
           "Espace de réflexion privée chiffré en AES-256",
-          "Réflexion guidée par IA pour la clarté émotionnelle",
+          "Lecture psychologique profonde pour plus de clarté émotionnelle",
           "Motifs intérieurs récurrents visibles dans le temps",
           "Suivi des émotions et de leur évolution",
           "Alternative privée à Rosebud",
         ]
       : [
           "AES-256 encrypted private reflection space",
-          "AI-guided reflection for emotional clarity",
+          "Deep psychological reflection for emotional clarity",
           "Recurring inner pattern discovery over time",
           "Mood and emotion tracking",
           "Private alternative to Rosebud",
