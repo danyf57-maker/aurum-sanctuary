@@ -39,16 +39,34 @@ import {
 import { resolveOptionalFirstName } from '@/lib/profile/first-name';
 import type { Locale } from '@/lib/locale';
 
-type AurumIntent = 'reflection' | 'conversation' | 'analysis' | 'action' | 'philosophy';
+type AurumIntent = 'reflection' | 'conversation' | 'analysis' | 'clarify' | 'action' | 'philosophy';
 type SupportedLocale = Locale;
 
 const PHILOSOPHY_MODE_SYSTEM_PROMPT = PHILOSOPHY_SYSTEM_PROMPT;
+const CLARIFY_SYSTEM_PROMPT = `You are Aurum when the text carries a real tension, but not yet enough material for a solid analysis.
+
+Do not fill the gap with fake depth. Help the person make the pain point clearer.
+
+Style:
+- Match the user's register naturally.
+- 3 to 4 sentences maximum.
+- Start by naming what is already visible without pretending to know too much.
+- Then say what is still unclear if we want to understand properly: fear, fatigue, shame, conflict, overload, or another center if the text supports it.
+- End with one concrete, targeted question that helps the person reveal what hurts most.
+- Never use vague questions like "Can you tell me more?"
+- No jargon, no theory lecture, no advice.
+
+Examples of the right tone:
+- "Something is clearly tight here, but it is not yet clear whether the heaviest part is fear, exhaustion, or the fact that you have to keep holding. What weighs the most, concretely?"
+- "There is a real tension, but its center is still blurry: is it mostly anger held in, guilt, or overload? Which part feels the heaviest right now?"`;
 
 const ACTION_INTENT_REGEX = /(que faire|que puis-je faire|plan|prochaine etape|prochaine étape|action|aide moi a agir|aide-moi a agir|what should i do|what can i do|next step|what now|que hago|qué hago|que puedo hacer|qué puedo hacer|que devo fazer|o que faço|o que faco|o que posso fazer|cosa posso fare|cosa dovrei fare|che faccio|was soll ich tun|was kann ich tun|nächster schritt|naechster schritt)/;
 const PHILOSOPHY_INTENT_REGEX = /(philosophie|philosophique|epistemologie|épistémologie|metaphysique|métaphysique|ethique|éthique|philosophy|philosophical|epistemology|metaphysics|ethics|filosofia|filosófico|filosofico|epistemologia|metafisica|etica|filosofia|filosofica|epistemologia|metafisica|ética|filosofia|filosófica|epistemología|metafísica|ethik|philosophisch|epistemologie|metaphysik|platon|aristote|kant|nietzsche|stoicisme|stoïcisme|stoicism|estoicismo|stoizismus|existentialisme|existentialism|existencialismo|existenzialismus)/;
 const ANALYSIS_INTENT_REGEX = /(analyse|analyse-moi|explique|clarifie|clarifier|comprendre|pourquoi|analyze|analyse this|explain|clarify|understand|why|analiza|analise|explica|aclara|comprender|por que|por qué|analizza|spiega|chiarisci|capire|perché|porque|analysiere|erkläre|erklaere|kläre|klaere|verstehen|warum)/;
 const CONVERSATION_INTENT_REGEX = /(conversation en cours|utilisateur:|aurum:|reponds|réponds|continuer l'echange|continuer l'échange|reply|respond|keep going|continue the conversation|responde|segue|continua|antworten|weiter)/;
 const LIGHT_ACKNOWLEDGEMENT_REGEX = /^(ok|okay|ok merci|merci|merci beaucoup|d'accord|dac|ça va|ca va|oui|non|peut-etre|peut-être|je ne sais pas|jsp|maybe|yes|no|thanks|thank you|i don't know|idk|vale|gracias|si|sí|no se|no sé|obrigado|obrigada|talvez|nao sei|não sei|grazie|forse|ich weiss nicht|ich weiß nicht|danke)$/;
+const STRONG_PSYCH_STRUCTURE_REGEX = /(mais|puis|ensuite|dès que|des que|quand|chaque fois|toujours|jamais|souvent|parfois|alors|sauf que|en même temps|en meme temps|pendant que|tout en|yet|but|then|when|whenever|every time|always|never|often|sometimes|while|at the same time|as soon as|pero|entonces|cuando|cada vez|siempre|mai|poi|quando|sempre|aber|dann|wenn|jedes mal|immer|mas|depois|quando|sempre)/i;
+const CORE_PAIN_REGEX = /(peur|honte|colère|colere|fatigue|épuis|epuis|culpabil|triste|tristesse|angoiss|stress|pression|bloqu|vide|solitude|aband|rejet|envahi|fear|ashamed|shame|guilt|guilty|afraid|pain|hurt|empty|alone|stuck|numb|tired|pressure|panic|anxiety|miedo|vergüenza|verguenza|culpa|vacío|vacio|rabia|fatica|vergogna|colpa|vuoto|paura|scham|schuld|leer|angst|medo|culpa|vazio|cansaço|cansaco|vergonha)/i;
 
 function detectAurumIntent(content: string, userMessage?: string): AurumIntent {
   const latestText = (userMessage || content).toLowerCase();
@@ -68,6 +86,9 @@ function detectAurumIntent(content: string, userMessage?: string): AurumIntent {
     if (ANALYSIS_INTENT_REGEX.test(latestText)) {
       return 'analysis';
     }
+    if (shouldAskForClarification(userMessage || '', content, true)) {
+      return 'clarify';
+    }
     return 'analysis';
   }
 
@@ -84,12 +105,16 @@ function detectAurumIntent(content: string, userMessage?: string): AurumIntent {
   if (CONVERSATION_INTENT_REGEX.test(text)) {
     return 'conversation';
   }
+  if (shouldAskForClarification(content, content, false)) {
+    return 'clarify';
+  }
   return 'reflection';
 }
 
 function getSystemPromptForIntent(intent: AurumIntent, language: ReturnType<typeof resolvePromptLanguage>): string {
   if (intent === 'conversation') return buildAurumSystemPrompt('conversation', language);
   if (intent === 'analysis') return buildAurumSystemPrompt('analysis', language);
+  if (intent === 'clarify') return CLARIFY_SYSTEM_PROMPT;
   if (intent === 'action') return buildAurumSystemPrompt('action', language);
   if (intent === 'philosophy') return PHILOSOPHY_MODE_SYSTEM_PROMPT;
   return buildAurumSystemPrompt('reflection', language);
@@ -111,6 +136,29 @@ function countWords(value: string): number {
     .trim()
     .split(/\s+/)
     .filter(Boolean).length;
+}
+
+function shouldAskForClarification(primaryText: string, fullContext: string, isConversationFollowUp: boolean): boolean {
+  const text = primaryText.trim();
+  if (!text) return false;
+  if (LIGHT_ACKNOWLEDGEMENT_REGEX.test(text)) return false;
+  if (ANALYSIS_INTENT_REGEX.test(text) || ACTION_INTENT_REGEX.test(text) || PHILOSOPHY_INTENT_REGEX.test(text)) return false;
+
+  const wordCount = countWords(text);
+  const hasStrongStructure = STRONG_PSYCH_STRUCTURE_REGEX.test(text);
+  const hasNamedPain = CORE_PAIN_REGEX.test(text);
+  const hasQuestion = /\?/.test(text);
+  const hasLongContext = countWords(fullContext) >= 60;
+
+  if (hasStrongStructure && wordCount >= 18) return false;
+  if (wordCount >= 35) return false;
+  if (wordCount <= 5) return false;
+
+  if (isConversationFollowUp) {
+    return hasNamedPain && !hasStrongStructure;
+  }
+
+  return !hasLongContext && hasNamedPain && !hasStrongStructure && !hasQuestion;
 }
 
 function isVeryShortFollowUp(value: string): boolean {
