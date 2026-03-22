@@ -51,7 +51,7 @@ export default function WritePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-stone-50 via-[#F9F7F2] to-stone-100">
+      <div className="min-h-full flex items-center justify-center bg-gradient-to-b from-stone-50 via-[#F9F7F2] to-stone-100">
         <div className="space-y-6 w-full max-w-2xl px-6">
           <Skeleton className="h-12 w-3/4 mx-auto" />
           <Skeleton className="h-64 w-full rounded-3xl" />
@@ -67,14 +67,14 @@ export default function WritePage() {
   // Anonymous User View - Elegant Landing
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-stone-50 via-[#F9F7F2] to-stone-100">
+      <div className="min-h-full bg-gradient-to-b from-stone-50 via-[#F9F7F2] to-stone-100">
         <AnimatePresence>
           {isVisible && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8 }}
-              className="min-h-screen flex flex-col"
+              className="min-h-full flex flex-col"
             >
               {/* Hero Section */}
               <section className="flex-1 flex items-center justify-center px-4 py-16 md:py-24">
@@ -222,7 +222,7 @@ export default function WritePage() {
 
   // Authenticated User View - Writing Interface
   return (
-    <div className="min-h-screen bg-gradient-to-b from-stone-50 via-[#F9F7F2] to-stone-100">
+    <div className="min-h-full bg-gradient-to-b from-stone-50 via-[#F9F7F2] to-stone-100">
       <WelcomePresence userName={user?.displayName || undefined} />
 
       <AnimatePresence>
