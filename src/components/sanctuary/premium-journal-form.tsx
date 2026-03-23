@@ -17,7 +17,6 @@ import { saveJournalEntry, type FormState } from '@/app/actions';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { ReflectionResponse } from './reflection-response';
 import { ReflectionPulse } from './reflection-pulse';
@@ -862,17 +861,6 @@ export function PremiumJournalForm() {
                     ))}
                   </div>
                 )}
-                <div>
-                  <Label htmlFor="tags" className="sr-only">
-                    {t('tagsLabel')}
-                  </Label>
-                  <Input
-                    id="tags"
-                    name="tags"
-                    placeholder={t('placeholders.tags')}
-                    className="bg-transparent border-0 rounded-none px-0 [font-family:var(--font-cormorant)] text-2xl text-stone-500 placeholder:text-stone-300 shadow-none focus:ring-0 focus-visible:ring-0"
-                  />
-                </div>
               </div>
               <div className={`flex justify-center transition-opacity duration-300 ${isFocusMode ? 'opacity-90' : 'opacity-100'}`}>
                 <Button
