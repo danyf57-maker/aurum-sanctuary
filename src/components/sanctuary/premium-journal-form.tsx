@@ -1009,12 +1009,12 @@ export function PremiumJournalForm() {
               >
                 <div className="space-y-3 md:space-y-4">
                   {threadTurns.map((turn, index) => {
-                    if (turn.role === 'aurum' && index === 0) {
+                    if (turn.role === 'aurum') {
                       return (
                         <ReflectionResponse
                           key={turn.id}
                           reflection={turn.text}
-                          patternsUsed={reflection.patternsUsed}
+                          patternsUsed={index === 0 ? reflection.patternsUsed : 0}
                         />
                       );
                     }
@@ -1025,9 +1025,7 @@ export function PremiumJournalForm() {
                         initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.3 }}
-                        className={turn.role === 'user'
-                          ? 'ml-auto max-w-[88%] rounded-2xl bg-stone-900 px-4 py-3 text-sm leading-relaxed text-stone-50'
-                          : 'mr-auto max-w-[88%] rounded-2xl border border-[#C5A059]/15 bg-[#C5A059]/8 px-4 py-3 text-sm leading-relaxed text-stone-800'}
+                        className="ml-auto max-w-[88%] rounded-2xl bg-stone-900 px-4 py-3 text-sm leading-relaxed text-stone-50"
                       >
                         {turn.text}
                       </motion.div>
