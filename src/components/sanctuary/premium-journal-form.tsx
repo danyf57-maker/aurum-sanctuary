@@ -1047,10 +1047,10 @@ export function PremiumJournalForm() {
                   </div>
                   {!isPremium && (
                     <div className="border-b border-stone-200/70 pb-2">
-                      <p className="text-[11px] text-stone-500 md:hidden">
+                      <p className="text-[11px] text-stone-700 md:hidden">
                         {conversationRemainingCompactLabel}
                       </p>
-                      <p className="hidden text-xs text-stone-500 md:block">
+                      <p className="hidden text-xs text-stone-700 md:block">
                         {conversationRemainingLabel}
                       </p>
                     </div>
@@ -1084,14 +1084,14 @@ export function PremiumJournalForm() {
                           t('placeholders.replyToAurum'),
                           premiumFormFallback.replyToAurum
                         )}
-                        className="min-h-[76px] resize-y rounded-2xl border-stone-200 bg-white/60 [font-family:var(--font-cormorant)] px-4 py-3 text-base text-stone-800 placeholder:text-stone-400 focus:border-[#C5A059]/30 focus:ring-[#C5A059]/10 md:min-h-[88px] md:text-lg"
+                        className="min-h-[76px] resize-y rounded-2xl border-stone-300 bg-white/85 [font-family:var(--font-cormorant)] px-4 py-3 text-base text-stone-900 placeholder:text-stone-500 focus:border-[#C5A059]/40 focus:ring-[#C5A059]/15 md:min-h-[88px] md:text-lg"
                       />
                       <div className="flex justify-stretch sm:justify-end">
                         <Button
                           type="button"
                           onClick={handleContinueConversation}
                           disabled={isContinuingConversation || !conversationInput.trim()}
-                          className="w-full bg-gradient-to-r from-[#D4AF37] to-[#C5A059] text-stone-900 hover:from-[#C5A059] hover:to-[#D4AF37] rounded-xl px-6 font-semibold shadow-[0_6px_18px_rgba(212,175,55,0.2)] transition-all duration-300 hover:shadow-[0_8px_24px_rgba(212,175,55,0.3)] sm:w-auto"
+                          className="w-full rounded-xl px-6 font-semibold shadow-[0_6px_18px_rgba(212,175,55,0.2)] transition-all duration-300 bg-gradient-to-r from-[#D4AF37] to-[#C5A059] text-stone-900 hover:from-[#C5A059] hover:to-[#D4AF37] hover:shadow-[0_8px_24px_rgba(212,175,55,0.3)] disabled:opacity-100 disabled:bg-[#D8BF6B] disabled:text-stone-700 disabled:shadow-none sm:w-auto"
                         >
                           {isContinuingConversation ? (
                             <>
