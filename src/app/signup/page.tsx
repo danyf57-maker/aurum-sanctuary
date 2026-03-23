@@ -92,12 +92,6 @@ function SignupPage() {
     );
   }, []);
   const redirectAfterGoogle = "/sanctuary/write";
-  const onboardingPills = [
-    tSign("pillPrivate"),
-    tSign("pillGuided"),
-    tSign("pillClarity"),
-    tSign("pillPatterns"),
-  ];
   const loginHref = to("/login");
   const signupFallback = locale === "fr"
     ? {
@@ -242,16 +236,6 @@ function SignupPage() {
             </p>
           </div>
 
-          <div className="mt-4 flex flex-wrap gap-2">
-            {onboardingPills.map((pill) => (
-              <span
-                key={pill}
-                className="rounded-full border border-stone-200 bg-stone-50 px-3 py-1 text-xs font-medium text-stone-600"
-              >
-                {pill}
-              </span>
-            ))}
-          </div>
           <div className="mt-4 rounded-lg border border-stone-200 bg-stone-50 px-3 py-3 text-sm text-stone-700">
             {resolveMessage(tSign("languagePolicy"), signupFallback.languagePolicy)}
           </div>
