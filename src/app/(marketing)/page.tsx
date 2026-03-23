@@ -263,12 +263,12 @@ export default function Home() {
             <section className="py-24 md:py-32 bg-stone-100/50">
                 <div className="container max-w-4xl mx-auto">
                     <div className="text-center max-w-3xl mx-auto mb-14">
-                        <h2 className="text-4xl md:text-5xl font-headline mb-6">{t('scientificProof.title')}</h2>
-                        <p className="text-stone-600 font-light text-lg leading-relaxed">
+                        <h2 className="text-4xl md:text-5xl font-headline text-stone-900 mb-6">{t('scientificProof.title')}</h2>
+                        <p className="text-stone-700 font-light text-lg leading-relaxed">
                             {t('scientificProof.subtitle')}
                         </p>
                     </div>
-                    <ul className="space-y-5 text-stone-700 font-light leading-relaxed text-lg max-w-3xl mx-auto">
+                    <ul className="space-y-5 text-stone-800 font-light leading-relaxed text-lg max-w-3xl mx-auto">
                         {discoveries.map((discovery, index) => (
                             <li key={discovery.label} className="rounded-2xl border border-stone-200 bg-white p-6">
                                 <span className="font-medium text-stone-900">{discovery.label}</span> {discovery.body}
@@ -283,7 +283,7 @@ export default function Home() {
                 {/* SECTION 1: Problem */}
                 <section className="py-24 md:py-32 bg-stone-100/50">
                     <div className="container max-w-3xl mx-auto text-center">
-                        <h2 className="text-4xl md:text-5xl font-headline mb-6">
+                        <h2 className="text-4xl md:text-5xl font-headline text-stone-900 mb-6">
                             {t('problem.title')}
                         </h2>
                         <div className="prose prose-lg lg:prose-xl mx-auto text-foreground/80 font-light">
@@ -297,10 +297,10 @@ export default function Home() {
                 {/* SECTION 2: Solution */}
                 <section className="py-24 md:py-32 bg-white">
                     <div className="container max-w-3xl mx-auto text-center">
-                        <h2 className="text-4xl md:text-5xl font-headline mb-6">
+                        <h2 className="text-4xl md:text-5xl font-headline text-stone-900 mb-6">
                             {t('solution.title')}
                         </h2>
-                        <p className="text-stone-600 font-light text-lg leading-relaxed">
+                        <p className="text-stone-700 font-light text-lg leading-relaxed">
                             {t('solution.body')}
                         </p>
                     </div>
@@ -310,9 +310,9 @@ export default function Home() {
                 <section className="py-24 md:py-40 bg-white">
                     <div className="container">
                         <div className="text-center max-w-3xl mx-auto mb-20">
-                            <span className="text-primary/60 text-[10px] uppercase tracking-[0.3em] font-bold mb-4 block">{t('trust.eyebrow')}</span>
-                            <h2 className="text-4xl md:text-6xl font-headline mb-6">{t('trust.title')}</h2>
-                            <p className="text-stone-500 font-light text-lg">{t('trust.subtitle')}</p>
+                            <span className="text-[#B8941F] text-[10px] uppercase tracking-[0.3em] font-bold mb-4 block">{t('trust.eyebrow')}</span>
+                            <h2 className="text-4xl md:text-6xl font-headline text-stone-900 mb-6">{t('trust.title')}</h2>
+                            <p className="text-stone-700 font-light text-lg">{t('trust.subtitle')}</p>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-20">
@@ -324,7 +324,7 @@ export default function Home() {
                                         {index === 2 && <ShieldCheck className="w-6 h-6" />}
                                     </div>
                                     <h3 className="text-xl font-headline mb-3 text-primary">{card.title}</h3>
-                                    <p className="text-sm text-stone-500 font-light leading-relaxed mb-4">{card.body}</p>
+                                    <p className="text-sm text-stone-700 font-light leading-relaxed mb-4">{card.body}</p>
                                 </div>
                             ))}
                         </div>
@@ -359,17 +359,17 @@ export default function Home() {
                         </Link>
                     </Button>
                     <div className="mt-6">
-                        <span className="text-xs text-stone-400 font-light">{t('finalCta.note')}</span>
+                        <span className="text-xs text-stone-600 font-light">{t('finalCta.note')}</span>
                     </div>
                     <div className="mt-10 max-w-5xl mx-auto">
-                        <p className="text-stone-600 font-light text-lg mb-6">
+                        <p className="text-stone-700 font-light text-lg mb-6">
                             {t('finalCta.subtitle')}
                         </p>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-left">
                             {featureCards.map((card) => (
                                 <div key={card.title} className="rounded-2xl border border-stone-200 bg-white p-5">
                                     <p className="text-[11px] uppercase tracking-[0.16em] text-stone-500 mb-2 font-semibold">{card.eyebrow}</p>
-                                    <p className="text-sm text-stone-600 font-light">{card.body}</p>
+                                    <p className="text-sm text-stone-700 font-light">{card.body}</p>
                                 </div>
                             ))}
                         </div>
@@ -377,7 +377,7 @@ export default function Home() {
                 </section>
 
                 <section className="container max-w-3xl pb-24 md:pb-32">
-                    <h2 className="text-4xl font-headline text-center mb-12">
+                    <h2 className="text-4xl font-headline text-stone-900 text-center mb-12">
                         {t('faqTitle')}
                     </h2>
                     <Accordion type="single" collapsible className="w-full">
