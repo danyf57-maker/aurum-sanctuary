@@ -59,13 +59,6 @@ function LoginForm() {
   const checkEmail = searchParams.get("check_email");
   const existingAccount = searchParams.get("existing");
   const prefilledEmail = searchParams.get("email") ?? "";
-  const onboardingPills = [
-    t("pillPrivate"),
-    t("pillGuided"),
-    t("pillClarity"),
-    t("pillPatterns"),
-  ];
-
   useEffect(() => {
     if (!authLoading && user) {
       router.replace(redirectUrl);
@@ -166,16 +159,6 @@ function LoginForm() {
           <CardTitle>{t("title")}</CardTitle>
           <CardDescription>{t("description")}</CardDescription>
 
-          <div className="mt-4 flex flex-wrap gap-2">
-            {onboardingPills.map((pill) => (
-              <span
-                key={pill}
-                className="rounded-full border border-stone-200 bg-stone-50 px-3 py-1 text-xs font-medium text-stone-600"
-              >
-                {pill}
-              </span>
-            ))}
-          </div>
           <div className="mt-4 rounded-lg border border-stone-200 bg-stone-50 px-3 py-3 text-sm text-stone-700">
             {t("languagePolicy")}
           </div>

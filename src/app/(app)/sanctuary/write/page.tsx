@@ -29,13 +29,6 @@ export default function WritePage() {
   const [isVisible, setIsVisible] = useState(false);
   const writingQuotes = t.raw("quotes") as { text: string; author: string }[];
   const [quoteIndex, setQuoteIndex] = useState(0);
-  const authenticatedSignals = [
-    t("authenticated.signalPrivate"),
-    t("authenticated.signalGuided"),
-    t("authenticated.signalClarity"),
-    t("authenticated.signalPatterns"),
-  ];
-
   useEffect(() => {
     // Trigger entrance animation
     const timer = setTimeout(() => setIsVisible(true), 100);
@@ -249,16 +242,6 @@ export default function WritePage() {
               <p className="text-stone-500 text-lg">
                 {t("authenticated.subtitle")}
               </p>
-              <div className="mt-5 flex flex-wrap justify-center gap-2">
-                {authenticatedSignals.map((signal) => (
-                  <span
-                    key={signal}
-                    className="rounded-full border border-stone-200 bg-white/80 px-3 py-1 text-xs font-medium text-stone-600"
-                  >
-                    {signal}
-                  </span>
-                ))}
-              </div>
             </motion.header>
 
             {/* Writing Form */}
