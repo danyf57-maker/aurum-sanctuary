@@ -48,11 +48,11 @@ export async function generateMetadata(): Promise<Metadata> {
   const alternates = buildAlternates("/", locale);
 
   const title = isFr
-    ? "Aurum Diary | Écriture privée et lecture psychologique profonde"
-    : "Aurum Diary | Private writing and deep psychological reflection";
+    ? "Aurum Diary | Écriture privée, plus de clarté"
+    : "Aurum Diary | Private writing, clearer insight";
   const description = isFr
-    ? "Aurum Diary est un espace d'écriture privé qui aide à voir plus clairement ce qui se répète, se contredit, se protège, ou reste sans se dire dans le temps."
-    : "Aurum Diary is a private writing space that helps you see more clearly what repeats, contradicts itself, protects itself, or stays unspoken over time.";
+    ? "Des travaux sur l'écriture expressive montrent que mettre une expérience en mots aide à y voir plus clair. Aurum t'aide à commencer en privé."
+    : "Research on expressive writing suggests that putting experience into words helps people see more clearly. Aurum helps you begin in private.";
   const ogTitle = "Aurum Diary | Private writing, clearer insight";
   const ogDescription = "Write freely in private. Aurum helps you see what keeps repeating.";
 
@@ -122,8 +122,8 @@ export default async function RootLayout({
     '@type': 'SoftwareApplication',
     name: 'Aurum',
     description: isFr
-      ? "Un espace d'écriture privé qui aide à voir plus clairement ce qui se répète, se contredit, se protège, ou reste sans se dire."
-      : "A private writing space that helps users see more clearly what repeats, contradicts itself, protects itself, or stays unspoken.",
+      ? "Un espace d'écriture privé pour mettre une expérience en mots et y voir plus clair."
+      : "A private writing space for putting experience into words and seeing it more clearly.",
     applicationCategory: ['LifestyleApplication', 'ProductivityApplication'],
     operatingSystem: 'Web, iOS, Android',
     offers: {
@@ -134,15 +134,15 @@ export default async function RootLayout({
     featureList: isFr
       ? [
           "Espace de réflexion privée chiffré en AES-256",
-          "Lecture psychologique profonde pour plus de clarté émotionnelle",
-          "Motifs intérieurs récurrents visibles dans le temps",
+          "Écriture privée pour clarifier ce que l'on vit",
+          "Motifs récurrents visibles dans le temps",
           "Suivi des émotions et de leur évolution",
           "Alternative privée à Rosebud",
         ]
       : [
           "AES-256 encrypted private reflection space",
-          "Deep psychological reflection for emotional clarity",
-          "Recurring inner pattern discovery over time",
+          "Private writing for clearer reflection",
+          "Recurring patterns visible over time",
           "Mood and emotion tracking",
           "Private alternative to Rosebud",
         ]
