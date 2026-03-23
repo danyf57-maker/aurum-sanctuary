@@ -83,6 +83,7 @@ export function PremiumJournalForm() {
   const conversationTextareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const initialAurumTurnIdRef = useRef<string | null>(null);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
@@ -516,23 +517,37 @@ export function PremiumJournalForm() {
     if (!savedContent) return;
 
     setIsGeneratingReflection(true);
+    const aurumTurnId = initialAurumTurnIdRef.current ?? `aurum-initial-${Date.now()}`;
+    initialAurumTurnIdRef.current = aurumTurnId;
     try {
       const result = await streamReflection(
         savedContent,
         (partial) => {
           setReflection({ text: partial, patternsUsed: 0 });
-          setConversationTurns([
-            { id: `aurum-${Date.now()}`, role: 'aurum', text: partial },
-          ]);
+          setConversationTurns((prev) => {
+            const existing = prev.find((turn) => turn.id === aurumTurnId);
+            if (existing) {
+              return prev.map((turn) =>
+                turn.id === aurumTurnId ? { ...turn, text: partial } : turn
+              );
+            }
+            return [{ id: aurumTurnId, role: 'aurum', text: partial }];
+          });
         },
         { entryId: savedEntryId },
       );
       const text = result.text;
       // Final state with complete text
       setReflection({ text, patternsUsed: 0 });
-      setConversationTurns([
-        { id: `aurum-${Date.now()}`, role: 'aurum', text },
-      ]);
+      setConversationTurns((prev) => {
+        const existing = prev.find((turn) => turn.id === aurumTurnId);
+        if (existing) {
+          return prev.map((turn) =>
+            turn.id === aurumTurnId ? { ...turn, text } : turn
+          );
+        }
+        return [{ id: aurumTurnId, role: 'aurum', text }];
+      });
       if (typeof result.meta?.conversationRepliesUsed === 'number') {
         setAurumRepliesUsed(result.meta.conversationRepliesUsed);
       }
@@ -619,6 +634,7 @@ export function PremiumJournalForm() {
     setConversationInput('');
     setAurumRepliesUsed(0);
     setIsActivelyTyping(false);
+    initialAurumTurnIdRef.current = null;
     if (formRef.current) formRef.current.reset();
 
     if (textareaRef.current) {
