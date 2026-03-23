@@ -110,7 +110,7 @@ function SignupPage() {
         existingAccountBannerCta: "Aller a la connexion",
         firstName: "Prenom",
       }
-    : {
+      : {
         title: "Create an account",
         description:
           "Research on expressive writing suggests that putting experience into words helps people see it more clearly. Create your account to begin.",
@@ -242,7 +242,6 @@ function SignupPage() {
               {resolveMessage(tSign("encrypted"), signupFallback.encrypted)}
             </p>
           </div>
-
         </CardHeader>
         <CardContent className="space-y-4">
           {info && (
