@@ -7,7 +7,7 @@
 "use client";
 
 import { useState, useEffect, Suspense, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/providers/auth-provider";
 import { z } from "zod";
@@ -73,6 +73,7 @@ function SignupPage() {
     passwordsMismatch: tSign("validation.passwordsMismatch"),
   });
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{
     firstName?: string;
@@ -91,16 +92,18 @@ function SignupPage() {
       ua
     );
   }, []);
-  const redirectAfterGoogle = "/sanctuary/write";
+  const rawRedirectUrl = searchParams.get("redirect");
+  const redirectAfterGoogle =
+    rawRedirectUrl && rawRedirectUrl.startsWith("/") && !rawRedirectUrl.startsWith("//")
+      ? rawRedirectUrl
+      : "/sanctuary/write";
   const loginHref = to("/login");
   const signupFallback = locale === "fr"
     ? {
         title: "Creer un compte",
         description:
-          "Cree ton espace d'ecriture prive. Ecris librement, recois une lecture psychologique profonde, et remarque les motifs recurrents dans le temps.",
+          "Des etudes sur l'ecriture expressive montrent que mettre une experience en mots aide a y voir plus clair. Ouvre ton compte pour commencer.",
         encrypted: "Chiffre par defaut et prive par conception",
-        languagePolicy:
-          "Lors de ta premiere visite, Aurum s'ouvre dans la langue de ton navigateur. Ensuite, il garde la langue que tu choisis. Les reponses suivent la langue dans laquelle tu ecris.",
         existingAccountBannerTitle: "Vous avez deja un compte ?",
         existingAccountBannerBody:
           "Ouvre cette page dans Safari ou dans Chrome, puis connecte-toi la-bas. Si ton compte marche dans Safari, retourne dans Safari. S'il marche dans Chrome, retourne dans Chrome.",
@@ -110,10 +113,8 @@ function SignupPage() {
     : {
         title: "Create an account",
         description:
-          "Create your private writing space. Write freely, receive deep psychological reflection, and notice recurring patterns over time.",
+          "Research on expressive writing suggests that putting experience into words helps people see it more clearly. Create your account to begin.",
         encrypted: "Encrypted by default and private by design",
-        languagePolicy:
-          "On your first visit, Aurum opens in your browser language. After that, it keeps the language you choose. Aurum replies in the language you write in.",
         existingAccountBannerTitle: "Already have an account?",
         existingAccountBannerBody:
           "Open this page in Safari or Chrome, then sign in there. If your account works in Safari, go back to Safari. If it works in Chrome, go back to Chrome.",
@@ -170,7 +171,12 @@ function SignupPage() {
         name: "signup",
         params: { method: "email", source: "signup_page" },
       });
-      router.push(to(`/login?check_email=1&email=${encodeURIComponent(result.data.email)}`));
+      const loginParams = new URLSearchParams({
+        check_email: "1",
+        email: result.data.email,
+        redirect: redirectAfterGoogle,
+      });
+      router.push(to(`/login?${loginParams.toString()}`));
     } catch (error) {
       const errorCode =
         typeof error === "object" && error !== null && "code" in error
@@ -180,6 +186,7 @@ function SignupPage() {
         const existingAccountParams = new URLSearchParams({
           email,
           existing: "1",
+          redirect: redirectAfterGoogle,
         });
         router.push(to(`/login?${existingAccountParams.toString()}`));
         return;
@@ -236,9 +243,6 @@ function SignupPage() {
             </p>
           </div>
 
-          <div className="mt-4 rounded-lg border border-stone-200 bg-stone-50 px-3 py-3 text-sm text-stone-700">
-            {resolveMessage(tSign("languagePolicy"), signupFallback.languagePolicy)}
-          </div>
         </CardHeader>
         <CardContent className="space-y-4">
           {info && (

@@ -23,8 +23,12 @@ const HeroIntegrated = () => {
           "Aurum est un espace d'ecriture prive pour les personnes qui portent beaucoup interieurement. Tu ecris franchement. Aurum te renvoie une lecture psychologique profonde de ce qui se repete, se contredit, se protege, ou reste encore sans se dire dans tes mots.",
         helper:
           "Ecris une ligne honnete. Aurum l'ouvre dans ta page privee.",
+        helperWithDraft:
+          "Crée ton compte pour ouvrir ce texte dans ta page privée.",
         cta: "Commencer gratuitement",
+        ctaContinueDraft: "Créer mon compte pour continuer",
         ctaSecondary: "Ecrire une premiere page",
+        ctaSecondaryGuest: "J'ai déjà un compte",
         ctaAuthenticated: "Continuer a ecrire",
         ctaSecondaryAuthenticated: "Ouvrir mon journal",
         languagesBadge: "Aurum te repond dans ta langue",
@@ -46,8 +50,12 @@ const HeroIntegrated = () => {
           "Aurum is a private writing space for people who carry a lot internally. You write honestly. Aurum gives back a deep psychological reading of what repeats, contradicts itself, protects itself, or stays unspoken in your words.",
         helper:
           "Write one honest line. Aurum opens it inside your private page.",
+        helperWithDraft:
+          "Create your account to open this text inside your private page.",
         cta: "Start for free",
+        ctaContinueDraft: "Create my account to continue",
         ctaSecondary: "Write a first page",
+        ctaSecondaryGuest: "I already have an account",
         ctaAuthenticated: "Continue writing",
         ctaSecondaryAuthenticated: "Open my journal",
         languagesBadge: "Aurum replies in your language",
@@ -73,12 +81,15 @@ const HeroIntegrated = () => {
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
-  const guestWriteHref =
-    thought.trim().length > 0
-      ? to(`/sanctuary/write?initial=${encodeURIComponent(thought)}`)
-      : to("/sanctuary/write");
-  const primaryHref = user ? to("/sanctuary/write") : to("/signup");
-  const secondaryHref = user ? to("/sanctuary") : guestWriteHref;
+  const hasDraft = thought.trim().length > 0;
+  const draftRedirect = hasDraft
+    ? `/sanctuary/write?initial=${encodeURIComponent(thought)}`
+    : "/sanctuary/write";
+  const signupHref = user
+    ? to(draftRedirect)
+    : to(`/signup?redirect=${encodeURIComponent(draftRedirect)}`);
+  const loginHref = to(`/login?redirect=${encodeURIComponent(draftRedirect)}`);
+  const secondaryHref = user ? to("/sanctuary") : loginHref;
 
   useEffect(() => {
     setPlaceholderText("");
@@ -137,7 +148,9 @@ const HeroIntegrated = () => {
               />
               <div className="mt-3 border-t border-[#D4AF37]/20 pt-3 text-center">
                 <p className="font-body text-sm text-stone-600">
-                  {resolveMessage(t("helper"), fallbackContent.helper)}
+                  {hasDraft
+                    ? resolveMessage(t("helperWithDraft"), fallbackContent.helperWithDraft)
+                    : resolveMessage(t("helper"), fallbackContent.helper)}
                 </p>
               </div>
               <div className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-[#D4AF37]/15" />
@@ -150,16 +163,20 @@ const HeroIntegrated = () => {
                   size="lg"
                   className="h-12 md:h-14 px-8 rounded-xl bg-[#D4AF37] text-stone-900 hover:bg-[#D4AF37]/90"
                 >
-                  <Link href={primaryHref}>
+                  <Link href={signupHref}>
                     {user
                       ? resolveMessage(t("ctaAuthenticated"), fallbackContent.ctaAuthenticated)
-                      : resolveMessage(t("cta"), fallbackContent.cta)}
+                      : hasDraft
+                        ? resolveMessage(t("ctaContinueDraft"), fallbackContent.ctaContinueDraft)
+                        : resolveMessage(t("cta"), fallbackContent.cta)}
                   </Link>
                 </Button>
                 <Link href={secondaryHref} className="font-body text-sm text-stone-600 hover:text-stone-900 transition-colors">
                   {user
                     ? resolveMessage(t("ctaSecondaryAuthenticated"), fallbackContent.ctaSecondaryAuthenticated)
-                    : resolveMessage(t("ctaSecondary"), fallbackContent.ctaSecondary)}
+                    : hasDraft
+                      ? resolveMessage(t("ctaSecondaryGuest"), fallbackContent.ctaSecondaryGuest)
+                      : resolveMessage(t("ctaSecondary"), fallbackContent.ctaSecondary)}
                 </Link>
               </>
             </div>
