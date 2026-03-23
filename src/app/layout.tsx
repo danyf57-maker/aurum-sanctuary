@@ -11,7 +11,6 @@ import ProductEventTracker from '@/components/analytics/ProductEventTracker';
 import { CookieConsent } from '@/components/legal/CookieConsent';
 import { TermsModal } from '@/components/auth/TermsModal';
 import { ThemeSync } from '@/components/theme/ThemeSync';
-import ServiceWorkerRefresh from '@/components/pwa/ServiceWorkerRefresh';
 import { getRequestLocale } from '@/lib/locale-server';
 import { PUBLIC_PRICING } from '@/lib/billing/config';
 import { buildAlternates, openGraphLocale, SITE_URL } from '@/lib/seo';
@@ -59,7 +58,6 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title,
     description,
-    manifest: "/manifest.json",
     icons: {
       icon: [
         { url: "/icons/icon-192x192.png", sizes: "192x192", type: "image/png" },
@@ -67,11 +65,6 @@ export async function generateMetadata(): Promise<Metadata> {
       ],
       apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
       shortcut: ["/icons/icon-192x192.png"],
-    },
-    appleWebApp: {
-      capable: true,
-      statusBarStyle: "default",
-      title: "Aurum",
     },
     openGraph: {
       title: ogTitle,
@@ -164,7 +157,6 @@ export default async function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <meta name="mobile-web-app-capable" content="yes" />
         {/* Le script GSI est maintenant dans GoogleAnalytics.tsx */}
       </head>
       <body
@@ -193,7 +185,6 @@ export default async function RootLayout({
               <GoogleAnalytics />
               <ProductEventTracker />
             </Suspense>
-            <ServiceWorkerRefresh />
             {children}
             <Toaster />
             <CookieConsent />
