@@ -30,8 +30,9 @@ export async function requireUserIdFromRequest(
   body?: RequestBodyWithAuth
 ): Promise<string> {
   const authName = (auth as { name?: string } | undefined)?.name;
-  const isMockAuth = typeof authName === "string" && authName.includes("mock");
-  if (!auth || isMockAuth) {
+  const authUnavailable =
+    typeof authName === "string" && (authName.includes("mock") || authName.includes("unavailable"));
+  if (!auth || authUnavailable) {
     throw new UserGuardError(
       503,
       "SERVICE_UNAVAILABLE",

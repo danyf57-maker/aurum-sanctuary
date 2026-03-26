@@ -13,6 +13,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { MagazineEntryEditor } from '@/components/sanctuary/magazine-entry-editor';
 import type { EncryptedData } from '@/lib/crypto/encryption';
 import { useLocalizedHref } from '@/hooks/use-localized-href';
+import { EncryptionAccessPanel } from '@/components/security/EncryptionAccessPanel';
 
 type EntryImage = {
   id: string;
@@ -32,7 +33,15 @@ type EntryDetails = {
 export default function MagazineEntryPage() {
   const to = useLocalizedHref();
   const { user, loading } = useAuth();
-  const { isReady: encryptionReady, decrypt } = useEncryption();
+  const {
+    status: encryptionStatus,
+    error: encryptionError,
+    isReady: encryptionReady,
+    decrypt,
+    migrateEntry,
+    setupVault,
+    unlockVault,
+  } = useEncryption();
   const params = useParams<{ entryId: string }>();
   const entryId = params?.entryId || '';
   const [entry, setEntry] = useState<EntryDetails | null>(null);
@@ -65,14 +74,19 @@ export default function MagazineEntryPage() {
         let content: string;
         let readOnly = false;
 
+        const entryVersion = data.version ? Number(data.version) : 1;
+
         if (data.encryptedContent && data.iv) {
           try {
             const encryptedData: EncryptedData = {
               ciphertext: String(data.encryptedContent),
               iv: String(data.iv),
-              version: data.version ? Number(data.version) : 1,
+              version: entryVersion,
             };
             content = await decrypt(encryptedData);
+            if (entryVersion < 2) {
+              void migrateEntry(snap.id, content);
+            }
           } catch (decryptError) {
             console.error('Failed to decrypt entry:', decryptError);
             content = '[Erreur de déchiffrement]';
@@ -81,6 +95,9 @@ export default function MagazineEntryPage() {
         } else {
           // Legacy plaintext entry
           content = typeof data.content === 'string' ? String(data.content) : '[No content]';
+          if (typeof data.content === 'string') {
+            void migrateEntry(snap.id, content);
+          }
         }
 
         // Parse images
@@ -123,6 +140,25 @@ export default function MagazineEntryPage() {
         <Skeleton className="h-8 w-56" />
         <Skeleton className="h-10 w-72" />
         <Skeleton className="h-[420px] w-full rounded-3xl" />
+      </div>
+    );
+  }
+
+  if (user && encryptionStatus !== 'ready') {
+    return (
+      <div className="container mx-auto max-w-4xl py-8 md:py-12 space-y-6">
+        <Button asChild variant="ghost" className="pl-0 text-stone-600 hover:text-stone-900">
+          <Link href={to("/sanctuary/magazine")}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Retour au journal
+          </Link>
+        </Button>
+        <EncryptionAccessPanel
+          status={encryptionStatus}
+          error={encryptionError}
+          onSetup={setupVault}
+          onUnlock={unlockVault}
+        />
       </div>
     );
   }

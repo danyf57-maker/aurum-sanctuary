@@ -1,16 +1,33 @@
 /**
  * Client-Side Encryption Library
  *
- * AES-256-GCM encryption for journal entries
- * - All encryption happens in the browser
- * - Keys are derived from Firebase UID + user passphrase
- * - Data is encrypted before being sent to Firestore
+ * AES-256-GCM protection layer for journal entries
+ * - All crypto operations happen in the browser
+ * - The current key derivation is deterministic from the Firebase UID
+ * - Data is transformed before being sent to Firestore
  *
- * Security model:
- * - Encryption key stored in browser's IndexedDB (encrypted with passphrase-derived key)
- * - Firestore only stores encrypted data (admin-blind)
- * - Decryption happens client-side only
+ * Important:
+ * - This is not end-to-end encryption
+ * - This does not provide a zero-knowledge or admin-blind guarantee
+ * - The current scheme mainly reduces accidental plaintext exposure at rest
  */
+
+export const ENCRYPTION_WARNING =
+  "Current journal protection is client-side AES-GCM with a deterministic UID-derived key. It should not be marketed as end-to-end, zero-knowledge, or admin-blind encryption.";
+
+export const LEGACY_ENCRYPTION_VERSION = 1;
+export const PASSPHRASE_ENCRYPTION_VERSION = 2;
+export const DEFAULT_PBKDF2_ITERATIONS = 310000;
+
+export interface WrappedContentKeyEnvelope {
+  version: number;
+  algorithm: 'AES-GCM';
+  kdf: 'PBKDF2-SHA-256';
+  iterations: number;
+  salt: string;
+  iv: string;
+  wrappedKey: string;
+}
 
 /**
  * Encrypted data structure stored in Firestore
@@ -62,9 +79,107 @@ export async function importKey(keyData: ArrayBuffer): Promise<CryptoKey> {
   );
 }
 
+async function derivePassphraseKey(
+  passphrase: string,
+  salt: Uint8Array,
+  iterations: number
+): Promise<CryptoKey> {
+  const passphraseBytes = new TextEncoder().encode(passphrase);
+  const keyMaterial = await crypto.subtle.importKey(
+    'raw',
+    passphraseBytes,
+    'PBKDF2',
+    false,
+    ['deriveKey']
+  );
+
+  return await crypto.subtle.deriveKey(
+    {
+      name: 'PBKDF2',
+      salt,
+      iterations,
+      hash: 'SHA-256',
+    },
+    keyMaterial,
+    {
+      name: 'AES-GCM',
+      length: 256,
+    },
+    false,
+    ['encrypt', 'decrypt']
+  );
+}
+
+export async function wrapKeyWithPassphrase(
+  key: CryptoKey,
+  passphrase: string,
+  iterations = DEFAULT_PBKDF2_ITERATIONS
+): Promise<WrappedContentKeyEnvelope> {
+  const rawKey = await exportKey(key);
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const wrappingKey = await derivePassphraseKey(passphrase, salt, iterations);
+
+  const wrappedKey = await crypto.subtle.encrypt(
+    {
+      name: 'AES-GCM',
+      iv,
+      tagLength: 128,
+    },
+    wrappingKey,
+    rawKey
+  );
+
+  return {
+    version: PASSPHRASE_ENCRYPTION_VERSION,
+    algorithm: 'AES-GCM',
+    kdf: 'PBKDF2-SHA-256',
+    iterations,
+    salt: arrayBufferToBase64(salt.buffer),
+    iv: arrayBufferToBase64(iv.buffer),
+    wrappedKey: arrayBufferToBase64(wrappedKey),
+  };
+}
+
+export async function unwrapKeyWithPassphrase(
+  envelope: WrappedContentKeyEnvelope,
+  passphrase: string
+): Promise<CryptoKey> {
+  const salt = new Uint8Array(base64ToArrayBuffer(envelope.salt));
+  const iv = new Uint8Array(base64ToArrayBuffer(envelope.iv));
+  const wrappedKey = base64ToArrayBuffer(envelope.wrappedKey);
+  const wrappingKey = await derivePassphraseKey(passphrase, salt, envelope.iterations);
+
+  const rawKey = await crypto.subtle.decrypt(
+    {
+      name: 'AES-GCM',
+      iv,
+      tagLength: 128,
+    },
+    wrappingKey,
+    wrappedKey
+  );
+
+  return await importKey(rawKey);
+}
+
+export function isWrappedContentKeyEnvelope(value: unknown): value is WrappedContentKeyEnvelope {
+  if (!value || typeof value !== 'object') return false;
+  const envelope = value as WrappedContentKeyEnvelope;
+  return (
+    envelope.version === PASSPHRASE_ENCRYPTION_VERSION &&
+    envelope.algorithm === 'AES-GCM' &&
+    envelope.kdf === 'PBKDF2-SHA-256' &&
+    typeof envelope.iterations === 'number' &&
+    typeof envelope.salt === 'string' &&
+    typeof envelope.iv === 'string' &&
+    typeof envelope.wrappedKey === 'string'
+  );
+}
+
 /**
- * Derive an encryption key from user's Firebase UID
- * This ensures each user has a unique key
+ * Derive a deterministic key from the Firebase UID.
+ * This creates per-user separation, but the UID is not a secret.
  *
  * @param uid Firebase user UID
  * @param salt Optional salt (for key rotation)
@@ -118,7 +233,7 @@ export async function encrypt(plaintext: string, key: CryptoKey): Promise<Encryp
   return {
     ciphertext: arrayBufferToBase64(ciphertextBuffer),
     iv: arrayBufferToBase64(iv.buffer),
-    version: 1, // Algorithm version
+    version: PASSPHRASE_ENCRYPTION_VERSION,
   };
 }
 

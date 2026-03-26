@@ -84,6 +84,12 @@ service cloud.firestore {
         allow write: if isOwner(userId);
       }
 
+      // Encryption Settings / Wrapped Content Key - WRITABLE by Client
+      match /settings/security {
+        allow read: if isOwner(userId);
+        allow write: if isOwner(userId);
+      }
+
       // -------------------------------------------------------
       // Entries Subcollection (Journal)
       // -------------------------------------------------------

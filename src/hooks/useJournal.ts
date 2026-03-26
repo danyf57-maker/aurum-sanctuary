@@ -18,7 +18,7 @@ export interface JournalEntry {
 
 export function useJournal() {
     const { user } = useAuth();
-    const { isReady: encryptionReady, encrypt, decrypt } = useEncryption();
+    const { isReady: encryptionReady, encrypt, decrypt, migrateEntry } = useEncryption();
     const { toast } = useToast();
     const [loading, setLoading] = useState(false);
     const [entries, setEntries] = useState<JournalEntry[]>([]);
@@ -90,14 +90,19 @@ export function useJournal() {
                 let content: string;
 
                 // Check if entry is encrypted
+                const entryVersion = data.version ? Number(data.version) : 1;
+
                 if (data.encryptedContent && data.iv) {
                     try {
                         const encryptedData: EncryptedData = {
                             ciphertext: data.encryptedContent,
                             iv: data.iv,
-                            version: data.version || 1,
+                            version: entryVersion,
                         };
                         content = await decrypt(encryptedData);
+                        if (entryVersion < 2) {
+                            void migrateEntry(doc.id, content);
+                        }
                     } catch (decryptError) {
                         logger.errorSafe("Failed to decrypt entry", decryptError);
                         content = '[Erreur de déchiffrement]';
@@ -105,6 +110,9 @@ export function useJournal() {
                 } else {
                     // Legacy plaintext entry
                     content = data.content || '[No content]';
+                    if (typeof data.content === 'string') {
+                        void migrateEntry(doc.id, content);
+                    }
                 }
 
                 return {

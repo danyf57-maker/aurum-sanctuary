@@ -31,6 +31,7 @@ import { useEncryption } from '@/hooks/useEncryption';
 import { useSearchParams } from 'next/navigation';
 import { useLocale } from '@/hooks/use-locale';
 import { useFreeEntryLimit } from '@/hooks/use-free-entry-limit';
+import { EncryptionAccessPanel } from '@/components/security/EncryptionAccessPanel';
 
 type DraftImage = {
   id: string;
@@ -69,7 +70,14 @@ function buildPreviewExcerpt(content: string, maxLength = 170) {
 export function PremiumJournalForm() {
   const searchParams = useSearchParams();
   const { user } = useAuth();
-  const { isReady: encryptionReady, encrypt } = useEncryption();
+  const {
+    status: encryptionStatus,
+    error: encryptionError,
+    isReady: encryptionReady,
+    encrypt,
+    setupVault,
+    unlockVault,
+  } = useEncryption();
   const { toast } = useToast();
   const locale = useLocale();
   const isFr = locale === 'fr';
@@ -631,6 +639,17 @@ export function PremiumJournalForm() {
     : remaining > 0
       ? `${remaining} free page${remaining > 1 ? 's' : ''} left before the full reflection experience.`
       : 'Go premium with a 7-day free trial to continue guided reflection.';
+
+  if (encryptionStatus !== 'ready') {
+    return (
+      <EncryptionAccessPanel
+        status={encryptionStatus}
+        error={encryptionError}
+        onSetup={setupVault}
+        onUnlock={unlockVault}
+      />
+    );
+  }
 
   return (
     <>

@@ -32,11 +32,13 @@ export async function POST(request: Request) {
         // Set session expiration to 14 days
         const expiresIn = 60 * 60 * 24 * 14 * 1000;
         const authName = (auth as any)?.name;
-        const isMockAuth = typeof authName === 'string' && authName.includes('mock');
+        const authUnavailable =
+            typeof authName === 'string' &&
+            (authName.includes('mock') || authName.includes('unavailable'));
 
-        if (!auth || isMockAuth || typeof (auth as any).createSessionCookie !== 'function') {
-            console.warn("Firebase Admin Auth not initialized or mocked. Skipping session cookie creation.");
-            return NextResponse.json({ status: 'skipped', message: 'Admin Auth missing' }, { status: 200 });
+        if (!auth || authUnavailable || typeof (auth as any).createSessionCookie !== 'function') {
+            logger.warnSafe('Firebase Admin Auth unavailable for session cookie creation', { authName });
+            return NextResponse.json({ error: 'Authentication service unavailable' }, { status: 503 });
         }
 
         // Verify ID token before exchanging to session cookie.

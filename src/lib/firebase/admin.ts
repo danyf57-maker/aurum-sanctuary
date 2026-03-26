@@ -20,6 +20,9 @@ export function isAdminEmail(email?: string | null) {
   return ADMIN_EMAILS.includes(email.toLowerCase() as (typeof ADMIN_EMAILS)[number]);
 }
 
+const ALLOW_ADMIN_MOCKS =
+  process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test";
+
 function createMock(name: string): any {
   return new Proxy(
     {},
@@ -47,6 +50,24 @@ function createMock(name: string): any {
         if (prop === "name") return "[DEFAULT]-mock";
 
         return () => Promise.resolve({});
+      },
+    }
+  );
+}
+
+function createUnavailable(name: string): any {
+  return new Proxy(
+    {},
+    {
+      get: (_target, prop) => {
+        if (prop === "then") return undefined;
+        if (prop === "name") return `[DEFAULT]-unavailable-${name.toLowerCase()}`;
+
+        return () => {
+          throw new Error(
+            `Firebase Admin ${name} is unavailable in this runtime. Configure Firebase Admin credentials instead of relying on mocks.`
+          );
+        };
       },
     }
   );
@@ -120,8 +141,13 @@ try {
     const adminAuthModule = require("firebase-admin/auth") as { getAuth: (app: App) => Auth };
     auth = adminAuthModule.getAuth(app);
   } catch {
-    console.warn("Firebase Admin Auth failed to initialize. Using PROXY MOCK.");
-    auth = createMock("Auth");
+    if (ALLOW_ADMIN_MOCKS) {
+      console.warn("Firebase Admin Auth failed to initialize. Using development mock.");
+      auth = createMock("Auth");
+    } else {
+      console.error("Firebase Admin Auth failed to initialize. Mocks are disabled outside development/test.");
+      auth = createUnavailable("Auth");
+    }
   }
 
   db = adminFirestoreModule.getFirestore(app);
@@ -133,10 +159,17 @@ try {
     }
   }
 } catch (error) {
-  console.warn("Firebase Admin failed to initialize. Using PROXY MOCKS.", error);
-  app = createMock("App");
-  auth = createMock("Auth");
-  db = createMock("Firestore");
+  if (ALLOW_ADMIN_MOCKS) {
+    console.warn("Firebase Admin failed to initialize. Using development mocks.", error);
+    app = createMock("App");
+    auth = createMock("Auth");
+    db = createMock("Firestore");
+  } else {
+    console.error("Firebase Admin failed to initialize. Mocks are disabled outside development/test.", error);
+    app = createUnavailable("App");
+    auth = createUnavailable("Auth");
+    db = createUnavailable("Firestore");
+  }
 }
 
 export { app, auth, db, db as firestore };

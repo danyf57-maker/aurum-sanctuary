@@ -19,6 +19,7 @@
 const SENSITIVE_FIELDS = [
     // Authentication & Tokens
     'password',
+    'passphrase',
     'token',
     'idToken',
     'accessToken',

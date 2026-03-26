@@ -1,24 +1,24 @@
 # Aurum Sanctuary
 
-A privacy-first mental health journaling app with AI-powered insights.
+A private journaling and reflection app with AI-powered insights.
 
 ## Tech Stack
 
-- **Frontend**: Next.js 15 (App Router), React 19, TypeScript
+- **Frontend**: Next.js 14 (App Router), React 18, TypeScript
 - **Styling**: Tailwind CSS
 - **State Management**: Zustand
 - **Backend**: Firebase (Firestore, Auth, Cloud Functions)
-- **AI**: DeepSeek (LLM for Mirror Chat & Insights)
+- **AI**: DeepSeek plus Genkit-based flows
 - **Payments**: Stripe
 - **Analytics**: PostHog
 - **Hosting**: Vercel (Next.js), Firebase (Cloud Functions)
 
 ## Key Features
 
-- **Encrypted Journaling**: Client-side AES-256-GCM encryption
+- **Journal Protection**: Client-side AES-256-GCM storage protection
 - **Mirror Chat**: AI-powered reflective questioning (Vercel Edge Runtime)
 - **Weekly Insights**: Automated emotional pattern analysis
-- **Privacy-First**: Admin-Blind processing, no PII in logs
+- **Privacy-First**: Minimal logging, explicit caveats on current storage protection
 - **Subscription Model**: Free tier + Pro ($9.99/month)
 
 ## Project Structure
@@ -27,16 +27,16 @@ A privacy-first mental health journaling app with AI-powered insights.
 aurum-sanctuary/
 ├── src/
 │   ├── app/                    # Next.js App Router
-│   │   ├── (public)/          # Public routes (login, signup, terms)
-│   │   ├── (protected)/       # Protected routes (dashboard, journal, insights)
-│   │   └── api/               # API routes (Edge & Node runtimes)
+│   │   ├── (marketing)/       # Marketing/public routes
+│   │   ├── (app)/             # Authenticated app routes
+│   │   └── api/               # API routes
 │   ├── components/
 │   │   ├── ui/                # Base UI components (shadcn/ui)
 │   │   └── features/          # Feature-specific components
 │   ├── lib/
 │   │   ├── firebase/          # Firebase client & admin SDK
-│   │   ├── crypto/            # Client-side encryption
-│   │   ├── deepseek/          # DeepSeek adapter
+│   │   ├── crypto/            # Client-side storage protection helpers
+│   │   ├── ai/                # AI service configuration
 │   │   ├── stripe/            # Stripe integration
 │   │   ├── logger/            # Safe logging utilities
 │   │   └── schemas/           # Zod validation schemas
@@ -45,7 +45,6 @@ aurum-sanctuary/
 │   └── src/
 │       ├── updateDerivedMemory.ts
 │       ├── generateInsight.ts
-│       ├── getContentKey.ts
 │       └── deleteUserAccount.ts
 ├── _bmad-output/
 │   ├── epics/                 # Epic & story definitions
@@ -100,27 +99,34 @@ make bootstrap
 # Environment safety checks
 make guard-env
 
+# Fast checks
+make lint
+make typecheck
+make test
+
+# Runtime smoke validation
+make smoke
+
 # Full local verification harness
 make verify
 ```
 
-`make verify` runs environment checks, client/server boundary checks, ESLint, TypeScript, EN/FR i18n parity, Next.js build, and Cloud Functions build.
+`make verify` runs environment checks, client/server boundary checks, ESLint, TypeScript, tests, Next.js build, Cloud Functions build, and a local smoke run against the built app.
 
 ## Architecture Decisions
 
 See `_bmad-output/planning-artifacts/architecture.md` for detailed architecture documentation.
 
-### Key Decisions
+### Current Caveats
 
-- **wrappedContentKey**: Random AES-256 key wrapped by Google Cloud KMS
-- **Edge Runtime**: Mirror Chat uses Vercel Edge for <400ms latency
-- **Admin-Blind**: Automated processes can decrypt, humans cannot
-- **Rate Limiting**: Upstash Redis (20 req/min Mirror Chat, 60 req/h getContentKey)
-- **Hard Delete**: GDPR compliance, no soft delete
+- Current journal storage protection is client-side AES-256-GCM with a deterministic UID-derived key.
+- This should not be described as end-to-end encryption, zero-knowledge storage, or admin-blind architecture.
+- Some AI and server-side features process submitted content operationally to return the requested functionality.
 
 ## Privacy & Security
 
-- Client-side encryption (AES-256-GCM)
+- Client-side AES-256-GCM storage protection for supported journal flows
+- No claim of end-to-end or zero-knowledge encryption in the current implementation
 - No PII in logs or analytics
 - Firestore Rules enforce access control
 - Safe logging patterns (`logger.errorSafe`)
@@ -128,7 +134,7 @@ See `_bmad-output/planning-artifacts/architecture.md` for detailed architecture 
 
 ## License
 
-Proprietary - All rights reserved
+MIT
 
 ## Contact
 

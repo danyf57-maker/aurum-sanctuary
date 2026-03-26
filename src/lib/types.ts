@@ -2,7 +2,9 @@ export type JournalEntry = {
   id: string;
   userId: string;
   content: string;
-  encryptedContent?: string;
+  encryptedContent?: string | null;
+  iv?: string | null;
+  version?: number | string | null;
   title?: string | null;
   excerpt?: string | null;
   tags: string[];

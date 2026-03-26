@@ -15,8 +15,8 @@
   },
   "entryForm": {
     "savedTitle": "Entrée sauvegardée",
-    "savedDescription": "Votre pensée a été chiffrée et enregistrée.",
-    "encryptionActive": "Chiffrement côté client actif",
+    "savedDescription": "Votre pensée a été protégée côté client puis enregistrée.",
+    "encryptionActive": "Protection locale active avant stockage",
     "save": "Sauvegarder"
   },
   "settings": {
@@ -39,8 +39,8 @@
   },
   "termsModal": {
     "title": "Mise à jour des Conditions",
-    "intro": "Pour continuer à utiliser Aurum Sanctuary, vous devez accepter nos nouvelles conditions d'utilisation et notre politique de confidentialité.",
-    "detail": "Nous avons mis à jour nos protocoles de chiffrement et nos mentions légales pour mieux protéger vos données de santé mentale.",
+    "intro": "Pour continuer à utiliser Aurum Diary, vous devez accepter nos nouvelles conditions d'utilisation et notre politique de confidentialité.",
+    "detail": "Nous avons mis à jour nos textes juridiques pour mieux refléter le fonctionnement d'Aurum, la livraison des fonctions IA et vos droits.",
     "readTerms": "Lire les Conditions d'Utilisation",
     "readPrivacy": "Lire la Politique de Confidentialité",
     "checkbox": "J'ai lu et j'accepte les conditions d'utilisation et la politique de confidentialité.",
@@ -397,7 +397,7 @@
     "description": "Crée ton espace de réflexion privé. Écris librement, reçois des reflets guidés, et remarque les motifs récurrents dans le temps.",
     "quizBadge": "Votre profil vous attend",
     "quizText": "Votre profil de réflexion est prêt ! Créez votre compte pour découvrir votre résultat personnalisé et commencer votre expérience.",
-    "encrypted": "Chiffré et privé par conception",
+    "encrypted": "Protection locale côté client et confidentialité par conception",
     "inAppBrowser": "Connexion Google bloquée dans ce navigateur intégré. Ouvre cette page dans Safari ou Chrome puis réessaie.",
     "google": "Continuer avec Google",
     "or": "Ou continuer avec",
@@ -481,9 +481,9 @@
     "ctaSecondary": "Écrire d'abord sans engagement",
     "trust": "100% Chiffré • Réflexion guidée par IA • Privé par design.",
     "placeholders": {
-      "0": "La même conversation rejoue encore dans ma tête...",
-      "1": "Je remarque la même tension chaque lundi...",
-      "2": "Quelque chose sonne faux, mais je n'arrive pas encore à le nommer..."
+      "0": "Je n'arrive pas à dormir, mon cerveau tourne en boucle sur la réunion de demain...",
+      "1": "Je me sens complètement submergé par ma liste de tâches aujourd'hui...",
+      "2": "J'ai juste besoin de vider ma tête avant d'exploser..."
     },
     "quotes": {
       "0": {
@@ -493,14 +493,14 @@
         "author": "Jules Renard"
       },
       "1": {
-        "hint": "Quand quelque chose rejoue, écris ce qui revient et ce que cela raconte.",
-        "detail": "Quelques lignes sincères peuvent révéler le motif dessous.",
+        "hint": "Quand tu rumines, écris ce qui tourne en boucle.",
+        "detail": "Mettre les mots dehors aide ton mental à ralentir.",
         "quote": "J'écris pour découvrir ce que je pense.",
         "author": "Joan Didion"
       },
       "2": {
-        "hint": "Si plusieurs émotions se mélangent, laisse-les se poser une à une.",
-        "detail": "Tu n'as pas besoin d'écrire parfaitement, juste assez précisément pour te remarquer.",
+        "hint": "Si tu portes trop, dépose tout ici, ligne après ligne.",
+        "detail": "Tu n'as pas besoin d'écrire parfaitement, juste d'écrire vrai.",
         "quote": "Il n'y a pas de plus grande agonie que de porter une histoire non racontée en soi.",
         "author": "Maya Angelou"
       },
@@ -511,14 +511,14 @@
         "author": "Margaret Atwood"
       },
       "4": {
-        "hint": "Quand tes signaux intérieurs se brouillent, cet espace t'aide à trier l'essentiel.",
-        "detail": "Tu peux y déposer ce qui s'emmêle et remarquer ce qui revient.",
+        "hint": "Quand la surcharge intérieure monte, cet espace t'aide à ralentir.",
+        "detail": "Tu peux y déposer ce qui s'emmêle et remarquer ce qui demande de la clarté.",
         "quote": "Nous écrivons pour goûter la vie deux fois.",
         "author": "Anaïs Nin"
       },
       "5": {
-        "hint": "Après un moment marquant, écris ce qui est resté avec toi.",
-        "detail": "Même 2 minutes de réflexion peuvent rendre un thème récurrent plus visible.",
+        "hint": "Après une journée lourde, écris ce qui est resté avec toi.",
+        "detail": "Même 2 minutes de réflexion peuvent rendre un motif plus visible.",
         "quote": "La clarté commence quand les mots cessent de tourner et commencent à se poser.",
         "author": "Aurum"
       },
@@ -529,8 +529,8 @@
         "author": "Jules Renard"
       },
       "7": {
-        "hint": "Quand ton attention se disperse, ralentis avec des mots simples.",
-        "detail": "Ici, tu peux remarquer sans avoir à performer.",
+        "hint": "Quand ton esprit accélère, ralentis avec des mots simples.",
+        "detail": "Ici, tu peux déposer sans te juger.",
         "quote": "J'écris pour découvrir ce que je pense.",
         "author": "Joan Didion"
       }
@@ -753,50 +753,50 @@
     "studyCards": [
       {
         "eyebrow": "Sais-tu que...",
-        "title": "écrire une expérience difficile peut aider à organiser ce que tu ressens ?",
-        "body": "Dans une étude fondatrice, les personnes qui écrivaient sur un événement difficile ont montré des changements mesurables dans leur façon de le traiter.",
-        "example": "Exemple concret : écris 10 minutes sur ce qui s'est passé, ce que tu as ressenti, puis ce qui semble revenir."
+        "title": "écrire un stress vécu peut réduire des symptômes physiques ?",
+        "body": "Dans une étude fondatrice, les personnes qui écrivaient sur un événement difficile ont montré de meilleurs indicateurs de santé.",
+        "example": "Exemple concret : 10 minutes le soir pour poser ce qui te pèse au lieu de ruminer au lit."
       },
       {
         "eyebrow": "Sais-tu que...",
-        "title": "mettre tes émotions en mots peut soutenir des prochains pas plus clairs ?",
+        "title": "mettre tes émotions en mots peut améliorer ton rebond ?",
         "body": "Une étude sur des personnes en période de perte d'emploi a trouvé un meilleur retour à l'action chez celles qui écrivaient.",
         "example": "Exemple concret : écrire 3 fois par semaine ce que tu ressens, puis ton prochain pas réaliste."
       },
       {
         "eyebrow": "Sais-tu que...",
-        "title": "une écriture réflexive régulière peut améliorer le bien-être dans le temps ?",
-        "body": "Les revues récentes suggèrent qu'un journaling régulier peut soutenir la clarté émotionnelle, la réflexion et le bien-être dans la durée.",
+        "title": "les revues systématiques confirment un gain de bien-être ?",
+        "body": "Les synthèses récentes montrent un effet positif du journaling sur le stress et le bien-être psychologique.",
         "example": "Exemple concret : une routine de 5 minutes par jour peut déjà changer ton niveau de clarté."
       }
     ],
     "useCases": {
-      "title": "Moments fréquents où la réflexion peut rendre les motifs visibles",
-      "subtitle": "Des exemples concrets pour démêler ce que tu ressens, faire émerger les thèmes récurrents, et transformer des pensées dispersées en signaux plus lisibles.",
-      "note": "Ancré dans des recherches sur l'écriture expressive, la mise en mots des émotions et la pratique réflexive",
+      "title": "Moments fréquents où l'écriture peut ramener de la clarté",
+      "subtitle": "Des exemples concrets pour démêler ce que tu ressens, alléger la surcharge intérieure et faire apparaître ce qui revient.",
+      "note": "Ancré dans des recherches récentes sur l'écriture expressive et le bien-être psychologique",
       "cards": [
         {
-          "badge": "Clarté du soir",
-          "title": "Une conversation rejoue encore à la fin de la journée",
-          "body": "Écris les faits, ce qui est resté émotionnellement, puis ce dont tu as besoin maintenant. Trois lignes peuvent transformer une boucle en quelque chose que tu vois vraiment.",
+          "badge": "Insomnie",
+          "title": "Ton cerveau tourne la nuit",
+          "body": "Écris ce qui tourne en boucle. En pratique: 3 lignes avant de dormir (fait, émotion, besoin) peuvent déjà apaiser ton esprit.",
           "cta": "Commencer gratuitement →"
         },
         {
           "badge": "Self-talk",
-          "title": "Ta voix intérieure raconte toujours la même histoire",
-          "body": "Écris la phrase exacte que tu te répètes, puis réponds-lui avec quelque chose de plus juste et plus vrai. Le motif devient plus facile à nommer.",
+          "title": "Tu te parles trop durement",
+          "body": "Quand la petite voix dit \"je suis nul\", écris une version plus juste: \"j'avance petit à petit\". Ça aide à reprendre confiance.",
           "cta": "Créer mon compte →"
         },
         {
-          "badge": "Motif récurrent",
-          "title": "La même tension revient dans des situations différentes",
-          "body": "Liste trois moments récents qui se ressemblent. Aurum t'aide à voir le fil commun au lieu de traiter chaque scène comme isolée.",
+          "badge": "Overthinking",
+          "title": "Tout est confus dans ta tête",
+          "body": "Écris une idée par ligne. Tu transformes la confusion mentale en points clairs, puis tu choisis un seul petit pas pour aujourd'hui.",
           "cta": "Je veux essayer →"
         },
         {
-          "badge": "Signal émotionnel",
-          "title": "Tu te sens chargé sans voir ce qu'il y a dessous",
-          "body": "Écris ce qui s'est passé, ce que tu as ressenti d'abord, puis ce qui est apparu ensuite. Une courte réflexion révèle souvent le vrai centre émotionnel.",
+          "badge": "Pression",
+          "title": "Tu gardes tout, puis tu exploses",
+          "body": "Quelques lignes régulières valent mieux qu'une longue session rare. Tu décompresses avant saturation et tu retrouves plus de calme.",
           "cta": "Je commence maintenant →"
         },
         {
@@ -806,65 +806,65 @@
           "cta": "Ouvrir mon journal →"
         },
         {
-          "badge": "Surcharge de rôles",
-          "title": "Tu portes trop de rôles en même temps",
-          "body": "Écris en trois colonnes: ce qu'on attend de toi, ce qui compte pour toi, puis ce qui t'épuise. Ta hiérarchie intérieure devient plus visible.",
+          "badge": "Charge mentale",
+          "title": "Ta liste de tâches t'étouffe",
+          "body": "Pose un minuteur 5 minutes et écris sans corriger: faits, émotions, besoins. Cette routine courte te redonne de l'air mental.",
           "cta": "Créer mon espace →"
         },
         {
           "badge": "Conflit",
-          "title": "Après une dispute, tu veux comprendre clairement ta part",
-          "body": "Pose les faits, ce que tu as ressenti, puis la limite ou le besoin qui est devenu visible. Tu passes de la scène rejouée au motif compris.",
-          "cta": "Revenir à la réflexion →"
+          "title": "Après une dispute, ton mental rejoue la scène",
+          "body": "Pose les faits, ce que tu as ressenti, puis ce dont tu as besoin maintenant. Tu sors du film mental et tu reviens à toi.",
+          "cta": "Revenir au calme →"
         },
         {
-          "badge": "Rythme d'énergie",
-          "title": "Ton énergie baisse sans que tu voies vraiment pourquoi",
-          "body": "Écris cinq lignes en fin de journée: ce qui t'a vidé, ce qui t'a recentré, puis ce qui s'est répété. Avec le temps, le rythme devient plus lisible.",
-          "cta": "Voir le motif →"
+          "badge": "Fatigue mentale",
+          "title": "Tu te sens vidé sans savoir pourquoi",
+          "body": "Écris 5 lignes en fin de journée: ce qui t'a pris de l'énergie, ce qui t'en a donné. Tu retrouves des repères pour demain.",
+          "cta": "Retrouver de l'énergie →"
         },
         {
           "badge": "Décision",
           "title": "Tu bloques sur une décision importante",
-          "body": "Divise ta page en deux colonnes: ce qui t'aligne, puis ce qui te compromet. Mettre tes pensées devant toi fait souvent émerger le vrai choix.",
+          "body": "Divise ta page en deux colonnes: ce que tu gagnes, ce que tu perds. Mettre à plat tes pensées fait souvent émerger ton vrai choix.",
           "cta": "Clarifier ma décision →"
         }
       ]
     },
     "scientificProof": {
-      "title": "Écrire n'est pas seulement expressif. C'est clarifiant.",
-      "subtitle": "Les recherches sur l'écriture expressive suggèrent que mettre une expérience en mots peut soutenir la prise de recul, le traitement émotionnel et des choix plus clairs dans le temps.",
+      "title": "Ce n'est pas de la magie, c'est un phénomène observé.",
+      "subtitle": "Des chercheurs se sont penchés sur le pouvoir de l'écriture. Dans leurs études, ils ont fait des découvertes surprenantes :",
       "discoveries": [
         {
           "label": "Découverte n°1 :",
-          "body": "Les participants qui écrivaient régulièrement sur des expériences difficiles ont montré des évolutions mesurables dans leurs marqueurs d'ajustement et de santé"
+          "body": "Les participants qui prenaient le temps d'écrire sur leurs soucis ont vu leurs visites chez le médecin diminuer de moitié"
         },
         {
           "label": "Découverte n°2 :",
-          "body": "Dans une autre étude sur des personnes ayant perdu leur emploi, celles qui écrivaient sur leurs émotions étaient plus susceptibles de retrouver de l'élan et de poser des prochains pas constructifs"
+          "body": "Dans une autre étude sur des personnes ayant perdu leur emploi, celles qui écrivaient sur leurs émotions avaient deux fois plus de chances de retrouver un travail que les autres"
         }
       ]
     },
     "problem": {
-      "title": "Que se passe-t-il quand les signaux intérieurs restent sans nom ?",
-      "body": "Les pensées tournent, les émotions se mélangent, et les mêmes réactions reviennent sans nom clair. L'écriture rend ces signaux plus visibles avant qu'ils ne disparaissent."
+      "title": "À quoi ressemble la surcharge intérieure ?",
+      "body": "Les pensées tournent, les émotions se mélangent, et il devient plus difficile de voir ce qui compte vraiment. L'écriture rend ces signaux plus lisibles."
     },
     "solution": {
-      "title": "Écrire crée assez de distance pour mieux te voir.",
-      "body": "Écrire en privé donne à tes pensées un endroit où se poser. Aurum ajoute une réflexion guidée douce pour laisser émerger des motifs émotionnels, des thèmes récurrents et des prochains pas plus clairs dans le temps."
+      "title": "L'écriture ralentit assez pour voir clair.",
+      "body": "Écrire en privé donne à tes pensées un endroit où se poser. Aurum ajoute une réflexion guidée douce pour laisser émerger la clarté et les motifs récurrents dans le temps."
     },
     "trust": {
       "eyebrow": "Ton intégrité, notre priorité",
       "title": "Un sanctuaire où tu es le seul maître.",
-      "subtitle": "Aurum a été conçu pour offrir à tes écrits un espace privé et protégé. Le chiffrement côté client, la limitation des accès internes et des contrôles clairs sont intégrés dès le départ.",
+      "subtitle": "Nous avons conçu Aurum autour d'une idée simple : ton monde intérieur mérite un espace privé et respectueux.",
       "cards": [
         {
-          "title": "Chiffré par défaut",
-          "body": "Tes pages sont chiffrées sur ton appareil avant d'être stockées. Aurum est conçu pour protéger ce que tu écris contre un accès interne trop large."
+          "title": "Confidentialité protégée",
+          "body": "Le stockage du journal est protégé par un chiffrement côté client sur les flux compatibles, avec des protections supplémentaires sur le compte et le transport."
         },
         {
-          "title": "Privé par conception",
-          "body": "Nous ne vendons pas tes données et nous n'utilisons pas tes écrits pour la publicité. Les fonctionnalités assistées par IA ne traitent que les textes nécessaires pour générer les reflets que tu demandes."
+          "title": "Traitement respectueux",
+          "body": "Nous ne vendons pas tes écrits. Certaines fonctionnalités IA traitent le texte que tu choisis d'envoyer pour produire le reflet que tu demandes."
         },
         {
           "title": "Droit à l'oubli",
@@ -877,7 +877,7 @@
     },
     "finalCta": {
       "button": "Créer mon sanctuaire maintenant",
-      "note": "Sans engagement • Chiffré et privé par conception",
+      "note": "Sans engagement • Privé par conception",
       "subtitle": "Tu entres dans un espace de réflexion privée conçu pour écrire régulièrement, comprendre ce qui revient et retrouver de la clarté dans le temps.",
       "cards": [
         {
@@ -905,20 +905,20 @@
     "faqTitle": "Questions fréquentes",
     "faqs": [
       {
-        "question": "Comment mes écrits sont-ils protégés ?",
-        "answer": "Tes pages sont chiffrées avant d'être stockées, et Aurum est conçu pour limiter l'accès interne aux données lisibles. Quand tu demandes une réflexion guidée par IA, le texte nécessaire est traité pour générer cette réponse. Nous ne vendons pas tes données et nous ne les utilisons pas pour la publicité."
+        "question": "Qui peut lire mes données ?",
+        "answer": "Ton journal est stocké avec une protection chiffrée côté client sur les flux compatibles, et l'accès reste limité à ton compte. Certaines fonctionnalités IA traitent le texte que tu choisis d'envoyer pour pouvoir produire le reflet demandé."
       },
       {
-        "question": "Comment l'écriture privée aide-t-elle à voir ce qui revient ?",
-        "answer": "Écris trois lignes courtes : ce qui s'est passé, ce que tu as ressenti, puis ce qui semble se répéter. Le but n'est pas seulement de te soulager sur le moment, mais de mieux voir le motif dessous."
+        "question": "Comment l'écriture privée aide-t-elle à retrouver de la clarté le soir ?",
+        "answer": "Écris 3 lignes avant de te coucher : ce qui te pèse, ce que tu ressens, puis ce dont tu as besoin demain. Le but est de sortir les boucles mentales de ta tête pour laisser revenir la clarté."
       },
       {
-        "question": "Comment retrouver de la clarté en 5 minutes ?",
-        "answer": "Pose un minuteur 5 minutes et écris sans corriger : faits, émotions, besoins. Cette courte réflexion aide à transformer des pensées dispersées en quelque chose que tu peux voir et comprendre."
+        "question": "Comment réduire la surcharge intérieure en 5 minutes ?",
+        "answer": "Pose un minuteur 5 minutes et écris sans corriger : faits, émotions, besoins. Cette courte réflexion aide à alléger la surcharge intérieure et à retrouver de la clarté, même pendant une journée chargée."
       },
       {
-        "question": "Comment la réflexion aide-t-elle à voir un motif récurrent plus clairement ?",
-        "answer": "Quand quelque chose tourne en boucle, écris une idée par ligne, puis souligne ce qui revient. La réflexion transforme le bruit mental en motif que tu peux nommer et travailler."
+        "question": "Comment la réflexion aide-t-elle à sortir du trop-plein mental ?",
+        "answer": "Quand tout tourne dans ta tête, écris une idée par ligne. La réflexion transforme un flot confus en quelque chose que tu peux voir, nommer et traverser plus clairement."
       },
       {
         "question": "L'écriture réflexive peut-elle améliorer la clarté émotionnelle ?",
@@ -926,11 +926,11 @@
       },
       {
         "question": "Quelle app de réflexion privée protège vraiment mes écrits ?",
-        "answer": "Choisis une app de réflexion privée conçue avec la confidentialité en tête, claire sur la façon dont les fonctionnalités assistées par IA traitent tes écrits, et sans incitation publicitaire. Sur Aurum, tes mots restent dans un espace privé conçu pour la clarté et les motifs récurrents."
+        "answer": "Choisis une app de réflexion privée qui explique clairement comment les écrits sont protégés, évite les logiques publicitaires et garde tes mots dans un espace non public. Sur Aurum, tes écrits restent dans un produit privé conçu pour la clarté et les motifs récurrents."
       },
       {
         "question": "Combien coûte Aurum ?",
-        "answer": "Aurum propose une formule mensuelle à 13$/mois et une formule annuelle à 129$/an (2 mois offerts)."
+        "answer": "Aurum propose une formule mensuelle à 13€/mois et une formule annuelle à 129€/an (2 mois offerts)."
       }
     ],
     "references": {
@@ -980,9 +980,9 @@
       "privateBadge": "Espace privé",
       "titleLine1": "Ton sanctuaire",
       "titleLine2": "t'attend",
-      "description": "Un espace privé et chiffré pour écrire librement, recevoir un reflet guidé, et commencer à voir les motifs émotionnels qui reviennent dans le temps.",
-      "featurePrivate": "Privé par conception",
-      "featureEncrypted": "Chiffré",
+      "description": "Un espace privé pour écrire librement, recevoir un reflet guidé, et commencer à voir les motifs émotionnels qui reviennent dans le temps.",
+      "featurePrivate": "Privé",
+      "featureEncrypted": "Protégé",
       "featureAi": "Reflet guidé",
       "featurePatterns": "Motifs dans le temps",
       "cta": "Entrer dans le Sanctuaire",
@@ -1053,8 +1053,8 @@
       "title": "L'élégance du secret.",
       "features": [
         {
-          "title": "Chiffrement absolu",
-          "description": "Vos pensées sont scellées avant même de quitter votre appareil. Personne d’autre ne peut les lire."
+          "title": "Stockage protégé",
+          "description": "Le stockage du journal est protégé par un chiffrement côté client sur les flux compatibles et par un transport sécurisé."
         },
         {
           "title": "Miroir intérieur",
