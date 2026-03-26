@@ -34,6 +34,8 @@ export type OnboardingState = {
   stoppedReason?: string | null;
   unsubscribedAt?: string | null;
   invalidEmailAt?: string | null;
+  lastSentEmailId?: OnboardingEmailId | null;
+  lastSentAt?: string | null;
   updatedAt?: string | null;
 };
 

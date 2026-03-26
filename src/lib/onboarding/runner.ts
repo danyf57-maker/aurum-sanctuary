@@ -5,11 +5,9 @@ import { trackServerEvent } from "@/lib/analytics/server";
 import { renderOnboardingEmail } from "@/lib/onboarding/templates";
 import { sendOnboardingEmail } from "@/lib/onboarding/sender";
 import type { OnboardingEmailId, OnboardingState } from "@/lib/onboarding/types";
-import { FREE_ENTRY_LIMIT, STRIPE_TRIAL_REMINDER_DAYS } from "@/lib/billing/config";
+import { pickNextOnboardingEmail } from "@/lib/onboarding/decision";
 import { normalizeLocale, type Locale } from "@/lib/locale";
 import { resolveFirstName } from "@/lib/profile/first-name";
-
-const PAID_STATUSES = new Set(["active", "trialing"]);
 
 function asDate(value: unknown): Date | null {
   if (!value) return null;
@@ -25,67 +23,6 @@ function asDate(value: unknown): Date | null {
       return null;
     }
   }
-  return null;
-}
-
-function hoursSince(value?: unknown) {
-  const date = asDate(value ?? null);
-  if (!date) return Number.POSITIVE_INFINITY;
-  return (Date.now() - date.getTime()) / (1000 * 60 * 60);
-}
-
-function hoursUntil(value?: unknown) {
-  const date = asDate(value ?? null);
-  if (!date) return Number.NEGATIVE_INFINITY;
-  return (date.getTime() - Date.now()) / (1000 * 60 * 60);
-}
-
-type LifecycleSignals = {
-  entryCount: number;
-  subscriptionStatus: string;
-  freeLimitReachedAt: Date | null;
-  trialConsumedAt: Date | null;
-  trialEndsAt: Date | null;
-};
-
-function pickLifecycleEmail(
-  state: OnboardingState,
-  signals: LifecycleSignals
-): OnboardingEmailId | null {
-  const sent = state.sent || {};
-
-  if (
-    signals.subscriptionStatus === "active" &&
-    !sent.subscription_active
-  ) {
-    return "subscription_active";
-  }
-
-  if (signals.subscriptionStatus === "trialing") {
-    if (!sent.trial_started) {
-      return "trial_started";
-    }
-
-    const remainingHours = hoursUntil(signals.trialEndsAt);
-    if (
-      !sent.trial_ending_soon &&
-      remainingHours > 0 &&
-      remainingHours <= STRIPE_TRIAL_REMINDER_DAYS * 24
-    ) {
-      return "trial_ending_soon";
-    }
-
-    return null;
-  }
-
-  if (
-    signals.entryCount >= FREE_ENTRY_LIMIT &&
-    !sent.free_limit_followup &&
-    hoursSince(signals.freeLimitReachedAt) >= 12
-  ) {
-    return "free_limit_followup";
-  }
-
   return null;
 }
 
@@ -115,12 +52,18 @@ export async function runOnboardingSequence() {
   const usersSnap = await db.collection("users").limit(1000).get();
   let sentCount = 0;
   let skipped = 0;
+  const processedEmails = new Set<string>();
 
   for (const userDoc of usersSnap.docs as any[]) {
     const data = userDoc.data() as Record<string, unknown>;
     const userId = userDoc.id as string;
     const email = String(data.email || "").trim().toLowerCase();
     if (!email) {
+      skipped += 1;
+      continue;
+    }
+
+    if (processedEmails.has(email)) {
       skipped += 1;
       continue;
     }
@@ -132,9 +75,18 @@ export async function runOnboardingSequence() {
       displayName: typeof data.displayName === 'string' ? data.displayName : null,
       email,
     });
+    const createdAt = asDate(data.createdAt);
+    const lastEntryAt = asDate(data.lastEntryAt);
     const freeLimitReachedAt = asDate(data.freeLimitReachedAt);
-    const trialConsumedAt = asDate(data.trialConsumedAt);
     const trialEndsAt = asDate(data.subscriptionTrialEndsAt) || asDate(data.subscriptionCurrentPeriodEnd);
+    const subscriptionId =
+      typeof data.subscriptionId === "string" && data.subscriptionId.trim()
+        ? data.subscriptionId.trim()
+        : null;
+    const billingPhase =
+      typeof data.billingPhase === "string" && data.billingPhase.trim()
+        ? data.billingPhase.trim()
+        : null;
 
     const prefsRef = db.collection("users").doc(userId).collection("settings").doc("preferences");
     const stateRef = db.collection("users").doc(userId).collection("onboarding").doc("state");
@@ -148,15 +100,16 @@ export async function runOnboardingSequence() {
       continue;
     }
 
-    const nextLifecycleEmail = pickLifecycleEmail(stateData, {
+    const nextEmail = pickNextOnboardingEmail(stateData, {
+      createdAt,
+      lastEntryAt,
       entryCount,
       subscriptionStatus,
+      subscriptionId,
+      billingPhase,
       freeLimitReachedAt,
-      trialConsumedAt,
       trialEndsAt,
     });
-
-    const nextEmail = nextLifecycleEmail;
 
     if (!nextEmail) {
       skipped += 1;
@@ -208,6 +161,7 @@ export async function runOnboardingSequence() {
             [nextEmail]: nowIso,
           },
           lastSentEmailId: nextEmail,
+          lastSentAt: nowIso,
           updatedAt: nowIso,
           providerMessageId: providerMessageId || null,
         },
@@ -234,6 +188,7 @@ export async function runOnboardingSequence() {
       });
 
       sentCount += 1;
+      processedEmails.add(email);
     } catch (error) {
       await stateRef.set(
         {
