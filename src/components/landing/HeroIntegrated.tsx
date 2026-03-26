@@ -74,57 +74,57 @@ const HeroIntegrated = () => {
         </div>
         <div className="mx-auto flex max-w-4xl flex-col items-center gap-10 text-center">
           <div className="space-y-4">
-            <p className="font-body text-xs uppercase tracking-[0.35em] text-[#D4AF37] font-semibold">
+            <p className="font-body text-xs font-semibold uppercase tracking-[0.35em] text-[#9b7230]">
               {t("badge")}
             </p>
             <h1 className="font-headline text-4xl md:text-6xl text-stone-900">
               {t("title")}
             </h1>
-            <p className="font-body text-lg md:text-xl text-stone-600">
+            <p className="font-body text-lg md:text-xl text-stone-700">
               {t("subtitle")}
             </p>
           </div>
 
           <div className="w-full">
-            <div className="relative rounded-3xl border border-[#D4AF37]/25 bg-white/80 p-6 md:p-8 shadow-xl">
+            <div className="relative rounded-3xl border border-[#9b7230]/25 bg-white/92 p-6 shadow-xl md:p-8">
               <textarea
                 value={thought}
                 onChange={(event) => setThought(event.target.value)}
                 placeholder={placeholderText}
-                className="h-44 w-full resize-none bg-transparent text-lg md:text-xl font-body text-stone-800 placeholder:text-stone-400 focus:outline-none"
+                className="h-44 w-full resize-none bg-transparent text-lg font-body text-stone-900 placeholder:text-stone-500 focus:outline-none md:text-xl"
               />
-              <div className="mt-3 border-t border-[#D4AF37]/20 pt-3 text-center">
+              <div className="mt-3 border-t border-[#9b7230]/20 pt-3 text-center">
                 <p
                   key={quoteIndex}
-                  className="font-body text-sm text-stone-700 transition-opacity duration-500"
+                  className="font-body text-sm text-stone-800 transition-opacity duration-500"
                 >
                   {rotatingQuotes[quoteIndex].hint}
                 </p>
-                <p className="mt-1 font-body text-xs text-stone-500 transition-opacity duration-500">
+                <p className="mt-1 font-body text-xs text-stone-600 transition-opacity duration-500">
                   {rotatingQuotes[quoteIndex].detail}
                 </p>
-                <p className="mt-2 font-body text-xs italic text-stone-500 transition-opacity duration-500">
+                <p className="mt-2 font-body text-xs italic text-stone-600 transition-opacity duration-500">
                   &ldquo;{rotatingQuotes[quoteIndex].quote}&rdquo;{" "}
                   <span className="not-italic">- {rotatingQuotes[quoteIndex].author}</span>
                 </p>
               </div>
-              <div className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-[#D4AF37]/15" />
+              <div className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-[#9b7230]/18" />
             </div>
 
             <div className="mt-6 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               <Button
                 asChild
                 size="lg"
-                className="h-12 md:h-14 px-8 rounded-xl bg-[#D4AF37] text-stone-900 hover:bg-[#D4AF37]/90"
+                className="h-12 rounded-xl bg-[#c49545] px-8 text-stone-950 hover:bg-[#b58537] md:h-14"
               >
                 <Link href={signupHref}>
                   {t("cta")}
                 </Link>
               </Button>
-              <Link href={writeHref} className="font-body text-sm text-stone-600 hover:text-stone-900 transition-colors">
+              <Link href={writeHref} className="font-body text-sm text-stone-700 transition-colors hover:text-stone-900">
                 {t("ctaSecondary")}
               </Link>
-              <span className="font-body text-xs uppercase tracking-[0.2em] text-stone-500">
+              <span className="font-body text-xs uppercase tracking-[0.2em] text-stone-600">
                 {t("trust")}
               </span>
             </div>
