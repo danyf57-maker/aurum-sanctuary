@@ -1,426 +1,470 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import HeroIntegrated from '@/components/landing/HeroIntegrated';
-import { Button } from '@/components/ui/button';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Compass, ArrowRight, ShieldCheck, Lock, Fingerprint, Brain, Moon, Flame, CircleHelp, Wind, ListChecks } from 'lucide-react';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useAuth } from '@/providers/auth-provider';
+import { Lock, Moon, ShieldCheck, Sparkles, ArrowRight } from 'lucide-react';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Button } from '@/components/ui/button';
 import { useLocalizedHref } from '@/hooks/use-localized-href';
-import { useTranslations } from 'next-intl';
-import { PricingOfferBlock } from '@/components/marketing/pricing-offer-block';
+import { useLocale } from '@/hooks/use-locale';
 
-type MarketingFaq = {
-    question: string;
-    answer: string;
+type TrustCard = {
+  title: string;
+  body: string;
+  icon: React.ReactNode;
 };
 
-type MarketingCard = {
-    eyebrow?: string;
-    title: string;
-    body: string;
-    example?: string;
-    badge?: string;
-    cta?: string;
+type ProblemCard = {
+  title: string;
+  body: string;
+  icon: React.ReactNode;
 };
 
-type MarketingStudyCard = {
-    eyebrow: string;
-    title: string;
-    body: string;
-    example: string;
+type StepCard = {
+  title: string;
+  body: string;
+  step: string;
 };
 
-type MarketingExampleHighlight = {
-    title: string;
-    body: string;
+type CredibilityPoint = {
+  title: string;
+  body: string;
 };
 
-const ExitIntent = () => null;
+type FaqItem = {
+  question: string;
+  answer: string;
+};
 
-const FloatingCTA = ({
-    visible,
-    href,
-    label,
-    disabled = false,
+function SectionShell({
+  id,
+  className = '',
+  children,
 }: {
-    visible: boolean;
-    href: string;
-    label: string;
-    disabled?: boolean;
-}) => {
-    const t = useTranslations('marketingPage.floatingCta');
-    return (
-        <AnimatePresence>
-            {visible && (
-                <motion.div
-                initial={{ opacity: 0, y: 100 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 100 }}
-                className="fixed bottom-8 right-8 z-[100]"
-            >
-                <Button
-                    asChild={!disabled}
-                    size="lg"
-                    disabled={disabled}
-                    className="rounded-full shadow-2xl bg-primary hover:bg-primary/90 px-8 h-14 group border-4 border-white/20 backdrop-blur-sm"
-                >
-                    {disabled ? (
-                        <span className="flex items-center gap-3">
-                            <span className="font-headline font-semibold">{label}</span>
-                            <ArrowRight className="w-5 h-5" />
-                        </span>
-                    ) : (
-                    <Link href={href} className="flex items-center gap-3">
-                        <span className="font-headline font-semibold">{label}</span>
-                        <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-                    </Link>
-                    )}
-                </Button>
-                <div className="mt-2 text-center pointer-events-none">
-                    <span className="text-[9px] text-white bg-black/40 backdrop-blur-sm px-3 py-1 rounded-full uppercase tracking-tighter font-bold">{t('label')}</span>
-                </div>
-            </motion.div>
-            )}
-        </AnimatePresence>
-    );
-};
+  id?: string;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section id={id} className={`px-4 py-14 sm:px-6 sm:py-18 lg:px-8 lg:py-22 ${className}`}>
+      <div className="mx-auto max-w-6xl">{children}</div>
+    </section>
+  );
+}
+
+function getCopy(locale: 'fr' | 'en') {
+  const isFr = locale === 'fr';
+
+  const trustCards: TrustCard[] = [
+    {
+      title: isFr ? 'Chiffré par défaut' : 'Encrypted by default',
+      body: isFr ? 'Ce que vous écrivez reste à vous.' : 'What you write stays yours.',
+      icon: <Lock className="h-5 w-5" />,
+    },
+    {
+      title: isFr ? 'Privé par conception' : 'Private by design',
+      body: isFr ? 'Conçu pour réfléchir, pas pour s’exposer.' : 'Built for reflection, not exposure.',
+      icon: <ShieldCheck className="h-5 w-5" />,
+    },
+    {
+      title: isFr ? 'Pas de pub. Pas de données revendues.' : 'No ads. No data sold.',
+      body: isFr ? 'Vos pensées ne sont pas un produit.' : 'Your thoughts are not a product.',
+      icon: <Sparkles className="h-5 w-5" />,
+    },
+  ];
+
+  const problemCards: ProblemCard[] = [
+    {
+      title: isFr ? 'Vous n’arrivez pas à couper le soir' : "You can't switch off at night",
+      body: isFr
+        ? 'Vous êtes épuisé, mais dès que le silence revient, vos pensées prennent toute la place.'
+        : "You're exhausted, but the second the room gets quiet, your thoughts get louder.",
+      icon: <Moon className="h-5 w-5" />,
+    },
+    {
+      title: isFr ? 'Vous portez trop mentalement' : 'You carry too much mentally',
+      body: isFr
+        ? 'Émotions, décisions, pensées inachevées, pression dans tous les sens: tout s’accumule au même endroit.'
+        : 'Feelings, decisions, unfinished thoughts, pressure from every direction - all stuck in the same space.',
+      icon: <Sparkles className="h-5 w-5" />,
+    },
+    {
+      title: isFr ? 'Vous bouclez sur les mêmes choses' : 'You keep looping on the same things',
+      body: isFr
+        ? 'Les mêmes émotions, les mêmes questions, les mêmes dialogues intérieurs, encore et encore.'
+        : 'The same emotions, the same questions, the same internal conversations, again and again.',
+      icon: <ArrowRight className="h-5 w-5" />,
+    },
+  ];
+
+  const steps: StepCard[] = [
+    {
+      step: isFr ? 'Étape 1' : 'Step 1',
+      title: isFr ? 'Écrivez librement' : 'Write freely',
+      body: isFr
+        ? 'Commencez par ce que vous avez en tête. Pas besoin d’écrire parfaitement, ni de savoir exactement ce que vous ressentez.'
+        : "Start with what's on your mind. No pressure to write perfectly. No need to know exactly how you feel.",
+    },
+    {
+      step: isFr ? 'Étape 2' : 'Step 2',
+      title: isFr ? 'Réfléchissez avec guidance' : 'Reflect with guidance',
+      body: isFr
+        ? 'Aurum vous aide à ralentir, explorer ce qu’il y a dessous, et aller plus loin qu’un simple déversement mental.'
+        : "Aurum helps you slow down, explore what's underneath, and go further than a simple brain dump.",
+    },
+    {
+      step: isFr ? 'Étape 3' : 'Step 3',
+      title: isFr ? 'Repérez vos motifs' : 'Notice your patterns',
+      body: isFr
+        ? 'Avec le temps, vous voyez ce qui revient: émotions, déclencheurs, thèmes, questions, tensions intérieures.'
+        : 'Over time, you begin to see what repeats - emotions, triggers, themes, questions, inner tensions.',
+    },
+  ];
+
+  const credibilityPoints: CredibilityPoint[] = [
+    {
+      title: isFr ? 'Étudié depuis les années 1980' : 'Studied since the 1980s',
+      body: isFr
+        ? 'La recherche sur l’écriture expressive est publiée depuis des décennies, sur des populations variées.'
+        : 'Peer-reviewed expressive-writing research has been published for decades across different populations.',
+    },
+    {
+      title: isFr ? 'Des bénéfices à court terme observés' : 'Evidence of short-term benefits',
+      body: isFr
+        ? 'Des essais randomisés ont lié l’écriture structurée à moins de détresse mentale, moins d’anxiété chez certains groupes, et un meilleur bien-être.'
+        : 'Randomized trials have linked structured writing with lower mental distress, lower anxiety in some groups, and better well-being.',
+    },
+    {
+      title: isFr ? 'Une vision honnête des limites' : 'Honest about the limits',
+      body: isFr
+        ? 'Les effets restent modestes et varient selon les personnes, le contexte et la manière d’écrire.'
+        : 'The effects are modest and vary by person, context, and writing style.',
+    },
+  ];
+
+  const faqs: FaqItem[] = [
+    {
+      question: isFr ? 'Aurum est-il privé ?' : 'Is Aurum private?',
+      answer: isFr
+        ? 'Oui. Aurum est conçu pour une réflexion privée. Ce que vous écrivez n’est pas fait pour être partagé publiquement.'
+        : 'Yes. Aurum is built for private reflection. Your writing is not meant for public sharing.',
+    },
+    {
+      question: isFr ? 'Faut-il savoir bien tenir un journal ?' : 'Do I need to be good at journaling?',
+      answer: isFr
+        ? 'Non. Vous pouvez commencer fatigué, confus, débordé, brouillon: c’est précisément le point.'
+        : "No. You can start messy, tired, confused, overwhelmed - that's exactly the point.",
+    },
+    {
+      question: isFr ? 'Aurum est-il une thérapie ?' : 'Is Aurum therapy?',
+      answer: isFr
+        ? 'Non. Aurum est un outil de réflexion guidée, pas une thérapie ni un soin médical.'
+        : 'No. Aurum is a guided reflection tool, not therapy or medical care.',
+    },
+    {
+      question: isFr
+        ? 'Quelle différence avec une app de notes ou de journal ?'
+        : 'What makes it different from a notes app or journal app?',
+      answer: isFr
+        ? 'Aurum est conçu pour vous aider à réfléchir, pas seulement à stocker du texte. L’outil vise plus de clarté et la mise en lumière des motifs récurrents dans le temps.'
+        : 'Aurum is designed to help you reflect, not just store text. It supports deeper clarity and helps you notice recurring patterns over time.',
+    },
+    {
+      question: isFr ? 'Pourquoi parler de science ?' : 'Why mention science?',
+      answer: isFr
+        ? 'Parce que l’écriture structurée est étudiée depuis des décennies. Nous nous appuyons sur cette recherche sans faire de promesses exagérées.'
+        : 'Because structured writing has been studied for decades. We use that research to inform the experience - without making exaggerated claims.',
+    },
+    {
+      question: isFr ? 'Comment commencer ?' : 'How do I start?',
+      answer: isFr
+        ? 'Vous pouvez commencer avec 5 entrées gratuites et voir si l’expérience trouve sa place dans votre vie.'
+        : 'You can begin with 5 free entries and see whether the experience fits your life.',
+    },
+  ];
+
+  return {
+    trustCards,
+    problemCards,
+    steps,
+    credibilityPoints,
+    faqs,
+    heroBadge: isFr ? 'Privé par conception. Pas de pub. Pas de données revendues.' : 'Private by design. No ads. No data sold.',
+    heroTitle: isFr ? 'Votre corps est fatigué. Votre esprit continue de tourner.' : 'Your body is tired. Your mind is still running.',
+    heroBody: isFr
+      ? 'Un espace de réflexion privé guidé par IA pour la surcharge mentale, le trop-plein émotionnel, et les nuits où les pensées ne s’arrêtent pas.'
+      : "A private AI-guided reflection space for overthinking, emotional overload, and nights when your thoughts won't switch off.",
+    heroCta: isFr ? 'Commencer avec 5 entrées gratuites' : 'Start with 5 free entries',
+    heroSecondary: isFr ? 'Voir comment ça marche' : 'See how it works',
+    sideEyebrow: isFr ? 'Un endroit plus calme pour atterrir' : 'A quieter place to land',
+    sideQuote: isFr
+      ? 'Déposez ce qui tourne en boucle, suivez ce qui compte, et repartez avec plus de clarté qu’en arrivant.'
+      : 'Put down what is circling, follow what matters, and leave with more clarity than you started with.',
+    sideBody: isFr
+      ? 'Aurum n’est ni un réseau social, ni une app de notes, ni une thérapie. C’est un espace de réflexion privé guidé par IA pour la surcharge mentale, les ruminations nocturnes et la clarté émotionnelle.'
+      : 'Aurum is not a social app, a notes app, or therapy. It is a private AI-guided reflection space for mental overload, night overthinking, and emotional clarity.',
+    problemEyebrow: isFr ? 'Reconnaître le problème' : 'Problem recognition',
+    problemTitle: isFr ? 'Aurum est conçu pour les moments où votre esprit est trop chargé' : 'Aurum is for the moments when your mind feels too full',
+    benefitTitle: isFr
+      ? 'Aurum vous aide à alléger ce qui pèse, comprendre ce qui revient, et respirer mentalement un peu mieux'
+      : "Aurum helps you clear what's heavy, understand what's recurring, and feel mentally lighter",
+    benefitLead: isFr ? 'Ce n’est pas juste un journal vide.' : 'This is not just a blank journal.',
+    benefitBody: isFr
+      ? 'Aurum vous aide à mettre les pensées en mots, réfléchir avec guidance, et repérer les motifs dans le temps, pour comprendre ce qui revient au lieu de le porter seul.'
+      : 'Aurum helps you put thoughts into words, reflect with guidance, and notice patterns over time - so you can understand what keeps returning instead of carrying it alone.',
+    howTitle: isFr ? 'Un esprit plus calme commence par un endroit où déposer les choses' : 'A calmer mind starts with somewhere to put things down',
+    howCta: isFr ? 'Commencer votre première entrée' : 'Begin your first entry',
+    researchTitle: isFr ? 'Ancré dans des décennies de recherche sur l’écriture expressive' : 'Grounded in decades of expressive-writing research',
+    researchLead: isFr ? 'Écrire n’est pas magique. Mais cela fait l’objet d’études depuis des décennies.' : 'Writing is not magic. But it has been studied for decades.',
+    researchBody1: isFr
+      ? 'La recherche sur l’écriture expressive suggère que l’écriture structurée peut aider certaines personnes à réduire leur détresse mentale, clarifier leurs émotions, et améliorer certains aspects du bien-être dans le temps.'
+      : 'Research on expressive writing suggests that structured writing can help some people reduce mental distress, process emotions more clearly, and improve aspects of well-being over time.',
+    researchBody2: isFr
+      ? 'D’autres travaux montrent que les effets ne sont pas identiques pour tout le monde. C’est pourquoi Aurum ne promet ni traitement ni diagnostic. L’outil offre un espace privé et guidé pour réfléchir avec plus de clarté et de régularité.'
+      : "Other studies show the effects are not the same for everyone. That's why Aurum does not promise treatment or diagnosis. It gives you a private, guided space to reflect more clearly and more consistently.",
+    researchDisclaimer: isFr
+      ? 'Aurum est un outil de réflexion inspiré par les travaux sur l’écriture et le traitement émotionnel. Ce n’est ni une thérapie ni un soin médical.'
+      : 'Aurum is a reflection tool inspired by evidence on writing and emotional processing. It is not therapy or medical care.',
+    privacyTitle: isFr ? 'Privé veut dire privé' : 'Private means private',
+    privacyBody1: isFr ? 'Écrire n’aide vraiment que si vous vous sentez assez en sécurité pour être honnête.' : 'Writing only helps when you feel safe enough to be honest.',
+    privacyBody2: isFr ? 'C’est pourquoi Aurum est construit autour de la confidentialité dès le départ:' : "That's why Aurum is built around privacy from the start:",
+    privacyBullets: isFr
+      ? ['chiffré par défaut', 'pas de publicité', 'pas de revente de vos données', 'conçu pour la réflexion personnelle, pas pour l’exposition publique']
+      : ['encrypted by default', 'no ads', 'no selling your data', 'designed for personal reflection, not public sharing'],
+    privacyFooter: isFr
+      ? 'Aurum existe pour vous aider à penser plus clairement, pas pour vous observer, vous traquer, ou vous exposer.'
+      : 'Aurum exists to help you think more clearly - not to watch, track, or expose you.',
+    faqTitle: 'FAQ',
+    finalTitle: isFr ? 'Quand vos pensées font trop de bruit, donnez-leur un endroit où se poser' : 'When your thoughts feel too loud, give them somewhere to land',
+    finalBody: isFr ? 'Privé. Guidé. Conçu pour la clarté.' : 'Private. Guided. Built for clarity.',
+    finalCta: isFr ? 'Commencer avec 5 entrées gratuites' : 'Start with 5 free entries',
+  };
+}
+
 export default function Home() {
-    const [showCTA, setShowCTA] = useState(false);
-    const { user } = useAuth();
-    const to = useLocalizedHref();
-    const t = useTranslations('marketingPage');
-    const primaryCtaHref = user ? to('/sanctuary/write') : to('/signup');
-    const primaryCtaLabel = user ? t('returningUser.writeCta') : null;
-    const primaryCtaLabelArrow = user ? t('returningUser.writeCtaArrow') : null;
+  const to = useLocalizedHref();
+  const locale = useLocale();
+  const copy = getCopy(locale);
 
-    useEffect(() => {
-        const handleScroll = () => {
-            if (window.scrollY > window.innerHeight * 0.8) {
-                setShowCTA(true);
-            } else {
-                setShowCTA(false);
-            }
-        };
+  return (
+    <main className="bg-[#f4ede6] text-stone-900">
+      <SectionShell className="overflow-hidden pt-8 sm:pt-10 lg:pt-14">
+        <div className="relative overflow-hidden rounded-[2.25rem] border border-stone-300/80 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,1),_rgba(246,239,231,0.97)_50%,_rgba(233,220,204,0.99))] px-6 py-10 shadow-[0_24px_80px_rgba(120,94,72,0.14)] sm:px-8 sm:py-12 lg:px-14 lg:py-16">
+          <div className="absolute -right-16 top-0 h-48 w-48 rounded-full bg-[#d8b89a]/20 blur-3xl" />
+          <div className="absolute -left-12 bottom-0 h-40 w-40 rounded-full bg-[#b79174]/16 blur-3xl" />
+          <div className="absolute inset-x-0 top-0 h-px bg-white/80" />
 
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-
-    const faqs = t.raw('faqs') as MarketingFaq[];
-    const studyCards = t.raw('studyCards') as MarketingStudyCard[];
-    const exampleHighlights = t.raw('exampleSection.highlights') as MarketingExampleHighlight[];
-    const useCaseCards = t.raw('useCases.cards') as MarketingCard[];
-    const trustCards = t.raw('trust.cards') as MarketingCard[];
-    const featureCards = t.raw('finalCta.cards') as MarketingCard[];
-    const discoveries = t.raw('scientificProof.discoveries') as Array<{ label: string; body: string }>;
-    const referenceAriaLabels = [
-        t('references.aria1'),
-        t('references.aria2'),
-        t('references.aria3'),
-        t('references.aria4'),
-    ];
-    return (
-        <main>
-            <HeroIntegrated />
-            <section className="bg-white py-14 md:py-16">
-                <div className="container">
-                    <PricingOfferBlock className="mx-auto" pagePath="/" />
-                </div>
-            </section>
-            <section className="bg-stone-50/60 py-16 md:py-20 border-y border-stone-200/70">
-                <div className="container">
-                    <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-                        <div className="text-center lg:text-left">
-                            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-stone-500">
-                                {t('exampleSection.eyebrow')}
-                            </p>
-                            <h2 className="mb-4 text-3xl md:text-4xl font-headline text-stone-900">
-                                {t('exampleSection.title')}
-                            </h2>
-                            <p className="text-lg font-light text-stone-600">
-                                {t('exampleSection.subtitle')}
-                            </p>
-                            <div className="mt-6 grid gap-4">
-                                {exampleHighlights.map((item) => (
-                                    <div key={item.title} className="rounded-2xl border border-stone-200 bg-white px-5 py-4 text-left shadow-sm">
-                                        <p className="text-sm font-semibold text-stone-900">{item.title}</p>
-                                        <p className="mt-1 text-sm font-light leading-relaxed text-stone-600">{item.body}</p>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                        <div className="rounded-[2rem] border border-stone-200 bg-white p-6 md:p-8 shadow-sm">
-                            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-stone-500">
-                                {t('exampleSection.entryLabel')}
-                            </p>
-                            <p className="mt-3 rounded-2xl bg-stone-900 px-5 py-4 text-lg font-light leading-relaxed text-white">
-                                {t('exampleSection.entry')}
-                            </p>
-                            <div className="mt-5 rounded-2xl border border-[#D4AF37]/25 bg-[#D4AF37]/8 px-5 py-4">
-                                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-stone-500">
-                                    {t('exampleSection.reflectionLabel')}
-                                </p>
-                                <p className="mt-3 text-lg font-light leading-relaxed text-stone-800">
-                                    {t('exampleSection.reflection')}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <section className="py-14 md:py-16 bg-white border-y border-stone-200/70">
-                <div className="container">
-                    <div className="max-w-4xl mx-auto text-center mb-8">
-                        <h2 className="text-3xl md:text-4xl font-headline text-stone-900 mb-4">
-                            {t('studySection.title')}
-                        </h2>
-                        <p className="text-stone-600 font-light text-lg">
-                            {t('studySection.subtitle')}
-                        </p>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-6xl mx-auto">
-                        {studyCards.map((card, index) => (
-                            <article key={card.title} className="rounded-2xl border border-stone-200 bg-stone-50/70 p-6">
-                                <p className="text-[11px] uppercase tracking-[0.14em] text-stone-500 mb-3 font-semibold">{card.eyebrow}</p>
-                                <h3 className="text-xl font-headline text-stone-900 mb-2">{card.title}</h3>
-                                <p className="text-sm text-stone-600 font-light leading-relaxed mb-3">{card.body}</p>
-                                <p className="text-xs text-stone-500 font-light leading-relaxed">
-                                    {card.example}
-                                    {index === 0 && (
-                                        <sup><a href={to('/etudes-scientifiques#etude-1')} aria-label={t('references.aria1')} className="no-underline font-semibold text-stone-700"> 1</a></sup>
-                                    )}
-                                    {index === 1 && (
-                                        <sup><a href={to('/etudes-scientifiques#etude-2')} aria-label={t('references.aria2')} className="no-underline font-semibold text-stone-700"> 2</a></sup>
-                                    )}
-                                    {index === 2 && (
-                                        <>
-                                            <sup><a href={to('/etudes-scientifiques#etude-3')} aria-label={t('references.aria3')} className="no-underline font-semibold text-stone-700"> 3</a></sup>
-                                            <sup><a href={to('/etudes-scientifiques#etude-4')} aria-label={t('references.aria4')} className="no-underline font-semibold text-stone-700"> 4</a></sup>
-                                        </>
-                                    )}
-                                </p>
-                            </article>
-                        ))}
-                    </div>
-                    <div className="mt-8 text-center">
-                        <Button asChild size="lg" className="h-12 px-8 rounded-xl">
-                            <Link href={primaryCtaHref}>
-                                {user ? t('studySection.ctaAuthenticated') : t('studySection.cta')}
-                            </Link>
-                        </Button>
-                    </div>
-                </div>
-            </section>
-            <section id="use-cases-seo" className="py-20 md:py-24 bg-white border-y border-stone-200/70">
-                <div className="container">
-                    <div className="max-w-3xl mx-auto text-center mb-12">
-                        <h2 className="text-3xl md:text-5xl font-headline text-stone-900 mb-4">
-                            {t('useCases.title')}
-                        </h2>
-                        <p className="text-stone-600 font-light text-lg">
-                            {t('useCases.subtitle')}
-                        </p>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {useCaseCards.map((card, index) => (
-                            <article key={card.title} className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm h-full flex flex-col">
-                                <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-stone-100 px-3 py-1 text-[11px] uppercase tracking-[0.12em] text-stone-600 font-medium w-fit">
-                                    {index === 0 && <Moon className="h-3.5 w-3.5" />}
-                                    {index === 1 && <Brain className="h-3.5 w-3.5" />}
-                                    {index === 2 && <Wind className="h-3.5 w-3.5" />}
-                                    {index === 3 && <Flame className="h-3.5 w-3.5" />}
-                                    {index === 4 && <CircleHelp className="h-3.5 w-3.5" />}
-                                    {(index === 5 || index === 8) && <ListChecks className="h-3.5 w-3.5" />}
-                                    {index === 6 && <Compass className="h-3.5 w-3.5" />}
-                                    {index === 7 && <Moon className="h-3.5 w-3.5" />}
-                                    {card.badge}
-                                </div>
-                                <h3 className="text-2xl font-headline text-stone-900 mb-3">{card.title}</h3>
-                                <p className="text-stone-600 font-light leading-relaxed mb-6">{card.body}</p>
-                                <Link href={primaryCtaHref} className="mt-auto text-primary font-medium hover:underline">
-                                    {primaryCtaLabelArrow ?? t('useCases.cta')}
-                                </Link>
-                            </article>
-                        ))}
-                    </div>
-                    <p className="mt-8 text-xs text-stone-500 text-center font-light">
-                        {t('useCases.note')}
-                        <sup>
-                            <a href={to('/etudes-scientifiques#etude-3')} aria-label={t('references.aria3')} className="no-underline font-semibold text-stone-700"> 3</a>
-                        </sup>
-                        <sup>
-                            <a href={to('/etudes-scientifiques#etude-4')} aria-label={t('references.aria4')} className="no-underline font-semibold text-stone-700"> 4</a>
-                        </sup>
-                        .
-                    </p>
-                </div>
-            </section>
-
-            {/* SECTION 3: Scientific social proof */}
-            <section className="py-24 md:py-32 bg-stone-100/50">
-                <div className="container max-w-4xl mx-auto">
-                    <div className="text-center max-w-3xl mx-auto mb-14">
-                        <h2 className="text-4xl md:text-5xl font-headline text-stone-900 mb-6">{t('scientificProof.title')}</h2>
-                        <p className="text-stone-700 font-light text-lg leading-relaxed">
-                            {t('scientificProof.subtitle')}
-                        </p>
-                    </div>
-                    <ul className="space-y-5 text-stone-800 font-light leading-relaxed text-lg max-w-3xl mx-auto">
-                        {discoveries.map((discovery, index) => (
-                            <li key={discovery.label} className="rounded-2xl border border-stone-200 bg-white p-6">
-                                <span className="font-medium text-stone-900">{discovery.label}</span> {discovery.body}
-                                <sup><a href={to(`/etudes-scientifiques#etude-${index + 1}`)} aria-label={referenceAriaLabels[index]} className="no-underline font-semibold text-stone-700"> {index + 1}</a></sup>.
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            </section>
-
-            <div id="sanctuary-content" className="bg-background text-foreground">
-                {/* SECTION 1: Problem */}
-                <section className="py-24 md:py-32 bg-stone-100/50">
-                    <div className="container max-w-3xl mx-auto text-center">
-                        <h2 className="text-4xl md:text-5xl font-headline text-stone-900 mb-6">
-                            {t('problem.title')}
-                        </h2>
-                        <div className="prose prose-lg lg:prose-xl mx-auto text-foreground/80 font-light">
-                            <p>
-                                {t('problem.body')}
-                            </p>
-                        </div>
-                    </div>
-                </section>
-
-                {/* SECTION 2: Solution */}
-                <section className="py-24 md:py-32 bg-white">
-                    <div className="container max-w-3xl mx-auto text-center">
-                        <h2 className="text-4xl md:text-5xl font-headline text-stone-900 mb-6">
-                            {t('solution.title')}
-                        </h2>
-                        <p className="text-stone-700 font-light text-lg leading-relaxed">
-                            {t('solution.body')}
-                        </p>
-                    </div>
-                </section>
-
-                {/* SECTION 5: Trust & Privacy (Enhanced) */}
-                <section className="py-24 md:py-40 bg-white">
-                    <div className="container">
-                        <div className="text-center max-w-3xl mx-auto mb-20">
-                            <span className="text-[#B8941F] text-[10px] uppercase tracking-[0.3em] font-bold mb-4 block">{t('trust.eyebrow')}</span>
-                            <h2 className="text-4xl md:text-6xl font-headline text-stone-900 mb-6">{t('trust.title')}</h2>
-                            <p className="text-stone-700 font-light text-lg">{t('trust.subtitle')}</p>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-20">
-                            {trustCards.map((card, index) => (
-                                <div key={card.title} className="flex flex-col items-center text-center p-8 rounded-3xl bg-stone-50 border border-stone-100 transition-all hover:shadow-lg">
-                                    <div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center mb-6 text-primary">
-                                        {index === 0 && <Lock className="w-6 h-6" />}
-                                        {index === 1 && <Fingerprint className="w-6 h-6" />}
-                                        {index === 2 && <ShieldCheck className="w-6 h-6" />}
-                                    </div>
-                                    <h3 className="text-xl font-headline mb-3 text-primary">{card.title}</h3>
-                                    <p className="text-sm text-stone-700 font-light leading-relaxed mb-4">{card.body}</p>
-                                </div>
-                            ))}
-                        </div>
-
-                        <div className="bg-stone-900 rounded-[2rem] p-8 md:p-16 text-white relative overflow-hidden">
-                            <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
-                                <div className="max-w-xl text-center md:text-left">
-                                    <h4 className="text-3xl font-headline mb-4">{t('trust.manifestoTitle')}</h4>
-                                    <p className="text-stone-400 font-light leading-relaxed">
-                                        {t('trust.manifestoBody')}
-                                    </p>
-                                </div>
-                                <div className="flex flex-col items-center gap-4">
-                                    <div className="text-7xl font-headline text-primary/20 select-none">Aurum</div>
-                                    <div className="w-20 h-px bg-white/20"></div>
-                                    <span className="text-[10px] uppercase tracking-[0.4em] font-medium opacity-50">{t('trust.seal')}</span>
-                                </div>
-                            </div>
-                            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 blur-[100px] -translate-y-1/2 translate-x-1/2 rounded-full"></div>
-                            <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/5 blur-[80px] translate-y-1/2 -translate-x-1/2 rounded-full"></div>
-                        </div>
-
-                        {/* Security page removed - TABULA RASA */}
-                    </div>
-                </section>
-
-                {/* SECTION 7: CTA Final */}
-                <section className="container py-24 md:py-32 text-center border-t border-black/5">
-                    <Button asChild size="lg" className="h-14 px-12 text-base">
-                        <Link href={primaryCtaHref}>
-                            {user ? t('finalCta.buttonAuthenticated') : t('finalCta.button')}
-                        </Link>
-                    </Button>
-                    <div className="mt-6">
-                        <span className="text-xs text-stone-600 font-light">{t('finalCta.note')}</span>
-                    </div>
-                    <div className="mt-10 max-w-5xl mx-auto">
-                        <p className="text-stone-700 font-light text-lg mb-6">
-                            {t('finalCta.subtitle')}
-                        </p>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-left">
-                            {featureCards.map((card) => (
-                                <div key={card.title} className="rounded-2xl border border-stone-200 bg-white p-5">
-                                    <p className="text-[11px] uppercase tracking-[0.16em] text-stone-500 mb-2 font-semibold">{card.eyebrow}</p>
-                                    <p className="text-sm text-stone-700 font-light">{card.body}</p>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
-                <section className="container max-w-3xl pb-24 md:pb-32">
-                    <h2 className="text-4xl font-headline text-stone-900 text-center mb-12">
-                        {t('faqTitle')}
-                    </h2>
-                    <Accordion type="single" collapsible className="w-full">
-                        {faqs.map((faq, index) => (
-                            <AccordionItem value={`item-${index + 1}`} key={index}>
-                                <AccordionTrigger className="text-xl text-left font-headline font-normal">{faq.question}</AccordionTrigger>
-                                <AccordionContent className="prose prose-lg font-light text-foreground/80">
-                                    {faq.answer}
-                                </AccordionContent>
-                            </AccordionItem>
-                        ))}
-                    </Accordion>
-                </section>
-
-                <section className="container max-w-4xl pb-24 md:pb-28">
-                    <div className="rounded-2xl border border-stone-200 bg-stone-50/60 p-6 md:p-8">
-                        <h3 className="text-sm font-semibold tracking-wider uppercase text-stone-500 mb-4">{t('references.title')}</h3>
-                        <ul className="space-y-3 text-xs text-stone-500 leading-relaxed">
-                            <li id="ref1">
-                                <strong>1</strong> Pennebaker, J. W., & Beall, S. K. (1986). <em>Confronting a traumatic event: Toward an understanding of inhibition and disease.</em> Journal of Abnormal Psychology, 95, 274-281.
-                            </li>
-                            <li id="ref2">
-                                <strong>2</strong> Spera, S. P., Buhrfeind, E. D., & Pennebaker, J. W. (1994). <em>Expressive writing and coping with job loss.</em> Academy of Management Journal, 37, 722-733.
-                            </li>
-                            <li id="ref3">
-                                <strong>3</strong> Sohal, M., Singh, P., Dhillon, B. S., & Gill, H. S. (2022). <em>Efficacy of journaling in the management of mental illness: a systematic review and meta-analysis.</em> Family Medicine and Community Health.
-                            </li>
-                            <li id="ref4">
-                                <strong>4</strong> Yosep, I., et al. (2025). <em>Positive self talk journaling intervention to improve psychological well-being among child and adolescents in juvenile.</em> Child and Adolescent Psychiatry and Mental Health.
-                            </li>
-                        </ul>
-                    </div>
-                </section>
-
+          <div className="relative grid gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.75fr)] lg:items-end">
+            <div className="max-w-3xl">
+              <div className="mb-6 inline-flex items-center rounded-full border border-stone-300 bg-white/95 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-stone-700 shadow-sm">
+                {copy.heroBadge}
+              </div>
+              <h1 className="font-headline max-w-3xl text-4xl font-semibold leading-[0.96] tracking-[-0.03em] text-stone-950 sm:text-5xl lg:text-[5.2rem]">
+                {copy.heroTitle}
+              </h1>
+              <p className="mt-6 max-w-2xl text-lg leading-relaxed text-stone-800 sm:text-[1.35rem]">
+                {copy.heroBody}
+              </p>
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <Button asChild size="lg" className="h-12 rounded-full bg-stone-950 px-6 text-sm text-white shadow-[0_10px_24px_rgba(28,25,23,0.18)] hover:bg-stone-800 sm:h-14 sm:px-8 sm:text-base">
+                  <Link href={to('/signup')}>{copy.heroCta}</Link>
+                </Button>
+                <Button asChild size="lg" variant="outline" className="h-12 rounded-full border-stone-300 bg-white/90 px-6 text-sm text-stone-800 shadow-sm hover:bg-white sm:h-14 sm:px-8 sm:text-base">
+                  <Link href="#how-it-works">{copy.heroSecondary}</Link>
+                </Button>
+              </div>
+              <p className="mt-4 text-sm text-stone-600">
+                {copy.heroBadge}
+              </p>
             </div>
 
-            <FloatingCTA
-                visible={showCTA}
-                href={primaryCtaHref}
-                label={primaryCtaLabel ?? t('floatingCta.cta')}
-                disabled={false}
-            />
-            <ExitIntent />
-        </main>
-    );
+            <div className="rounded-[1.85rem] border border-white/80 bg-white/92 p-5 shadow-[0_20px_50px_rgba(120,94,72,0.16)] backdrop-blur">
+              <div className="rounded-[1.6rem] bg-stone-950 px-5 py-6 text-stone-100 shadow-inner">
+                <p className="text-xs uppercase tracking-[0.22em] text-stone-300">{copy.sideEyebrow}</p>
+                <p className="mt-4 text-xl leading-relaxed text-stone-50">
+                  {copy.sideQuote}
+                </p>
+                <div className="mt-6 rounded-2xl bg-white/10 p-4">
+                  <p className="text-sm leading-relaxed text-stone-200">
+                    {copy.sideBody}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </SectionShell>
+
+      <SectionShell className="pt-0">
+        <div className="grid gap-4 md:grid-cols-3">
+          {copy.trustCards.map((card) => (
+            <article
+              key={card.title}
+              className="rounded-[1.6rem] border border-stone-300/70 bg-white/95 p-6 shadow-[0_14px_34px_rgba(120,94,72,0.10)] transition-transform duration-300 hover:-translate-y-1"
+            >
+              <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#f2e5d8] text-stone-800">
+                {card.icon}
+              </div>
+              <h2 className="font-headline text-xl font-semibold tracking-tight text-stone-900">{card.title}</h2>
+              <p className="mt-2 text-sm leading-relaxed text-stone-700">{card.body}</p>
+            </article>
+          ))}
+        </div>
+      </SectionShell>
+
+      <SectionShell>
+        <div className="mx-auto max-w-3xl text-center">
+          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-stone-600">{copy.problemEyebrow}</p>
+          <h2 className="font-headline mt-4 text-3xl font-semibold tracking-tight text-stone-950 sm:text-5xl">
+            {copy.problemTitle}
+          </h2>
+        </div>
+        <div className="mt-10 grid gap-5 lg:grid-cols-3">
+          {copy.problemCards.map((card) => (
+            <article
+              key={card.title}
+              className="rounded-[1.75rem] border border-stone-300/70 bg-[#fcf8f3] p-6 shadow-[0_16px_36px_rgba(120,94,72,0.09)]"
+            >
+              <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-stone-700 shadow-[0_8px_20px_rgba(120,94,72,0.10)]">
+                {card.icon}
+              </div>
+              <h3 className="font-headline text-2xl font-semibold tracking-tight text-stone-900">{card.title}</h3>
+              <p className="mt-3 text-base leading-relaxed text-stone-700">{card.body}</p>
+            </article>
+          ))}
+        </div>
+      </SectionShell>
+
+      <SectionShell className="bg-white/55">
+        <div className="mx-auto max-w-4xl rounded-[2rem] border border-stone-300/70 bg-white/94 px-6 py-10 text-center shadow-[0_18px_44px_rgba(120,94,72,0.12)] sm:px-10 sm:py-12">
+          <h2 className="font-headline mt-4 text-3xl font-semibold tracking-tight text-stone-950 sm:text-5xl">
+            {copy.benefitTitle}
+          </h2>
+          <div className="mx-auto mt-6 max-w-3xl space-y-4 text-lg leading-relaxed text-stone-800">
+            <p>{copy.benefitLead}</p>
+            <p>{copy.benefitBody}</p>
+          </div>
+        </div>
+      </SectionShell>
+
+      <SectionShell id="how-it-works">
+        <div className="mx-auto max-w-3xl text-center">
+          <h2 className="font-headline mt-4 text-3xl font-semibold tracking-tight text-stone-950 sm:text-5xl">
+            {copy.howTitle}
+          </h2>
+        </div>
+        <div className="mt-10 grid gap-5 lg:grid-cols-3">
+          {copy.steps.map((step) => (
+            <article
+              key={step.step}
+              className="rounded-[1.75rem] border border-stone-300/70 bg-white/94 p-6 shadow-[0_16px_34px_rgba(120,94,72,0.09)]"
+            >
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-stone-600">{step.step}</p>
+              <h3 className="font-headline mt-4 text-2xl font-semibold tracking-tight text-stone-900">{step.title}</h3>
+              <p className="mt-3 text-base leading-relaxed text-stone-700">{step.body}</p>
+            </article>
+          ))}
+        </div>
+        <div className="mt-10 text-center">
+          <Button asChild size="lg" className="h-12 rounded-full bg-stone-900 px-6 text-sm text-white hover:bg-stone-800 sm:h-14 sm:px-8 sm:text-base">
+            <Link href={to('/signup')}>{copy.howCta}</Link>
+          </Button>
+        </div>
+      </SectionShell>
+
+      <SectionShell className="bg-white/55">
+        <div className="grid gap-7 rounded-[2rem] border border-stone-300/70 bg-white/94 p-6 shadow-[0_18px_44px_rgba(120,94,72,0.12)] sm:p-10 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
+          <div>
+            <h2 className="font-headline mt-4 text-3xl font-semibold tracking-tight text-stone-950 sm:text-5xl">
+              {copy.researchTitle}
+            </h2>
+            <p className="mt-6 text-lg leading-relaxed text-stone-800">
+              {copy.researchLead}
+            </p>
+            <div className="mt-5 space-y-3 text-base leading-relaxed text-stone-700">
+              <p>{copy.researchBody1}</p>
+              <p>{copy.researchBody2}</p>
+            </div>
+          </div>
+          <div className="space-y-4">
+            {copy.credibilityPoints.map((point) => (
+              <article key={point.title} className="rounded-[1.5rem] border border-stone-300/70 bg-[#fcf8f3] p-5 shadow-[0_8px_20px_rgba(120,94,72,0.06)]">
+                <h3 className="font-headline text-xl font-semibold tracking-tight text-stone-900">{point.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-stone-700">{point.body}</p>
+              </article>
+            ))}
+            <p className="rounded-[1.5rem] border border-stone-200/80 bg-stone-950 px-5 py-4 text-sm leading-relaxed text-stone-200">
+              {copy.researchDisclaimer}
+            </p>
+          </div>
+        </div>
+      </SectionShell>
+
+      <SectionShell>
+        <div className="grid gap-7 rounded-[2rem] border border-stone-300/70 bg-[linear-gradient(135deg,rgba(255,255,255,0.98),rgba(244,236,226,1))] p-6 shadow-[0_18px_44px_rgba(120,94,72,0.12)] sm:p-10 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
+          <div>
+            <h2 className="font-headline mt-4 text-3xl font-semibold tracking-tight text-stone-950 sm:text-5xl">
+              {copy.privacyTitle}
+            </h2>
+            <div className="mt-6 space-y-4 text-base leading-relaxed text-stone-800">
+              <p>{copy.privacyBody1}</p>
+              <p>{copy.privacyBody2}</p>
+            </div>
+          </div>
+          <div className="rounded-[1.75rem] border border-white/80 bg-white/95 p-6 shadow-[0_12px_28px_rgba(120,94,72,0.08)]">
+            <ul className="space-y-4 text-base leading-relaxed text-stone-800">
+              {copy.privacyBullets.map((item) => (
+                <li key={item} className="flex items-start gap-3">
+                  <span className="mt-1 h-2.5 w-2.5 rounded-full bg-stone-900" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-6 border-t border-stone-300 pt-6 text-base leading-relaxed text-stone-800">
+              {copy.privacyFooter}
+            </p>
+          </div>
+        </div>
+      </SectionShell>
+
+      <SectionShell className="bg-white/55">
+        <div className="mx-auto max-w-4xl">
+          <div className="text-center">
+            <h2 className="font-headline mt-4 text-3xl font-semibold tracking-tight text-stone-950 sm:text-5xl">
+              {copy.faqTitle}
+            </h2>
+          </div>
+          <div className="mt-10 rounded-[2rem] border border-stone-300/70 bg-white/95 p-4 shadow-[0_16px_36px_rgba(120,94,72,0.10)] sm:p-6">
+            <Accordion type="single" collapsible className="w-full">
+              {copy.faqs.map((faq, index) => (
+                <AccordionItem key={faq.question} value={`faq-${index}`} className="border-stone-200">
+                  <AccordionTrigger className="font-headline text-left text-lg font-medium text-stone-900 sm:text-xl">
+                    {faq.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-base leading-relaxed text-stone-700">
+                    {faq.answer}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+        </div>
+      </SectionShell>
+
+      <SectionShell>
+        <div className="overflow-hidden rounded-[2rem] border border-stone-200/80 bg-stone-950 px-6 py-10 text-center text-white shadow-[0_20px_60px_rgba(40,26,18,0.22)] sm:px-10 sm:py-14">
+          <h2 className="font-headline mx-auto mt-4 max-w-3xl text-3xl font-semibold tracking-tight text-white sm:text-5xl">
+            {copy.finalTitle}
+          </h2>
+          <p className="mt-5 text-lg leading-relaxed text-stone-300">
+            {copy.finalBody}
+          </p>
+          <div className="mt-8">
+            <Button asChild size="lg" className="h-12 rounded-full bg-[#f3e6d6] px-6 text-sm text-stone-950 hover:bg-[#ead7c2] sm:h-14 sm:px-8 sm:text-base">
+              <Link href={to('/signup')}>{copy.finalCta}</Link>
+            </Button>
+          </div>
+        </div>
+      </SectionShell>
+    </main>
+  );
 }

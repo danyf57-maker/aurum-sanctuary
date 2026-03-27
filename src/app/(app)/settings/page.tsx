@@ -54,9 +54,11 @@ import { useLocalizedHref } from "@/hooks/use-localized-href";
 import { useTranslations } from "next-intl";
 import { useLocale } from "@/hooks/use-locale";
 import { useSubscription } from "@/hooks/useSubscription";
-import { resolveFirstName, resolveOptionalFirstName } from "@/lib/profile/first-name";
+import { resolveFirstName } from "@/lib/profile/first-name";
 import { registerPushReminderDevice, unregisterPushReminderDevice } from "@/lib/reminders/push";
 import { buildWritingReminderCopy } from "@/lib/reminders/writing-reminders";
+import { LOCALE_COOKIE_NAME, type Locale } from "@/lib/locale";
+import { stripLocalePrefix, toLocalePath } from "@/i18n/routing";
 
 const WEEKDAY_OPTIONS = [0, 1, 2, 3, 4, 5, 6] as const;
 
@@ -65,7 +67,7 @@ export default function SettingsPage() {
   const locale = useLocale();
   const isFr = locale === "fr";
   const t = useTranslations("settings");
-  const { user, profileFirstName, updateFirstName, loading: authLoading, logout } = useAuth();
+  const { user, loading: authLoading, logout } = useAuth();
   const {
     subscription,
     loading: subscriptionLoading,
@@ -78,34 +80,22 @@ export default function SettingsPage() {
     preferences,
     loading: settingsLoading,
     updatePreferences,
-  } = useSettings();
+  } = useSettings(locale);
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [isOpeningAnnualUpgrade, setIsOpeningAnnualUpgrade] = useState(false);
-  const [firstNameInput, setFirstNameInput] = useState("");
-  const [isSavingFirstName, setIsSavingFirstName] = useState(false);
   const [notificationPermission, setNotificationPermission] = useState<NotificationPermission | "unsupported">("default");
   const [isSyncingReminderDevice, setIsSyncingReminderDevice] = useState(false);
   const [isSendingReminderTest, setIsSendingReminderTest] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
-  const savedFirstName = resolveOptionalFirstName({
-    firstName: profileFirstName,
-    displayName: user?.displayName,
-    email: user?.email,
-  });
-
   const firstName = resolveFirstName({
-    firstName: profileFirstName,
+    firstName: null,
     displayName: user?.displayName,
     email: user?.email,
     fallback: isFr ? "toi" : "you",
   });
-
-  useEffect(() => {
-    setFirstNameInput(savedFirstName || "");
-  }, [savedFirstName]);
 
   useEffect(() => {
     if (typeof window === "undefined" || !("Notification" in window)) {
@@ -115,6 +105,29 @@ export default function SettingsPage() {
 
     setNotificationPermission(Notification.permission);
   }, []);
+
+  const switchAppLanguage = async (nextLocale: Locale) => {
+    if (nextLocale === locale) return;
+
+    await updatePreferences({ language: nextLocale });
+
+    const secure = window.location.protocol === "https:";
+    document.cookie = [
+      `${LOCALE_COOKIE_NAME}=${nextLocale}`,
+      "Path=/",
+      "Max-Age=31536000",
+      "SameSite=Lax",
+      secure ? "Secure" : "",
+    ]
+      .filter(Boolean)
+      .join("; ");
+
+    const normalizedPath = stripLocalePrefix(window.location.pathname || "/");
+    const targetPath = toLocalePath(normalizedPath, nextLocale);
+    const query = window.location.search;
+    router.push(`${targetPath}${query}`);
+    router.refresh();
+  };
 
   const copy = useMemo(
     () => ({
@@ -130,8 +143,8 @@ export default function SettingsPage() {
       language: {
         title: isFr ? "Langue et région" : "Language and region",
         description: isFr
-          ? "Lors de votre première visite, Aurum s'ouvre dans la langue de votre navigateur. Ensuite, il garde la langue que vous choisissez ici."
-          : "Aurum opens in your browser language the first time. After that, it remembers what you choose here.",
+          ? "Personnalisez votre langue et vos préférences horaires."
+          : "Adjust your language and time preferences.",
         label: isFr ? "Langue" : "Language",
         placeholder: isFr ? "Choisir une langue" : "Choose a language",
         english: isFr ? "Anglais (US)" : "English (US)",
@@ -141,9 +154,6 @@ export default function SettingsPage() {
           ? "Choisir un fuseau horaire"
           : "Choose a time zone",
         local: isFr ? "Local" : "Local",
-        replyRule: isFr
-          ? "Les réponses d'Aurum suivent la langue dans laquelle vous écrivez, même si l'interface reste dans une autre langue."
-          : "Aurum replies in the language you write in, even if the interface stays in another language.",
       },
       appearance: {
         title: isFr ? "Apparence" : "Appearance",
@@ -219,20 +229,6 @@ export default function SettingsPage() {
       profile: {
         title: isFr ? "Profil" : "Profile",
         description: isFr ? "Vos informations de compte." : "Your account details.",
-        firstName: isFr ? "Prénom" : "First name",
-        firstNameHelp: isFr
-          ? "Aurum peut l'utiliser avec parcimonie dans les reflets quand cela sonne naturel."
-          : "Aurum may use it sparingly in reflections when it feels natural.",
-        saveFirstName: isFr ? "Enregistrer le prénom" : "Save first name",
-        savingFirstName: isFr ? "Enregistrement..." : "Saving...",
-        firstNameSavedTitle: isFr ? "Prénom enregistré" : "First name saved",
-        firstNameSavedDescription: isFr
-          ? "Aurum pourra maintenant personnaliser ses reflets avec plus de justesse."
-          : "Aurum can now personalize its reflections more naturally.",
-        firstNameErrorTitle: isFr ? "Prénom indisponible" : "First name unavailable",
-        firstNameErrorDescription: isFr
-          ? "Impossible d'enregistrer ce prénom pour le moment."
-          : "We could not save this first name right now.",
         email: "Email",
         displayName: isFr ? "Nom affiché" : "Display name",
       },
@@ -256,8 +252,8 @@ export default function SettingsPage() {
           ? "Passe à l'annuel sans casser ton fil de réflexion"
           : "Move to yearly without breaking your reflection thread",
         annualOfferBody: isFr
-          ? "Si Aurum fait déjà partie de ta manière d'écrire, de recevoir une lecture psychologique profonde, et de voir ce qui revient, le forfait annuel t'offre 2 mois."
-          : "If Aurum is already part of how you write, receive deep psychological reflection, and notice what keeps returning, the yearly plan gives you 2 months free.",
+          ? "Si Aurum fait déjà partie de ta manière d'écrire, de recevoir des reflets guidés, et de voir ce qui revient, le forfait annuel t'offre 2 mois."
+          : "If Aurum is already part of how you write, receive guided reflection, and notice what keeps returning, the yearly plan gives you 2 months free.",
         annualOfferMeta: isFr
           ? "Proposé après 3 mois d'abonnement mensuel, directement dans votre espace de facturation Stripe."
           : "Shown after 3 months on monthly billing, directly inside your Stripe billing space.",
@@ -450,28 +446,6 @@ export default function SettingsPage() {
         variant: 'destructive',
       });
       setIsOpeningAnnualUpgrade(false);
-    }
-  };
-
-  const handleSaveFirstName = async () => {
-    if (!user) return;
-
-    setIsSavingFirstName(true);
-    try {
-      await updateFirstName(firstNameInput);
-      toast({
-        title: copy.profile.firstNameSavedTitle,
-        description: copy.profile.firstNameSavedDescription,
-      });
-    } catch (error) {
-      console.error("First name update failed:", error);
-      toast({
-        title: copy.profile.firstNameErrorTitle,
-        description: copy.profile.firstNameErrorDescription,
-        variant: "destructive",
-      });
-    } finally {
-      setIsSavingFirstName(false);
     }
   };
 
@@ -671,7 +645,9 @@ export default function SettingsPage() {
                 <Label htmlFor="language">{copy.language.label}</Label>
                 <Select
                   value={preferences.language}
-                  onValueChange={(val: any) => updatePreferences({ language: val })}
+                  onValueChange={(val: Locale) => {
+                    void switchAppLanguage(val);
+                  }}
                 >
                   <SelectTrigger id="language">
                     <SelectValue placeholder={copy.language.placeholder} />
@@ -699,10 +675,6 @@ export default function SettingsPage() {
                     </SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-
-              <div className="rounded-xl border border-stone-200 bg-stone-50/80 px-4 py-3 text-sm text-stone-700">
-                {copy.language.replyRule}
               </div>
             </CardContent>
           </Card>
@@ -897,32 +869,6 @@ export default function SettingsPage() {
                   <Label>{copy.profile.email}</Label>
                   <Input value={user?.email || ""} readOnly disabled />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="firstName">{copy.profile.firstName}</Label>
-                  <Input
-                    id="firstName"
-                    value={firstNameInput}
-                    onChange={(event) => setFirstNameInput(event.target.value)}
-                    autoComplete="given-name"
-                    maxLength={40}
-                    disabled={isSavingFirstName}
-                  />
-                  <p className="text-xs text-muted-foreground">{copy.profile.firstNameHelp}</p>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={handleSaveFirstName}
-                    disabled={
-                      isSavingFirstName ||
-                      firstNameInput.trim().length === 0 ||
-                      firstNameInput.trim() === (savedFirstName ?? "").trim()
-                    }
-                  >
-                    {isSavingFirstName ? copy.profile.savingFirstName : copy.profile.saveFirstName}
-                  </Button>
-                </div>
-              </div>
-              <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label>{copy.profile.displayName}</Label>
                   <Input value={user?.displayName || ""} readOnly disabled />

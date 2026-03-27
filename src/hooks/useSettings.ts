@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { doc, onSnapshot, setDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, onSnapshot, setDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/web-client';
 import { useAuth } from '@/providers/auth-provider';
 import { logger } from '@/lib/logger/safe';
 import { useToast } from '@/hooks/use-toast';
+import type { Locale } from '@/lib/locale';
 
 export interface UserPreferences {
     notificationsEnabled: boolean;
@@ -29,73 +30,36 @@ const DEFAULT_PREFERENCES: UserPreferences = {
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
 };
 
-const THEME_STORAGE_KEY = 'aurum-theme';
-
-function readStoredTheme(): UserPreferences['theme'] {
-    if (typeof window === 'undefined') return 'system';
-    const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
-    return stored === 'light' || stored === 'dark' || stored === 'system' ? stored : 'system';
-}
-
-function resolveSystemTheme(): 'light' | 'dark' {
-    if (typeof window === 'undefined') return 'light';
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-}
-
-function applyTheme(theme: UserPreferences['theme']) {
-    if (typeof document === 'undefined') return;
-    const effectiveTheme = theme === 'system' ? resolveSystemTheme() : theme;
-    const root = document.documentElement;
-    root.classList.toggle('dark', effectiveTheme === 'dark');
-    root.style.colorScheme = effectiveTheme;
-}
-
-export function useSettings() {
-    const { user } = useAuth();
-    const [preferences, setPreferences] = useState<UserPreferences>({
+function buildDefaultPreferences(locale: Locale): UserPreferences {
+    return {
         ...DEFAULT_PREFERENCES,
-        theme: readStoredTheme(),
-    });
+        language: locale,
+    };
+}
+
+export function useSettings(defaultLocale: Locale = 'en') {
+    const { user } = useAuth();
+    const [preferences, setPreferences] = useState<UserPreferences>(() => buildDefaultPreferences(defaultLocale));
     const [loading, setLoading] = useState(true);
     const { toast } = useToast();
 
     useEffect(() => {
-        applyTheme(preferences.theme);
-        if (typeof window !== 'undefined') {
-            window.localStorage.setItem(THEME_STORAGE_KEY, preferences.theme);
-        }
-    }, [preferences.theme]);
-
-    useEffect(() => {
-        if (typeof window === 'undefined') return;
-
-        const media = window.matchMedia('(prefers-color-scheme: dark)');
-        const handleChange = () => {
-            if (readStoredTheme() === 'system') {
-                applyTheme('system');
-            }
-        };
-
-        media.addEventListener('change', handleChange);
-        return () => media.removeEventListener('change', handleChange);
-    }, []);
-
-    useEffect(() => {
         if (!user) {
-            setPreferences((prev) => ({ ...prev, theme: readStoredTheme() }));
+            setPreferences(buildDefaultPreferences(defaultLocale));
             setLoading(false);
             return;
         }
 
+        const defaultPreferences = buildDefaultPreferences(defaultLocale);
         const prefsRef = doc(firestore, 'users', user.uid, 'settings', 'preferences');
 
         const unsubscribe = onSnapshot(prefsRef, (docSnap) => {
             if (docSnap.exists()) {
-                setPreferences({ ...DEFAULT_PREFERENCES, ...docSnap.data() } as UserPreferences);
+                setPreferences({ ...defaultPreferences, ...docSnap.data() } as UserPreferences);
             } else {
                 // Initialize default preferences if they don't exist
                 setDoc(prefsRef, {
-                    ...DEFAULT_PREFERENCES,
+                    ...defaultPreferences,
                     createdAt: serverTimestamp(),
                     updatedAt: serverTimestamp(),
                 }, { merge: true }).catch(err => {
@@ -109,7 +73,7 @@ export function useSettings() {
         });
 
         return () => unsubscribe();
-    }, [user]);
+    }, [defaultLocale, user]);
 
     const updatePreferences = async (newPrefs: Partial<UserPreferences>) => {
         if (!user) return;
