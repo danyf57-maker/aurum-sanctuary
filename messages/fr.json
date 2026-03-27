@@ -15,8 +15,8 @@
   },
   "entryForm": {
     "savedTitle": "Entrée sauvegardée",
-    "savedDescription": "Votre pensée a été chiffrée et enregistrée.",
-    "encryptionActive": "Chiffrement de bout en bout actif",
+    "savedDescription": "Votre pensée a été protégée côté client puis enregistrée.",
+    "encryptionActive": "Protection locale active avant stockage",
     "save": "Sauvegarder"
   },
   "settings": {
@@ -50,16 +50,14 @@
   "login": {
     "invalidEmail": "Email invalide",
     "passwordMin": "Le mot de passe doit contenir au moins 6 caractères",
-    "emailNotVerified": "Votre email n'est pas encore vérifié. Nous venons de renvoyer un message. Vérifiez vos mails et vos spams pour ouvrir votre espace de réflexion privé.",
+    "emailNotVerified": "Votre email n'est pas encore vérifié. Nous venons de renvoyer un message. Vérifiez votre boîte mail et vos spams pour accéder à votre espace privé.",
     "loading": "Chargement...",
     "title": "Connexion",
-    "description": "Retrouve ton espace de réflexion privé. Reprends tes pages, tes reflets guidés et les motifs qui émergent.",
+    "description": "Retrouve ton espace privé. Reprends tes pages, tes reflets guidés et ce qui se dessine au fil du temps.",
     "quizBadge": "Votre profil vous attend",
     "quizText": "Votre profil de réflexion est prêt ! Connectez-vous pour découvrir votre résultat personnalisé.",
-    "verified": "Email vérifié. Vous pouvez vous connecter et reprendre votre réflexion privée.",
-    "checkEmail": "Un email de vérification vient d'être envoyé. Merci de vérifier votre boîte de réception et vos spams pour ouvrir votre espace de réflexion privé.",
-    "resendVerification": "Renvoyer le mail",
-    "resendingVerification": "Envoi...",
+    "verified": "Email vérifié. Vous pouvez maintenant vous connecter et retrouver votre espace privé.",
+    "checkEmail": "Un email de vérification vient d'être envoyé. Merci de vérifier votre boîte de réception et vos spams pour accéder à votre espace privé.",
     "inAppBrowser": "Connexion Google bloquée dans ce navigateur intégré. Ouvre cette page dans Safari ou Chrome puis réessaie.",
     "google": "Continuer avec Google",
     "or": "Ou continuer avec",
@@ -68,11 +66,7 @@
     "pillPrivate": "Privé par conception",
     "pillGuided": "Reflet guidé",
     "pillClarity": "Clarté émotionnelle",
-    "pillPatterns": "Motifs dans le temps",
-    "languagePolicy": "Lors de ta première visite, Aurum s'ouvre dans la langue de ton navigateur. Ensuite, il garde la langue que tu choisis. Les réponses suivent la langue dans laquelle tu écris.",
-    "existingAccountInfo": "Ce compte existe déjà. Connecte-toi pour retrouver ton espace.",
-    "googleAccountInAppBrowser": "Ce compte utilise Google. Ouvre Aurum dans Safari ou Chrome pour te connecter.",
-    "googleAccountGoogle": "Ce compte utilise Google. Continue avec Google pour retrouver ton espace.",
+    "pillPatterns": "Ce qui revient",
     "forgot": "Mot de passe oublié ?",
     "signingIn": "Connexion...",
     "signIn": "Se connecter",
@@ -96,9 +90,9 @@
       "close": "Fermer",
       "welcome": "Bienvenue",
       "line1": "Cet espace privé est le tien.",
-      "line2": "Écris sans te filtrer. Aurum te renvoie ce qui ressort, ce qui revient, et ce qui reste encore flou.",
-      "line3": "Avec le temps, tes pages commencent à révéler des motifs émotionnels récurrents que tu peux reconnaître plus facilement.",
-      "badge": "Réflexion privée"
+      "line2": "Écris sans te filtrer. Aurum te renvoie ce qui ressort, ce qui revient, et ce qui mérite peut-être d'être regardé de plus près.",
+      "line3": "Avec le temps, tes pages rendent plus lisibles les mouvements émotionnels qui reviennent.",
+      "badge": "Réflexion privée guidée par IA"
     },
     "personalityQuestionnaire": {
       "fallbackArchetype": "Le Décideur",
@@ -123,13 +117,13 @@
       "analyzePages": "Analyser mes pages",
       "guidedPath": "Parcours guidé",
       "recommended": "Recommandé pour commencer",
-      "emptyQuickOption": "Option rapide: fais le parcours guidé pour voir ton style de fonctionnement.",
+      "emptyQuickOption": "Option rapide : fais le parcours guidé pour voir comment tu fonctionnes.",
       "emptyOutcome": "Tu repars avec des repères concrets sur ta manière d'agir et de communiquer.",
       "emptyAnalyzeRequirement": "Pour l'analyse automatique de tes pages, il faut au moins 5 entrées non chiffrées.",
       "analysisInProgress": "Analyse en cours...",
       "analysisLegend": "Analyse",
       "questionnaireLegend": "Questionnaire",
-      "premiumReading": "Lecture Aurum premium",
+      "premiumReading": "Lecture approfondie Aurum",
       "currentStrength": "Point fort actuel:",
       "suggestedMicroAction": "Micro-action conseillée:",
       "whyWriteAfterProfile": "Pourquoi écrire après ce profil:",
@@ -191,13 +185,13 @@
       "analyzePages": "Analyser mes pages",
       "guidedPath": "Parcours guidé",
       "recommended": "Recommandé pour commencer",
-      "emptyQuickOption": "Option rapide: réponds au parcours guidé en 2 minutes.",
+      "emptyQuickOption": "Option rapide : réponds au parcours guidé en 2 minutes.",
       "emptyOutcome": "Tu obtiens une lecture claire de ton niveau d'énergie, de calme et d'équilibre.",
       "emptyAnalyzeRequirement": "Pour l'analyse automatique de tes pages, il faut au moins 5 entrées non chiffrées.",
       "analysisInProgress": "Analyse en cours...",
       "analysisLegend": "Analyse",
       "questionnaireLegend": "Questionnaire",
-      "premiumReading": "Lecture Aurum premium",
+      "premiumReading": "Lecture approfondie Aurum",
       "currentStrength": "Point fort actuel:",
       "suggestedMicroAction": "Micro-action conseillée:",
       "whyWriteNow": "Pourquoi écrire maintenant:",
@@ -302,32 +296,23 @@
       "removeImageAria": "Supprimer l'image",
       "tagsLabel": "Étiquettes",
       "uploadImage": "Envoi...",
-      "saving": "Enregistrement...",
-      "saveThought": "Enregistrer",
-      "savedThoughtTitle": "Page enregistrée",
-      "savedThoughtSubtitle": "Privée, chiffrée, prête pour un reflet",
+      "saving": "Sécurisation...",
+      "saveThought": "Sécuriser cette page",
+      "savedThoughtTitle": "Page sécurisée",
+      "savedThoughtSubtitle": "Chiffrée, privée, prête pour un reflet",
       "getReflection": "Voir ce qu'Aurum remarque",
-      "getReflectionDescription": "Un premier reflet pour voir ce qui ressort, ce qui revient, et où se situe la tension principale.",
+      "getReflectionDescription": "Un reflet doux pour clarifier ce qui ressort, ce qui revient, et là où se situe le centre émotionnel.",
       "revealReflection": "Révéler ce qu'Aurum remarque",
-      "continueWithAurum": "Continuer à écrire",
+      "continueWithAurum": "Approfondir ce reflet",
       "conversationLockedTitle": "Continuer l'échange",
       "conversationLockedBody": "Tu as atteint tes 5 pages gratuites. Lance ton essai pour continuer à échanger avec Aurum après chaque reflet.",
       "unlockConversation": "Débloquer l'échange complet",
       "aurumThinking": "Aurum relit...",
       "send": "Envoyer",
       "anythingElse": "Autre chose demande une page ?",
-      "openNewWritingSpace": "Ouvrir une nouvelle page",
-      "conversationStarters": {
-        "0": "Le fait le plus concret, c'est...",
-        "1": "Ce que je ressens dans mon corps, c'est...",
-        "2": "Ce que je n'ai pas encore écrit, c'est..."
-      },
-      "scienceCue": {
-        "body": "Dans les études sur l'écriture expressive, écrire 15 à 20 minutes, à 3 à 5 reprises, est associé à une mise en mots plus claire de l'expérience.",
-        "source": "Baikie & Wilhelm, revue clinique, 2005."
-      },
+      "openNewWritingSpace": "Ouvrir une nouvelle page privée",
       "placeholders": {
-        "write": "Des travaux de James Pennebaker à l'Université du Texas montrent que mettre en mots ce que l'on vit aide à mieux l'organiser. Commence à écrire ici...",
+        "write": "Écris librement. Aurum t'aidera à remarquer ce qui revient...",
         "caption": "Ajouter une note...",
         "tags": "Thèmes, humeurs, moments (optionnel)",
         "replyToAurum": "Demande à Aurum ce qui ressort, ce qui revient, ou ce qui reste flou..."
@@ -409,18 +394,13 @@
   },
   "signup": {
     "title": "Créer un compte",
-    "description": "Des études sur l'écriture expressive montrent que mettre une expérience en mots aide à y voir plus clair. Ouvre ton compte pour commencer.",
+    "description": "Crée ton espace privé. Écris librement, reçois des reflets guidés, et vois plus clairement ce qui revient.",
     "quizBadge": "Votre profil vous attend",
     "quizText": "Votre profil de réflexion est prêt ! Créez votre compte pour découvrir votre résultat personnalisé et commencer votre expérience.",
-    "encrypted": "Chiffré par défaut et privé par conception",
+    "encrypted": "Protection locale côté client et confidentialité par conception",
     "inAppBrowser": "Connexion Google bloquée dans ce navigateur intégré. Ouvre cette page dans Safari ou Chrome puis réessaie.",
     "google": "Continuer avec Google",
     "or": "Ou continuer avec",
-    "existingAccountBannerTitle": "Vous avez déjà un compte ?",
-    "existingAccountBannerBody": "Ouvre cette page dans Safari ou dans Chrome, puis connecte-toi là-bas. Si ton compte marche dans Safari, retourne dans Safari. S'il marche dans Chrome, retourne dans Chrome.",
-    "existingAccountBannerCta": "Aller à la connexion",
-    "firstName": "Prénom",
-    "firstNamePlaceholder": "Daniel",
     "emailPlaceholder": "vous@exemple.com",
     "password": "Mot de passe",
     "passwordHint": "Au moins 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre",
@@ -431,18 +411,16 @@
     "privacy": "politique de confidentialité",
     "creating": "Création...",
     "create": "Créer un compte",
-    "emailNote": "Un email de vérification activera votre espace de réflexion privé.",
+    "emailNote": "Un email de vérification activera votre espace privé.",
     "alreadyAccount": "Vous avez déjà un compte ?",
     "signIn": "Se connecter",
-    "checkEmail": "Vérifiez votre boîte de réception pour activer votre espace de réflexion privé.",
+    "checkEmail": "Vérifiez votre boîte de réception pour activer votre espace privé.",
     "loading": "Chargement...",
     "pillPrivate": "Privé par conception",
     "pillGuided": "Reflet guidé",
     "pillClarity": "Clarté émotionnelle",
-    "pillPatterns": "Motifs dans le temps",
+    "pillPatterns": "Ce qui revient",
     "validation": {
-      "firstNameRequired": "Le prénom est requis",
-      "firstNameTooLong": "Le prénom ne peut pas dépasser 40 caractères",
       "invalidEmail": "Email invalide",
       "passwordMinLength": "Le mot de passe doit contenir au moins 8 caractères",
       "passwordUppercase": "Le mot de passe doit contenir au moins une majuscule",
@@ -460,7 +438,7 @@
     "checkoutNoUrl": "Aucune URL de paiement reçue.",
     "offerPending": "Offre en préparation. Contacte-nous sur aurumdiary.com pour être prévenu.",
     "title": "Choisissez votre formule",
-    "subtitle": "Une écriture privée, une lecture psychologique profonde, et des motifs intérieurs qui deviennent plus lisibles dans le temps.",
+    "subtitle": "Un espace d'écriture chiffré, des reflets guidés par IA, et une meilleure lecture de ce qui revient en toi.",
     "recommended": "Recommandé",
     "stripeNote": "Les abonnements sont gérés via Stripe. Résiliation possible à tout moment.",
     "currentPlan": "Plan actuel",
@@ -468,7 +446,7 @@
     "monthly": {
       "name": "Mensuel",
       "period": "/mois",
-      "description": "L’expérience Aurum complète, avec écriture privée et lecture psychologique profonde, facturée au mois.",
+      "description": "L’expérience Aurum complète, guidée par l’IA, facturée au mois.",
       "cta": "Choisir mensuel"
     },
     "yearly": {
@@ -479,7 +457,7 @@
     },
     "features": {
       "entries": "Écriture privée et chiffrée illimitée",
-      "conversations": "Lectures psychologiques illimitées avec Aurum",
+      "conversations": "Réflexions guidées illimitées avec Aurum",
       "history": "Mémoire complète de tes pages et de leur évolution",
       "export": "Export de tes écrits et reflets",
       "reflections": "Motifs récurrents et reflets approfondis"
@@ -496,22 +474,12 @@
     }
   },
   "hero": {
-    "badge": "ÉCRITURE PRIVÉE • REFLET PRÉCIS",
-    "title": "Écris en privé. Vois plus clair en toi.",
-    "subtitle": "Des travaux de James Pennebaker à l'Université du Texas montrent que mettre une expérience en mots aide à y voir plus clair. Commence à écrire.",
-    "helper": "Écris une ligne honnête. Aurum l'ouvre dans ta page privée.",
-    "helperWithDraft": "Crée ton compte pour ouvrir ce texte dans ta page privée.",
-    "cta": "Commencer gratuitement",
-    "ctaContinueDraft": "Créer mon compte pour continuer",
-    "ctaSecondary": "Écrire une première page",
-    "ctaSecondaryGuest": "J'ai déjà un compte",
-    "ctaAuthenticated": "Continuer à écrire",
-    "ctaSecondaryAuthenticated": "Ouvrir mon journal",
-    "ctaLoading": "Ouverture...",
-    "languagesBadge": "Aurum te répond dans ta langue",
-    "interfaceLanguage": "Au premier chargement, Aurum suit la langue de ton navigateur. Ensuite, il garde la langue que tu choisis.",
-    "languages": "Écris en français, anglais, espagnol, italien, allemand ou portugais.",
-    "trust": "7 jours gratuits • Privé par conception • Résiliable à tout moment.",
+    "badge": "ÉCRITURE PRIVÉE • REFLET GUIDÉ",
+    "title": "Écris en privé. Retrouve de la clarté.",
+    "subtitle": "Aurum t'aide à écrire librement, à mettre des mots sur ce que tu ressens, et à reconnaître plus facilement ce qui revient dans le temps.",
+    "cta": "Créer mon espace gratuitement",
+    "ctaSecondary": "Écrire d'abord, sans engagement",
+    "trust": "Journal chiffré • Reflet guidé par IA • Privé par conception",
     "placeholders": {
       "0": "Je n'arrive pas à dormir, mon cerveau tourne en boucle sur la réunion de demain...",
       "1": "Je me sens complètement submergé par ma liste de tâches aujourd'hui...",
@@ -519,7 +487,7 @@
     },
     "quotes": {
       "0": {
-        "hint": "Écris sans te filtrer. Retrouve de la clarté grâce à une réflexion douce.",
+        "hint": "Écris sans te filtrer. Retrouve de la clarté avec un reflet doux.",
         "detail": "Écris simplement ce que tu as en tête, sans filtre.",
         "quote": "Écrire, c'est une façon de parler sans être interrompu.",
         "author": "Jules Renard"
@@ -550,7 +518,7 @@
       },
       "5": {
         "hint": "Après une journée lourde, écris ce qui est resté avec toi.",
-        "detail": "Même 2 minutes de réflexion peuvent rendre un motif plus visible.",
+        "detail": "Même 2 minutes d'écriture peuvent rendre un motif plus visible.",
         "quote": "La clarté commence quand les mots cessent de tourner et commencent à se poser.",
         "author": "Aurum"
       },
@@ -590,7 +558,7 @@
             },
             {
               "label": "I",
-              "text": "J'ai besoin de connecter avec les autres et partager"
+              "text": "J'ai besoin de me relier aux autres et de partager"
             },
             {
               "label": "S",
@@ -769,74 +737,43 @@
         },
         "MIXTE": {
           "title": "Profil mixte • L'Équilibriste",
-          "description": "Tu combines plusieurs forces. Aurum t'aide à voir comment tes motifs intérieurs changent selon les situations."
+          "description": "Tu combines plusieurs forces. Aurum t'aide à voir comment tes dynamiques intérieures changent selon les situations."
         }
       }
     },
     "floatingCta": {
-      "cta": "Commencer gratuitement",
+      "cta": "Créer mon compte",
       "label": "Sans engagement • Privé"
     },
-    "returningUser": {
-      "checkingCta": "Ouverture...",
-      "checkingCtaArrow": "Ouverture...",
-      "writeCta": "Continuer à écrire",
-      "writeCtaArrow": "Continuer à écrire"
-    },
     "studySection": {
-      "title": "Ce que montre la recherche",
-      "subtitle": "Les travaux sur l'écriture expressive relient des sessions courtes et répétées à une expérience émotionnelle plus claire et à moins de rumination chez une partie des participants.",
-      "cta": "Commencer gratuitement",
-      "ctaAuthenticated": "Continuer à écrire"
+      "title": "Écrire aide. Aurum aide à comprendre ce qui revient.",
+      "subtitle": "La confidentialité protège tes mots. La réflexion guidée d'Aurum t'aide à mieux comprendre ce que tu ressens et à reconnaître ce qui revient.",
+      "cta": "Créer mon compte et commencer aujourd'hui"
     },
     "studyCards": [
       {
-        "eyebrow": "Dans les études",
-        "title": "Le format le plus étudié est court et répété",
-        "body": "Un protocole fréquent consiste à écrire 15 à 20 minutes, à 3 à 5 reprises, autour d'une expérience importante ou difficile.",
-        "example": "À tester : 10 minutes ce soir, puis quelques retours cette semaine."
+        "eyebrow": "Sais-tu que...",
+        "title": "écrire un stress vécu peut réduire des symptômes physiques ?",
+        "body": "Dans une étude fondatrice, les personnes qui écrivaient sur un événement difficile ont montré de meilleurs indicateurs de santé.",
+        "example": "Exemple concret : 10 minutes le soir pour poser ce qui te pèse au lieu de ruminer au lit."
       },
       {
-        "eyebrow": "Dans les études",
-        "title": "Mettre l'expérience en mots aide à mieux la traiter",
-        "body": "Les études suggèrent que décrire ce qui s'est passé et nommer les émotions rend l'expérience intérieure plus structurée.",
-        "example": "À tester : ce qui s'est passé, ce que tu as ressenti, ce dont tu avais besoin."
+        "eyebrow": "Sais-tu que...",
+        "title": "mettre tes émotions en mots peut améliorer ton rebond ?",
+        "body": "Une étude sur des personnes en période de perte d'emploi a trouvé un meilleur retour à l'action chez celles qui écrivaient.",
+        "example": "Exemple concret : écrire 3 fois par semaine ce que tu ressens, puis ton prochain pas réaliste."
       },
       {
-        "eyebrow": "Dans les études",
-        "title": "La valeur vient de la répétition, pas d'une page parfaite",
-        "body": "Les synthèses suggèrent que les effets apparaissent surtout avec une pratique répétée, pas avec une seule page exceptionnelle.",
-        "example": "À tester : cinq minutes honnêtes, trois fois cette semaine."
+        "eyebrow": "Sais-tu que...",
+        "title": "les revues systématiques confirment un gain de bien-être ?",
+        "body": "Les synthèses récentes montrent un effet positif du journaling sur le stress et le bien-être psychologique.",
+        "example": "Exemple concret : une routine de 5 minutes par jour peut déjà changer ton niveau de clarté."
       }
     ],
-    "exampleSection": {
-      "eyebrow": "Ce qu'Aurum te renvoie",
-      "title": "Après une page, Aurum nomme mieux ce qui se passe",
-      "subtitle": "Aurum ne résume pas seulement. Il renvoie le cycle, la contradiction ou la pression réellement visibles dans ton écriture.",
-      "entryLabel": "Ce que tu écris",
-      "entry": "Je dis oui à tout le monde, puis je me sens envahi, agacé, et coupable d'être agacé.",
-      "reflectionLabel": "Ce qu'Aurum peut te renvoyer",
-      "reflection": "Tu n'es pas seulement débordé. Un rôle apparaît : tu deviens d'abord celui qui tient, et tu remarques trop tard ta propre limite. La culpabilité arrive après, mais le mouvement commence plus tôt : tu t'éloignes de ton besoin dès que quelqu'un a besoin de toi.",
-      "highlights": [
-        {
-          "title": "Plus analytique, moins générique",
-          "body": "Aurum lit la séquence émotionnelle sous la page, pas seulement le sujet en surface."
-        },
-        {
-          "title": "Dans ta langue",
-          "body": "Écris dans la langue qui te vient naturellement. Aurum répond dans la même langue."
-        },
-        {
-          "title": "Pensé pour durer",
-          "body": "Quand les pages s'accumulent, les mêmes conflits, besoins et réactions deviennent plus visibles."
-        }
-      ]
-    },
     "useCases": {
-      "title": "Des moments réels pour commencer",
-      "subtitle": "Insomnie, pression intérieure, conflit, fatigue de décision. Pars d'un moment réel et écris-le simplement.",
-      "note": "L'écriture aide déjà. Aurum ajoute le reflet qui rend le motif plus net.",
-      "cta": "Commencer gratuitement",
+      "title": "Moments fréquents où l'écriture aide à y voir plus clair",
+      "subtitle": "Des exemples concrets pour démêler ce que tu ressens, alléger la surcharge intérieure et mieux voir ce qui revient.",
+      "note": "Ancré dans des recherches récentes sur l'écriture expressive et le bien-être psychologique",
       "cards": [
         {
           "badge": "Insomnie",
@@ -848,19 +785,19 @@
           "badge": "Self-talk",
           "title": "Tu te parles trop durement",
           "body": "Quand la petite voix dit \"je suis nul\", écris une version plus juste: \"j'avance petit à petit\". Ça aide à reprendre confiance.",
-          "cta": "Commencer gratuitement →"
+          "cta": "Créer mon compte →"
         },
         {
           "badge": "Overthinking",
           "title": "Tout est confus dans ta tête",
           "body": "Écris une idée par ligne. Tu transformes la confusion mentale en points clairs, puis tu choisis un seul petit pas pour aujourd'hui.",
-          "cta": "Commencer gratuitement →"
+          "cta": "Je veux essayer →"
         },
         {
           "badge": "Pression",
           "title": "Tu gardes tout, puis tu exploses",
           "body": "Quelques lignes régulières valent mieux qu'une longue session rare. Tu décompresses avant saturation et tu retrouves plus de calme.",
-          "cta": "Commencer gratuitement →"
+          "cta": "Je commence maintenant →"
         },
         {
           "badge": "Démarrage",
@@ -895,43 +832,43 @@
       ]
     },
     "scientificProof": {
-      "title": "Ce que montrent les données",
-      "subtitle": "L'écriture expressive est étudiée depuis des décennies. Certains résultats sont particulièrement utiles pour comprendre la logique d'Aurum :",
+      "title": "Ce n'est pas de la magie, c'est un phénomène observé.",
+      "subtitle": "Des chercheurs se sont penchés sur le pouvoir de l'écriture. Dans leurs études, ils ont fait des découvertes surprenantes :",
       "discoveries": [
         {
           "label": "Découverte n°1 :",
-          "body": "Dans une étude fondatrice, les participants qui écrivaient sur une expérience difficile ont ensuite déclaré moins de visites en centre de santé"
+          "body": "Les participants qui prenaient le temps d'écrire sur leurs soucis ont vu leurs visites chez le médecin diminuer de moitié"
         },
         {
           "label": "Découverte n°2 :",
-          "body": "Dans une étude sur la perte d'emploi, les personnes qui écrivaient sur leurs émotions avaient davantage de chances de reprendre un travail"
+          "body": "Dans une autre étude sur des personnes ayant perdu leur emploi, celles qui écrivaient sur leurs émotions avaient deux fois plus de chances de retrouver un travail que les autres"
         }
       ]
     },
     "problem": {
       "title": "À quoi ressemble la surcharge intérieure ?",
-      "body": "Les pensées tournent, les émotions se mélangent, et les mêmes situations reviennent sans devenir plus claires."
+      "body": "Les pensées tournent, les émotions se mélangent, et il devient plus difficile de voir ce qui compte vraiment. L'écriture rend ces signaux plus lisibles."
     },
     "solution": {
-      "title": "L'écriture donne à l'expérience un endroit où se poser.",
-      "body": "Aurum ajoute une lecture psychologique profonde, pour rendre plus visibles ce qui revient, se contredit, se protège, ou reste sans se dire."
+      "title": "L'écriture ralentit assez pour voir clair.",
+      "body": "Écrire en privé donne à tes pensées un endroit où se poser. Aurum y ajoute un reflet guidé, doux et précis, pour mieux comprendre ce qui se répète."
     },
     "trust": {
-      "eyebrow": "Confiance",
-      "title": "Un espace privé, protégé, et sous ton contrôle.",
-      "subtitle": "Aurum protège tes pages, limite l'accès au contenu lisible aux traitements nécessaires au service, et ne vend pas tes données.",
+      "eyebrow": "Ton intégrité, notre priorité",
+      "title": "Un sanctuaire où tu es le seul maître.",
+      "subtitle": "Nous avons conçu Aurum autour d'une idée simple : ton monde intérieur mérite un espace privé et respectueux.",
       "cards": [
         {
-          "title": "Chiffré par défaut",
-          "body": "Tes pages sont chiffrées avant stockage et restent dans un espace privé conçu pour la réflexion."
+          "title": "Confidentialité protégée",
+          "body": "Le stockage du journal est protégé par un chiffrement côté client sur les flux compatibles, avec des protections supplémentaires sur le compte et le transport."
         },
         {
-          "title": "Accès limité",
-          "body": "L'accès au contenu lisible est restreint aux traitements nécessaires pour fournir les reflets et le service."
+          "title": "Traitement respectueux",
+          "body": "Nous ne vendons pas tes écrits. Certaines fonctionnalités IA traitent le texte que tu choisis d'envoyer pour produire le reflet que tu demandes."
         },
         {
-          "title": "Tes données, ton choix",
-          "body": "Tu peux exporter tes pages ou demander la suppression de ton compte."
+          "title": "Droit à l'oubli",
+          "body": "Tu restes propriétaire de tes données à 100%. Exporte tes journaux ou supprime ton compte en un clic, sans délai."
         }
       ],
       "manifestoTitle": "Notre manifeste de confiance",
@@ -939,10 +876,9 @@
       "seal": "Sceau de confiance"
     },
     "finalCta": {
-      "button": "Commencer gratuitement",
-      "buttonAuthenticated": "Continuer à écrire",
-      "note": "7 jours gratuits • Juge par toi-même la qualité des reflets",
-      "subtitle": "Écris quelques pages honnêtes, lis ce qu'Aurum te renvoie, et vois si la clarté est différente de ce que tu as déjà essayé.",
+      "button": "Créer mon sanctuaire maintenant",
+      "note": "Sans engagement • Privé par conception",
+      "subtitle": "Tu entres dans un espace privé conçu pour écrire régulièrement, mieux comprendre ce qui revient et retrouver de la clarté.",
       "cards": [
         {
           "title": "writing",
@@ -952,7 +888,7 @@
         {
           "title": "analysis",
           "eyebrow": "Réflexion",
-          "body": "Un reflet psychologiquement précis, qui nomme la boucle, la tension ou la contradiction visible dans tes mots."
+          "body": "Des repères guidés pour voir émerger tes thèmes récurrents, tes rythmes émotionnels et tes besoins."
         },
         {
           "title": "privacy",
@@ -962,7 +898,7 @@
         {
           "title": "continuity",
           "eyebrow": "Continuité",
-          "body": "Quand tu continues à écrire, Aurum aide les motifs récurrents à devenir plus visibles."
+          "body": "Ta réflexion s'approfondit dans le temps, page après page, sans perdre le fil."
         }
       ]
     },
@@ -970,7 +906,7 @@
     "faqs": [
       {
         "question": "Qui peut lire mes données ?",
-        "answer": "Tes pages restent dans un espace privé chiffré. L'accès au contenu lisible est limité aux traitements nécessaires pour fournir les reflets et faire fonctionner le service."
+        "answer": "Ton journal est stocké avec une protection chiffrée côté client sur les flux compatibles, et l'accès reste limité à ton compte. Certaines fonctionnalités IA traitent le texte que tu choisis d'envoyer pour pouvoir produire le reflet demandé."
       },
       {
         "question": "Comment l'écriture privée aide-t-elle à retrouver de la clarté le soir ?",
@@ -978,7 +914,7 @@
       },
       {
         "question": "Comment réduire la surcharge intérieure en 5 minutes ?",
-        "answer": "Pose un minuteur 5 minutes et écris sans corriger : faits, émotions, besoins. Cette courte réflexion aide à alléger la surcharge intérieure et à retrouver de la clarté, même pendant une journée chargée."
+        "answer": "Pose un minuteur de 5 minutes et écris sans corriger : faits, émotions, besoins. Ce court temps d'écriture aide à alléger la surcharge intérieure et à retrouver un peu de clarté, même au milieu d'une journée chargée."
       },
       {
         "question": "Comment la réflexion aide-t-elle à sortir du trop-plein mental ?",
@@ -986,11 +922,11 @@
       },
       {
         "question": "L'écriture réflexive peut-elle améliorer la clarté émotionnelle ?",
-        "answer": "L'écriture réflexive peut améliorer la clarté émotionnelle dans le temps en aidant à nommer ce que tu ressens, remarquer ce qui revient et prendre un peu de distance avec le bruit mental."
+        "answer": "L'écriture réflexive peut améliorer la clarté émotionnelle avec le temps en aidant à nommer ce que tu ressens, à repérer ce qui revient et à prendre un peu de distance avec le bruit mental."
       },
       {
         "question": "Quelle app de réflexion privée protège vraiment mes écrits ?",
-        "answer": "Choisis une app de réflexion privée qui protège tes écrits par défaut, ne vend pas tes données, et garde tes pages hors de tout espace public. Sur Aurum, tes mots restent dans un espace privé conçu pour la clarté et les motifs récurrents."
+        "answer": "Choisis une app de réflexion privée qui explique clairement comment les écrits sont protégés, évite les logiques publicitaires et garde tes mots dans un espace non public. Sur Aurum, tes écrits restent dans un produit privé conçu pour t'aider à y voir plus clair et à reconnaître ce qui revient."
       },
       {
         "question": "Combien coûte Aurum ?",
@@ -1019,9 +955,9 @@
   },
   "authDialog": {
     "createTitle": "Créer mon compte",
-    "createDescription": "Crée ton espace de réflexion privé et commence à écrire avec plus de clarté guidée.",
+    "createDescription": "Crée ton espace privé et commence à écrire avec un cadre plus clair.",
     "signInTitle": "Se connecter",
-    "signInDescription": "Retrouve ton espace de réflexion privé et ce qui revient en toi.",
+    "signInDescription": "Retrouve ton espace privé et ce qui revient en toi.",
     "google": "Continuer avec Google",
     "or": "Ou",
     "yourName": "Ton nom",
@@ -1044,22 +980,22 @@
       "privateBadge": "Espace privé",
       "titleLine1": "Ton sanctuaire",
       "titleLine2": "t'attend",
-      "description": "Un espace privé et chiffré pour écrire librement, recevoir une lecture psychologique profonde, et commencer à voir les motifs émotionnels qui reviennent dans le temps.",
-      "featurePrivate": "100% privé",
-      "featureEncrypted": "Chiffré",
+      "description": "Un espace privé pour écrire librement, recevoir un reflet guidé, et commencer à voir plus clairement ce qui revient.",
+      "featurePrivate": "Privé",
+      "featureEncrypted": "Protégé",
       "featureAi": "Reflet guidé",
-      "featurePatterns": "Motifs dans le temps",
+      "featurePatterns": "Ce qui revient",
       "cta": "Entrer dans le Sanctuaire",
       "signInNote": "Connexion sécurisée via Google ou Email",
       "footerQuote": "\"Écris ce qui demande à être posé. Le reste viendra.\""
     },
     "authenticated": {
       "title": "Ton espace d'écriture privé",
-      "subtitle": "Écris sans te censurer. Aurum te renvoie ce qui ressort, t'aide à clarifier ce que tu ressens, et laisse les motifs récurrents émerger dans le temps.",
+      "subtitle": "Écris sans te censurer. Aurum te renvoie ce qui ressort, t'aide à clarifier ce que tu ressens, et rend plus visible ce qui revient.",
       "signalPrivate": "Privé par conception",
       "signalGuided": "Reflet après chaque page",
       "signalClarity": "Clarté émotionnelle",
-      "signalPatterns": "Motifs dans le temps"
+      "signalPatterns": "Ce qui revient"
     },
     "quotes": [
       {
@@ -1117,8 +1053,8 @@
       "title": "L'élégance du secret.",
       "features": [
         {
-          "title": "Chiffrement absolu",
-          "description": "Vos pensées sont scellées avant même de quitter votre appareil. Personne d’autre ne peut les lire."
+          "title": "Stockage protégé",
+          "description": "Le stockage du journal est protégé par un chiffrement côté client sur les flux compatibles et par un transport sécurisé."
         },
         {
           "title": "Miroir intérieur",
@@ -1139,16 +1075,16 @@
   },
   "trialOffer": {
     "badge": "7 JOURS OFFERTS",
-    "title": "Commence avec 7 jours de lecture psychologique privée.",
-    "body": "Écris sans te censurer, reçois une lecture psychologique profonde après chaque page, et commence à voir tes motifs émotionnels récurrents avant la première facturation.",
+    "title": "Commence avec 7 jours de réflexion guidée privée.",
+    "body": "Écris sans te censurer, reçois un reflet guidé après chaque page, et commence à mieux voir ce qui revient avant la première facturation.",
     "cta": "Voir l'offre"
   },
   "paywall": {
     "close": "Fermer",
     "title": "Laisse tes reflets continuer à se déployer",
     "intro": "Continue avec l'expérience complète de réflexion Aurum :",
-    "benefit1": "Recevoir une lecture psychologique profonde après chaque page",
-    "benefit2": "Voir les thèmes récurrents et les motifs émotionnels devenir plus reconnaissables dans le temps",
+    "benefit1": "Recevoir un reflet guidé après chaque page",
+    "benefit2": "Voir les thèmes récurrents et les motifs émotionnels devenir plus lisibles",
     "benefit3": "Continuer à faire grandir ton historique privé et ta carte de clarté",
     "reassurance": "Privé par conception. Pas de publicité, pas de vente de données, pas de pression.",
     "subscribe": "Activer mes 7 jours offerts",
@@ -1162,7 +1098,7 @@
     "trialTitle": "Que débloquent les 7 jours ?",
     "trialBody": "L'essai commence quand tu confirmes Stripe Checkout et ouvre l'expérience complète de réflexion Aurum pendant exactement 7 jours.",
     "trialBullet1": "Les reflets guidés et Magazine sont accessibles immédiatement",
-    "trialBullet2": "Ton historique privé et tes motifs récurrents continuent de se construire pendant l'essai",
+    "trialBullet2": "Ton historique privé et ce qui revient continuent de se dessiner pendant l'essai",
     "trialBullet3": "Tu peux annuler avant la fin si tu ne veux pas être facturé",
     "trialNote": "Exemple : activation le 10 mars 2026 à 14:32 = fin le 17 mars 2026 à 14:32."
   }

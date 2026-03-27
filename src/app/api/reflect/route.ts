@@ -16,6 +16,7 @@ import { detectPatterns, detectionToStorageFormat } from '@/lib/patterns/detect'
 import { selectPatternsForInjection, formatPatternsForContext } from '@/lib/patterns/inject';
 import {
   PSYCHOLOGIST_ANALYST_SKILL_ID,
+  PSYCHOLOGIST_ANALYST_SYSTEM_PROMPT,
 } from '@/lib/skills/psychologist-analyst';
 import {
   PHILOSOPHY_SKILL_ID,
@@ -25,126 +26,128 @@ import {
   validateResponse,
 } from '@/lib/patterns/anti-meta';
 import { rateLimit, RateLimitPresets } from '@/lib/rate-limit';
-import {
-  buildStrictReplyLanguageInstruction,
-  resolvePromptLanguage,
-  resolveReplyLanguage,
-} from '@/lib/ai/language';
-import { buildAurumSystemPrompt } from '@/lib/ai/aurum-system-prompts';
-import {
-  getFreeAurumConversationState,
-  getFreeEntryState,
-  resolveAurumAccessState,
-} from '@/lib/billing/aurum-access';
-import { resolveOptionalFirstName } from '@/lib/profile/first-name';
-import type { Locale } from '@/lib/locale';
+import { getFreeEntryState, resolveAurumAccessState } from '@/lib/billing/aurum-access';
 
 type AurumIntent = 'reflection' | 'conversation' | 'analysis' | 'clarify' | 'action' | 'philosophy';
-type SupportedLocale = Locale;
+type SupportedLocale = 'fr' | 'en';
+const LIGHT_ACKNOWLEDGEMENT_REGEX = /^(ok|okay|ok merci|merci|merci beaucoup|d'accord|dac|ça va|ca va|oui|non|peut-etre|peut-être|je ne sais pas|jsp|maybe|yes|no|thanks|thank you|i don't know|idk|vale|gracias|si|sí|no se|no sé|obrigado|obrigada|talvez|nao sei|não sei|grazie|forse|ich weiss nicht|ich weiß nicht|danke)$/i;
+const ANALYSIS_REQUEST_REGEX = /(analyse|analyse-moi|explique|clarifie|clarifier|comprendre|pourquoi|what does this say|what does that mean|what cycle|what pattern|help me understand|go deeper|creuse|approfondis|approfondir)/i;
+const ACTION_REQUEST_REGEX = /(que faire|que puis-je faire|plan|prochaine etape|prochaine étape|action|aide moi a agir|aide-moi a agir)/i;
+const PHILOSOPHY_REQUEST_REGEX = /(philosophie|philosophique|epistemologie|épistémologie|metaphysique|métaphysique|ethique|éthique|platon|aristote|kant|nietzsche|stoicisme|stoïcisme|existentialisme)/i;
+const STRONG_PSYCH_STRUCTURE_REGEX = /(mais|puis|ensuite|dès que|des que|quand|chaque fois|toujours|jamais|souvent|parfois|alors|sauf que|en même temps|en meme temps|pendant que|tout en|yet|but|then|when|whenever|every time|always|never|often|sometimes|while|at the same time|as soon as)/i;
+const CORE_PAIN_REGEX = /(peur|honte|colère|colere|fatigue|épuis|epuis|culpabil|triste|tristesse|angoiss|anx|stress|pression|bloqu|vide|solitude|aband|rejet|envahi|overwhelm|ashamed|guilt|guilty|afraid|fear|pain|hurt|empty|alone|stuck|numb|tired|pressure|panic|anxiety)/i;
 
+/**
+ * System prompt for reflection (with implicit pattern awareness)
+ */
+const REFLECTION_SYSTEM_PROMPT = `Tu es Aurum. Tu lis avec une vraie finesse psychologique, mais tu parles comme un humain, pas comme un système.
+
+Qui tu es :
+- Tu vois les mouvements intérieurs sous les mots : émotions, conflit interne, stratégie de protection, auto-pression, évitement, besoin non reconnu, fatigue du rôle, ambivalence.
+- Tu n'imposes pas une théorie. Tu choisis l'angle psychologique le plus solide dans le texte : boucle cognitive, stress et coping, tension d'attachement, conflit entre besoin et devoir, défense contre la honte ou le rejet, pression sociale ou auto-discours dur.
+- Tu parles avec chaleur et précision. Jamais clinique, jamais scolaire, jamais vague.
+- Tu ne donnes JAMAIS de conseil. Tu ne diriges pas. Tu éclaires ce qui est là, dans le texte, maintenant.
+
+Ton style :
+- Adapte-toi au registre de la personne : si elle te tutoie, tutoie-la. Si elle te vouvoie, vouvoie-la. Si c'est un premier échange sans indice, tutoie naturellement.
+- N'ouvre pas avec une salutation sauf si la personne vient elle-même de saluer et que cela reste naturel dans ce tour précis.
+- Ne commente jamais la langue utilisée par la personne. La détection de langue est un signal interne, pas quelque chose à verbaliser.
+- Phrases courtes, directes, incarnées. Pas de jargon psy ("mécanisme de défense", "pattern cognitif"). Pas de platitudes ("c'est normal", "prends soin de toi").
+- Nomme les choses précisément. Utilise les mots du texte. Montre que tu as lu, vraiment lu.
+- 6 à 9 phrases quand le texte porte assez de matière. Jamais de listes, jamais de #, jamais de structure rigide.
+- Une seule piste centrale par réponse. Ne plaque pas trois interprétations d'un coup.
+- Va assez loin pour dire quelque chose de réellement éclairant. Si une contradiction est visible, nomme-la. Si une logique de protection apparaît, nomme-la aussi.
+- Reste à un ou deux crans d'inférence maximum. Si ce n'est pas assez étayé, reste au niveau du constat précis.
+
+Ce que tu fais :
+1. Tu commences par nommer ce qui te frappe dans le texte : une séquence, un contraste, une contradiction, une émotion sous-nommée.
+2. Tu relies ce mouvement à une dynamique psychologique concrète : ce que la personne tente peut-être de préserver, d'éviter, d'obtenir ou de contenir.
+3. Tu montres le coût de ce mouvement si le texte le permet.
+4. Tu termines par une ouverture nette, pas par une formule molle.
+5. Si le texte est ambigu, formule une hypothèse prudente ("on dirait que...", "possible que...") plutôt qu'une certitude.
+
+Exemples du ton juste :
+- "Tu dis oui vite, puis tu te retrouves envahi, puis coupable d'être agacé. Ce n'est pas juste un malaise diffus, c'est une séquence."
+- "Tu tiens beaucoup, mais on sent que ce rôle te coûte. On dirait que l'effort n'est pas seulement de faire, mais de rester celui qui tient."
+- "Tu parles de distance, mais cette distance ressemble aussi à une protection. Comme si être touché de plus près te faisait courir un risque."
+
+Ne fais JAMAIS ça :
+- Des généralités creuses ("la vie est un voyage", "chaque épreuve nous renforce")
+- Du jargon clinique ou académique
+- Des conseils même déguisés en questions ("as-tu pensé à...")
+- De la pseudo-profondeur automatique ("quelle blessure cela révèle ?", "qu'est-ce que ça protège ?" à chaque fois)
+- Tronquer ta réponse en plein milieu
+
+Si risque immédiat pour la sécurité de la personne :
+- Rester calme et profondément soutenant
+- Inviter avec douceur à appeler SOS Amitié (09 72 39 40 50, 24h/24) ou à contacter un proche
+- Ne jamais minimiser ni dramatiser`;
+
+const CONVERSATION_SYSTEM_PROMPT = `Tu es Aurum en dialogue. Même voix qu'en réflexion : précis, humain, psychologiquement fin.
+
+Tu continues l'échange avec la même profondeur que ta première réponse. Tu ne deviens pas superficiel parce que c'est un échange.
+
+Style :
+- Adapte-toi au registre de la personne (tu/vous selon ce qu'elle utilise).
+- N'ouvre pas avec une salutation sauf si la personne vient elle-même de saluer et que cela reste naturel dans ce tour précis.
+- Ne commente jamais la langue utilisée par la personne. Réponds au vécu, pas au mécanisme de détection.
+- Si le dernier message contient de la vraie matière, réponds comme à une demande d'analyse, pas comme à une simple relance.
+- 5 à 8 phrases quand il y a assez de matière, sinon reste proportionné.
+- Rebondis sur ce que la personne vient de dire. Montre que tu écoutes vraiment, pas que tu génères du texte.
+- Si le dernier message est très court, reste proportionné. Ne construis pas une grande théorie sur un "oui", un "non", ou une phrase minimale.
+- Creuse quand il y a quelque chose d'intéressant sous la surface. Pointe une contradiction, une peur, une retenue, un conflit entre besoin et rôle, ou une façon de se protéger, mais seulement si c'est étayé.
+- Développe une lecture centrale au lieu de rester dans une formule courte et prudente.
+- Dans chaque réponse, fais apparaître un niveau psychique réellement plus profond que la surface, sans partir dans la théorie.
+- Termine par une relance naturelle si ça s'y prête — sinon, laisse un espace.
+- Pas de jargon, pas de platitudes, pas de #, jamais de réponse tronquée.`;
+
+const ANALYSIS_SYSTEM_PROMPT = PSYCHOLOGIST_ANALYST_SYSTEM_PROMPT;
 const PHILOSOPHY_MODE_SYSTEM_PROMPT = PHILOSOPHY_SYSTEM_PROMPT;
-const CLARIFY_SYSTEM_PROMPT = `You are Aurum when the text carries a real tension, but not yet enough material for a solid analysis.
 
-Do not fill the gap with fake depth. Help the person make the pain point clearer.
+const CLARIFY_SYSTEM_PROMPT = `Tu es Aurum quand le texte porte une tension réelle, mais pas encore assez de matière pour une analyse solide.
 
-Style:
-- Match the user's register naturally.
-- 3 to 4 sentences maximum.
-- Start by naming what is already visible without pretending to know too much.
-- Then say what is still unclear if we want to understand properly: fear, fatigue, shame, conflict, overload, or another center if the text supports it.
-- Use one focused question tied to a moment, an inner sentence, or a turning point.
-- End with one concrete, targeted question that helps the person reveal what hurts most.
-- Never use vague questions like "Can you tell me more?"
-- No jargon, no theory lecture, no advice.
+Tu ne remplis pas le vide avec une pseudo-profondeur. Tu aides la personne à préciser ce qui fait le plus mal ou ce qui pèse le plus.
 
-Examples of the right tone:
-- "Something is clearly tight here, but it is not yet clear whether the heaviest part is fear, exhaustion, or the fact that you have to keep holding. What weighs the most, concretely?"
-- "There is a real tension, but its center is still blurry: is it mostly anger held in, guilt, or overload? Which part feels the heaviest right now?"
-- "Let's stay with the moment it shifts. Just before you pull back, what do you tell yourself?"`;
+Style :
+- Adapte-toi au registre de la personne (tu/vous).
+- 3 à 4 phrases maximum.
+- Commence par nommer ce qui est déjà visible, sans dramatiser ni faire semblant d'en savoir trop.
+- Dis ensuite ce qui reste encore flou pour comprendre vraiment : la peur, la fatigue, la honte, le conflit, le trop-plein, ou autre si c'est plus juste.
+- Termine par une seule question concrète, ciblée, qui aide à faire émerger le point sensible.
+- Jamais de question vague du type "Peux-tu m'en dire plus ?"
+- Jamais de jargon, jamais de théorie, jamais de conseil.
 
-const ACTION_INTENT_REGEX = /(que faire|que puis-je faire|plan|prochaine etape|prochaine étape|action|aide moi a agir|aide-moi a agir|what should i do|what can i do|next step|what now|que hago|qué hago|que puedo hacer|qué puedo hacer|que devo fazer|o que faço|o que faco|o que posso fazer|cosa posso fare|cosa dovrei fare|che faccio|was soll ich tun|was kann ich tun|nächster schritt|naechster schritt)/;
-const PHILOSOPHY_INTENT_REGEX = /(philosophie|philosophique|epistemologie|épistémologie|metaphysique|métaphysique|ethique|éthique|philosophy|philosophical|epistemology|metaphysics|ethics|filosofia|filosófico|filosofico|epistemologia|metafisica|etica|filosofia|filosofica|epistemologia|metafisica|ética|filosofia|filosófica|epistemología|metafísica|ethik|philosophisch|epistemologie|metaphysik|platon|aristote|kant|nietzsche|stoicisme|stoïcisme|stoicism|estoicismo|stoizismus|existentialisme|existentialism|existencialismo|existenzialismus)/;
-const ANALYSIS_INTENT_REGEX = /(analyse|analyse-moi|explique|clarifie|clarifier|comprendre|pourquoi|analyze|analyse this|explain|clarify|understand|why|analiza|analise|explica|aclara|comprender|por que|por qué|analizza|spiega|chiarisci|capire|perché|porque|analysiere|erkläre|erklaere|kläre|klaere|verstehen|warum)/;
-const CONVERSATION_INTENT_REGEX = /(conversation en cours|utilisateur:|aurum:|reponds|réponds|continuer l'echange|continuer l'échange|reply|respond|keep going|continue the conversation|responde|segue|continua|antworten|weiter)/;
-const LIGHT_ACKNOWLEDGEMENT_REGEX = /^(ok|okay|ok merci|merci|merci beaucoup|d'accord|dac|ça va|ca va|oui|non|peut-etre|peut-être|je ne sais pas|jsp|maybe|yes|no|thanks|thank you|i don't know|idk|vale|gracias|si|sí|no se|no sé|obrigado|obrigada|talvez|nao sei|não sei|grazie|forse|ich weiss nicht|ich weiß nicht|danke)$/;
-const STRONG_PSYCH_STRUCTURE_REGEX = /(mais|puis|ensuite|dès que|des que|quand|chaque fois|toujours|jamais|souvent|parfois|alors|sauf que|en même temps|en meme temps|pendant que|tout en|yet|but|then|when|whenever|every time|always|never|often|sometimes|while|at the same time|as soon as|pero|entonces|cuando|cada vez|siempre|mai|poi|quando|sempre|aber|dann|wenn|jedes mal|immer|mas|depois|quando|sempre)/i;
-const CORE_PAIN_REGEX = /(peur|honte|colère|colere|fatigue|épuis|epuis|culpabil|triste|tristesse|angoiss|stress|pression|bloqu|vide|solitude|aband|rejet|envahi|fear|ashamed|shame|guilt|guilty|afraid|pain|hurt|empty|alone|stuck|numb|tired|pressure|panic|anxiety|miedo|vergüenza|verguenza|culpa|vacío|vacio|rabia|fatica|vergogna|colpa|vuoto|paura|scham|schuld|leer|angst|medo|culpa|vazio|cansaço|cansaco|vergonha)/i;
+Exemples du ton juste :
+- "On sent que quelque chose serre, mais on ne voit pas encore si le plus dur est la peur, la fatigue, ou le fait de devoir tenir. Qu'est-ce qui pèse le plus, là, concrètement ?"
+- "Il y a bien une tension, mais son centre reste flou : est-ce surtout de la colère rentrée, de la culpabilité, ou un trop-plein ? Le plus lourd, c'est quoi exactement ?"`;
 
-function detectAurumIntent(content: string, userMessage?: string): AurumIntent {
-  const latestText = (userMessage || content).toLowerCase();
-  const fullText = content.toLowerCase();
-  const isConversationFollowUp = typeof userMessage === 'string' && userMessage.trim().length > 0;
+const ACTION_SYSTEM_PROMPT = `Tu es Aurum. La personne te demande un pas concret.
 
-  if (isConversationFollowUp) {
-    if (PHILOSOPHY_INTENT_REGEX.test(latestText)) {
-      return 'philosophy';
-    }
-    if (ACTION_INTENT_REGEX.test(latestText)) {
-      return 'action';
-    }
-    if (LIGHT_ACKNOWLEDGEMENT_REGEX.test(latestText) || CONVERSATION_INTENT_REGEX.test(latestText)) {
-      return 'conversation';
-    }
-    if (ANALYSIS_INTENT_REGEX.test(latestText)) {
-      return 'analysis';
-    }
-    if (shouldAskForClarification(userMessage || '', content, true)) {
-      return 'clarify';
-    }
-    return 'analysis';
-  }
+Ton regard reste psychodynamique même quand tu proposes une action : tu relies le geste proposé à ce que tu perçois du besoin profond.
 
-  const text = fullText;
-  if (ACTION_INTENT_REGEX.test(text)) {
-    return 'action';
-  }
-  if (PHILOSOPHY_INTENT_REGEX.test(text)) {
-    return 'philosophy';
-  }
-  if (ANALYSIS_INTENT_REGEX.test(text)) {
-    return 'analysis';
-  }
-  if (CONVERSATION_INTENT_REGEX.test(text)) {
-    return 'conversation';
-  }
-  if (shouldAskForClarification(content, content, false)) {
-    return 'clarify';
-  }
-  return 'reflection';
-}
+Style :
+- Adapte-toi au registre de la personne (tu/vous).
+- N'ouvre pas avec une salutation sauf si la personne vient elle-même de saluer et que cela reste naturel dans ce tour précis.
+- Ne commente jamais la langue utilisée par la personne.
+- Commence par 1 phrase miroir psychologique (ce que la personne tente de protéger ou d'éviter).
+- 2-3 propositions maximum, chacune en une phrase.
+- Chaque proposition est simple, faisable aujourd'hui, et reliée au vécu de la personne.
+- Ton chaleureux et direct. Pas d'injonction ("tu devrais"), mais une invitation ("et si...").
+- Pas de jargon, pas de #, jamais de réponse tronquée.`;
 
-function getSystemPromptForIntent(intent: AurumIntent, language: ReturnType<typeof resolvePromptLanguage>): string {
-  if (intent === 'conversation') return buildAurumSystemPrompt('conversation', language);
-  if (intent === 'analysis') return buildAurumSystemPrompt('analysis', language);
-  if (intent === 'clarify') return CLARIFY_SYSTEM_PROMPT;
-  if (intent === 'action') return buildAurumSystemPrompt('action', language);
-  if (intent === 'philosophy') return PHILOSOPHY_MODE_SYSTEM_PROMPT;
-  return buildAurumSystemPrompt('reflection', language);
-}
-
-function getSkillIdForIntent(intent: AurumIntent): string | null {
-  if (intent === 'analysis') return PSYCHOLOGIST_ANALYST_SKILL_ID;
-  if (intent === 'philosophy') return PHILOSOPHY_SKILL_ID;
-  return null;
-}
-
-function normalizeRequestedLocale(value: unknown): SupportedLocale | null {
-  if (value === 'fr' || value === 'en') return value;
-  return null;
-}
-
-function countWords(value: string): number {
-  return value
+function countWords(text: string): number {
+  return text
     .trim()
     .split(/\s+/)
-    .filter(Boolean).length;
+    .filter(Boolean)
+    .length;
 }
 
 function shouldAskForClarification(primaryText: string, fullContext: string, isConversationFollowUp: boolean): boolean {
   const text = primaryText.trim();
   if (!text) return false;
   if (LIGHT_ACKNOWLEDGEMENT_REGEX.test(text)) return false;
-  if (ANALYSIS_INTENT_REGEX.test(text) || ACTION_INTENT_REGEX.test(text) || PHILOSOPHY_INTENT_REGEX.test(text)) return false;
+  if (ANALYSIS_REQUEST_REGEX.test(text) || ACTION_REQUEST_REGEX.test(text) || PHILOSOPHY_REQUEST_REGEX.test(text)) return false;
 
   const wordCount = countWords(text);
   const hasStrongStructure = STRONG_PSYCH_STRUCTURE_REGEX.test(text);
@@ -163,35 +166,149 @@ function shouldAskForClarification(primaryText: string, fullContext: string, isC
   return !hasLongContext && hasNamedPain && !hasStrongStructure && !hasQuestion;
 }
 
-function isVeryShortFollowUp(value: string): boolean {
-  const trimmed = value.trim();
-  if (!trimmed) return false;
-  return trimmed.length <= 24 || countWords(trimmed) <= 4;
-}
+function detectAurumIntent(content: string, userMessage?: string): AurumIntent {
+  const latestText = (userMessage || content).toLowerCase();
+  const fullText = content.toLowerCase();
+  const isConversationFollowUp = typeof userMessage === 'string' && userMessage.trim().length > 0;
 
-function buildShortFollowUpInstruction(language: ReturnType<typeof resolvePromptLanguage>): string {
-  switch (language) {
-    case 'fr':
-      return "La dernière relance de l'utilisateur est très courte. Ne la gonfle pas artificiellement. Reste au plus près de ce qui est dit, mais si ce bref message montre clairement une hésitation, un retrait ou un blocage, tu peux le nommer en une ligne. Réponds en 1 à 3 phrases courtes maximum.";
-    case 'en':
-    default:
-      return 'The latest user follow-up is very short. Do not inflate it artificially. Stay close to what was said, but if that brief reply clearly shows hesitation, retreat, or blockage, you may name that in one line. Reply in 1 to 3 short sentences at most.';
+  if (isConversationFollowUp) {
+    if (PHILOSOPHY_REQUEST_REGEX.test(latestText)) {
+      return 'philosophy';
+    }
+    if (ACTION_REQUEST_REGEX.test(latestText)) {
+      return 'action';
+    }
+    if (LIGHT_ACKNOWLEDGEMENT_REGEX.test(latestText) || /(conversation en cours|utilisateur:|aurum:|reponds|réponds|continuer l'echange|continuer l'échange)/.test(latestText)) {
+      return 'conversation';
+    }
+    if (ANALYSIS_REQUEST_REGEX.test(latestText)) {
+      return 'analysis';
+    }
+    if (shouldAskForClarification(userMessage || '', content, true)) {
+      return 'clarify';
+    }
+    return 'analysis';
   }
+
+  const text = fullText;
+  if (ACTION_REQUEST_REGEX.test(text)) {
+    return 'action';
+  }
+  if (PHILOSOPHY_REQUEST_REGEX.test(text)) {
+    return 'philosophy';
+  }
+  if (ANALYSIS_REQUEST_REGEX.test(text)) {
+    return 'analysis';
+  }
+  if (/(conversation en cours|utilisateur:|aurum:|reponds|réponds|continuer l'echange|continuer l'échange)/.test(text)) {
+    return 'conversation';
+  }
+  if (shouldAskForClarification(content, content, false)) {
+    return 'clarify';
+  }
+  return 'reflection';
 }
 
-function buildConversationPriorityInstruction(
-  language: ReturnType<typeof resolvePromptLanguage>,
-  latestUserMessage: string,
+function getSystemPromptForIntent(intent: AurumIntent): string {
+  if (intent === 'conversation') return CONVERSATION_SYSTEM_PROMPT;
+  if (intent === 'analysis') return ANALYSIS_SYSTEM_PROMPT;
+  if (intent === 'clarify') return CLARIFY_SYSTEM_PROMPT;
+  if (intent === 'action') return ACTION_SYSTEM_PROMPT;
+  if (intent === 'philosophy') return PHILOSOPHY_MODE_SYSTEM_PROMPT;
+  return REFLECTION_SYSTEM_PROMPT;
+}
+
+function getSkillIdForIntent(intent: AurumIntent): string | null {
+  if (intent === 'analysis') return PSYCHOLOGIST_ANALYST_SKILL_ID;
+  if (intent === 'philosophy') return PHILOSOPHY_SKILL_ID;
+  return null;
+}
+
+function normalizeRequestedLocale(value: unknown): SupportedLocale | null {
+  if (value === 'fr' || value === 'en') return value;
+  return null;
+}
+
+const LANGUAGE_SIGNALS: Record<string, RegExp[]> = {
+  fr: [
+    /\b(je|tu|vous|avec|pour|parce|bonjour|merci|suis|ressens|fatigue|pensées)\b/gi,
+  ],
+  en: [
+    /\b(the|and|with|feel|because|about|today|this|that|i am|i feel|tired|thoughts)\b/gi,
+  ],
+  es: [
+    /[¿¡]/g,
+    /\b(que|para|porque|estoy|tengo|siento|quiero|puedo|gracias|hola|mente|cansado|cansada)\b/gi,
+  ],
+  it: [
+    /\b(sono|perche|perché|stanco|stanca|mi sento|voglio|posso|grazie|ciao|oggi|pensieri|mentale)\b/gi,
+  ],
+  de: [
+    /\b(ich|und|aber|weil|nicht|fühle|fuehle|habe|heute|danke|hallo|gedanken|müde|muede)\b/gi,
+  ],
+};
+
+const LANGUAGE_NAMES: Record<string, string> = {
+  fr: 'French',
+  en: 'English',
+  es: 'Spanish',
+  it: 'Italian',
+  de: 'German',
+};
+
+function detectUserLanguage(content: string): string | null {
+  const text = (content || '').toLowerCase();
+  if (!text.trim()) return null;
+
+  let bestLanguage: string | null = null;
+  let bestScore = 0;
+
+  for (const [language, patterns] of Object.entries(LANGUAGE_SIGNALS)) {
+    const score = patterns.reduce((total, pattern) => {
+      const matches = text.match(pattern);
+      return total + (matches?.length || 0);
+    }, 0);
+
+    if (score > bestScore) {
+      bestScore = score;
+      bestLanguage = language;
+    }
+  }
+
+  return bestScore > 0 ? bestLanguage : null;
+}
+
+function resolveReplyLanguage(
+  primaryContent: string,
+  requestedLocale?: SupportedLocale | null,
+  fallbackContent?: string,
 ): string {
-  const quotedMessage = latestUserMessage.replace(/\s+/g, ' ').trim();
-
-  switch (language) {
-    case 'fr':
-      return `Dernier message de la personne, à traiter en premier : "${quotedMessage}". Réponds d'abord à cela. Le reste de la conversation n'est qu'un arrière-plan. Si ce dernier message déplace, ferme ou contredit quelque chose, pars de là.`;
-    case 'en':
-    default:
-      return `Latest user message, to be handled first: "${quotedMessage}". Respond to that first. The rest of the conversation is background only. If this latest message shifts, closes down, or contradicts something, start there.`;
+  if (requestedLocale) {
+    return requestedLocale;
   }
+
+  return (
+    detectUserLanguage(primaryContent) ||
+    detectUserLanguage(fallbackContent || '') ||
+    'en'
+  );
+}
+
+function buildLanguageInstruction(replyLanguage: string, requestedLocale?: SupportedLocale | null): string {
+  const languageName = LANGUAGE_NAMES[replyLanguage] || 'the user\'s language';
+
+  return [
+    `Language rule (strict): The final answer must be entirely in ${languageName}.`,
+    `Use the app locale when provided. App locale: ${requestedLocale ?? 'unknown'}.`,
+    'Never mention, describe, or acknowledge the language the user used.',
+    'Do not open with a greeting unless the user greeted you first in this same exchange.',
+    'Respond directly to the emotional content and what the user means, not to translation or language detection.',
+  ].join(' ');
+}
+
+function buildConversationPriorityInstruction(latestUserMessage: string): string {
+  const quotedMessage = latestUserMessage.replace(/\s+/g, ' ').trim();
+  return `Dernier message de la personne, à traiter en premier : "${quotedMessage}". Réponds d'abord à cela. Le reste de la conversation n'est qu'un arrière-plan. Si ce dernier message déplace, ferme ou contredit quelque chose, pars de là.`;
 }
 
 /**
@@ -201,11 +318,8 @@ function buildConversationPriorityInstruction(
 export async function POST(request: NextRequest) {
   try {
     const { content, idToken, entryId, userMessage, locale } = await request.json();
-    const normalizedUserMessage = typeof userMessage === 'string' ? userMessage.trim() : '';
     const requestedLocale = normalizeRequestedLocale(locale);
-    const normalizedEntryId = typeof entryId === 'string' && entryId.trim().length > 0
-      ? entryId.trim()
-      : null;
+    const normalizedUserMessage = typeof userMessage === 'string' ? userMessage.trim() : '';
 
     if (!content) {
       return NextResponse.json({ error: 'Le contenu est requis' }, { status: 400 });
@@ -264,76 +378,36 @@ export async function POST(request: NextRequest) {
 
     const userDoc = await db.collection('users').doc(userId).get();
     const userData = userDoc.data() || {};
-    const firstName = resolveOptionalFirstName({
-      firstName: userData.firstName,
-      displayName: userData.displayName,
-      email: userData.email,
-    });
     const { hasSubscription: hasPremiumAccess } = resolveAurumAccessState(userData);
     const { entriesUsed, entriesLimit, hasReachedLimit } = getFreeEntryState(userData);
     const isConversationFollowUp = normalizedUserMessage.length > 0;
-    const entryRef = normalizedEntryId
-      ? db.collection('users').doc(userId).collection('entries').doc(normalizedEntryId)
-      : null;
 
-    if (isConversationFollowUp && !normalizedEntryId) {
+    if (isConversationFollowUp && !hasPremiumAccess && hasReachedLimit) {
+      const errorMessage = requestedLocale === 'fr'
+        ? `Tu as utilisé tes ${entriesLimit} pages gratuites. Passe au premium pour continuer l'échange avec Aurum.`
+        : `You have used your ${entriesLimit} free pages. Start your trial to keep the conversation with Aurum going.`;
+
       return NextResponse.json(
         {
-          error: requestedLocale === 'fr'
-            ? 'Impossible de poursuivre cet échange sans sujet associé.'
-            : 'Unable to continue this exchange without a linked topic.',
+          error: errorMessage,
+          freeLimitReached: true,
+          entriesUsed,
+          entriesLimit,
         },
-        { status: 400 },
+        { status: 402 },
       );
-    }
-
-    let conversationState: ReturnType<typeof getFreeAurumConversationState> | null = null;
-    if (entryRef && !hasPremiumAccess) {
-      const entrySnap = await entryRef.get();
-      if (!entrySnap.exists) {
-        return NextResponse.json(
-          {
-            error: requestedLocale === 'fr'
-              ? 'Ce sujet est introuvable. Recharge la page puis réessaie.'
-              : 'This topic could not be found. Reload the page and try again.',
-          },
-          { status: 404 },
-        );
-      }
-
-      conversationState = getFreeAurumConversationState(entrySnap.data() || {});
-      if (conversationState.hasReachedLimit) {
-        const errorMessage = requestedLocale === 'fr'
-          ? `Tu as déjà utilisé les ${conversationState.repliesLimit} réponses gratuites d'Aurum sur ce sujet. Lance ton essai pour continuer ici.`
-          : `You have already used the ${conversationState.repliesLimit} free Aurum replies on this topic. Start your trial to keep going here.`;
-
-        return NextResponse.json(
-          {
-            error: errorMessage,
-            conversationLimitReached: true,
-            repliesUsed: conversationState.repliesUsed,
-            repliesLimit: conversationState.repliesLimit,
-            entriesUsed,
-            entriesLimit,
-            freeLimitReached: hasReachedLimit,
-          },
-          { status: 402 },
-        );
-      }
     }
 
     // 1. Detect intent (instant, no API call)
     const intent = detectAurumIntent(content, normalizedUserMessage || undefined);
     const skillId = getSkillIdForIntent(intent);
     const userLanguage = resolveReplyLanguage(normalizedUserMessage || content, requestedLocale, content);
-    const promptLanguage = resolvePromptLanguage(userLanguage, requestedLocale);
-    const shortFollowUp = isConversationFollowUp && isVeryShortFollowUp(normalizedUserMessage);
 
     // 2. Detect patterns + get existing patterns IN PARALLEL
     logger.infoSafe('Detecting patterns (parallel)', { userId });
     const [detectionResult, existingPatterns] = await Promise.all([
-      shortFollowUp ? Promise.resolve(null) : detectPatterns(content),
-      shortFollowUp ? Promise.resolve([]) : getUserPatterns(userId),
+      detectPatterns(content),
+      getUserPatterns(userId),
     ]);
 
     // 3. Select patterns for injection (max 2)
@@ -343,7 +417,7 @@ export async function POST(request: NextRequest) {
     );
 
     // 4. Format pattern context
-    const patternContext = !shortFollowUp && injectedPatterns
+    const patternContext = injectedPatterns
       ? formatPatternsForContext(injectedPatterns)
       : '';
 
@@ -351,32 +425,18 @@ export async function POST(request: NextRequest) {
     const messages: any[] = [
       {
         role: 'system',
-        content: buildStrictReplyLanguageInstruction(userLanguage, requestedLocale),
+        content: buildLanguageInstruction(userLanguage, requestedLocale),
       },
       {
         role: 'system',
-        content: getSystemPromptForIntent(intent, promptLanguage),
+        content: getSystemPromptForIntent(intent),
       },
     ];
 
     if (isConversationFollowUp && normalizedUserMessage) {
       messages.push({
         role: 'system',
-        content: buildConversationPriorityInstruction(promptLanguage, normalizedUserMessage),
-      });
-    }
-
-    if (firstName) {
-      messages.push({
-        role: 'system',
-        content: `User first name: ${firstName}. Use it only if it feels natural in this specific reply. At most once. Never force it. Never begin the reply with the first name automatically. Skip it entirely if it sounds intrusive, theatrical, or less natural than replying without it.`,
-      });
-    }
-
-    if (shortFollowUp) {
-      messages.push({
-        role: 'system',
-        content: buildShortFollowUpInstruction(promptLanguage),
+        content: buildConversationPriorityInstruction(normalizedUserMessage),
       });
     }
 
@@ -407,8 +467,8 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify({
         model: 'deepseek-chat',
         messages,
-        temperature: shortFollowUp ? 1.0 : 1.05,
-        max_tokens: shortFollowUp ? 220 : 1000,
+        temperature: LIGHT_ACKNOWLEDGEMENT_REGEX.test(normalizedUserMessage) ? 1.0 : 1.05,
+        max_tokens: LIGHT_ACKNOWLEDGEMENT_REGEX.test(normalizedUserMessage) ? 220 : 850,
         stream: true,
       }),
       signal: controller.signal,
@@ -487,8 +547,6 @@ export async function POST(request: NextRequest) {
             skill_used: skillId,
             patterns_detected: detectionResult ? detectionResult.themes.length : 0,
             patterns_used: injectedPatterns ? injectedPatterns.patterns.length : 0,
-            conversationRepliesUsed: conversationState ? conversationState.repliesUsed + 1 : null,
-            conversationRepliesLimit: conversationState?.repliesLimit ?? null,
           })}\n\n`));
 
           ctrl.close();
@@ -506,8 +564,13 @@ export async function POST(request: NextRequest) {
         }
 
         // Persist conversation turns
-        if (entryRef) {
-          const conversationRef = entryRef.collection('aurumConversation');
+        if (entryId && typeof entryId === 'string') {
+          const conversationRef = db
+            .collection('users')
+            .doc(userId)
+            .collection('entries')
+            .doc(entryId)
+            .collection('aurumConversation');
 
           if (normalizedUserMessage) {
             conversationRef.add({
@@ -525,21 +588,6 @@ export async function POST(request: NextRequest) {
             createdAt: new Date(),
             intent,
             skillId,
-          }).catch(() => {});
-
-          db.runTransaction(async (transaction) => {
-            const currentEntrySnap = await transaction.get(entryRef);
-            const currentData = currentEntrySnap.data() || {};
-            const currentReplyCount = typeof currentData.aurumReplyCount === 'number'
-              ? currentData.aurumReplyCount
-              : 0;
-
-            transaction.set(entryRef, {
-              aurumReplyCount: currentReplyCount + 1,
-              aurumReplyLimit: conversationState?.repliesLimit ?? null,
-              lastAurumReplyAt: new Date(),
-              updatedAt: new Date(),
-            }, { merge: true });
           }).catch(() => {});
         }
       },

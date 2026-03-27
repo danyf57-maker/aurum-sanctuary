@@ -86,8 +86,8 @@ export function renderOnboardingEmail(input: TemplateInput): EmailTemplateResult
     email_1: {
       fr: {
         subject: `Ton espace de réflexion privé est prêt, ${name}`,
-        preheader: "Commence par une page privée. Aurum t'aidera à voir ce qui compte.",
-        body: `Bonjour ${name},<br/><br/>Bienvenue dans Aurum.<br/><br/>Ici, tu peux écrire sans te filtrer, dans un espace privé pensé pour la clarté.<br/><br/>Après chaque page, Aurum peut te renvoyer ce qui ressort, ce qui semble émotionnellement central, et ce qui revient dans le temps.<br/><br/>Pour commencer, une phrase honnête suffit : <strong>qu&apos;est-ce qui est le plus présent en toi maintenant ?</strong><br/><br/>À très vite,<br/>Daniel`,
+        preheader: "Commence par une première page privée. Aurum t'aidera à voir plus clair.",
+        body: `Bonjour ${name},<br/><br/>Bienvenue dans Aurum.<br/><br/>Ici, tu peux écrire sans te filtrer, dans un espace privé pensé pour t'aider à y voir plus clair.<br/><br/>Après chaque page, Aurum peut te renvoyer ce qui ressort, ce qui pèse le plus, et ce qui revient dans le temps.<br/><br/>Pour commencer, une phrase honnête suffit : <strong>qu&apos;est-ce qui est le plus présent en toi en ce moment ?</strong><br/><br/>À très vite,<br/>Daniel`,
         ctaLabel: "Écrire ma première page",
         ctaUrl: writeUrl,
         footer: "Tu reçois cet email dans le cadre de ton onboarding Aurum Diary.",
@@ -107,7 +107,7 @@ export function renderOnboardingEmail(input: TemplateInput): EmailTemplateResult
       fr: {
         subject: "Une première question pour ouvrir la page",
         preheader: "Un point d'entrée simple pour écrire sans te censurer.",
-        body: `Bonjour ${name},<br/><br/>Parfois le plus dur est simplement de savoir où entrer.<br/><br/>Essaie cette question :<br/><br/><strong>&quot;Qu&apos;est-ce qui prend le plus de place en moi aujourd&apos;hui ?&quot;</strong><br/><br/>Quelques lignes suffisent. Aurum t&apos;aidera ensuite à clarifier ce qui ressort et ce qui revient.<br/><br/>Daniel`,
+        body: `Bonjour ${name},<br/><br/>Parfois, le plus difficile, c&apos;est simplement de savoir par où commencer.<br/><br/>Essaie cette question :<br/><br/><strong>&quot;Qu&apos;est-ce qui prend le plus de place en moi aujourd&apos;hui ?&quot;</strong><br/><br/>Quelques lignes suffisent. Aurum t&apos;aidera ensuite à voir plus nettement ce qui ressort et ce qui revient.<br/><br/>Daniel`,
         ctaLabel: "Répondre à cette question",
         ctaUrl: writeUrl,
         footer: "Tu reçois cet email dans le cadre de ton onboarding Aurum Diary.",
@@ -126,8 +126,8 @@ export function renderOnboardingEmail(input: TemplateInput): EmailTemplateResult
     email_3: {
       fr: {
         subject: "Ce n'est pas qu'un endroit pour écrire",
-        preheader: "Tes pages peuvent devenir un miroir plus clair dans le temps.",
-        body: `Bonjour ${name},<br/><br/>Aurum n&apos;est pas seulement un endroit pour déposer ce que tu portes.<br/><br/>C&apos;est aussi un espace privé où tes pages peuvent être relues avec plus de clarté, et où des motifs reviennent assez nettement pour être reconnus.<br/><br/>Aujourd&apos;hui, essaie cette question :<br/><br/><strong>&quot;Qu&apos;est-ce que j&apos;apprends sur moi à travers ce qui revient ?&quot;</strong><br/><br/>Daniel`,
+        preheader: "Tes pages peuvent devenir un miroir plus lisible avec le temps.",
+        body: `Bonjour ${name},<br/><br/>Aurum n&apos;est pas seulement un endroit où déposer ce que tu portes.<br/><br/>C&apos;est aussi un espace privé où tes pages peuvent t&apos;aider à relire plus clairement ce que tu traverses, et à reconnaître ce qui revient d&apos;une fois à l&apos;autre.<br/><br/>Aujourd&apos;hui, essaie cette question :<br/><br/><strong>&quot;Qu&apos;est-ce que j&apos;apprends sur moi à travers ce qui revient ?&quot;</strong><br/><br/>Daniel`,
         ctaLabel: "Explorer cette question",
         ctaUrl: writeUrl,
         footer: "Tu reçois cet email dans le cadre de ton onboarding Aurum Diary.",
@@ -146,7 +146,7 @@ export function renderOnboardingEmail(input: TemplateInput): EmailTemplateResult
     email_4: {
       fr: {
         subject: `Une semaine plus tard, le fil commence déjà à se voir`,
-        preheader: "La continuité aide les motifs et la clarté à émerger.",
+        preheader: "La régularité rend les motifs plus visibles et la lecture plus claire.",
         body: `Bonjour ${name},<br/><br/>Que tu aies écrit souvent ou seulement une fois, quelque chose d&apos;important a déjà commencé : tu as ouvert un espace privé où ta réflexion peut se construire dans le temps.<br/><br/>La suite n&apos;est pas d&apos;écrire parfaitement. C&apos;est de garder le fil, même avec quelques lignes.<br/><br/>Daniel`,
         ctaLabel: "Écrire aujourd'hui",
         ctaUrl: writeUrl,
@@ -167,7 +167,7 @@ export function renderOnboardingEmail(input: TemplateInput): EmailTemplateResult
       fr: {
         subject: "Tu as commencé. Maintenant, garde le fil",
         preheader: "Quelques lignes régulières suffisent pour approfondir la réflexion.",
-        body: `Bonjour ${name},<br/><br/>Tu as déjà commencé à écrire, et c&apos;est l&apos;essentiel.<br/><br/>La suite n&apos;est pas d&apos;en faire plus, mais de revenir régulièrement.<br/><br/>Un cadre simple peut aider : un fait, une émotion, ce qui demande plus de clarté.<br/><br/>Avec le temps, Aurum relie ces pages et aide à faire émerger ce qui revient.<br/><br/>Daniel`,
+        body: `Bonjour ${name},<br/><br/>Tu as déjà commencé à écrire, et c&apos;est l&apos;essentiel.<br/><br/>La suite n&apos;est pas d&apos;en faire plus, mais de revenir régulièrement.<br/><br/>Un cadre simple peut aider : un fait, une émotion, ce qui reste flou.<br/><br/>Avec le temps, Aurum relie ces pages et t&apos;aide à mieux voir ce qui revient.<br/><br/>Daniel`,
         ctaLabel: "Continuer ma réflexion",
         ctaUrl: writeUrl,
         footer: "Tu reçois cet email dans le cadre de ton onboarding Aurum Diary.",

@@ -34,7 +34,7 @@ export function middleware(request: NextRequest) {
   );
 
   const resolvedLocale: Locale =
-    forcedLang || pathLocale || localeFromCookie || localeFromCountry || localeFromAccept;
+    forcedLang || pathLocale || localeFromCookie || localeFromAccept || localeFromCountry;
 
   // Canonical EN routing: /en/* -> /*
   if (pathLocale === 'en') {

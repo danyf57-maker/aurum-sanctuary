@@ -3,17 +3,20 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Cookie } from 'lucide-react';
-import { useLocale } from '@/hooks/use-locale';
+import type { Locale } from '@/lib/locale';
 import { localizeHref } from '@/lib/i18n/path';
+import { detectPathLocale } from '@/i18n/routing';
 
 const COOKIE_CONSENT_KEY = 'aurum_cookie_consent';
 
 export function CookieConsent() {
   const [isVisible, setIsVisible] = useState(false);
-  const locale = useLocale();
+  const pathname = usePathname();
+  const locale: Locale = detectPathLocale(pathname || '/') || 'en';
   const isFr = locale === 'fr';
   const to = (href: string) => localizeHref(href, locale);
 
