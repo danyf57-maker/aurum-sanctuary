@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/providers/auth-provider';
 import { useLocalizedHref } from '@/hooks/use-localized-href';
+import { useLocale } from '@/hooks/use-locale';
 import { useTranslations } from 'next-intl';
 import { PricingOfferBlock } from '@/components/marketing/pricing-offer-block';
 
@@ -91,10 +92,18 @@ export default function Home() {
     const [showCTA, setShowCTA] = useState(false);
     const { user } = useAuth();
     const to = useLocalizedHref();
+    const locale = useLocale();
+    const isFr = locale === 'fr';
     const t = useTranslations('marketingPage');
     const primaryCtaHref = user ? to('/sanctuary/write') : to('/signup');
     const primaryCtaLabel = user ? t('returningUser.writeCta') : null;
     const primaryCtaLabelArrow = user ? t('returningUser.writeCtaArrow') : null;
+    const guideLinkLabel = isFr ? 'Lire le guide lié' : 'Read the related guide';
+    const guideLinksByIndex = [
+        '/guides/overthinking-at-night',
+        '/guides/charge-mentale',
+        '/guides/journaling-prompts-for-clarity',
+    ] as const;
 
     useEffect(() => {
         const handleScroll = () => {
@@ -240,9 +249,20 @@ export default function Home() {
                                 </div>
                                 <h3 className="text-2xl font-headline text-stone-900 mb-3">{card.title}</h3>
                                 <p className="text-stone-600 font-light leading-relaxed mb-6">{card.body}</p>
-                                <Link href={primaryCtaHref} className="mt-auto text-primary font-medium hover:underline">
-                                    {primaryCtaLabelArrow ?? t('useCases.cta')}
-                                </Link>
+                                <div className="mt-auto flex flex-col gap-2">
+                                    <Link href={primaryCtaHref} className="text-primary font-medium hover:underline">
+                                        {primaryCtaLabelArrow ?? t('useCases.cta')}
+                                    </Link>
+                                    {guideLinksByIndex[index] ? (
+                                        <Link
+                                            href={to(guideLinksByIndex[index])}
+                                            className="inline-flex items-center gap-2 text-sm font-medium text-stone-700 hover:text-stone-900 hover:underline"
+                                        >
+                                            {guideLinkLabel}
+                                            <ArrowRight className="h-4 w-4" />
+                                        </Link>
+                                    ) : null}
+                                </div>
                             </article>
                         ))}
                     </div>

@@ -16,6 +16,9 @@ export type KnowledgeHubTopic = {
   question: LocalizedField;
   shortAnswer: LocalizedField;
   deepDive: LocalizedFieldList;
+  practicalSteps?: LocalizedFieldList;
+  example?: LocalizedFieldList;
+  howAurumHelps?: LocalizedFieldList;
   metaTitle: LocalizedField;
   metaDescription: LocalizedField;
 };
@@ -26,6 +29,9 @@ export type LocalizedKnowledgeHubTopic = {
   question: string;
   shortAnswer: string;
   deepDive: string[];
+  practicalSteps?: string[];
+  example?: string[];
+  howAurumHelps?: string[];
   metaTitle: string;
   metaDescription: string;
 };
@@ -44,14 +50,48 @@ export const knowledgeHubTopics: KnowledgeHubTopic[] = [
     },
     deepDive: {
       fr: [
-        "La charge mentale augmente quand ton cerveau garde des tâches ouvertes en permanence. Mettre les pensées à l'écrit réduit la rumination et libère de l'espace attentionnel.",
-        "Dans Aurum, commence par une note brute de 3 minutes: sans corriger, sans filtrer. Ensuite, sépare en trois colonnes: urgent, important, à laisser. Ce tri diminue la sensation de débordement.",
-        "L'objectif n'est pas de tout résoudre immédiatement. L'objectif est de retrouver une direction claire et praticable.",
+        "La charge mentale augmente quand ton cerveau garde des tâches ouvertes, des attentes floues et des micro-décisions en même temps. Mettre les pensées à l'écrit aide à sortir du stockage permanent et à libérer de l'espace attentionnel.",
+        "Le problème n'est pas seulement d'avoir beaucoup à faire. Le problème est de tout garder dans la même zone mentale: obligations, émotions, rappels, décisions, culpabilité et fatigue.",
+        "Une bonne méthode ne cherche pas à tout résoudre d'un coup. Elle cherche d'abord à rendre visible ce qui pèse, puis à remettre de l'ordre de manière réaliste.",
       ],
       en: [
-        "Mental load increases when your brain keeps too many open loops. Writing thoughts down reduces rumination and frees attention.",
-        "In Aurum, start with a raw 3-minute note: no editing, no filtering. Then sort into three columns: urgent, important, let go. This lowers overwhelm quickly.",
-        "The goal is not to solve everything now. The goal is to regain clear direction and the next doable step.",
+        "Mental load increases when your brain keeps tasks, expectations, emotions, and decisions open at the same time. Writing thoughts down helps move them out of permanent mental storage and frees attention.",
+        "The issue is not just having too much to do. It is carrying obligations, feelings, reminders, guilt, and unfinished decisions in the same mental space.",
+        "A useful method does not try to solve everything at once. It first makes the load visible, then restores order in a realistic way.",
+      ],
+    },
+    practicalSteps: {
+      fr: [
+        "Fais un brain dump de 3 minutes sans corriger ni organiser.",
+        "Relis et trie en trois colonnes: urgent, important, à laisser.",
+        "Choisis une seule action utile pour aujourd'hui, même petite.",
+      ],
+      en: [
+        "Do a 3-minute brain dump without editing or organizing.",
+        "Read it back and sort it into three columns: urgent, important, let go.",
+        "Choose one useful action for today, even if it is small.",
+      ],
+    },
+    example: {
+      fr: [
+        "Exemple: \"Je pense à ce mail, au rendez-vous de demain, à la lessive, à cette conversation tendue et au fait que je n'avance sur rien.\"",
+        "Après tri: urgent = répondre au mail; important = préparer le rendez-vous; à laisser = ruminer la conversation ce soir.",
+      ],
+      en: [
+        "Example: \"I keep thinking about that email, tomorrow's meeting, the laundry, that tense conversation, and the feeling that I am behind on everything.\"",
+        "After sorting: urgent = reply to the email; important = prepare the meeting; let go = replaying the conversation tonight.",
+      ],
+    },
+    howAurumHelps: {
+      fr: [
+        "Aurum te donne un espace privé pour déposer ce qui tourne en boucle sans pression de performance.",
+        "La réflexion guidée t'aide ensuite à distinguer ce qui est urgent, ce qui est émotionnel, et ce qui peut attendre.",
+        "Avec le temps, tu vois mieux les motifs qui alimentent ta surcharge mentale.",
+      ],
+      en: [
+        "Aurum gives you a private space to unload recurring thoughts without performance pressure.",
+        "Guided reflection then helps you separate urgency, emotion, and what can wait.",
+        "Over time, you can spot the patterns that keep feeding your overload.",
       ],
     },
     metaTitle: {
@@ -61,6 +101,138 @@ export const knowledgeHubTopics: KnowledgeHubTopic[] = [
     metaDescription: {
       fr: "Découvre une méthode concrète pour alléger ta charge mentale en quelques minutes grâce à l'écriture guidée.",
       en: "Discover a practical method to reduce mental load in minutes with guided journaling.",
+    },
+  },
+  {
+    slug: "overthinking-at-night",
+    title: { fr: "Surpenser la nuit", en: "Overthinking at night" },
+    question: {
+      fr: "Comment arrêter de trop penser la nuit quand ton corps est épuisé mais que ton esprit continue ?",
+      en: "How do you stop overthinking at night when your body is tired but your mind keeps running?",
+    },
+    shortAnswer: {
+      fr: "Pose les faits, nomme l'émotion dominante, puis écris le prochain besoin ou la prochaine action. Le but n'est pas de tout régler avant de dormir, mais de sortir la boucle de ta tête.",
+      en: "Write down the facts, name the dominant emotion, then note the next need or next action. The goal is not to solve everything before sleep, but to get the loop out of your head.",
+    },
+    deepDive: {
+      fr: [
+        "La suractivité mentale du soir arrive souvent quand quelque chose reste ouvert: une conversation, une inquiétude, une décision, une tension que tu n'as pas encore mise en mots.",
+        "La fatigue physique n'éteint pas automatiquement les boucles mentales. Quand la journée ralentit enfin, ce qui a été repoussé revient prendre toute la place.",
+        "Écrire le soir n'a pas besoin d'être long ni parfait. Quelques lignes honnêtes suffisent souvent à transformer un flux flou en quelque chose de plus stable et plus visible.",
+      ],
+      en: [
+        "Night overthinking often happens when something is still open: a conversation, a worry, a decision, or a tension you have not yet put into words.",
+        "Physical tiredness does not automatically switch off mental loops. When the day finally slows down, whatever was postponed comes back and takes over.",
+        "Night journaling does not need to be long or polished. A few honest lines are often enough to turn vague mental noise into something steadier and more visible.",
+      ],
+    },
+    practicalSteps: {
+      fr: [
+        "Écris en trois lignes ce qui s'est passé concrètement.",
+        "Ajoute l'émotion dominante: peur, colère, tristesse, honte, confusion, frustration.",
+        "Termine par une seule phrase: ce dont j'ai besoin maintenant ou ce que je traiterai demain.",
+      ],
+      en: [
+        "Write three lines about what happened in concrete terms.",
+        "Add the dominant emotion: fear, anger, sadness, shame, confusion, frustration.",
+        "End with one sentence: what I need now or what I will handle tomorrow.",
+      ],
+    },
+    example: {
+      fr: [
+        "Exemple: \"Je repense à ce que j'ai dit pendant le dîner. J'ai peur d'avoir été maladroit. Ce soir, je n'ai pas besoin de résoudre la relation, juste de dormir et d'y revenir demain avec un esprit plus calme.\"",
+      ],
+      en: [
+        "Example: \"I keep replaying what I said at dinner. I am afraid I came across badly. Tonight I do not need to solve the relationship. I just need sleep and I can come back to it tomorrow with a calmer mind.\"",
+      ],
+    },
+    howAurumHelps: {
+      fr: [
+        "Aurum t'aide à écrire sans filtre dans un espace privé, sans exposition ni bruit social.",
+        "Les questions guidées aident à passer du chaos mental à quelque chose de plus précis: ce que tu ressens, ce qui revient, ce dont tu as besoin.",
+        "Au fil des pages, les mêmes thèmes du soir deviennent plus visibles au lieu de sembler nouveaux chaque nuit.",
+      ],
+      en: [
+        "Aurum helps you write without filtering in a private space, with no exposure and no social noise.",
+        "Guided prompts help you move from mental chaos to something clearer: what you feel, what keeps returning, and what you need.",
+        "Across entries, recurring nighttime themes become easier to see instead of feeling new every night.",
+      ],
+    },
+    metaTitle: {
+      fr: "Surpenser la nuit: comment calmer un esprit qui ne s'arrête pas",
+      en: "How to stop overthinking at night and calm a racing mind",
+    },
+    metaDescription: {
+      fr: "Une méthode simple pour sortir d'une boucle mentale le soir, retrouver de la clarté et préparer un meilleur endormissement.",
+      en: "A simple method to get out of a nighttime thought loop, regain clarity, and settle your mind before sleep.",
+    },
+  },
+  {
+    slug: "journaling-prompts-for-clarity",
+    title: { fr: "Prompts d'écriture pour la clarté", en: "Journaling prompts for clarity" },
+    question: {
+      fr: "Quels prompts d'écriture t'aident vraiment à retrouver de la clarté mentale ?",
+      en: "Which journaling prompts actually help you regain mental clarity?",
+    },
+    shortAnswer: {
+      fr: "Les meilleurs prompts ne demandent pas seulement ce que tu ressens. Ils t'aident à relier un fait, une émotion, un besoin et un prochain pas.",
+      en: "The best prompts do more than ask how you feel. They help connect a fact, an emotion, a need, and a next step.",
+    },
+    deepDive: {
+      fr: [
+        "Beaucoup de prompts restent trop abstraits pour les moments où ton esprit est encombré. Quand tu te sens submergé, tu as besoin de questions simples qui créent du mouvement, pas de formulations vagues.",
+        "Les prompts les plus utiles réduisent le brouillard mental en orientant ton attention vers des éléments concrets: ce qui s'est passé, ce qui revient, ce qui pèse, et ce qui pourrait t'aider maintenant.",
+        "Le bon prompt n'est pas seulement intéressant. Il doit être assez précis pour faire émerger une prise de conscience exploitable en quelques minutes.",
+      ],
+      en: [
+        "Many prompts stay too abstract for moments when your mind feels overloaded. When you are overwhelmed, you need simple questions that create movement, not vague phrasing.",
+        "The most useful prompts reduce mental fog by directing attention toward concrete elements: what happened, what keeps returning, what feels heavy, and what might help now.",
+        "A good prompt is not just interesting. It should be specific enough to produce a useful insight within a few minutes.",
+      ],
+    },
+    practicalSteps: {
+      fr: [
+        "Quand tu te sens submergé: \"Qu'est-ce qui occupe le plus d'espace dans ma tête en ce moment ?\"",
+        "Quand une conversation tourne en boucle: \"Qu'est-ce qui m'a touché exactement, au-delà des faits ?\"",
+        "Quand tu hésites sur une décision: \"Qu'est-ce qui m'aligne, et qu'est-ce qui me compromet ?\"",
+        "Quand un motif revient: \"Dans quelles trois situations récentes ai-je ressenti la même tension ?\"",
+        "Quand tu veux passer à l'action: \"Quel est le prochain pas le plus simple et le plus honnête ?\"",
+      ],
+      en: [
+        "When you feel overwhelmed: \"What is taking up the most space in my mind right now?\"",
+        "When a conversation keeps replaying: \"What touched me most here, beyond the facts?\"",
+        "When you are stuck on a decision: \"What aligns me, and what compromises me?\"",
+        "When a pattern keeps returning: \"In which three recent situations did I feel the same tension?\"",
+        "When you want to move forward: \"What is the simplest honest next step?\"",
+      ],
+    },
+    example: {
+      fr: [
+        "Mini exemple: prompt = \"Qu'est-ce qui occupe le plus d'espace dans ma tête ?\" Réponse = \"Ce n'est pas le travail en général. C'est surtout cette attente de réponse et la peur d'être jugé.\"",
+      ],
+      en: [
+        "Mini example: prompt = \"What is taking up the most space in my mind?\" Answer = \"It is not work in general. It is mostly that unanswered message and the fear of being judged.\"",
+      ],
+    },
+    howAurumHelps: {
+      fr: [
+        "Aurum te donne un cadre privé pour utiliser ces prompts sans te censurer.",
+        "Après l'écriture, la réflexion guidée aide à repérer les thèmes récurrents et à aller au-delà d'un simple brain dump.",
+        "Cela transforme une série de réponses isolées en continuité réflexive sur plusieurs jours.",
+      ],
+      en: [
+        "Aurum gives you a private space to use these prompts without self-censorship.",
+        "After writing, guided reflection helps surface recurring themes and goes beyond a simple brain dump.",
+        "This turns isolated answers into a more continuous reflective practice across days.",
+      ],
+    },
+    metaTitle: {
+      fr: "15 prompts d'écriture pour retrouver de la clarté mentale",
+      en: "15 journaling prompts for mental clarity",
+    },
+    metaDescription: {
+      fr: "Des prompts simples et concrets pour clarifier tes pensées, sortir d'une boucle mentale et mieux comprendre ce que tu ressens.",
+      en: "Simple, practical journaling prompts to clear your mind, exit thought loops, and understand what you feel more clearly.",
     },
   },
   {
@@ -207,6 +379,9 @@ export function localizeKnowledgeHubTopic(
     question: topic.question[locale],
     shortAnswer: topic.shortAnswer[locale],
     deepDive: topic.deepDive[locale],
+    practicalSteps: topic.practicalSteps?.[locale],
+    example: topic.example?.[locale],
+    howAurumHelps: topic.howAurumHelps?.[locale],
     metaTitle: topic.metaTitle[locale],
     metaDescription: topic.metaDescription[locale],
   };

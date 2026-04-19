@@ -13,6 +13,8 @@ Le service permet d'écrire ses réflexions, d'obtenir des analyses assistées p
 - Blog: https://aurumdiary.com/blog
 - Knowledge Hub: https://aurumdiary.com/guides
 - Charge mentale: https://aurumdiary.com/guides/charge-mentale
+- Overthinking at night: https://aurumdiary.com/guides/overthinking-at-night
+- Journaling prompts for clarity: https://aurumdiary.com/guides/journaling-prompts-for-clarity
 - Journal guide: https://aurumdiary.com/guides/journal-guide
 - Introspection: https://aurumdiary.com/guides/introspection
 - Confidentialite mentale: https://aurumdiary.com/guides/confidentialite-mentale
