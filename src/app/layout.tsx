@@ -49,13 +49,23 @@ const GoogleAnalytics = dynamic(() => import('@/components/analytics/GoogleAnaly
 type Messages = AbstractIntlMessages;
 
 const GLOBAL_CLIENT_MESSAGE_KEYS = [
+  'accountData',
   'authButton',
   'authDialog',
+  'entryForm',
+  'forgotPassword',
   'header',
+  'login',
   'mobileNav',
   'nav',
   'paywall',
+  'pricing',
+  'sanctuary',
+  'settings',
+  'signup',
   'termsModal',
+  'trialOffer',
+  'writePage',
 ] as const;
 
 const HOME_HERO_CLIENT_MESSAGE_KEYS = [

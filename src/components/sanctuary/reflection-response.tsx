@@ -10,6 +10,7 @@
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
+import { MarkdownLite } from "@/components/ui/markdown-lite";
 
 interface ReflectionResponseProps {
   reflection: string;
@@ -52,11 +53,10 @@ export function ReflectionResponse({
         </div>
 
         {/* Reflection text */}
-        <div className="space-y-4">
-          <p className="text-lg leading-relaxed text-stone-800 font-light">
-            {reflection}
-          </p>
-        </div>
+        <MarkdownLite
+          content={reflection}
+          className="space-y-4 text-lg leading-relaxed text-stone-800 font-light"
+        />
 
         {/* Subtle footer (patterns used, if any) */}
         {patternsUsed > 0 && (
