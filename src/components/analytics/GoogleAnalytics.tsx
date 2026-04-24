@@ -1,7 +1,7 @@
 
 'use client'
 
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import Script from 'next/script'
 import { useAuth } from '@/providers/auth-provider';
 import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
@@ -14,8 +14,7 @@ export default function GoogleAnalytics() {
   const { toast } = useToast();
   const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
-  useEffect(() => {
-    // If user is already logged in, don't show One Tap
+  const initializeGoogleOneTap = useCallback(() => {
     if (user) {
       return;
     }
@@ -24,6 +23,10 @@ export default function GoogleAnalytics() {
       console.warn(
         "NEXT_PUBLIC_GOOGLE_CLIENT_ID is not set. Google One Tap is disabled until a client ID is provided."
       );
+      return;
+    }
+
+    if (!window.google) {
       return;
     }
 
@@ -46,19 +49,21 @@ export default function GoogleAnalytics() {
       }
     };
 
-    if (window.google) {
-      window.google.accounts.id.initialize({
-        client_id: GOOGLE_CLIENT_ID,
-        callback: handleCredentialResponse,
-        auto_select: true,
-      });
+    window.google.accounts.id.initialize({
+      client_id: GOOGLE_CLIENT_ID,
+      callback: handleCredentialResponse,
+      auto_select: true,
+    });
 
-      window.google.accounts.id.prompt((notification: any) => {
-        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-          // console.log('Google One Tap not displayed or skipped.');
-        }
-      });
-    }
+    window.google.accounts.id.prompt((notification: any) => {
+      if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+        // Google One Tap can be unavailable depending on browser context.
+      }
+    });
+  }, [GOOGLE_CLIENT_ID, toast, user]);
+
+  useEffect(() => {
+    initializeGoogleOneTap();
 
     // Cleanup function to cancel the prompt if the component unmounts
     return () => {
@@ -66,13 +71,17 @@ export default function GoogleAnalytics() {
         window.google.accounts.id.cancel();
       }
     };
-  }, [user, toast]);
+  }, [initializeGoogleOneTap]);
 
 
   return (
     <>
       {GOOGLE_CLIENT_ID && (
-        <Script src="https://accounts.google.com/gsi/client" async defer />
+        <Script
+          src="https://accounts.google.com/gsi/client"
+          strategy="lazyOnload"
+          onLoad={initializeGoogleOneTap}
+        />
       )}
     </>
   )

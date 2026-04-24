@@ -6,6 +6,8 @@ import {
   type TrackedEventName,
 } from "@/lib/analytics/types";
 
+export const dynamic = "force-dynamic";
+
 type AnalyticsEventDoc = {
   id: string;
   name: TrackedEventName;

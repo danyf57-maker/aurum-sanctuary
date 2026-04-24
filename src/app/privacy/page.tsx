@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getRequestLocale } from "@/lib/locale-server";
+import { buildAlternates } from "@/lib/seo";
 
 type Locale = "fr" | "en";
 
@@ -27,7 +28,7 @@ const copy: Record<
     updated: "Dernière mise à jour : 19 mars 2026",
     back: "Retour à Aurum Diary",
     intro:
-      "Cette politique décrit comment Aurum Diary collecte, utilise, protège et partage les données nécessaires au fonctionnement du service. Elle couvre aussi les fonctionnalités assistées par IA, les prestataires techniques, les analytics et vos droits.",
+      "Cette politique décrit comment Aurum Diary collecte, utilise, protège et partage les données nécessaires au fonctionnement du service. Elle couvre aussi les reflets guidés, les prestataires techniques, les analytics et vos droits.",
     sections: [
       {
         title: "1. Qui traite vos données",
@@ -57,10 +58,10 @@ const copy: Record<
         ],
       },
       {
-        title: "4. Fonctionnalités IA",
+        title: "4. Reflets guidés",
         paragraphs: [
-          "Quand vous demandez un reflet, une analyse, un digest ou une autre fonctionnalité assistée par IA, le texte que vous choisissez de soumettre ainsi que certains éléments de contexte nécessaires au fonctionnement de la fonctionnalité peuvent être traités afin de générer la réponse demandée.",
-          "Ce traitement peut impliquer des prestataires techniques d'IA agissant pour fournir la fonctionnalité. Nous utilisons cette transmission pour exécuter votre demande, pas pour vendre vos pages de journal.",
+          "Quand vous demandez un reflet, une lecture, un digest ou une autre fonctionnalité de réflexion, le texte que vous choisissez de soumettre ainsi que certains éléments de contexte nécessaires au fonctionnement de la fonctionnalité peuvent être traités afin de produire la réponse demandée.",
+          "Ce traitement peut impliquer des prestataires techniques spécialisés agissant pour fournir la fonctionnalité. Nous utilisons cette transmission pour exécuter votre demande, pas pour vendre vos pages de journal.",
         ],
       },
       {
@@ -72,7 +73,7 @@ const copy: Record<
           "Google / Firebase / Google Cloud pour l'hébergement, l'authentification, la base de données, le stockage et certains analytics techniques.",
           "Stripe pour le paiement, le portail de facturation et les webhooks liés à l'abonnement.",
           "Resend pour les emails transactionnels et certains emails d'onboarding.",
-          "Des fournisseurs d'IA, dont DeepSeek, pour générer les fonctionnalités de réflexion ou d'analyse que vous demandez explicitement.",
+          "Des prestataires de traitement linguistique pour produire les reflets ou lectures que vous demandez explicitement.",
         ],
       },
       {
@@ -87,14 +88,14 @@ const copy: Record<
         title: "7. Bases légales (GDPR)",
         paragraphs: [
           "Lorsque le GDPR s'applique, nous traitons vos données sur une ou plusieurs des bases suivantes : exécution du contrat pour fournir Aurum Diary, respect d'obligations légales, intérêt légitime pour sécuriser et améliorer le service, et consentement lorsqu'il est requis.",
-          "Lorsque vous utilisez les fonctionnalités assistées par IA, le traitement correspondant repose principalement sur l'exécution du service que vous demandez.",
+          "Lorsque vous utilisez les fonctionnalités de réflexion guidée, le traitement correspondant repose principalement sur l'exécution du service que vous demandez.",
         ],
       },
       {
         title: "8. Sécurité",
         paragraphs: [
           "Nous mettons en place des mesures de sécurité raisonnables, y compris le chiffrement en transit, des contrôles d'accès, de la journalisation de sécurité et, pour certains flux de stockage du journal, un chiffrement côté client.",
-          "Certaines fonctionnalités, notamment les fonctionnalités assistées par IA, impliquent toutefois un traitement opérationnel du texte que vous soumettez afin de produire le service demandé. Aucune méthode de transmission ou de stockage n'est parfaitement sûre.",
+          "Certaines fonctionnalités, notamment les reflets guidés, impliquent toutefois un traitement opérationnel du texte que vous soumettez afin de produire le service demandé. Aucune méthode de transmission ou de stockage n'est parfaitement sûre.",
         ],
       },
       {
@@ -143,7 +144,7 @@ const copy: Record<
     updated: "Last updated: March 19, 2026",
     back: "Back to Aurum Diary",
     intro:
-      "This policy explains how Aurum Diary collects, uses, protects, and discloses the data required to operate the service. It also covers AI-powered features, technical service providers, analytics, and your privacy rights.",
+      "This policy explains how Aurum Diary collects, uses, protects, and discloses the data required to operate the service. It also covers guided reflections, technical service providers, analytics, and your privacy rights.",
     sections: [
       {
         title: "1. Who handles your data",
@@ -168,15 +169,15 @@ const copy: Record<
       {
         title: "3. How we use data",
         paragraphs: [
-          "We use data to provide the service you request, secure accounts, deliver AI-assisted reflection features, manage subscriptions, respond to support requests, send service-related communications, produce internal product analytics, and comply with legal obligations.",
+          "We use data to provide the service you request, secure accounts, deliver guided reflection features, manage subscriptions, respond to support requests, send service-related communications, produce internal product analytics, and comply with legal obligations.",
           "We do not publish or sell your journal content. We use your content to deliver the features you activate inside the product.",
         ],
       },
       {
-        title: "4. AI-powered features",
+        title: "4. Guided reflection features",
         paragraphs: [
-          "When you request a reflection, analysis, digest, or other AI-powered feature, the text you choose to submit, together with relevant context required to deliver that feature, may be processed to generate the requested output.",
-          "This processing may involve AI service providers acting on our behalf to return the feature you requested. We use that transmission to deliver the service, not to sell your journal entries.",
+          "When you request a reflection, reading, digest, or other reflection feature, the text you choose to submit, together with relevant context required to deliver that feature, may be processed to produce the requested output.",
+          "This processing may involve specialized technical providers acting on our behalf to return the feature you requested. We use that transmission to deliver the service, not to sell your journal entries.",
         ],
       },
       {
@@ -188,7 +189,7 @@ const copy: Record<
           "Google / Firebase / Google Cloud for hosting, authentication, database, storage, and certain analytics functions.",
           "Stripe for payments, billing portal services, and subscription-related webhooks.",
           "Resend for transactional and certain onboarding emails.",
-          "AI providers, including DeepSeek, for reflections and analyses you explicitly request.",
+          "Language-processing providers for reflections and readings you explicitly request.",
         ],
       },
       {
@@ -203,14 +204,14 @@ const copy: Record<
         title: "7. Legal bases (GDPR)",
         paragraphs: [
           "Where the GDPR applies, we process personal data on one or more of the following legal bases: performance of a contract to provide Aurum Diary, compliance with legal obligations, legitimate interests in securing and improving the service, and consent where required.",
-          "When you use AI-assisted features, the related processing is primarily carried out to provide the service you requested.",
+          "When you use guided reflection features, the related processing is primarily carried out to provide the service you requested.",
         ],
       },
       {
         title: "8. Security",
         paragraphs: [
           "We use reasonable security measures, including encryption in transit, access controls, security logging, and client-side encryption for supported journal-storage flows.",
-          "Some features, including AI-powered features, require operational processing of the text you submit in order to return the requested output. No transmission or storage method is perfectly secure.",
+          "Some features, including guided reflections, require operational processing of the text you submit in order to return the requested output. No transmission or storage method is perfectly secure.",
         ],
       },
       {
@@ -261,18 +262,18 @@ export async function generateMetadata(): Promise<Metadata> {
   const isFr = locale === "fr";
   const title = isFr ? "Politique de Confidentialité | Aurum Diary" : "Privacy Policy | Aurum Diary";
   const description = isFr
-    ? "Comment Aurum Diary collecte, protège et traite vos données: service, IA, analytics, sous-traitants, droits GDPR et CCPA."
-    : "How Aurum Diary collects, protects, and processes data: service delivery, AI features, analytics, service providers, GDPR and CCPA rights.";
-  const canonical = "https://aurumdiary.com/privacy";
+    ? "Comment Aurum Diary collecte, protège et traite vos données: service, reflets guidés, analytics, sous-traitants, droits GDPR et CCPA."
+    : "How Aurum Diary collects, protects, and processes data: service delivery, guided reflections, analytics, service providers, GDPR and CCPA rights.";
+  const alternates = buildAlternates("/privacy", locale);
 
   return {
     title,
     description,
-    alternates: { canonical },
+    alternates,
     openGraph: {
       title,
       description,
-      url: canonical,
+      url: alternates.canonical,
       type: "article",
       locale: isFr ? "fr_FR" : "en_US",
     },

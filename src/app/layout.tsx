@@ -6,7 +6,8 @@ import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/providers/auth-provider';
 import { Suspense } from 'react';
 import Script from 'next/script';
-import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
+import dynamic from 'next/dynamic';
+import { headers } from 'next/headers';
 import ProductEventTracker from '@/components/analytics/ProductEventTracker';
 import { CookieConsent } from '@/components/legal/CookieConsent';
 import { TermsModal } from '@/components/auth/TermsModal';
@@ -15,6 +16,7 @@ import { getRequestLocale } from '@/lib/locale-server';
 import { PUBLIC_PRICING } from '@/lib/billing/config';
 import { buildAlternates, openGraphLocale, SITE_URL } from '@/lib/seo';
 import { NextIntlClientProvider } from 'next-intl';
+import type { AbstractIntlMessages } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 
 import { Cormorant_Garamond, Inter, Dawning_of_a_New_Day } from 'next/font/google';
@@ -40,6 +42,96 @@ const dawning = Dawning_of_a_New_Day({
 });
 
 const GTM_CONTAINER_ID = 'GTM-WNDQPP94';
+const GoogleAnalytics = dynamic(() => import('@/components/analytics/GoogleAnalytics'), {
+  loading: () => null,
+});
+
+type Messages = AbstractIntlMessages;
+
+const GLOBAL_CLIENT_MESSAGE_KEYS = [
+  'authButton',
+  'authDialog',
+  'header',
+  'mobileNav',
+  'nav',
+  'paywall',
+  'termsModal',
+] as const;
+
+const HOME_HERO_CLIENT_MESSAGE_KEYS = [
+  'badge',
+  'title',
+  'subtitle',
+  'helper',
+  'helperWithDraft',
+  'cta',
+  'ctaContinueDraft',
+  'ctaSecondary',
+  'ctaSecondaryGuest',
+  'ctaAuthenticated',
+  'ctaSecondaryAuthenticated',
+  'languagesBadge',
+  'languages',
+  'trust',
+  'placeholders',
+] as const;
+
+const HOME_MARKETING_CLIENT_MESSAGE_KEYS = [
+  'floatingCta',
+  'returningUser',
+] as const;
+
+function pickMessageKeys(
+  messages: Messages,
+  namespace: string,
+  keys: readonly string[]
+): Messages[string] | undefined {
+  const source = messages[namespace];
+  if (!source || typeof source !== 'object' || Array.isArray(source)) return undefined;
+
+  return Object.fromEntries(
+    keys
+      .filter((key) => key in source)
+      .map((key) => [key, (source as Record<string, unknown>)[key]])
+  ) as Messages[string];
+}
+
+function selectClientMessages(messages: Messages, pathname: string): Messages {
+  const keys = new Set<string>(GLOBAL_CLIENT_MESSAGE_KEYS);
+  const selected: Messages = {};
+
+  if (pathname === '/') {
+    const heroMessages = pickMessageKeys(messages, 'hero', HOME_HERO_CLIENT_MESSAGE_KEYS);
+    const marketingMessages = pickMessageKeys(
+      messages,
+      'marketingPage',
+      HOME_MARKETING_CLIENT_MESSAGE_KEYS
+    );
+    if (heroMessages) selected.hero = heroMessages;
+    if (marketingMessages) selected.marketingPage = marketingMessages;
+  }
+
+  if (pathname.startsWith('/login')) keys.add('login');
+  if (pathname.startsWith('/signup')) keys.add('signup');
+  if (pathname.startsWith('/forgot-password')) keys.add('forgotPassword');
+  if (pathname.startsWith('/pricing')) {
+    keys.add('pricing');
+    keys.add('trialOffer');
+  }
+  if (pathname.startsWith('/settings')) keys.add('settings');
+  if (pathname.startsWith('/account/data')) keys.add('accountData');
+  if (pathname.startsWith('/sanctuary')) {
+    keys.add('sanctuary');
+    keys.add('writePage');
+    keys.add('entryForm');
+  }
+
+  for (const key of keys) {
+    if (key in messages) selected[key] = messages[key];
+  }
+
+  return selected;
+}
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
@@ -110,6 +202,9 @@ export default async function RootLayout({
   const locale = await getRequestLocale();
   const isFr = locale === "fr";
   const messages = await getMessages();
+  const headerStore = await headers();
+  const pathname = headerStore.get('x-aurum-path') || '/';
+  const clientMessages = selectClientMessages(messages as Messages, pathname);
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
@@ -144,7 +239,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning={true}>
       <head>
-        <Script id="gtm-init" strategy="beforeInteractive">
+        <Script id="gtm-init" strategy="lazyOnload">
           {`
             (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
             new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -177,7 +272,7 @@ export default async function RootLayout({
             style={{ display: 'none', visibility: 'hidden' }}
           />
         </noscript>
-        <NextIntlClientProvider locale={locale} messages={messages}>
+        <NextIntlClientProvider locale={locale} messages={clientMessages}>
           <AuthProvider>
             <ThemeSync />
             <TermsModal />

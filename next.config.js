@@ -39,6 +39,30 @@ const nextConfig = {
             },
         ],
     },
+    async redirects() {
+        return [
+            {
+                source: '/legal/terms',
+                destination: '/terms',
+                permanent: true,
+            },
+            {
+                source: '/legal/privacy',
+                destination: '/privacy',
+                permanent: true,
+            },
+            {
+                source: '/fr/legal/terms',
+                destination: '/fr/terms',
+                permanent: true,
+            },
+            {
+                source: '/fr/legal/privacy',
+                destination: '/fr/privacy',
+                permanent: true,
+            },
+        ];
+    },
     async headers() {
         return [
             {

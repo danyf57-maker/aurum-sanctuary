@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { LanguageSwitch } from "@/components/layout/language-switch";
@@ -15,7 +15,8 @@ const HeroIntegrated = () => {
   const to = useLocalizedHref();
   const { user } = useAuth();
 
-  const fallbackContent = locale === "fr"
+  const fallbackContent = useMemo(
+    () => locale === "fr"
     ? {
         badge: "ECRITURE PRIVEE • REFLET PRECIS",
         title: "Ecris en prive. Vois plus clair en toi.",
@@ -69,13 +70,18 @@ const HeroIntegrated = () => {
           "I feel completely overwhelmed by my to-do list today...",
           "I just need to clear my head before I explode...",
         ],
-      };
+      },
+    [locale]
+  );
 
-  const placeholders = [
-    resolveMessage(t("placeholders.0"), fallbackContent.placeholders[0]),
-    resolveMessage(t("placeholders.1"), fallbackContent.placeholders[1]),
-    resolveMessage(t("placeholders.2"), fallbackContent.placeholders[2]),
-  ];
+  const placeholders = useMemo(
+    () => [
+      resolveMessage(t("placeholders.0"), fallbackContent.placeholders[0]),
+      resolveMessage(t("placeholders.1"), fallbackContent.placeholders[1]),
+      resolveMessage(t("placeholders.2"), fallbackContent.placeholders[2]),
+    ],
+    [fallbackContent.placeholders, t]
+  );
   const [thought, setThought] = useState("");
   const [placeholderText, setPlaceholderText] = useState("");
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
@@ -127,7 +133,7 @@ const HeroIntegrated = () => {
         </div>
         <div className="mx-auto flex max-w-4xl flex-col items-center gap-10 text-center">
           <div className="space-y-4">
-            <p className="font-body text-xs uppercase tracking-[0.35em] text-[#D4AF37] font-semibold">
+            <p className="font-body text-xs uppercase tracking-[0.35em] text-[#8A6A00] font-semibold">
               {resolveMessage(t("badge"), fallbackContent.badge)}
             </p>
             <h1 className="font-headline text-4xl md:text-6xl text-stone-900">
@@ -182,7 +188,7 @@ const HeroIntegrated = () => {
             </div>
             <div className="mt-4 space-y-3 text-center">
               <div className="flex justify-center">
-                <span className="inline-flex items-center rounded-full border border-[#D4AF37]/35 bg-[#D4AF37]/10 px-4 py-2 font-body text-[11px] font-semibold uppercase tracking-[0.22em] text-stone-700">
+                <span className="inline-flex items-center rounded-full border border-[#8A6A00]/35 bg-[#D4AF37]/10 px-4 py-2 font-body text-[11px] font-semibold uppercase tracking-[0.22em] text-stone-700">
                   {resolveMessage(t("languagesBadge"), fallbackContent.languagesBadge)}
                 </span>
               </div>

@@ -1,16 +1,10 @@
-'use client';
-
-import { useState, useEffect } from 'react';
 import HeroIntegrated from '@/components/landing/HeroIntegrated';
-import { Button } from '@/components/ui/button';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Compass, ArrowRight, ShieldCheck, Lock, Fingerprint, Brain, Moon, Flame, CircleHelp, Wind, ListChecks } from 'lucide-react';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useAuth } from '@/providers/auth-provider';
-import { useLocalizedHref } from '@/hooks/use-localized-href';
-import { useTranslations } from 'next-intl';
-import { PricingOfferBlock } from '@/components/marketing/pricing-offer-block';
+import { getTranslations } from 'next-intl/server';
+import { localizeHref } from '@/lib/i18n/path';
+import { getRequestLocale } from '@/lib/locale-server';
+import { FloatingHomeCta } from '@/components/marketing/floating-home-cta';
 
 type MarketingFaq = {
     question: string;
@@ -38,76 +32,19 @@ type MarketingExampleHighlight = {
     body: string;
 };
 
-const ExitIntent = () => null;
-
-const FloatingCTA = ({
-    visible,
-    href,
-    label,
-    disabled = false,
-}: {
-    visible: boolean;
-    href: string;
-    label: string;
-    disabled?: boolean;
-}) => {
-    const t = useTranslations('marketingPage.floatingCta');
-    return (
-        <AnimatePresence>
-            {visible && (
-                <motion.div
-                initial={{ opacity: 0, y: 100 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 100 }}
-                className="fixed bottom-8 right-8 z-[100]"
-            >
-                <Button
-                    asChild={!disabled}
-                    size="lg"
-                    disabled={disabled}
-                    className="rounded-full shadow-2xl bg-primary hover:bg-primary/90 px-8 h-14 group border-4 border-white/20 backdrop-blur-sm"
-                >
-                    {disabled ? (
-                        <span className="flex items-center gap-3">
-                            <span className="font-headline font-semibold">{label}</span>
-                            <ArrowRight className="w-5 h-5" />
-                        </span>
-                    ) : (
-                    <Link href={href} className="flex items-center gap-3">
-                        <span className="font-headline font-semibold">{label}</span>
-                        <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-                    </Link>
-                    )}
-                </Button>
-                <div className="mt-2 text-center pointer-events-none">
-                    <span className="text-[9px] text-white bg-black/40 backdrop-blur-sm px-3 py-1 rounded-full uppercase tracking-tighter font-bold">{t('label')}</span>
-                </div>
-            </motion.div>
-            )}
-        </AnimatePresence>
-    );
-};
-export default function Home() {
-    const [showCTA, setShowCTA] = useState(false);
-    const { user } = useAuth();
-    const to = useLocalizedHref();
-    const t = useTranslations('marketingPage');
-    const primaryCtaHref = user ? to('/sanctuary/write') : to('/signup');
-    const primaryCtaLabel = user ? t('returningUser.writeCta') : null;
-    const primaryCtaLabelArrow = user ? t('returningUser.writeCtaArrow') : null;
-
-    useEffect(() => {
-        const handleScroll = () => {
-            if (window.scrollY > window.innerHeight * 0.8) {
-                setShowCTA(true);
-            } else {
-                setShowCTA(false);
-            }
-        };
-
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
+export default async function Home() {
+    const locale = await getRequestLocale();
+    const isFr = locale === 'fr';
+    const t = await getTranslations('marketingPage');
+    const trialT = await getTranslations('trialOffer');
+    const to = (href: string) => localizeHref(href, locale);
+    const primaryCtaHref = to('/signup');
+    const guideLinkLabel = isFr ? 'Lire le guide lié' : 'Read the related guide';
+    const guideLinksByIndex = [
+        '/guides/overthinking-at-night',
+        '/guides/charge-mentale',
+        '/guides/journaling-prompts-for-clarity',
+    ] as const;
 
     const faqs = t.raw('faqs') as MarketingFaq[];
     const studyCards = t.raw('studyCards') as MarketingStudyCard[];
@@ -127,7 +64,32 @@ export default function Home() {
             <HeroIntegrated />
             <section className="bg-white py-14 md:py-16">
                 <div className="container">
-                    <PricingOfferBlock className="mx-auto" pagePath="/" />
+                    <section className="mx-auto">
+                        <div className="mx-auto w-full max-w-[720px] rounded-3xl border border-stone-200 bg-gradient-to-b from-white to-stone-50 p-8 shadow-sm md:p-10">
+                            <div className="flex h-full flex-col justify-between gap-8">
+                                <div className="space-y-4">
+                                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-stone-500">
+                                        {trialT('badge')}
+                                    </p>
+                                    <h3 className="font-headline text-3xl text-stone-900 md:text-4xl">
+                                        {trialT('title')}
+                                    </h3>
+                                    <p className="max-w-2xl text-base text-stone-600">
+                                        {trialT('body')}
+                                    </p>
+                                </div>
+
+                                <div className="pt-2">
+                                    <Link
+                                        href={to('/pricing')}
+                                        className="inline-flex items-center rounded-xl bg-stone-900 px-6 py-3 text-sm font-semibold text-stone-50 hover:bg-stone-800"
+                                    >
+                                        {trialT('cta')}
+                                    </Link>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
                 </div>
             </section>
             <section className="bg-stone-50/60 py-16 md:py-20 border-y border-stone-200/70">
@@ -206,11 +168,12 @@ export default function Home() {
                         ))}
                     </div>
                     <div className="mt-8 text-center">
-                        <Button asChild size="lg" className="h-12 px-8 rounded-xl">
-                            <Link href={primaryCtaHref}>
-                                {user ? t('studySection.ctaAuthenticated') : t('studySection.cta')}
-                            </Link>
-                        </Button>
+                        <Link
+                            href={primaryCtaHref}
+                            className="inline-flex h-12 items-center justify-center rounded-xl bg-primary px-8 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                        >
+                            {t('studySection.cta')}
+                        </Link>
                     </div>
                 </div>
             </section>
@@ -240,9 +203,20 @@ export default function Home() {
                                 </div>
                                 <h3 className="text-2xl font-headline text-stone-900 mb-3">{card.title}</h3>
                                 <p className="text-stone-600 font-light leading-relaxed mb-6">{card.body}</p>
-                                <Link href={primaryCtaHref} className="mt-auto text-primary font-medium hover:underline">
-                                    {primaryCtaLabelArrow ?? t('useCases.cta')}
-                                </Link>
+                                <div className="mt-auto flex flex-col gap-2">
+                                    <Link href={primaryCtaHref} className="text-primary font-medium hover:underline">
+                                        {t('useCases.cta')}
+                                    </Link>
+                                    {guideLinksByIndex[index] ? (
+                                        <Link
+                                            href={to(guideLinksByIndex[index])}
+                                            className="inline-flex items-center gap-2 text-sm font-medium text-stone-700 hover:text-stone-900 hover:underline"
+                                        >
+                                            {guideLinkLabel}
+                                            <ArrowRight className="h-4 w-4" />
+                                        </Link>
+                                    ) : null}
+                                </div>
                             </article>
                         ))}
                     </div>
@@ -310,7 +284,7 @@ export default function Home() {
                 <section className="py-24 md:py-40 bg-white">
                     <div className="container">
                         <div className="text-center max-w-3xl mx-auto mb-20">
-                            <span className="text-[#B8941F] text-[10px] uppercase tracking-[0.3em] font-bold mb-4 block">{t('trust.eyebrow')}</span>
+                            <span className="text-[#7A5D00] text-[10px] uppercase tracking-[0.3em] font-bold mb-4 block">{t('trust.eyebrow')}</span>
                             <h2 className="text-4xl md:text-6xl font-headline text-stone-900 mb-6">{t('trust.title')}</h2>
                             <p className="text-stone-700 font-light text-lg">{t('trust.subtitle')}</p>
                         </div>
@@ -353,11 +327,12 @@ export default function Home() {
 
                 {/* SECTION 7: CTA Final */}
                 <section className="container py-24 md:py-32 text-center border-t border-black/5">
-                    <Button asChild size="lg" className="h-14 px-12 text-base">
-                        <Link href={primaryCtaHref}>
-                            {user ? t('finalCta.buttonAuthenticated') : t('finalCta.button')}
-                        </Link>
-                    </Button>
+                    <Link
+                        href={primaryCtaHref}
+                        className="inline-flex h-14 items-center justify-center rounded-md bg-primary px-12 text-base font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                    >
+                        {t('finalCta.button')}
+                    </Link>
                     <div className="mt-6">
                         <span className="text-xs text-stone-600 font-light">{t('finalCta.note')}</span>
                     </div>
@@ -380,16 +355,19 @@ export default function Home() {
                     <h2 className="text-4xl font-headline text-stone-900 text-center mb-12">
                         {t('faqTitle')}
                     </h2>
-                    <Accordion type="single" collapsible className="w-full">
+                    <div className="w-full divide-y divide-stone-200 border-y border-stone-200">
                         {faqs.map((faq, index) => (
-                            <AccordionItem value={`item-${index + 1}`} key={index}>
-                                <AccordionTrigger className="text-xl text-left font-headline font-normal">{faq.question}</AccordionTrigger>
-                                <AccordionContent className="prose prose-lg font-light text-foreground/80">
+                            <details key={index} className="group py-5">
+                                <summary className="flex cursor-pointer list-none items-center justify-between gap-6 text-left text-xl font-headline font-normal text-stone-900">
+                                    <span>{faq.question}</span>
+                                    <span className="text-2xl leading-none text-stone-400 transition-transform group-open:rotate-45">+</span>
+                                </summary>
+                                <p className="mt-4 text-lg font-light leading-relaxed text-foreground/80">
                                     {faq.answer}
-                                </AccordionContent>
-                            </AccordionItem>
+                                </p>
+                            </details>
                         ))}
-                    </Accordion>
+                    </div>
                 </section>
 
                 <section className="container max-w-4xl pb-24 md:pb-28">
@@ -414,13 +392,7 @@ export default function Home() {
 
             </div>
 
-            <FloatingCTA
-                visible={showCTA}
-                href={primaryCtaHref}
-                label={primaryCtaLabel ?? t('floatingCta.cta')}
-                disabled={false}
-            />
-            <ExitIntent />
+            <FloatingHomeCta />
         </main>
     );
 }

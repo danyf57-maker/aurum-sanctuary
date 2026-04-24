@@ -18,7 +18,14 @@
     "ignore": [
       "firebase.json",
       "**/.*",
-      "**/node_modules/**"
+      "**/node_modules/**",
+      "memory/**",
+      "output/**",
+      "docs/**",
+      "knowledge/**",
+      "_bmad/**",
+      "*.md",
+      "users.json"
     ],
     "frameworksBackend": {
       "region": "us-central1"
@@ -32,7 +39,14 @@
       ".git",
       "firebase-debug.log",
       "firebase-debug.*.log",
-      "functions"
+      "functions",
+      "memory",
+      "output",
+      "docs",
+      "knowledge",
+      "_bmad",
+      "*.md",
+      "users.json"
     ],
     "alwaysDeployFromSource": true
   }

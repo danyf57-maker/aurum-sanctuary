@@ -12,6 +12,7 @@ export function buildLanguageAlternates(pathname: string) {
   return {
     en: absoluteUrl(pathname, "en"),
     fr: absoluteUrl(pathname, "fr"),
+    "x-default": absoluteUrl(pathname, "en"),
   };
 }
 
