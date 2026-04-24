@@ -9,6 +9,7 @@ import {
   resolveReplyLanguage,
 } from '@/lib/ai/language';
 import { buildAurumSystemPrompt } from '@/lib/ai/aurum-system-prompts';
+import { AI_MODEL } from '@/lib/ai/models';
 
 export async function POST(request: NextRequest) {
   try {
@@ -44,7 +45,7 @@ export async function POST(request: NextRequest) {
         'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: 'deepseek-chat',
+        model: AI_MODEL,
         messages: [
           {
             role: 'system',

@@ -16,6 +16,8 @@ import { FieldValue } from 'firebase-admin/firestore';
 import { firestore } from './admin';
 import { buildEvidencePrompt } from './evidencePrompt';
 
+const DEEPSEEK_MODEL = process.env.DEEPSEEK_MODEL || 'deepseek-v4-pro';
+
 /**
  * Call DeepSeek API to generate insight
  */
@@ -52,7 +54,7 @@ ${buildEvidencePrompt('weeklyInsight')}`;
             'Authorization': `Bearer ${DEEPSEEK_API_KEY}`,
         },
         body: JSON.stringify({
-            model: 'deepseek-chat',
+            model: DEEPSEEK_MODEL,
             messages: [
                 { role: 'system', content: systemPrompt },
                 { role: 'user', content: userPrompt },

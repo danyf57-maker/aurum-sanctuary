@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { rateLimit, RateLimitPresets } from '@/lib/rate-limit';
 import { logger } from '@/lib/logger/safe';
 import { requireUserIdFromRequest, UserGuardError } from '@/lib/api/require-user-id';
+import { AI_MODEL } from '@/lib/ai/models';
 
 type InputEntry = {
   id: string;
@@ -162,7 +163,7 @@ ${JSON.stringify(safeEntries)}`;
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'deepseek-chat',
+        model: AI_MODEL,
         response_format: { type: 'json_object' },
         temperature: 1.5,
         messages: [

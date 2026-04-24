@@ -4,6 +4,7 @@
 import OpenAI from 'openai';
 import { JournalEntry, UserInsights } from '@/lib/types';
 import { buildEvidencePrompt } from '@/lib/ai/evidence/prompt-policy';
+import { AI_MODEL } from '@/lib/ai/models';
 
 const deepseek = new OpenAI({
   apiKey: process.env.DEEPSEEK_API_KEY,
@@ -42,7 +43,7 @@ export async function generateInsights(entries: JournalEntry[]): Promise<Omit<Us
 
     try {
         const response = await deepseek.chat.completions.create({
-            model: 'deepseek-chat',
+            model: AI_MODEL,
             messages: [
                 { role: 'system', content: systemPrompt },
                 { role: 'user', content: formattedContent }

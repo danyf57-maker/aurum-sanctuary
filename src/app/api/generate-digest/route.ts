@@ -3,6 +3,7 @@ import { rateLimit, RateLimitPresets } from '@/lib/rate-limit';
 import { logger } from '@/lib/logger/safe';
 import { requireUserIdFromRequest, UserGuardError } from '@/lib/api/require-user-id';
 import { buildEvidencePrompt } from '@/lib/ai/evidence/prompt-policy';
+import { AI_MODEL } from '@/lib/ai/models';
 
 type InputEntry = {
   id: string;
@@ -68,7 +69,7 @@ export async function POST(request: NextRequest) {
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'deepseek-chat',
+        model: AI_MODEL,
         temperature: 1.5,
         messages: [
           {

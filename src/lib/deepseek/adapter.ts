@@ -15,6 +15,7 @@ import {
     resolvePromptLanguage,
     resolveReplyLanguage,
 } from '@/lib/ai/language';
+import { AI_MODEL } from '@/lib/ai/models';
 
 /**
  * DeepSeek API configuration
@@ -71,7 +72,7 @@ export async function callDeepSeek(
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                model: 'deepseek-chat',
+                model: AI_MODEL,
                 messages: [
                     { role: 'system', content: promptPack.system },
                     { role: 'system', content: buildStrictReplyLanguageInstruction(replyLanguage, null) },

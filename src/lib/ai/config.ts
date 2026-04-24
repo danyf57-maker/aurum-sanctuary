@@ -1,6 +1,7 @@
 // src/lib/ai/config.ts
 
 import OpenAI from 'openai';
+export { AI_FAST_MODEL, AI_MODEL } from './models';
 
 let cachedClient: OpenAI | null = null;
 
@@ -18,5 +19,4 @@ export function getAiClient(): OpenAI {
   return cachedClient;
 }
 
-export const AI_MODEL = 'deepseek-chat';
 export const AI_TEMPERATURE = 0.5;

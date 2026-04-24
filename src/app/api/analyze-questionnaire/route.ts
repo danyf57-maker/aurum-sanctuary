@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { AI_MODEL } from "@/lib/ai/models";
 
 export const runtime = "nodejs";
 
@@ -218,7 +219,7 @@ export async function POST(request: NextRequest) {
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: "deepseek-chat",
+        model: AI_MODEL,
         response_format: { type: "json_object" },
         temperature: 0.8,
         messages: [

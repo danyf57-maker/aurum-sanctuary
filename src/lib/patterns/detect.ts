@@ -7,6 +7,7 @@
 
 import { ThemeId, EmotionalTone, PatternDetectionResult } from './types';
 import { logger } from '@/lib/logger/safe';
+import { AI_FAST_MODEL } from '@/lib/ai/models';
 
 /**
  * System prompt for pattern detection (NOT reflection)
@@ -65,7 +66,7 @@ export async function detectPatterns(
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'deepseek-chat',
+        model: AI_FAST_MODEL,
         messages: [
           {
             role: 'system',
