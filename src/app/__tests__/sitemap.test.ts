@@ -26,4 +26,22 @@ describe("sitemap", () => {
       expect(urls).toContain(`https://aurumdiary.com/fr/guides/${slug}`);
     }
   });
+
+  it("includes the science of writing guides in both languages", async () => {
+    const urls = (await sitemap()).map((entry) => entry.url);
+
+    for (const slug of [
+      "journaling-scientifique",
+      "bienfaits-ecriture-expressive",
+      "ecriture-et-clarte-mentale",
+      "journaling-et-rumination",
+      "ecriture-manuscrite-ou-clavier",
+      "journal-intime-et-emotions",
+      "prompts-ecriture-expressive",
+      "ecriture-et-recits-personnels",
+    ]) {
+      expect(urls).toContain(`https://aurumdiary.com/guides/${slug}`);
+      expect(urls).toContain(`https://aurumdiary.com/fr/guides/${slug}`);
+    }
+  });
 });
