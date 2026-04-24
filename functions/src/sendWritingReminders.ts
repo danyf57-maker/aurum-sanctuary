@@ -18,23 +18,23 @@ const REMINDER_LIBRARY: Record<Locale, Record<Tone, string[]>> = {
   fr: {
     gentle: [
       '{firstName}, tu veux prendre trois minutes pour toi ?',
-      '{firstName}, comment ca va vraiment aujourd\'hui ?',
+      '{firstName}, comment ça va vraiment aujourd\'hui ?',
       '{firstName}, quelques lignes suffisent pour te retrouver.',
     ],
     clarity: [
       '{firstName}, tu veux y voir un peu plus clair ?',
-      '{firstName}, qu\'est-ce qui prend le plus de place dans ta tete ?',
+      '{firstName}, qu\'est-ce qui prend le plus de place dans ta tête ?',
       '{firstName}, pose ce qui revient le plus en ce moment.',
     ],
     pressure_release: [
-      '{firstName}, tu veux relacher un peu la pression ?',
-      '{firstName}, quelques lignes peuvent deja alleger la charge.',
-      '{firstName}, un moment pour deposer ce qui pese ?',
+      '{firstName}, tu veux relâcher un peu la pression ?',
+      '{firstName}, quelques lignes peuvent déjà alléger la charge.',
+      '{firstName}, un moment pour déposer ce qui pèse ?',
     ],
     routine: [
       '{firstName}, tu reprends ton fil aujourd\'hui ?',
       '{firstName}, quelques lignes pour garder ton rythme ?',
-      '{firstName}, tu veux revenir a ton espace de reflection prive ?',
+      '{firstName}, tu veux revenir à ton espace de réflexion privé ?',
     ],
   },
   en: {
@@ -74,7 +74,7 @@ function buildCopy(params: { locale: Locale; tone: Tone; firstName?: string | nu
   return {
     title: template.replace('{firstName}', firstName),
     body: params.locale === 'fr'
-      ? 'Ouvre Aurum et ecris quelques lignes privees. Aurum t aidera a voir ce qui ressort et ce qui revient.'
+      ? 'Ouvre Aurum et écris quelques lignes privées. Aurum t\'aidera à voir ce qui ressort et ce qui revient.'
       : 'Open Aurum and write a few private lines. Aurum will help you notice what stands out and what keeps returning.',
   };
 }
@@ -167,7 +167,7 @@ export const sendWritingReminders = onSchedule(
       const tone: Tone = ['gentle', 'clarity', 'pressure_release', 'routine'].includes(String(prefs.writingReminderTone))
         ? prefs.writingReminderTone as Tone
         : 'gentle';
-      const firstName = userData.firstName || userData.displayName || userData.email?.split('@')[0] || null;
+      const firstName = userData.firstName || userData.displayName || null;
       const copy = buildCopy({ locale, tone, firstName, seed: now.getUTCDate() + context.weekday });
       const link = locale === 'fr' ? 'https://aurumdiary.com/fr/sanctuary/write' : 'https://aurumdiary.com/sanctuary/write';
 

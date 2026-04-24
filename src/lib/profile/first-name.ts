@@ -32,8 +32,7 @@ export function resolveOptionalFirstName(params: {
 }): string | null {
   return (
     sanitizeFirstName(params.firstName) ||
-    extractFirstName(params.displayName) ||
-    extractFirstNameFromEmail(params.email)
+    extractFirstName(params.displayName)
   );
 }
 

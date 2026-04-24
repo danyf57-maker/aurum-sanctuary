@@ -22,7 +22,7 @@ import {
   ensureAuthPersistence,
 } from '@/lib/firebase/web-client';
 import { logger } from '@/lib/logger/safe';
-import { resolveOptionalFirstName, sanitizeFirstName } from '@/lib/profile/first-name';
+import { extractFirstName, resolveOptionalFirstName, sanitizeFirstName } from '@/lib/profile/first-name';
 import { useToast } from '@/hooks/use-toast';
 import { useLocale } from '@/hooks/use-locale';
 
@@ -200,10 +200,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const userRef = doc(db, "users", finalUser.uid);
 
           let userSnap = await getDoc(userRef);
-          const inferredFirstName = resolveOptionalFirstName({
-            displayName: finalUser.displayName,
-            email: finalUser.email,
-          });
+          const displayFirstName = extractFirstName(finalUser.displayName);
+          const inferredFirstName = displayFirstName;
 
           // FALLBACK: If trigger didn't run, create doc client-side
           // This ensures users can still use the app even if Cloud Functions aren't deployed yet
@@ -242,8 +240,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             const userData = userSnap.data();
             const storedFirstName = sanitizeFirstName(userData.firstName);
             const profilePatch: Record<string, unknown> = {};
+            const emailLocalPart = finalUser.email?.split('@')[0]?.trim().toLowerCase() || null;
+            const storedLooksLikeEmail = Boolean(
+              storedFirstName &&
+              emailLocalPart &&
+              storedFirstName.trim().toLowerCase() === emailLocalPart
+            );
 
-            if (!storedFirstName && inferredFirstName) {
+            if ((!storedFirstName || storedLooksLikeEmail) && inferredFirstName) {
               profilePatch.firstName = inferredFirstName;
             }
 
@@ -258,7 +262,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               }, { merge: true });
             }
 
-            setProfileFirstName(storedFirstName || inferredFirstName || null);
+            setProfileFirstName(
+              storedLooksLikeEmail ? inferredFirstName || null : storedFirstName || inferredFirstName || null
+            );
 
             // User exists, check terms in settings/legal
             const legalRef = doc(db, "users", finalUser.uid, "settings", "legal");
@@ -463,7 +469,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signUpWithEmail = async (e: string, p: string, firstName: string) => {
     try {
-      const safeFirstName = sanitizeFirstName(firstName) || sanitizeFirstName(e.split('@')[0]) || 'Aurum';
+      const safeFirstName = sanitizeFirstName(firstName) || 'Aurum';
       const cred = await createUserWithEmailAndPassword(firebaseAuth, e, p);
       await updateProfile(cred.user, { displayName: safeFirstName });
       await setDoc(doc(db, "users", cred.user.uid), {

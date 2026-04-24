@@ -21,6 +21,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { CheckCircle2, XCircle, Loader2 } from 'lucide-react';
 import { useLocale } from '@/hooks/use-locale';
 import { localizeHref } from '@/lib/i18n/path';
+import type { Locale } from '@/lib/locale';
 
 type ActionMode = 'verifyEmail' | 'resetPassword' | 'recoverEmail' | null;
 
@@ -28,8 +29,10 @@ function AuthActionContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const locale = useLocale();
-  const to = (href: string) => localizeHref(href, locale);
-  const isFr = locale === 'fr';
+  const langParam = searchParams.get('lang');
+  const actionLocale: Locale = langParam === 'fr' || langParam === 'en' ? langParam : locale;
+  const to = (href: string) => localizeHref(href, actionLocale);
+  const isFr = actionLocale === 'fr';
   const txt = (fr: string, en: string) => (isFr ? fr : en);
 
   const [mode, setMode] = useState<ActionMode>(null);

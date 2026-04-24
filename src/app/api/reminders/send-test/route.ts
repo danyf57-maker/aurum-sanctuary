@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     }
 
     const userData = userSnap.data() || {};
-    const firstName = String(userData.firstName || userData.displayName || decoded.name || '').split(' ')[0] || (decoded.email?.split('@')[0] ?? 'you');
+    const firstName = String(userData.firstName || userData.displayName || decoded.name || '').split(' ')[0] || null;
     const prefsSnap = await userRef.collection('settings').doc('preferences').get();
     const prefs = prefsSnap.data() || {};
     const locale = prefs.language === 'fr' ? 'fr' : 'en';

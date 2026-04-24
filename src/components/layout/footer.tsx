@@ -36,7 +36,7 @@ export function Footer() {
                 {isFr ? "Ressources" : "Resources"}
               </h3>
               <ul className="mt-4 space-y-2">
-                <li><Link href={to('/sanctuary/chat')} className="text-sm text-muted-foreground hover:text-foreground">{isFr ? "Discuter avec Aurum" : "Chat with Aurum"}</Link></li>
+                <li><Link href={to('/sanctuary/write')} className="text-sm text-muted-foreground hover:text-foreground">{isFr ? "Discuter avec Aurum" : "Chat with Aurum"}</Link></li>
                 <li><Link href={to('/sources-citations')} className="text-sm text-muted-foreground hover:text-foreground">{isFr ? "Sources des citations" : "Quote sources"}</Link></li>
               </ul>
             </div>

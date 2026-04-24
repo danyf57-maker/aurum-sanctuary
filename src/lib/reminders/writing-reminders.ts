@@ -4,8 +4,8 @@ export type ReminderLocale = 'fr' | 'en';
 const REMINDER_LIBRARY: Record<ReminderLocale, Record<WritingReminderTone, string[]>> = {
   fr: {
     gentle: [
-      '{firstName}, tu veux prendre trois minutes pour revenir a toi ?',
-      '{firstName}, comment ca se passe en toi aujourd\'hui ?',
+      '{firstName}, tu veux prendre trois minutes pour revenir à toi ?',
+      '{firstName}, comment ça se passe en toi aujourd\'hui ?',
       '{firstName}, quelques lignes peuvent suffire pour te retrouver.',
     ],
     clarity: [
@@ -14,14 +14,14 @@ const REMINDER_LIBRARY: Record<ReminderLocale, Record<WritingReminderTone, strin
       '{firstName}, pose ce qui revient le plus en ce moment.',
     ],
     pressure_release: [
-      '{firstName}, tu veux desserrer un peu ce qui te pese ?',
-      '{firstName}, quelques lignes peuvent deja redonner de l\'air.',
-      '{firstName}, un moment pour deposer ce qui te serre ?',
+      '{firstName}, tu veux desserrer un peu ce qui te pèse ?',
+      '{firstName}, quelques lignes peuvent déjà redonner de l\'air.',
+      '{firstName}, un moment pour déposer ce qui te serre ?',
     ],
     routine: [
       '{firstName}, tu reprends ton fil aujourd\'hui ?',
-      '{firstName}, quelques lignes pour garder ton rythme interieur ?',
-      '{firstName}, tu reviens a ton espace de reflection prive ?',
+      '{firstName}, quelques lignes pour garder ton rythme intérieur ?',
+      '{firstName}, tu reviens à ton espace de réflexion privé ?',
     ],
   },
   en: {
@@ -49,7 +49,7 @@ const REMINDER_LIBRARY: Record<ReminderLocale, Record<WritingReminderTone, strin
 };
 
 const BODY_COPY: Record<ReminderLocale, string> = {
-  fr: 'Ouvre Aurum et ecris quelques lignes privees. Aurum t\'aidera a voir ce qui ressort et ce qui revient.',
+  fr: 'Ouvre Aurum et écris quelques lignes privées. Aurum t\'aidera à voir ce qui ressort et ce qui revient.',
   en: 'Open Aurum and write a few private lines. Aurum will help you notice what stands out and what keeps returning.',
 };
 

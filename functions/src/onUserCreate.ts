@@ -35,14 +35,6 @@ function extractFirstName(displayName?: string | null): string | null {
     return firstPart || null;
 }
 
-function extractFirstNameFromEmail(email?: string | null): string | null {
-    if (!email) return null;
-    const localPart = email.split('@')[0]?.trim();
-    if (!localPart) return null;
-    const [firstToken] = localPart.split(/[._-]+/).filter(Boolean);
-    return sanitizeFirstName(firstToken);
-}
-
 /**
  * onCreate auth trigger
  */
@@ -51,7 +43,7 @@ export const onUserCreate = functions.auth.user().onCreate(async (user) => {
     const email = user.email;
     const displayName = user.displayName;
     const photoURL = user.photoURL;
-    const firstName = extractFirstName(displayName) || extractFirstNameFromEmail(email);
+    const firstName = extractFirstName(displayName);
 
     try {
         const batch = firestore.batch();
@@ -77,7 +69,7 @@ export const onUserCreate = functions.auth.user().onCreate(async (user) => {
             billingPhase: 'trial_started',
             trialOrigin: 'app_no_card',
             entryCount: 0,
-        });
+        }, { merge: true });
 
         // 2. Initialize Preferences
         const prefsRef = firestore.doc(`users/${uid}/settings/preferences`);

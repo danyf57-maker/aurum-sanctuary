@@ -36,6 +36,14 @@ export function middleware(request: NextRequest) {
   const resolvedLocale: Locale =
     forcedLang || pathLocale || localeFromCookie || localeFromCountry || localeFromAccept;
 
+  if (normalizedPath === '/sanctuary/chat') {
+    const url = nextUrl.clone();
+    url.pathname = pathLocale === 'fr' ? '/fr/sanctuary/write' : '/sanctuary/write';
+    const response = NextResponse.redirect(url, 308);
+    setLocaleCookie(response, pathLocale || resolvedLocale);
+    return response;
+  }
+
   // Canonical EN routing: /en/* -> /*
   if (pathLocale === 'en') {
     const url = nextUrl.clone();

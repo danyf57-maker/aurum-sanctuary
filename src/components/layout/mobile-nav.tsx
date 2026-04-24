@@ -19,9 +19,9 @@ const Logo = (props: React.SVGProps<SVGSVGElement>) => (
 )
 
 const mobileNavItems = [
-  { href: '/sanctuary/write', key: 'write', helperKey: 'newPage', icon: PenSquare },
-  { href: '/sanctuary', key: 'journal', helperKey: 'yourEntries', icon: BookOpenText },
-  { href: '/settings', key: 'settings', helperKey: 'accountData', icon: Settings },
+  { href: '/sanctuary/write', key: 'write', helperKey: 'writeDesc', icon: PenSquare },
+  { href: '/sanctuary', key: 'journal', helperKey: 'journalDesc', icon: BookOpenText },
+  { href: '/settings', key: 'settings', helperKey: 'settingsDesc', icon: Settings },
 ] as const;
 
 export function MobileNav() {
