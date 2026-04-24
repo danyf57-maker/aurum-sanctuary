@@ -83,6 +83,7 @@ export function PremiumJournalForm() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const initialAurumTurnIdRef = useRef<string | null>(null);
+  const hasRestoredInitialDraftRef = useRef(false);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
@@ -148,6 +149,9 @@ export function PremiumJournalForm() {
 
   // Pré-remplir depuis l'URL si "initial" est fourni et non vide.
   useEffect(() => {
+    if (hasRestoredInitialDraftRef.current) return;
+    hasRestoredInitialDraftRef.current = true;
+
     const initial = searchParams.get('initial');
     if (!initial) return;
     if (draftContent.trim().length > 0) return;
