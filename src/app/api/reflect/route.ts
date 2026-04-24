@@ -38,6 +38,7 @@ import {
 } from '@/lib/billing/aurum-access';
 import { resolveOptionalFirstName } from '@/lib/profile/first-name';
 import type { Locale } from '@/lib/locale';
+import { AI_MODEL } from '@/lib/ai/models';
 
 type AurumIntent = 'reflection' | 'conversation' | 'analysis' | 'clarify' | 'action' | 'philosophy';
 type SupportedLocale = Locale;
@@ -405,7 +406,7 @@ export async function POST(request: NextRequest) {
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'deepseek-chat',
+        model: AI_MODEL,
         messages,
         temperature: shortFollowUp ? 1.0 : 1.05,
         max_tokens: shortFollowUp ? 220 : 1000,
