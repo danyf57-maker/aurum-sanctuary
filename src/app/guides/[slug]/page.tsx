@@ -272,23 +272,23 @@ export default async function GuidePage({ params }: GuidePageProps) {
                   ? "Si tu veux aller plus loin que la lecture, Aurum te permet d'écrire sans filtre, de clarifier ce qui revient, et de commencer gratuitement."
                   : "If you want to go beyond reading, Aurum gives you a private place to write freely, clarify what keeps returning, and begin for free."}
               </p>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Button asChild size="lg">
+              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                <Button asChild size="lg" className="w-full">
                   <Link href={signupHref}>
                     {isFr ? "Commencer avec 5 entrées gratuites" : "Start with 5 free entries"}
                   </Link>
                 </Button>
-                <Button asChild variant="outline" size="lg">
+                <Button asChild variant="outline" size="lg" className="w-full">
                   <Link href={pricingHref}>
                     {isFr ? "Voir les formules" : "See pricing"}
                   </Link>
                 </Button>
-                <Button asChild variant="outline" size="lg">
+                <Button asChild variant="outline" size="lg" className="w-full">
                   <Link href={guidesHref}>
                     {isFr ? "Tous les guides" : "All guides"}
                   </Link>
                 </Button>
-                <Button asChild variant="ghost" size="lg">
+                <Button asChild variant="outline" size="lg" className="w-full">
                   <Link href={manifestoHref}>
                     {isFr ? "Lire le manifeste" : "Read the manifesto"}
                   </Link>
