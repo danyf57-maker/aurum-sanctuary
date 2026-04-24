@@ -20,5 +20,6 @@ describe("guide structured data", () => {
     );
 
     expect(source).not.toContain('<Button asChild variant="ghost" size="lg">');
+    expect(source).toContain("whitespace-normal");
   });
 });
