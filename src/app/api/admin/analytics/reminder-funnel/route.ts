@@ -3,6 +3,8 @@ import type { TrackedEventName } from "@/lib/analytics/types";
 import { toCsv } from "@/lib/analytics/export-csv";
 import { requireAnalyticsExportAccess } from "@/lib/analytics/export-auth";
 
+export const dynamic = "force-dynamic";
+
 const WINDOW_DAYS = 30;
 
 type AnalyticsEventDoc = {

@@ -104,12 +104,12 @@ export default async function ManifestePage() {
             </section>
             <section>
               <h2 className="text-2xl font-headline mb-3">
-                {isFr ? "3. Une IA au service de ta réflexion" : "3. AI in service of reflection"}
+                {isFr ? "3. Une lecture guidée au service de ta réflexion" : "3. Guided reading in service of reflection"}
               </h2>
               <p>
                 {isFr
-                  ? "L'IA d'Aurum guide la réflexion, reformule avec douceur, et aide à faire émerger des motifs récurrents. Elle ne remplace pas un avis médical ni un suivi thérapeutique."
-                  : "Aurum's AI guides reflection, rephrases gently, and helps recurring patterns become easier to see. It does not replace medical advice or therapeutic care."}
+                  ? "Aurum guide la réflexion, reformule avec douceur, et aide à faire émerger des motifs récurrents. Il ne remplace pas un avis médical ni un suivi thérapeutique."
+                  : "Aurum guides reflection, rephrases gently, and helps recurring patterns become easier to see. It does not replace medical advice or therapeutic care."}
               </p>
             </section>
             <section>

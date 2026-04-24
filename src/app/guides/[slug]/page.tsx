@@ -67,12 +67,36 @@ export default async function GuidePage({ params }: GuidePageProps) {
   const topicBase = getKnowledgeHubTopicBase(params.slug);
   const signupHref = toLocalePath("/signup", locale);
   const pricingHref = toLocalePath("/pricing", locale);
+  const guidesHref = toLocalePath("/guides", locale);
+  const manifestoHref = toLocalePath("/manifeste", locale);
 
   if (!topic || !topicBase) {
     notFound();
   }
 
   const pageUrl = absoluteUrl(`/guides/${topic.slug}`, locale);
+  const faqItems = [
+    {
+      question: topic.question,
+      answer: topic.shortAnswer,
+    },
+    {
+      question: isFr
+        ? "Comment appliquer cette méthode aujourd'hui ?"
+        : "How can you apply this method today?",
+      answer: topic.practicalSteps?.join(" ") || topic.deepDive[0],
+    },
+    {
+      question: isFr
+        ? "Pourquoi utiliser Aurum pour cette réflexion ?"
+        : "Why use Aurum for this reflection?",
+      answer:
+        topic.howAurumHelps?.join(" ") ||
+        (isFr
+          ? "Aurum donne un espace privé pour écrire et repérer ce qui revient."
+          : "Aurum gives you a private space to write and notice what keeps returning."),
+    },
+  ];
   const jsonLd = [
     {
       "@context": "https://schema.org",
@@ -113,6 +137,34 @@ export default async function GuidePage({ params }: GuidePageProps) {
         },
       ],
     },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: faqItems.map((item) => ({
+        "@type": "Question",
+        name: item.question,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: item.answer,
+        },
+      })),
+    },
+    ...(topic.practicalSteps?.length
+      ? [
+          {
+            "@context": "https://schema.org",
+            "@type": "HowTo",
+            name: topic.metaTitle,
+            description: topic.metaDescription,
+            inLanguage: schemaLanguage(locale),
+            step: topic.practicalSteps.map((step, index) => ({
+              "@type": "HowToStep",
+              position: index + 1,
+              text: step,
+            })),
+          },
+        ]
+      : []),
   ];
 
   return (
@@ -195,6 +247,20 @@ export default async function GuidePage({ params }: GuidePageProps) {
               </section>
             ) : null}
 
+            <section className="rounded-2xl border border-stone-200 bg-white p-8">
+              <h2 className="text-2xl font-headline mb-4">
+                {isFr ? "Questions fréquentes" : "Frequently asked questions"}
+              </h2>
+              <div className="space-y-5 text-foreground/90">
+                {faqItems.map((item) => (
+                  <div key={item.question}>
+                    <h3 className="font-semibold text-stone-900">{item.question}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-stone-700">{item.answer}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+
             <section className="rounded-2xl border border-amber-200 bg-amber-50 p-8">
               <h2 className="text-2xl font-headline mb-3">
                 {isFr
@@ -215,6 +281,16 @@ export default async function GuidePage({ params }: GuidePageProps) {
                 <Button asChild variant="outline" size="lg">
                   <Link href={pricingHref}>
                     {isFr ? "Voir les formules" : "See pricing"}
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" size="lg">
+                  <Link href={guidesHref}>
+                    {isFr ? "Tous les guides" : "All guides"}
+                  </Link>
+                </Button>
+                <Button asChild variant="ghost" size="lg">
+                  <Link href={manifestoHref}>
+                    {isFr ? "Lire le manifeste" : "Read the manifesto"}
                   </Link>
                 </Button>
               </div>

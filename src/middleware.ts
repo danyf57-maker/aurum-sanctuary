@@ -98,6 +98,7 @@ export function middleware(request: NextRequest) {
 
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set('x-aurum-locale', localeForPath);
+  requestHeaders.set('x-aurum-path', normalizedPath);
 
   const response =
     pathLocale === 'fr'

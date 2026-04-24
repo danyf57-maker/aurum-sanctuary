@@ -21,6 +21,10 @@ export const metadata: Metadata = {
   title: "Best AI Video Generation Models (2026) | Directory",
   description:
     "Comprehensive directory of the best AI video generation models in 2026. Compare Sora, Veo 3, Kling, Runway Gen-4, MiniMax, and more.",
+  robots: {
+    index: false,
+    follow: false,
+  },
   openGraph: {
     title: "Best AI Video Generation Models (2026)",
     description:

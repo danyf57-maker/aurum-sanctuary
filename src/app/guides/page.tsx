@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getKnowledgeHubTopics } from "@/lib/knowledge-hub";
 import { getRequestLocale } from "@/lib/locale-server";
 import { buildAlternates, openGraphLocale, schemaLanguage, SITE_URL } from "@/lib/seo";
+import { toLocalePath } from "@/i18n/routing";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
@@ -73,7 +74,7 @@ export default async function GuidesPage() {
             {topics.map((topic) => (
               <Link
                 key={topic.slug}
-                href={`/guides/${topic.slug}`}
+                href={toLocalePath(`/guides/${topic.slug}`, locale)}
                 className="rounded-2xl border border-stone-200 bg-white p-6 transition-colors hover:bg-stone-100"
               >
                 <h2 className="text-xl font-headline mb-2">{topic.title}</h2>
