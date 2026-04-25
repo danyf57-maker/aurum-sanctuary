@@ -935,7 +935,7 @@ export function PremiumJournalForm() {
                   type="submit"
                   disabled={isSubmitting || isUploadingImage}
                   size="lg"
-                  className="border-0 bg-stone-900 text-stone-50 hover:bg-stone-800 px-10 rounded-full shadow-[0_12px_28px_rgba(30,20,8,0.24)] text-base font-semibold"
+                  className="aurum-motion-button border-0 bg-stone-900 text-stone-50 hover:bg-stone-800 px-10 rounded-full shadow-[0_12px_28px_rgba(30,20,8,0.24)] text-base font-semibold"
                 >
                   {isSubmitting || isUploadingImage ? (
                     <>
@@ -958,7 +958,7 @@ export function PremiumJournalForm() {
             className="space-y-8"
           >
             {/* Premium saved confirmation */}
-            <div className="relative overflow-hidden rounded-[28px] bg-[linear-gradient(180deg,rgba(255,255,255,0.95),rgba(248,244,234,0.88))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] p-8 md:p-12">
+            <div className="aurum-motion-card aurum-motion-reveal relative overflow-hidden rounded-[28px] bg-[linear-gradient(180deg,rgba(255,255,255,0.95),rgba(248,244,234,0.88))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] p-8 md:p-12">
               {/* Decorative golden glow */}
               <div className="absolute -top-20 -right-20 h-40 w-40 rounded-full bg-[#C5A059]/8 blur-3xl" />
               <div className="absolute -bottom-20 -left-20 h-40 w-40 rounded-full bg-[#D4AF37]/6 blur-3xl" />
@@ -1027,7 +1027,7 @@ export function PremiumJournalForm() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.4, delay: 0.3 }}
-                    className="relative overflow-hidden rounded-[28px] bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(248,244,234,0.82))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] p-8 md:p-12 text-center"
+                    className="aurum-motion-card relative overflow-hidden rounded-[28px] bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(248,244,234,0.82))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] p-8 md:p-12 text-center"
                   >
                     <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/3 via-transparent to-[#C5A059]/3 pointer-events-none" />
                     <div className="relative space-y-6">
@@ -1045,7 +1045,7 @@ export function PremiumJournalForm() {
                       <Button
                         onClick={() => void handleRequestReflection()}
                         size="lg"
-                        className="group h-12 px-8 bg-gradient-to-r from-[#D4AF37] to-[#C5A059] text-stone-900 hover:from-[#C5A059] hover:to-[#D4AF37] rounded-2xl shadow-[0_8px_24px_rgba(212,175,55,0.25)] font-semibold transition-all duration-300 hover:shadow-[0_12px_32px_rgba(212,175,55,0.35)] hover:scale-[1.02]"
+                        className="aurum-motion-button group h-12 px-8 bg-gradient-to-r from-[#D4AF37] to-[#C5A059] text-stone-900 hover:from-[#C5A059] hover:to-[#D4AF37] rounded-2xl shadow-[0_8px_24px_rgba(212,175,55,0.25)] font-semibold transition-all duration-300 hover:shadow-[0_12px_32px_rgba(212,175,55,0.35)] hover:scale-[1.02]"
                       >
                         <Eye className="mr-2 h-4.5 w-4.5 transition-transform group-hover:scale-110" />
                         {t('revealReflection')}
@@ -1059,7 +1059,7 @@ export function PremiumJournalForm() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.97 }}
                     transition={{ duration: 0.4, ease: 'easeOut' }}
-                    className="rounded-[28px] bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(248,244,234,0.82))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] p-8 md:p-12"
+                    className="aurum-motion-card rounded-[28px] bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(248,244,234,0.82))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] p-8 md:p-12"
                   >
                     <div className="space-y-6 py-4">
                       <ReflectionPulse />
@@ -1102,7 +1102,7 @@ export function PremiumJournalForm() {
                 </div>
 
                 {/* Conversation continuation */}
-                <div className="rounded-[24px] bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(248,244,234,0.82))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] p-4 md:rounded-[28px] md:p-6 space-y-3">
+                <div className="aurum-motion-card rounded-[24px] bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(248,244,234,0.82))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] p-4 md:rounded-[28px] md:p-6 space-y-3">
                   <div className="flex items-center justify-between gap-3">
                     <h4 className="truncate font-headline text-base text-stone-900 md:text-lg">
                       {resolveMessage(t('continueWithAurum'), premiumFormFallback.continueWithAurum)}
@@ -1136,7 +1136,7 @@ export function PremiumJournalForm() {
                         <Button
                           type="button"
                           onClick={() => setIsPaywallOpen(true)}
-                          className="bg-gradient-to-r from-[#D4AF37] to-[#C5A059] text-stone-900 hover:from-[#C5A059] hover:to-[#D4AF37] rounded-xl px-6 font-semibold shadow-[0_6px_18px_rgba(212,175,55,0.2)] transition-all duration-300 hover:shadow-[0_8px_24px_rgba(212,175,55,0.3)]"
+                          className="aurum-motion-button bg-gradient-to-r from-[#D4AF37] to-[#C5A059] text-stone-900 hover:from-[#C5A059] hover:to-[#D4AF37] rounded-xl px-6 font-semibold shadow-[0_6px_18px_rgba(212,175,55,0.2)] transition-all duration-300 hover:shadow-[0_8px_24px_rgba(212,175,55,0.3)]"
                         >
                           {t('unlockConversation')}
                         </Button>
@@ -1159,7 +1159,7 @@ export function PremiumJournalForm() {
                           type="button"
                           onClick={handleContinueConversation}
                           disabled={isContinuingConversation || !conversationInput.trim()}
-                          className="w-full rounded-xl px-6 font-semibold shadow-[0_6px_18px_rgba(212,175,55,0.2)] transition-all duration-300 bg-gradient-to-r from-[#D4AF37] to-[#C5A059] text-stone-900 hover:from-[#C5A059] hover:to-[#D4AF37] hover:shadow-[0_8px_24px_rgba(212,175,55,0.3)] disabled:opacity-100 disabled:bg-[#D8BF6B] disabled:text-stone-700 disabled:shadow-none sm:w-auto"
+                          className="aurum-motion-button w-full rounded-xl px-6 font-semibold shadow-[0_6px_18px_rgba(212,175,55,0.2)] transition-all duration-300 bg-gradient-to-r from-[#D4AF37] to-[#C5A059] text-stone-900 hover:from-[#C5A059] hover:to-[#D4AF37] hover:shadow-[0_8px_24px_rgba(212,175,55,0.3)] disabled:opacity-100 disabled:bg-[#D8BF6B] disabled:text-stone-700 disabled:shadow-none sm:w-auto"
                         >
                           {isContinuingConversation ? (
                             <>
@@ -1209,7 +1209,7 @@ export function PremiumJournalForm() {
               <button
                 onClick={handleNewEntry}
                 type="button"
-                className="group w-full rounded-2xl border border-stone-200 bg-white/70 px-4 py-4 text-center transition-colors duration-300 hover:border-[#C5A059]/35 hover:bg-[#C5A059]/5"
+                className="aurum-motion-button group w-full rounded-2xl border border-stone-200 bg-white/70 px-4 py-4 text-center transition-colors duration-300 hover:border-[#C5A059]/35 hover:bg-[#C5A059]/5"
               >
                 <p className="font-headline text-lg text-stone-500 transition-colors duration-300 group-hover:text-stone-700 md:text-xl">
                   {resolveMessage(t('openNewWritingSpace'), premiumFormFallback.openNewWritingSpace)}

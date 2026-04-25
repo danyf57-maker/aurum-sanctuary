@@ -84,7 +84,7 @@ export default function WritePage() {
                     <div className="absolute -bottom-32 -left-32 w-64 h-64 bg-[#C5A059]/5 rounded-full blur-3xl" />
 
                     {/* Card */}
-                    <div className="relative bg-white/80 backdrop-blur-xl rounded-[40px] border border-[#D4AF37]/10 shadow-[0_20px_60px_rgba(0,0,0,0.06)] p-10 md:p-16 text-center overflow-hidden">
+                    <div className="aurum-motion-card relative bg-white/80 backdrop-blur-xl rounded-[40px] border border-[#D4AF37]/10 shadow-[0_20px_60px_rgba(0,0,0,0.06)] p-10 md:p-16 text-center overflow-hidden">
                       {/* Subtle gradient overlay */}
                       <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/3 via-transparent to-[#C5A059]/3 pointer-events-none" />
 
@@ -175,7 +175,7 @@ export default function WritePage() {
                           <Button
                             onClick={() => setIsAuthDialogOpen(true)}
                             size="lg"
-                            className="group h-14 px-10 bg-gradient-to-r from-[#D4AF37] to-[#C5A059] text-stone-900 hover:from-[#C5A059] hover:to-[#D4AF37] rounded-2xl shadow-[0_12px_28px_rgba(212,175,55,0.3)] text-lg font-semibold transition-all duration-300 hover:shadow-[0_16px_36px_rgba(212,175,55,0.4)] hover:scale-[1.02]"
+                            className="aurum-motion-button group h-14 px-10 bg-gradient-to-r from-[#D4AF37] to-[#C5A059] text-stone-900 hover:from-[#C5A059] hover:to-[#D4AF37] rounded-2xl shadow-[0_12px_28px_rgba(212,175,55,0.3)] text-lg font-semibold transition-all duration-300 hover:shadow-[0_16px_36px_rgba(212,175,55,0.4)] hover:scale-[1.02]"
                           >
                             {t("anonymous.cta")}
                             <ChevronRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
@@ -250,7 +250,7 @@ export default function WritePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <div className="mb-6 rounded-2xl border border-stone-200 bg-white/60 px-5 py-4 text-center">
+              <div className="aurum-motion-card mb-6 rounded-2xl border border-stone-200 bg-white/60 px-5 py-4 text-center">
                 <p className="text-sm italic text-stone-600">
                   &ldquo;{writingQuotes[quoteIndex]?.text}&rdquo;
                   <span className="ml-1 not-italic text-stone-500">

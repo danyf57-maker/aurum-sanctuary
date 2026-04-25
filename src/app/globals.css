@@ -78,3 +78,141 @@
     opacity: 1;
   }
 }
+
+@layer utilities {
+  .aurum-motion-section {
+    animation: aurum-section-rise 760ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .aurum-motion-card {
+    animation: aurum-card-reveal 680ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    transition:
+      border-color 260ms ease,
+      box-shadow 260ms ease,
+      transform 260ms ease,
+      background-color 260ms ease;
+  }
+
+  .aurum-motion-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 45px rgba(41, 37, 36, 0.08);
+  }
+
+  .aurum-motion-button {
+    transition:
+      box-shadow 260ms ease,
+      transform 260ms ease,
+      background-color 260ms ease,
+      color 260ms ease;
+  }
+
+  .aurum-motion-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 34px rgba(148, 113, 25, 0.18);
+  }
+
+  .aurum-motion-reveal {
+    animation: aurum-reflection-reveal 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .aurum-motion-sheen {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .aurum-motion-sheen::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    transform: translateX(-120%);
+    background: linear-gradient(
+      100deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.18) 42%,
+      rgba(255, 255, 255, 0.42) 50%,
+      rgba(255, 255, 255, 0.18) 58%,
+      transparent 100%
+    );
+    animation: aurum-sheen 4800ms ease-in-out infinite;
+  }
+
+  .aurum-motion-delay-1 {
+    animation-delay: 90ms;
+  }
+
+  .aurum-motion-delay-2 {
+    animation-delay: 180ms;
+  }
+
+  .aurum-motion-delay-3 {
+    animation-delay: 270ms;
+  }
+
+  .aurum-motion-delay-4 {
+    animation-delay: 360ms;
+  }
+}
+
+@keyframes aurum-section-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes aurum-card-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes aurum-reflection-reveal {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+
+@keyframes aurum-sheen {
+  0%,
+  58% {
+    transform: translateX(-120%);
+  }
+  82%,
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurum-motion-section,
+  .aurum-motion-card,
+  .aurum-motion-reveal,
+  .aurum-motion-sheen::after {
+    animation: none !important;
+  }
+
+  .aurum-motion-card,
+  .aurum-motion-card:hover,
+  .aurum-motion-button,
+  .aurum-motion-button:hover {
+    transform: none !important;
+    transition: none !important;
+  }
+}

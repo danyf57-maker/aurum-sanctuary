@@ -29,11 +29,12 @@ export function ReflectionResponse({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className={cn("w-full", className)}
+      className={cn("aurum-motion-reveal w-full", className)}
     >
       <div
         className={cn(
           "relative",
+          "aurum-motion-card",
           "bg-gradient-to-br from-amber-50 via-amber-50/80 to-white",
           "backdrop-blur-sm",
           "rounded-2xl",
