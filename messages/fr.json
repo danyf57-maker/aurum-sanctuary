@@ -498,7 +498,7 @@
   "hero": {
     "badge": "ÉCRITURE PRIVÉE • CE QUI REVIENT",
     "title": "Tu sais que ça te fait mal. Mais tu y retournes quand même.",
-    "subtitle": "Un journal privé guidé pour les pensées qui tournent, ce qui serre dans la poitrine, et les schémas que tu n'arrives pas encore à lâcher.",
+    "subtitle": "Pour le message que tu relis, la conversation que tu rejoues, et ce qui serre dans ta poitrine sans encore avoir de nom.",
     "helper": "Écris ce qui revient. Aurum l'ouvre dans ta page privée.",
     "helperWithDraft": "Crée ton compte pour ouvrir ce texte dans ta page privée.",
     "cta": "Commencer à écrire en privé",
@@ -841,31 +841,31 @@
         {
           "badge": "Rejeu",
           "title": "La conversation est terminée. Mais pas en toi.",
-          "body": "Écris la phrase qui est restée, la réponse que tu n'as pas donnée, et ce qui semble encore inachevé dans ta poitrine.",
+          "body": "Tu rejoues le ton, le silence, la phrase que tu aurais dû dire. La pièce est calme. Pas ton corps.",
           "cta": "Commencer gratuitement →"
         },
         {
           "badge": "Message",
           "title": "Tu relis le message, même si ça fait mal.",
-          "body": "Aurum donne à cet élan un espace privé, sans le transformer en performance ou en confession.",
+          "body": "Pas parce qu'il y a quelque chose de nouveau. Parce qu'une part de toi attend encore que ça fasse autrement.",
           "cta": "Commencer gratuitement →"
         },
         {
           "badge": "Boucle",
           "title": "Ton corps est fatigué. Ta tête discute encore.",
-          "body": "Pose chaque pensée sur une ligne. Pas pour gagner le débat, mais pour voir autour de quoi il tourne.",
+          "body": "Tu voudrais dormir, mais tes pensées préparent encore une défense pour une conversation déjà finie.",
           "cta": "Commencer gratuitement →"
         },
         {
           "badge": "Intensité",
           "title": "Le calme semble vide, alors tu retournes vers l'intensité.",
-          "body": "Écris la part de toi qui revient vers ce qui fait mal parce qu'au moins, c'est familier.",
+          "body": "Le calme devrait rassurer. À la place, il ressemble à une absence. Alors tu reviens vers ce qui brûle, parce qu'au moins c'est familier.",
           "cta": "Commencer gratuitement →"
         },
         {
           "badge": "Histoire",
           "title": "Tu appelles ça une mauvaise habitude. Mais elle a une histoire.",
-          "body": "Aurum t'aide à remarquer le vieux schéma sous la réaction actuelle, sans te blâmer de l'avoir.",
+          "body": "Ce schéma n'est pas arrivé de nulle part. Il a appris ta peur avant que tu aies les mots.",
           "cta": "Ouvrir mon journal →"
         },
         {
@@ -877,7 +877,7 @@
         {
           "badge": "Conflit",
           "title": "Tu confonds comprendre et rejouer.",
-          "body": "Écris ce que tu essaies de comprendre, puis ce que cette boucle te coûte ce soir.",
+          "body": "Tu te dis que tu essaies de comprendre. Mais la boucle prend plus qu'elle ne donne.",
           "cta": "Revenir au calme →"
         },
         {

@@ -21,7 +21,7 @@ const HeroIntegrated = () => {
         badge: "ECRITURE PRIVEE • CE QUI REVIENT",
         title: "Tu sais que ca te fait mal. Mais tu y retournes quand meme.",
         subtitle:
-          "Un journal prive guide pour les pensees qui tournent, ce qui serre dans la poitrine, et les schemas que tu n'arrives pas encore a lacher.",
+          "Pour le message que tu relis, la conversation que tu rejoues, et ce qui serre dans ta poitrine sans encore avoir de nom.",
         helper:
           "Ecris ce qui revient. Aurum l'ouvre dans ta page privee.",
         helperWithDraft:
@@ -48,7 +48,7 @@ const HeroIntegrated = () => {
         badge: "PRIVATE WRITING • WHAT KEEPS RETURNING",
         title: "You know it hurts. But you keep going back.",
         subtitle:
-          "A private guided journal for the thoughts that loop, the feelings that tighten your chest, and the patterns you cannot seem to leave alone.",
+          "For the message you reread, the conversation you replay, and the feeling in your chest that still has no name.",
         helper:
           "Write what keeps coming back. Aurum opens it inside your private page.",
         helperWithDraft:
