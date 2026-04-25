@@ -57,8 +57,12 @@ describe("homepage performance constraints", () => {
     );
 
     expect(homepageSource).toContain("aurum-motion-section");
+    expect(homepageSource).toContain("aurum-landing-motion");
     expect(homepageSource).toContain("aurum-motion-card");
     expect(homepageSource).toContain("aurum-motion-button");
+    expect(globalCss).toContain(".aurum-landing-motion .aurum-motion-section");
+    expect(globalCss).toContain("aurum-landing-card-reveal");
+    expect(globalCss).toContain("aurum-button-breathe");
     expect(globalCss).toContain("@media (prefers-reduced-motion: reduce)");
     expect(globalCss).toContain("@keyframes aurum-section-rise");
     expect(globalCss).toContain("@keyframes aurum-reflection-reveal");

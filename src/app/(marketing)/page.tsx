@@ -60,7 +60,7 @@ export default async function Home() {
         t('references.aria4'),
     ];
     return (
-        <main>
+        <main className="aurum-landing-motion">
             <HeroIntegrated />
             <section className="aurum-motion-section bg-white py-14 md:py-16">
                 <div className="container">
