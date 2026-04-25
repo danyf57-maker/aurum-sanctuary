@@ -11,6 +11,7 @@
 - Aurum est un SaaS de journaling émotionnel et d'introspection.
 - Positionnement à garder : compagnon d'écriture et de clarté personnelle, pas application médicale, pas thérapie, pas diagnostic.
 - Formulations sûres : "mettre des mots", "y voir plus clair", "repérer ce qui revient", "espace privé".
+- Direction copy landing validée le 2026-04-25 : plus viscérale, intime et incarnée. Faire sentir les boucles concrètes avant de parler de clarté : message relu, conversation rejouée, poitrine qui serre, calme qui semble vide, schémas qu'on n'arrive pas encore à lâcher.
 - Éviter : promesses de guérison, vocabulaire clinique directif, diagnostic, scores médicaux, posture de psy.
 - Référence produit locale importante : `AURUM_REFERENCES_FOR_CODEX.md`. La lire avant les changements liés à onboarding, journaling, prompts, marketing, pricing, Premium, contenus TikTok ou garde-fous santé mentale.
 

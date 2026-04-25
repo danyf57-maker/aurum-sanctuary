@@ -18,17 +18,17 @@ const HeroIntegrated = () => {
   const fallbackContent = useMemo(
     () => locale === "fr"
     ? {
-        badge: "ECRITURE PRIVEE • REFLET PRECIS",
-        title: "Ecris en prive. Vois plus clair en toi.",
+        badge: "ECRITURE PRIVEE • CE QUI REVIENT",
+        title: "Tu sais que ca te fait mal. Mais tu y retournes quand meme.",
         subtitle:
-          "Des travaux de James Pennebaker a l'Universite du Texas montrent que mettre une experience en mots aide a y voir plus clair. Commence a ecrire.",
+          "Un journal prive guide pour les pensees qui tournent, ce qui serre dans la poitrine, et les schemas que tu n'arrives pas encore a lacher.",
         helper:
-          "Ecris une ligne honnete. Aurum l'ouvre dans ta page privee.",
+          "Ecris ce qui revient. Aurum l'ouvre dans ta page privee.",
         helperWithDraft:
           "Crée ton compte pour ouvrir ce texte dans ta page privée.",
-        cta: "Commencer gratuitement",
+        cta: "Commencer a ecrire en prive",
         ctaContinueDraft: "Créer mon compte pour continuer",
-        ctaSecondary: "Ecrire une premiere page",
+        ctaSecondary: "J'ai deja un compte",
         ctaSecondaryGuest: "J'ai déjà un compte",
         ctaAuthenticated: "Continuer a ecrire",
         ctaSecondaryAuthenticated: "Ouvrir mon journal",
@@ -39,23 +39,23 @@ const HeroIntegrated = () => {
           "Ecris en francais, anglais, espagnol, italien, allemand ou portugais.",
         trust: "7 jours gratuits • Prive par conception • Resiliable a tout moment.",
         placeholders: [
-          "Je n'arrive pas a dormir, mon cerveau tourne en boucle sur la reunion de demain...",
-          "Je me sens completement submerge par ma liste de taches aujourd'hui...",
-          "J'ai juste besoin de vider ma tete avant d'exploser...",
+          "Je relis le message, meme si je sais que ca va me faire mal...",
+          "La conversation est terminee, mais elle continue encore en moi...",
+          "J'ai la poitrine serree et je ne sais pas exactement ce que je porte...",
         ],
       }
     : {
-        badge: "PRIVATE WRITING • SHARP REFLECTION",
-        title: "Write in private. See yourself more clearly.",
+        badge: "PRIVATE WRITING • WHAT KEEPS RETURNING",
+        title: "You know it hurts. But you keep going back.",
         subtitle:
-          "James Pennebaker's work at the University of Texas suggests that putting experience into words helps people see it more clearly. Start writing.",
+          "A private guided journal for the thoughts that loop, the feelings that tighten your chest, and the patterns you cannot seem to leave alone.",
         helper:
-          "Write one honest line. Aurum opens it inside your private page.",
+          "Write what keeps coming back. Aurum opens it inside your private page.",
         helperWithDraft:
           "Create your account to open this text inside your private page.",
-        cta: "Start for free",
+        cta: "Start writing privately",
         ctaContinueDraft: "Create my account to continue",
-        ctaSecondary: "Write a first page",
+        ctaSecondary: "I already have an account",
         ctaSecondaryGuest: "I already have an account",
         ctaAuthenticated: "Continue writing",
         ctaSecondaryAuthenticated: "Open my journal",
@@ -66,9 +66,9 @@ const HeroIntegrated = () => {
           "Write in English, French, Spanish, Italian, German, or Portuguese.",
         trust: "7 days free • Private by design • Cancel anytime.",
         placeholders: [
-          "I can't sleep, my mind keeps replaying tomorrow's meeting...",
-          "I feel completely overwhelmed by my to-do list today...",
-          "I just need to clear my head before I explode...",
+          "I read the message again, even though I knew it would hurt...",
+          "The conversation is over, but it is still happening inside me...",
+          "My chest feels tight and I do not know what I am carrying...",
         ],
       },
     [locale]

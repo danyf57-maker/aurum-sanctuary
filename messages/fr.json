@@ -496,14 +496,14 @@
     }
   },
   "hero": {
-    "badge": "ÉCRITURE PRIVÉE • REFLET PRÉCIS",
-    "title": "Écris en privé. Vois plus clair en toi.",
-    "subtitle": "Des travaux de James Pennebaker à l'Université du Texas montrent que mettre une expérience en mots aide à y voir plus clair. Commence à écrire.",
-    "helper": "Écris une ligne honnête. Aurum l'ouvre dans ta page privée.",
+    "badge": "ÉCRITURE PRIVÉE • CE QUI REVIENT",
+    "title": "Tu sais que ça te fait mal. Mais tu y retournes quand même.",
+    "subtitle": "Un journal privé guidé pour les pensées qui tournent, ce qui serre dans la poitrine, et les schémas que tu n'arrives pas encore à lâcher.",
+    "helper": "Écris ce qui revient. Aurum l'ouvre dans ta page privée.",
     "helperWithDraft": "Crée ton compte pour ouvrir ce texte dans ta page privée.",
-    "cta": "Commencer gratuitement",
+    "cta": "Commencer à écrire en privé",
     "ctaContinueDraft": "Créer mon compte pour continuer",
-    "ctaSecondary": "Écrire une première page",
+    "ctaSecondary": "J'ai déjà un compte",
     "ctaSecondaryGuest": "J'ai déjà un compte",
     "ctaAuthenticated": "Continuer à écrire",
     "ctaSecondaryAuthenticated": "Ouvrir mon journal",
@@ -513,56 +513,56 @@
     "languages": "Écris en français, anglais, espagnol, italien, allemand ou portugais.",
     "trust": "7 jours gratuits • Privé par conception • Résiliable à tout moment.",
     "placeholders": {
-      "0": "Je n'arrive pas à dormir, mon cerveau tourne en boucle sur la réunion de demain...",
-      "1": "Je me sens complètement submergé par ma liste de tâches aujourd'hui...",
-      "2": "J'ai juste besoin de vider ma tête avant d'exploser..."
+      "0": "Je relis le message, même si je sais que ça va me faire mal...",
+      "1": "La conversation est terminée, mais elle continue encore en moi...",
+      "2": "J'ai la poitrine serrée et je ne sais pas exactement ce que je porte..."
     },
     "quotes": {
       "0": {
-        "hint": "Écris sans te filtrer. Retrouve de la clarté grâce à une réflexion douce.",
-        "detail": "Écris simplement ce que tu as en tête, sans filtre.",
+        "hint": "Écris ce que tu n'arrives pas encore à dire à voix haute.",
+        "detail": "Commence par ce qui revient.",
         "quote": "Écrire, c'est une façon de parler sans être interrompu.",
         "author": "Jules Renard"
       },
       "1": {
-        "hint": "Quand tu rumines, écris ce qui tourne en boucle.",
-        "detail": "Mettre les mots dehors aide ton mental à ralentir.",
+        "hint": "Quand ta tête rejoue la même scène, donne-lui une page.",
+        "detail": "Quelques lignes vraies peuvent rendre la boucle plus visible.",
         "quote": "J'écris pour découvrir ce que je pense.",
         "author": "Joan Didion"
       },
       "2": {
-        "hint": "Si tu portes trop, dépose tout ici, ligne après ligne.",
-        "detail": "Tu n'as pas besoin d'écrire parfaitement, juste d'écrire vrai.",
+        "hint": "Si ça serre dans ta poitrine, écris avant que ça prenne toute la place.",
+        "detail": "Pas de performance. Pas d'explication. Juste ce qui est vrai maintenant.",
         "quote": "Il n'y a pas de plus grande agonie que de porter une histoire non racontée en soi.",
         "author": "Maya Angelou"
       },
       "3": {
-        "hint": "Quand tu doutes de toi, reviens aux faits et à ton ressenti.",
-        "detail": "Quelques lignes peuvent te redonner un point d'appui.",
+        "hint": "Quand tu t'accuses encore, reviens à ce qui s'est vraiment passé.",
+        "detail": "Sépare le fait, le ressenti, et l'histoire que tu te racontes.",
         "quote": "Un mot après l'autre, c'est le pouvoir.",
         "author": "Margaret Atwood"
       },
       "4": {
-        "hint": "Quand la surcharge intérieure monte, cet espace t'aide à ralentir.",
-        "detail": "Tu peux y déposer ce qui s'emmêle et remarquer ce qui demande de la clarté.",
+        "hint": "Quand le calme semble vide, écris l'intensité sans lui obéir.",
+        "detail": "Tu peux regarder ce qui t'attire sans y retourner.",
         "quote": "Nous écrivons pour goûter la vie deux fois.",
         "author": "Anaïs Nin"
       },
       "5": {
-        "hint": "Après une journée lourde, écris ce qui est resté avec toi.",
-        "detail": "Même 2 minutes de réflexion peuvent rendre un motif plus visible.",
+        "hint": "Après une journée lourde, écris ce qui est resté dans ton corps.",
+        "detail": "Même deux minutes peuvent montrer où la même pression revient.",
         "quote": "La clarté commence quand les mots cessent de tourner et commencent à se poser.",
         "author": "Aurum"
       },
       "6": {
-        "hint": "Quand tout est flou, une phrase claire suffit pour repartir.",
-        "detail": "Commence petit: un fait, une émotion, un besoin.",
+        "hint": "Quand tout est flou, commence par la phrase que tu évites.",
+        "detail": "Commence petit : un fait, un ressenti, l'endroit où ça fait mal.",
         "quote": "Écrire, c'est une façon de parler sans être interrompu.",
         "author": "Jules Renard"
       },
       "7": {
-        "hint": "Quand ton esprit accélère, ralentis avec des mots simples.",
-        "detail": "Ici, tu peux déposer sans te juger.",
+        "hint": "Quand ton esprit accélère, laisse la page rester immobile.",
+        "detail": "Ici, tu peux déposer sans te défendre.",
         "quote": "J'écris pour découvrir ce que je pense.",
         "author": "Joan Didion"
       }
@@ -784,43 +784,43 @@
       "writeCtaArrow": "Continuer à écrire"
     },
     "studySection": {
-      "title": "Ce que montre la recherche",
-      "subtitle": "Les travaux sur l'écriture expressive relient des sessions courtes et répétées à une expérience émotionnelle plus claire et à moins de rumination chez une partie des participants.",
-      "cta": "Commencer gratuitement",
+      "title": "La science, simplement",
+      "subtitle": "Les recherches sur l'écriture expressive suggèrent que mettre des expériences difficiles en mots peut aider certaines personnes à organiser ce qu'elles ressentent, prendre de la distance et voir plus clairement ce qui revient.",
+      "cta": "Commencer à écrire en privé",
       "ctaAuthenticated": "Continuer à écrire"
     },
     "studyCards": [
       {
         "eyebrow": "Dans les études",
-        "title": "Le format le plus étudié est court et répété",
-        "body": "Un protocole fréquent consiste à écrire 15 à 20 minutes, à 3 à 5 reprises, autour d'une expérience importante ou difficile.",
-        "example": "À tester : 10 minutes ce soir, puis quelques retours cette semaine."
+        "title": "Quelques retours comptent plus qu'une page parfaite",
+        "body": "Beaucoup d'études utilisent 15 à 20 minutes d'écriture, répétées plusieurs fois autour d'une expérience importante ou difficile.",
+        "example": "À tester : revenir cette semaine sur le même point qui serre, sans forcer de réponse."
       },
       {
         "eyebrow": "Dans les études",
-        "title": "Mettre l'expérience en mots aide à mieux la traiter",
-        "body": "Les études suggèrent que décrire ce qui s'est passé et nommer les émotions rend l'expérience intérieure plus structurée.",
-        "example": "À tester : ce qui s'est passé, ce que tu as ressenti, ce dont tu avais besoin."
+        "title": "Les mots peuvent donner une forme à ce qui n'en a pas",
+        "body": "Décrire ce qui s'est passé et nommer ce que tu as ressenti peut aider certaines personnes à rendre l'expérience moins emmêlée.",
+        "example": "À tester : ce qui s'est passé, ce qui a serré, ce que tu n'as pas dit."
       },
       {
         "eyebrow": "Dans les études",
-        "title": "La valeur vient de la répétition, pas d'une page parfaite",
-        "body": "Les synthèses suggèrent que les effets apparaissent surtout avec une pratique répétée, pas avec une seule page exceptionnelle.",
-        "example": "À tester : cinq minutes honnêtes, trois fois cette semaine."
+        "title": "La clarté apparaît souvent par répétition",
+        "body": "Les synthèses suggèrent que l'écriture répétée peut rendre les schémas plus reconnaissables dans le temps.",
+        "example": "À tester : cinq minutes honnêtes quand la même pensée revient."
       }
     ],
     "exampleSection": {
       "eyebrow": "Ce qu'Aurum te renvoie",
-      "title": "Après une page, Aurum nomme mieux ce qui se passe",
-      "subtitle": "Aurum ne résume pas seulement. Il renvoie le cycle, la contradiction ou la pression réellement visibles dans ton écriture.",
+      "title": "Toutes les pensées n'ont pas besoin d'une réponse. Certaines ont besoin d'un endroit où se poser.",
+      "subtitle": "Aurum ne cherche pas à te réparer. Il lit ce qui apparaît dans tes mots et renvoie la boucle, la contradiction ou la pression que tu revis.",
       "entryLabel": "Ce que tu écris",
-      "entry": "Je dis oui à tout le monde, puis je me sens envahi, agacé, et coupable d'être agacé.",
+      "entry": "Je relis encore le message. Je sais que ça me fait mal, mais j'y retourne quand même, comme si la prochaine lecture allait enfin donner un sens à tout ça.",
       "reflectionLabel": "Ce qu'Aurum peut te renvoyer",
-      "reflection": "Tu n'es pas seulement débordé. Un rôle apparaît : tu deviens d'abord celui qui tient, et tu remarques trop tard ta propre limite. La culpabilité arrive après, mais le mouvement commence plus tôt : tu t'éloignes de ton besoin dès que quelqu'un a besoin de toi.",
+      "reflection": "Tu ne cherches pas seulement une explication. Tu retournes au moment où tu t'es senti invisible, comme si comprendre pouvait rendre la douleur plus cohérente. Le message est terminé, mais ton corps attend encore que ça fasse moins mal.",
       "highlights": [
         {
-          "title": "Plus analytique, moins générique",
-          "body": "Aurum lit la séquence émotionnelle sous la page, pas seulement le sujet en surface."
+          "title": "Plus proche du corps",
+          "body": "Aurum cherche la pression sous les mots : ce qui serre, revient, se protège, ou reste sans se dire."
         },
         {
           "title": "Dans ta langue",
@@ -828,75 +828,75 @@
         },
         {
           "title": "Pensé pour durer",
-          "body": "Quand les pages s'accumulent, les mêmes conflits, besoins et réactions deviennent plus visibles."
+          "body": "Quand les pages s'accumulent, les mêmes élans, blessures, besoins et réactions deviennent plus reconnaissables."
         }
       ]
     },
     "useCases": {
-      "title": "Des moments réels pour commencer",
-      "subtitle": "Insomnie, pression intérieure, conflit, fatigue de décision. Pars d'un moment réel et écris-le simplement.",
-      "note": "L'écriture aide déjà. Aurum ajoute le reflet qui rend le motif plus net.",
-      "cta": "Commencer gratuitement",
+      "title": "Commence là où ça serre encore",
+      "subtitle": "Un message relu. Une conversation rejouée. Un soir calme qui ne semble pas apaisant. Écris le moment réel avant qu'il prenne toute la place.",
+      "note": "L'écriture privée peut t'aider à déposer ce qui tourne. Aurum ajoute un reflet guidé pour rendre le schéma plus visible.",
+      "cta": "Commencer à écrire en privé",
       "cards": [
         {
-          "badge": "Insomnie",
-          "title": "Ton cerveau tourne la nuit",
-          "body": "Écris ce qui tourne en boucle. En pratique: 3 lignes avant de dormir (fait, émotion, besoin) peuvent déjà apaiser ton esprit.",
+          "badge": "Rejeu",
+          "title": "La conversation est terminée. Mais pas en toi.",
+          "body": "Écris la phrase qui est restée, la réponse que tu n'as pas donnée, et ce qui semble encore inachevé dans ta poitrine.",
           "cta": "Commencer gratuitement →"
         },
         {
-          "badge": "Self-talk",
-          "title": "Tu te parles trop durement",
-          "body": "Quand la petite voix dit \"je suis nul\", écris une version plus juste: \"j'avance petit à petit\". Ça aide à reprendre confiance.",
+          "badge": "Message",
+          "title": "Tu relis le message, même si ça fait mal.",
+          "body": "Aurum donne à cet élan un espace privé, sans le transformer en performance ou en confession.",
           "cta": "Commencer gratuitement →"
         },
         {
-          "badge": "Overthinking",
-          "title": "Tout est confus dans ta tête",
-          "body": "Écris une idée par ligne. Tu transformes la confusion mentale en points clairs, puis tu choisis un seul petit pas pour aujourd'hui.",
+          "badge": "Boucle",
+          "title": "Ton corps est fatigué. Ta tête discute encore.",
+          "body": "Pose chaque pensée sur une ligne. Pas pour gagner le débat, mais pour voir autour de quoi il tourne.",
           "cta": "Commencer gratuitement →"
         },
         {
-          "badge": "Pression",
-          "title": "Tu gardes tout, puis tu exploses",
-          "body": "Quelques lignes régulières valent mieux qu'une longue session rare. Tu décompresses avant saturation et tu retrouves plus de calme.",
+          "badge": "Intensité",
+          "title": "Le calme semble vide, alors tu retournes vers l'intensité.",
+          "body": "Écris la part de toi qui revient vers ce qui fait mal parce qu'au moins, c'est familier.",
           "cta": "Commencer gratuitement →"
         },
         {
-          "badge": "Démarrage",
-          "title": "Tu ne sais pas par où commencer",
-          "body": "Règle simple: commence par un fait, une émotion, un besoin. C'est suffisant pour démarrer sans pression, même en 2 minutes.",
+          "badge": "Histoire",
+          "title": "Tu appelles ça une mauvaise habitude. Mais elle a une histoire.",
+          "body": "Aurum t'aide à remarquer le vieux schéma sous la réaction actuelle, sans te blâmer de l'avoir.",
           "cta": "Ouvrir mon journal →"
         },
         {
-          "badge": "Charge mentale",
-          "title": "Ta liste de tâches t'étouffe",
-          "body": "Pose un minuteur 5 minutes et écris sans corriger: faits, émotions, besoins. Cette routine courte te redonne de l'air mental.",
+          "badge": "Corps",
+          "title": "Tu ressens trop, sans savoir encore ce que c'est.",
+          "body": "Commence par le corps : gorge, ventre, poitrine. Puis écris le moment qui a déclenché la tension.",
           "cta": "Créer mon espace →"
         },
         {
           "badge": "Conflit",
-          "title": "Après une dispute, ton mental rejoue la scène",
-          "body": "Pose les faits, ce que tu as ressenti, puis ce dont tu as besoin maintenant. Tu sors du film mental et tu reviens à toi.",
+          "title": "Tu confonds comprendre et rejouer.",
+          "body": "Écris ce que tu essaies de comprendre, puis ce que cette boucle te coûte ce soir.",
           "cta": "Revenir au calme →"
         },
         {
-          "badge": "Fatigue mentale",
-          "title": "Tu te sens vidé sans savoir pourquoi",
-          "body": "Écris 5 lignes en fin de journée: ce qui t'a pris de l'énergie, ce qui t'en a donné. Tu retrouves des repères pour demain.",
+          "badge": "Silence",
+          "title": "Le calme sonne faux, même quand rien ne se passe.",
+          "body": "Utilise la page pour l'inconfort qui arrive quand la pièce devient enfin silencieuse.",
           "cta": "Retrouver de l'énergie →"
         },
         {
-          "badge": "Décision",
-          "title": "Tu bloques sur une décision importante",
-          "body": "Divise ta page en deux colonnes: ce que tu gagnes, ce que tu perds. Mettre à plat tes pensées fait souvent émerger ton vrai choix.",
+          "badge": "Voix",
+          "title": "Certaines choses ne peuvent pas encore sortir de ta bouche.",
+          "body": "Écris-les d'abord en privé. Tu n'as pas à expliquer, justifier, ou rendre ça acceptable.",
           "cta": "Clarifier ma décision →"
         }
       ]
     },
     "scientificProof": {
-      "title": "Ce que montrent les données",
-      "subtitle": "L'écriture expressive est étudiée depuis des décennies. Certains résultats sont particulièrement utiles pour comprendre la logique d'Aurum :",
+      "title": "Un principe simple, étudié depuis des décennies",
+      "subtitle": "Les recherches sur l'écriture expressive suggèrent que mettre des expériences difficiles en mots peut aider certaines personnes à organiser ce qu'elles ressentent, prendre de la distance et voir plus clairement ce qui revient. Aurum s'inscrit dans cette logique avec une réflexion guidée, non pas pour te réparer, mais pour t'aider à regarder ce qui revient.",
       "discoveries": [
         {
           "label": "Découverte n°1 :",
@@ -909,17 +909,17 @@
       ]
     },
     "problem": {
-      "title": "À quoi ressemble la surcharge intérieure ?",
-      "body": "Les pensées tournent, les émotions se mélangent, et les mêmes situations reviennent sans devenir plus claires."
+      "title": "Tu n'es pas bloqué parce que tu es faible.",
+      "body": "Parfois un message, un souvenir, une personne ou une phrase prend toute la place en toi. Tu le rejoues pendant des heures. Tu appelles ça comprendre. Mais ton corps sait que c'est une boucle."
     },
     "solution": {
-      "title": "L'écriture donne à l'expérience un endroit où se poser.",
-      "body": "Aurum ajoute une lecture psychologique profonde, pour rendre plus visibles ce qui revient, se contredit, se protège, ou reste sans se dire."
+      "title": "Écris ce qui revient avant que ça prenne toute la place.",
+      "body": "Aurum t'aide à écrire ce qui revient : les pensées, les boucles et les schémas émotionnels qui serrent à l'intérieur. Il renvoie ce qui apparaît dans tes mots pour que tu puisses le regarder avec plus de distance."
     },
     "trust": {
       "eyebrow": "Confiance",
-      "title": "Un espace privé, protégé, et sous ton contrôle.",
-      "subtitle": "Aurum protège tes pages, limite l'accès au contenu lisible aux traitements nécessaires au service, et ne vend pas tes données.",
+      "title": "Ton journal n'est pas du contenu.",
+      "subtitle": "Ta douleur n'est pas une donnée à vendre. Aurum a été conçu comme un espace privé pour ce que tu n'es pas encore prêt à dire à voix haute.",
       "cards": [
         {
           "title": "Chiffré par défaut",
@@ -935,24 +935,24 @@
         }
       ],
       "manifestoTitle": "Notre manifeste de confiance",
-      "manifestoBody": "« Nous ne vendons pas de publicité. Nous ne vendons pas tes données. Nous protégeons un espace privé pour la clarté, la réflexion et la compréhension de soi. Ton journal n'est pas un produit. C'est ton terrain intérieur. »",
+      "manifestoBody": "« Nous ne vendons pas de publicité. Nous ne vendons pas tes données. Nous protégeons un espace privé pour ce que tu n'es pas encore prêt à dire à voix haute. Ton journal n'est pas un produit. C'est ton terrain intérieur. »",
       "seal": "Sceau de confiance"
     },
     "finalCta": {
-      "button": "Commencer gratuitement",
+      "button": "Commencer à écrire en privé",
       "buttonAuthenticated": "Continuer à écrire",
-      "note": "7 jours gratuits • Juge par toi-même la qualité des reflets",
-      "subtitle": "Écris quelques pages honnêtes, lis ce qu'Aurum te renvoie, et vois si la clarté est différente de ce que tu as déjà essayé.",
+      "note": "7 jours gratuits • Privé par conception • Résiliable à tout moment",
+      "subtitle": "Écris ce qui revient. Lis ce qu'Aurum te renvoie. Vois si le schéma devient plus facile à tenir.",
       "cards": [
         {
           "title": "writing",
           "eyebrow": "Écriture",
-          "body": "Un espace calme pour écrire librement, sans distraction ni auto-censure."
+          "body": "Un espace calme pour écrire ce que tu n'arrives pas encore à dire à voix haute."
         },
         {
           "title": "analysis",
           "eyebrow": "Réflexion",
-          "body": "Un reflet psychologiquement précis, qui nomme la boucle, la tension ou la contradiction visible dans tes mots."
+          "body": "Un reflet guidé qui nomme la boucle, la tension ou la contradiction visible dans tes mots."
         },
         {
           "title": "privacy",
@@ -962,35 +962,35 @@
         {
           "title": "continuity",
           "eyebrow": "Continuité",
-          "body": "Quand tu continues à écrire, Aurum aide les motifs récurrents à devenir plus visibles."
+          "body": "Quand tu continues à écrire, Aurum aide les schémas émotionnels récurrents à devenir plus reconnaissables."
         }
       ]
     },
     "faqTitle": "Questions fréquentes",
     "faqs": [
       {
-        "question": "Qui peut lire mes données ?",
-        "answer": "Tes pages restent dans un espace privé chiffré. L'accès au contenu lisible est limité aux traitements nécessaires pour fournir les reflets et faire fonctionner le service."
+        "question": "Aurum est-il une thérapie ?",
+        "answer": "Non. Aurum est un journal privé guidé. Il peut t'aider à écrire, clarifier et repérer des schémas récurrents, mais il ne remplace pas un professionnel de santé, un diagnostic, ni une prise en charge clinique."
       },
       {
-        "question": "Comment l'écriture privée aide-t-elle à retrouver de la clarté le soir ?",
-        "answer": "Écris 3 lignes avant de te coucher : ce qui te pèse, ce que tu ressens, puis ce dont tu as besoin demain. Le but est de sortir les boucles mentales de ta tête pour laisser revenir la clarté."
+        "question": "Que dois-je écrire quand je me sens submergé ?",
+        "answer": "Commence par la vérité la plus simple : ce qui s'est passé, l'endroit où ça serre dans ton corps, et la pensée qui revient. Tu n'as pas besoin d'une page parfaite. Une phrase honnête suffit pour commencer."
       },
       {
-        "question": "Comment réduire la surcharge intérieure en 5 minutes ?",
-        "answer": "Pose un minuteur 5 minutes et écris sans corriger : faits, émotions, besoins. Cette courte réflexion aide à alléger la surcharge intérieure et à retrouver de la clarté, même pendant une journée chargée."
+        "question": "L'écriture peut-elle m'aider à comprendre pourquoi je répète les mêmes schémas ?",
+        "answer": "Elle peut aider certaines personnes à prendre de la distance et à voir ce qui se répète. Aurum renvoie les boucles et schémas émotionnels visibles dans ton écriture, pour t'aider à les observer plus clairement dans le temps."
       },
       {
-        "question": "Comment la réflexion aide-t-elle à sortir du trop-plein mental ?",
-        "answer": "Quand tout tourne dans ta tête, écris une idée par ligne. La réflexion transforme un flot confus en quelque chose que tu peux voir, nommer et traverser plus clairement."
+        "question": "Mon journal est-il vraiment privé ?",
+        "answer": "Oui. Tes pages restent dans un espace privé chiffré. Aurum ne vend pas tes données, et l'accès au contenu lisible est limité aux traitements nécessaires pour fournir les reflets et faire fonctionner le service."
       },
       {
-        "question": "L'écriture réflexive peut-elle améliorer la clarté émotionnelle ?",
-        "answer": "L'écriture réflexive peut améliorer la clarté émotionnelle dans le temps en aidant à nommer ce que tu ressens, remarquer ce qui revient et prendre un peu de distance avec le bruit mental."
+        "question": "Que se passe-t-il après avoir écrit ?",
+        "answer": "Aurum lit la page et renvoie ce qui semble ressortir : la pression, la contradiction, la boucle ou le schéma dans tes mots. Ce n'est pas un jugement médical. C'est un miroir guidé pour ta réflexion privée."
       },
       {
-        "question": "Quelle app de réflexion privée protège vraiment mes écrits ?",
-        "answer": "Choisis une app de réflexion privée qui protège tes écrits par défaut, ne vend pas tes données, et garde tes pages hors de tout espace public. Sur Aurum, tes mots restent dans un espace privé conçu pour la clarté et les motifs récurrents."
+        "question": "Et si ce que j'écris est trop lourd ?",
+        "answer": "Aurum peut accueillir l'écriture privée, mais ce n'est pas un service d'urgence ou de crise. Si tu risques de te faire du mal, de faire du mal à quelqu'un, ou si tu ne te sens pas en sécurité, contacte immédiatement les urgences ou un professionnel qualifié."
       },
       {
         "question": "Combien coûte Aurum ?",
@@ -1139,8 +1139,8 @@
   },
   "trialOffer": {
     "badge": "7 JOURS OFFERTS",
-    "title": "Commence avec 7 jours de lecture psychologique privée.",
-    "body": "Écris sans te censurer, reçois une lecture psychologique profonde après chaque page, et commence à voir tes motifs émotionnels récurrents avant la première facturation.",
+    "title": "Commence avec 7 jours de réflexion guidée privée.",
+    "body": "Écris ce qui tourne en boucle, reçois un reflet après chaque page, et commence à remarquer les schémas émotionnels vers lesquels tu reviens avant la première facturation.",
     "cta": "Voir l'offre"
   },
   "paywall": {

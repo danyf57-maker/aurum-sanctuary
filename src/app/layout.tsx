@@ -149,13 +149,17 @@ export async function generateMetadata(): Promise<Metadata> {
   const alternates = buildAlternates("/", locale);
 
   const title = isFr
-    ? "Aurum Diary | Écriture privée, plus de clarté"
-    : "Aurum Diary | Private writing, clearer insight";
+    ? "Aurum | Journal privé guidé pour les pensées qui reviennent"
+    : "Aurum Diary | Private guided journal for thoughts that keep coming back";
   const description = isFr
-    ? "Des travaux sur l'écriture expressive montrent que mettre une expérience en mots aide à y voir plus clair. Aurum t'aide à commencer en privé."
-    : "Research on expressive writing suggests that putting experience into words helps people see more clearly. Aurum helps you begin in private.";
-  const ogTitle = "Aurum Diary | Private writing, clearer insight";
-  const ogDescription = "Write freely in private. Aurum helps you see what keeps repeating.";
+    ? "Écris ce qui tourne en boucle. Aurum est un journal privé guidé pour clarifier ce que tu ressens et mieux comprendre les schémas qui reviennent."
+    : "Write what keeps looping. Aurum is a private guided journal for emotional clarity, recurring patterns, and the thoughts you cannot seem to leave alone.";
+  const ogTitle = isFr
+    ? "Aurum | Journal privé guidé pour les pensées qui reviennent"
+    : "Aurum Diary | Private guided journal for thoughts that keep coming back";
+  const ogDescription = isFr
+    ? "Écris ce qui revient avant que ça prenne toute la place."
+    : "Write what keeps coming back before it takes all the space.";
 
   return {
     title,
@@ -220,8 +224,8 @@ export default async function RootLayout({
     '@type': 'SoftwareApplication',
     name: 'Aurum',
     description: isFr
-      ? "Un espace d'écriture privé pour mettre une expérience en mots et y voir plus clair."
-      : "A private writing space for putting experience into words and seeing it more clearly.",
+      ? "Un journal privé guidé pour écrire ce qui revient et mieux voir les schémas qui prennent de la place."
+      : "A private guided journal for writing what keeps coming back and seeing recurring patterns more clearly.",
     applicationCategory: ['LifestyleApplication', 'ProductivityApplication'],
     operatingSystem: 'Web, iOS, Android',
     offers: {
