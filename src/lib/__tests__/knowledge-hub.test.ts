@@ -18,6 +18,17 @@ const growthSlugs = [
   "rosebud-alternative",
 ] as const;
 
+const scienceSlugs = [
+  "journaling-scientifique",
+  "bienfaits-ecriture-expressive",
+  "ecriture-et-clarte-mentale",
+  "journaling-et-rumination",
+  "ecriture-manuscrite-ou-clavier",
+  "journal-intime-et-emotions",
+  "prompts-ecriture-expressive",
+  "ecriture-et-recits-personnels",
+] as const;
+
 function guideWordCount(slug: string, locale: "en" | "fr") {
   const topic = getKnowledgeHubTopic(slug, locale);
   if (!topic) return 0;
@@ -45,5 +56,10 @@ describe("priority guide content depth", () => {
   it.each(growthSlugs)("%s exists with useful bilingual launch content", (slug) => {
     expect(guideWordCount(slug, "en")).toBeGreaterThanOrEqual(250);
     expect(guideWordCount(slug, "fr")).toBeGreaterThanOrEqual(250);
+  });
+
+  it.each(scienceSlugs)("%s exists as a substantial bilingual science guide", (slug) => {
+    expect(guideWordCount(slug, "en")).toBeGreaterThanOrEqual(450);
+    expect(guideWordCount(slug, "fr")).toBeGreaterThanOrEqual(450);
   });
 });

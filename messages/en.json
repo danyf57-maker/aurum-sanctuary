@@ -496,14 +496,14 @@
     }
   },
   "hero": {
-    "badge": "PRIVATE WRITING • SHARP REFLECTION",
-    "title": "Write in private. See yourself more clearly.",
-    "subtitle": "James Pennebaker's work at the University of Texas suggests that putting experience into words helps people see it more clearly. Start writing.",
-    "helper": "Write one honest line. Aurum opens it inside your private page.",
+    "badge": "PRIVATE WRITING • WHAT KEEPS RETURNING",
+    "title": "You know it hurts. But you keep going back.",
+    "subtitle": "For the message you reread, the conversation you replay, and the feeling in your chest that still has no name.",
+    "helper": "Write what keeps coming back. Aurum opens it inside your private page.",
     "helperWithDraft": "Create your account to open this text inside your private page.",
-    "cta": "Start for free",
+    "cta": "Start writing privately",
     "ctaContinueDraft": "Create my account to continue",
-    "ctaSecondary": "Write a first page",
+    "ctaSecondary": "I already have an account",
     "ctaSecondaryGuest": "I already have an account",
     "ctaAuthenticated": "Continue writing",
     "ctaSecondaryAuthenticated": "Open my journal",
@@ -513,56 +513,56 @@
     "languages": "Write in English, French, Spanish, Italian, German, or Portuguese.",
     "trust": "7 days free • Private by design • Cancel anytime.",
     "placeholders": {
-      "0": "I can't sleep, my mind keeps replaying tomorrow's meeting...",
-      "1": "I feel completely overwhelmed by my to-do list today...",
-      "2": "I just need to clear my head before I explode..."
+      "0": "I read the message again, even though I knew it would hurt...",
+      "1": "The conversation is over, but it is still happening inside me...",
+      "2": "My chest feels tight and I do not know what I am carrying..."
     },
     "quotes": {
       "0": {
-        "hint": "Write without filtering. Regain clarity with gentle reflection.",
-        "detail": "Just write what's on your mind, without filtering.",
+        "hint": "Write what you cannot say out loud yet.",
+        "detail": "Start with the part that keeps coming back.",
         "quote": "Writing is a way of talking without being interrupted.",
         "author": "Jules Renard"
       },
       "1": {
-        "hint": "When you're ruminating, write down what keeps looping.",
-        "detail": "Getting words out helps your mind slow down.",
+        "hint": "When your mind replays the same scene, give it a page.",
+        "detail": "A few honest lines can make the loop easier to see.",
         "quote": "I write to find out what I think.",
         "author": "Joan Didion"
       },
       "2": {
-        "hint": "If you're carrying too much, set it all down here, line by line.",
-        "detail": "You don't need to write perfectly, just write honestly.",
+        "hint": "If your chest feels tight, write before it fills the room.",
+        "detail": "No performance. No explanation. Just what is true right now.",
         "quote": "There is no greater agony than bearing an untold story inside you.",
         "author": "Maya Angelou"
       },
       "3": {
-        "hint": "When you doubt yourself, return to the facts and your feelings.",
-        "detail": "A few lines can give you solid ground again.",
+        "hint": "When you keep blaming yourself, return to what actually happened.",
+        "detail": "Separate the fact, the feeling, and the story you keep telling.",
         "quote": "One word at a time — that's the power.",
         "author": "Margaret Atwood"
       },
       "4": {
-        "hint": "When inner overload rises, this space helps you sort what matters.",
-        "detail": "You can set down what feels tangled and notice what asks for clarity.",
+        "hint": "When calm feels empty, write the intensity without obeying it.",
+        "detail": "You can look at the pull without going back inside it.",
         "quote": "We write to taste life twice.",
         "author": "Anaïs Nin"
       },
       "5": {
-        "hint": "After a heavy day, write what stayed with you.",
-        "detail": "Even 2 minutes of reflection can make a pattern easier to see.",
+        "hint": "After a heavy day, write what stayed in your body.",
+        "detail": "Even two minutes can show where the same pressure returns.",
         "quote": "Clarity begins when words stop circling and start landing.",
         "author": "Aurum"
       },
       "6": {
-        "hint": "When everything is foggy, one clear sentence is enough to start again.",
-        "detail": "Start small: one fact, one emotion, one need.",
+        "hint": "When everything is foggy, begin with the one sentence you avoid.",
+        "detail": "Start small: one fact, one feeling, one place it hurts.",
         "quote": "Writing is a way of talking without being interrupted.",
         "author": "Jules Renard"
       },
       "7": {
-        "hint": "When your mind speeds up, slow down with simple words.",
-        "detail": "Here, you can set things down without judgment.",
+        "hint": "When your mind speeds up, let the page stay still.",
+        "detail": "Here, you can set it down without defending yourself.",
         "quote": "I write to find out what I think.",
         "author": "Joan Didion"
       }
@@ -784,43 +784,43 @@
       "writeCtaArrow": "Continue writing"
     },
     "studySection": {
-      "title": "What research shows",
-      "subtitle": "Expressive writing research links short repeated writing sessions with clearer emotional processing and lower rumination in some participants.",
-      "cta": "Start for free",
+      "title": "Science, told simply",
+      "subtitle": "Research on expressive writing suggests that putting difficult experiences into words can help some people organize what they feel, create distance, and notice recurring patterns more clearly.",
+      "cta": "Start writing privately",
       "ctaAuthenticated": "Continue writing"
     },
     "studyCards": [
       {
         "eyebrow": "Research finding",
-        "title": "Short repeated writing is the format studied most often",
-        "body": "A common protocol is 15 to 20 minutes of writing, repeated 3 to 5 times around one meaningful or difficult experience.",
-        "example": "Try this: 10 minutes tonight, then a few returns this week."
+        "title": "A few returns matter more than one perfect page",
+        "body": "Many studies use 15 to 20 minutes of writing, repeated several times around one meaningful or difficult experience.",
+        "example": "Try this: come back to the same ache this week, without forcing an answer."
       },
       {
         "eyebrow": "Research finding",
-        "title": "Putting experience into words can make it easier to process",
-        "body": "Studies suggest that describing events and naming emotions can make inner experience more structured and easier to understand.",
-        "example": "Try this: what happened, what you felt, what you needed."
+        "title": "Words can give shape to what feels shapeless",
+        "body": "Describing what happened and naming what you felt may help the experience feel less tangled for some people.",
+        "example": "Try this: what happened, what tightened, what you needed but did not say."
       },
       {
         "eyebrow": "Research finding",
-        "title": "The value comes from repetition, not from writing perfectly",
-        "body": "Reviews suggest that benefits appear through repeated sessions, not through one exceptional page.",
-        "example": "Try this: five honest minutes, three times this week."
+        "title": "Clarity often appears through repetition",
+        "body": "Reviews suggest that repeated writing can help patterns become easier to recognize over time.",
+        "example": "Try this: five honest minutes when the same thought comes back."
       }
     ],
     "exampleSection": {
       "eyebrow": "What Aurum gives back",
-      "title": "After one page, Aurum names what is actually happening",
-      "subtitle": "Aurum does not just summarize. It reflects the loop, contradiction, or pressure that is visible in your writing.",
+      "title": "Not every thought needs an answer. Some need a place to land.",
+      "subtitle": "Aurum does not try to fix you. It reads what is visible in your words and reflects the loop, contradiction, or pressure you keep living through.",
       "entryLabel": "What you write",
-      "entry": "I keep saying yes to everyone, then I feel overwhelmed and angry, and then guilty for feeling angry.",
+      "entry": "I keep reading the message again. I know it hurts, but I still go back to it, like maybe the next read will make it make sense.",
       "reflectionLabel": "What Aurum may reflect back",
-      "reflection": "You are not only overloaded. A role appears: you become the reliable one first, and only notice your own limit afterward. The guilt comes late, but the movement starts much earlier: you move away from what you need the moment someone else needs something from you.",
+      "reflection": "You are not only looking for an explanation. You are returning to the moment where you felt unseen, trying to make the pain more coherent. The message is over, but your body is still waiting for it to hurt less.",
       "highlights": [
         {
-          "title": "Psychologically sharper",
-          "body": "Aurum reads the emotional sequence underneath the page, not just the topic on the surface."
+          "title": "Closer to the body",
+          "body": "Aurum looks for the pressure underneath the words: what tightens, repeats, protects itself, or stays unsaid."
         },
         {
           "title": "In your own language",
@@ -828,75 +828,75 @@
         },
         {
           "title": "Built for continuity",
-          "body": "As pages accumulate, the same conflicts, needs, and reactions become easier to recognize."
+          "body": "As pages accumulate, the same pulls, wounds, needs, and reactions become easier to recognize."
         }
       ]
     },
     "useCases": {
-      "title": "Real moments to start from",
-      "subtitle": "Insomnia, inner pressure, conflict, decision fatigue. Start from a real moment and write it down plainly.",
-      "note": "Private writing helps. Aurum adds the reflection that makes the pattern clearer.",
-      "cta": "Start for free",
+      "title": "Start where it still hurts",
+      "subtitle": "A message reread. A conversation replayed. A quiet evening that does not feel peaceful. Write the real moment before it takes all the space.",
+      "note": "Private writing can help you set down what loops. Aurum adds guided reflection to make the pattern easier to see.",
+      "cta": "Start writing privately",
       "cards": [
         {
-          "badge": "Insomnia",
-          "title": "Your mind keeps spinning at night",
-          "body": "Write down what keeps looping. In practice, three lines before bed (fact, emotion, need) can already soothe your mind.",
+          "badge": "Replay",
+          "title": "The conversation ended. But not inside you.",
+          "body": "You replay the tone, the pause, the sentence you should have said. The room is quiet. Your body is not.",
           "cta": "Start for free →"
         },
         {
-          "badge": "Self-talk",
-          "title": "You speak to yourself too harshly",
-          "body": "When the inner voice says “I am useless,” write a fairer version: “I am moving forward step by step.” It helps rebuild confidence.",
+          "badge": "Message",
+          "title": "You read the message again, even though it hurts.",
+          "body": "Not because there is something new in it. Because some part of you is still waiting for it to feel different.",
           "cta": "Start for free →"
         },
         {
           "badge": "Overthinking",
-          "title": "Everything feels tangled in your head",
-          "body": "Write one idea per line. You turn mental confusion into clear points, then pick one small step for today.",
+          "title": "Your body is tired. Your mind is still arguing.",
+          "body": "You want rest, but your thoughts keep preparing a defense for a conversation that is already over.",
           "cta": "Start for free →"
         },
         {
-          "badge": "Pressure",
-          "title": "You keep it all in until you explode",
-          "body": "A few regular lines are better than one rare long session. You decompress before saturation and regain calm.",
+          "badge": "Intensity",
+          "title": "Peace feels empty, so you go back to intensity.",
+          "body": "The calm should feel safe. Instead, it feels like absence. So you return to what burns because at least it feels familiar.",
           "cta": "Start for free →"
         },
         {
-          "badge": "Starting",
-          "title": "You do not know where to begin",
-          "body": "Simple rule: start with one fact, one emotion, one need. That is enough to begin without pressure, even in two minutes.",
+          "badge": "History",
+          "title": "You call it a bad habit. But it has a history.",
+          "body": "The pattern did not appear from nowhere. It learned your fear before you had words for it.",
           "cta": "Open my journal →"
         },
         {
-          "badge": "Mental load",
-          "title": "Your task list is suffocating you",
-          "body": "Set a five-minute timer and write without editing: facts, emotions, needs. This short routine gives your mind some air back.",
+          "badge": "Body",
+          "title": "You feel too much, but you do not know what it is yet.",
+          "body": "Start with the body: throat, stomach, chest. Then write the moment that made it tighten.",
           "cta": "Create my space →"
         },
         {
           "badge": "Conflict",
-          "title": "After an argument, your mind replays the scene",
-          "body": "Write the facts, what you felt, and what you need now. You step out of the mental movie and come back to yourself.",
+          "title": "You confuse understanding with replaying.",
+          "body": "You tell yourself you are trying to make sense of it. But the loop keeps taking more than it gives.",
           "cta": "Return to calm →"
         },
         {
-          "badge": "Mental fatigue",
-          "title": "You feel drained without knowing why",
-          "body": "Write five lines at the end of the day: what drained your energy, and what gave some back. You regain reference points for tomorrow.",
+          "badge": "Silence",
+          "title": "The quiet feels wrong, even when nothing is happening.",
+          "body": "Use the page for the unease that arrives when the room finally goes still.",
           "cta": "Recover energy →"
         },
         {
-          "badge": "Decision",
-          "title": "You are stuck on an important decision",
-          "body": "Split the page in two columns: what you gain, what you lose. Putting thoughts in front of you often reveals the real choice.",
+          "badge": "Voice",
+          "title": "Some things still cannot leave your mouth.",
+          "body": "Write them privately first. You do not have to explain, justify, or make them sound acceptable.",
           "cta": "Clarify my decision →"
         }
       ]
     },
     "scientificProof": {
-      "title": "What the data shows",
-      "subtitle": "Expressive writing has been studied for decades. Some findings are especially relevant to what Aurum is built for:",
+      "title": "A simple principle, studied for decades",
+      "subtitle": "Research on expressive writing suggests that putting difficult experiences into words can help some people organize what they feel, create distance, and see recurring patterns more clearly. Aurum builds on that principle with guided reflection, not to fix you, but to help you see what keeps coming back.",
       "discoveries": [
         {
           "label": "Finding #1:",
@@ -909,25 +909,25 @@
       ]
     },
     "problem": {
-      "title": "What does inner overload feel like?",
-      "body": "Thoughts loop, emotions blur, and the same situations keep returning without becoming clearer."
+      "title": "You are not stuck because you are weak.",
+      "body": "Sometimes one message, one memory, one person, or one sentence keeps taking up the room inside you. You replay it for hours. You call it understanding. But your body knows it is rumination."
     },
     "solution": {
-      "title": "Writing gives the experience a place to land.",
-      "body": "Aurum adds a deep psychological reading, so what repeats, conflicts, protects itself, or stays unspoken becomes easier to see."
+      "title": "Write what keeps coming back before it takes all the space.",
+      "body": "Aurum helps you write what returns: the thoughts, loops, and emotional patterns that tighten inside you. It reflects what is visible in your words so you can look at it with more distance."
     },
     "trust": {
       "eyebrow": "Trust",
-      "title": "A private space, protected and under your control.",
-      "subtitle": "Aurum protects your pages, limits readable access to the processing needed to run the service, and does not sell your data.",
+      "title": "Your journal is not content.",
+      "subtitle": "Your pain is not data to sell. Aurum was built as a private place for what you are not ready to say out loud.",
       "cards": [
         {
           "title": "Encrypted by default",
-          "body": "Your pages are encrypted before storage and stay in a private space built for reflection."
+          "body": "Your pages are encrypted before storage and kept in a private space built for reflection."
         },
         {
           "title": "Limited access",
-          "body": "Readable access to content is restricted to the processing needed to provide reflections and run the service."
+          "body": "Readable access is limited to the processing needed to provide reflections and run the service."
         },
         {
           "title": "Your data, your choice",
@@ -935,24 +935,24 @@
         }
       ],
       "manifestoTitle": "Our trust manifesto",
-      "manifestoBody": "\"We do not sell advertising. We do not sell your data. We protect a private space for clarity, reflection, and self-understanding. Your journal is not a product. It is your inner ground.\"",
+      "manifestoBody": "\"We do not sell advertising. We do not sell your data. We protect a private space for what you cannot say out loud yet. Your journal is not a product. It is your inner ground.\"",
       "seal": "Trust seal"
     },
     "finalCta": {
-      "button": "Start for free",
+      "button": "Start writing privately",
       "buttonAuthenticated": "Continue writing",
-      "note": "7 days free • Judge the reflection quality for yourself",
-      "subtitle": "Write a few honest pages, read what Aurum gives back, and see whether the clarity feels different from anything else you have tried.",
+      "note": "7 days free • Private by design • Cancel anytime",
+      "subtitle": "Write the thing that keeps returning. Read what Aurum reflects back. See whether the pattern becomes easier to hold.",
       "cards": [
         {
           "title": "writing",
           "eyebrow": "Writing",
-          "body": "A calm space to write freely, without distraction or self-censorship."
+          "body": "A calm space to write what is hard to say out loud."
         },
         {
           "title": "reflection",
           "eyebrow": "Reflection",
-          "body": "Psychologically sharp reflection that names the loop, tension, or contradiction visible in your words."
+          "body": "Guided reflection that names the loop, tension, or contradiction visible in your words."
         },
         {
           "title": "privacy",
@@ -962,35 +962,35 @@
         {
           "title": "continuity",
           "eyebrow": "Continuity",
-          "body": "As you keep writing, Aurum helps recurring patterns become easier to recognize."
+          "body": "As you keep writing, Aurum helps recurring emotional patterns become easier to recognize."
         }
       ]
     },
     "faqTitle": "Frequently asked questions",
     "faqs": [
       {
-        "question": "Who can read my data?",
-        "answer": "Your pages stay in an encrypted private space. Readable access is limited to the processing needed to provide reflections and run the service."
+        "question": "Is Aurum therapy?",
+        "answer": "No. Aurum is a private guided journal. It can help you write, clarify, and notice recurring patterns, but it does not replace a licensed professional, a diagnosis, or clinical care."
       },
       {
-        "question": "How can private writing help me regain clarity at night?",
-        "answer": "Write three lines before bed: what feels heavy, what you feel, and what you need tomorrow. The goal is to move looping thoughts onto the page so clarity can return."
+        "question": "What should I write when I feel overwhelmed?",
+        "answer": "Start with the simplest truth: what happened, where it tightens in your body, and the thought that keeps returning. You do not need a perfect page. One honest sentence is enough to begin."
       },
       {
-        "question": "How can I reduce inner overload in 5 minutes?",
-        "answer": "Set a five-minute timer and write without editing: facts, emotions, needs. This short reflection helps reduce inner overload and regain clarity, even on a crowded day."
+        "question": "Can writing help me understand why I keep repeating the same patterns?",
+        "answer": "It can help some people create distance and see what repeats. Aurum reflects the loops and emotional patterns visible in your writing, so you can observe them more clearly over time."
       },
       {
-        "question": "How can reflection help me step out of overthinking?",
-        "answer": "When everything spins in your head, write one thought per line. Reflection turns mental noise into something you can see, name, and act on."
+        "question": "Is my journal private?",
+        "answer": "Yes. Your pages stay in an encrypted private space. Aurum does not sell your data, and readable access is limited to the processing needed to provide reflections and run the service."
       },
       {
-        "question": "Can reflective writing improve emotional clarity?",
-        "answer": "Reflective writing can improve emotional clarity over time by helping you name what you feel, notice what repeats, and create some distance from mental noise."
+        "question": "What happens after I write?",
+        "answer": "Aurum reads the page and reflects what seems to stand out: the pressure, contradiction, loop, or pattern in your words. It is not a medical judgment. It is a guided mirror for private reflection."
       },
       {
-        "question": "What private reflection app actually protects my writing?",
-        "answer": "Choose a private reflection app that protects your writing by default, does not sell your data, and keeps your pages out of any public feed. On Aurum, your words stay in a private space built for clarity and pattern discovery."
+        "question": "What if what I write feels too heavy?",
+        "answer": "Aurum can hold private writing, but it is not an emergency or crisis service. If you might hurt yourself or someone else, or if you feel unsafe, contact emergency services or a qualified professional immediately."
       },
       {
         "question": "How much does Aurum cost?",
@@ -1139,8 +1139,8 @@
   },
   "trialOffer": {
     "badge": "7 DAYS FREE",
-    "title": "Start with 7 days of private psychological reflection.",
-    "body": "Write without self-censorship, receive deep psychological reflection after each page, and notice recurring emotional patterns before your first charge.",
+    "title": "Start with 7 days of private guided reflection.",
+    "body": "Write what keeps looping, receive a reflection after each page, and begin noticing the emotional patterns you keep coming back to before your first charge.",
     "cta": "View plans"
   },
   "paywall": {

@@ -45,4 +45,26 @@ describe("homepage performance constraints", () => {
     expect(floatingCtaSource).toContain('"use client"');
     expect(floatingCtaSource).toContain("passive: true");
   });
+
+  it("uses CSS-only premium motion utilities with reduced-motion support", () => {
+    const homepageSource = readFileSync(
+      join(process.cwd(), "src/app/(marketing)/page.tsx"),
+      "utf8"
+    );
+    const globalCss = readFileSync(
+      join(process.cwd(), "src/app/globals.css"),
+      "utf8"
+    );
+
+    expect(homepageSource).toContain("aurum-motion-section");
+    expect(homepageSource).toContain("aurum-landing-motion");
+    expect(homepageSource).toContain("aurum-motion-card");
+    expect(homepageSource).toContain("aurum-motion-button");
+    expect(globalCss).toContain(".aurum-landing-motion .aurum-motion-section");
+    expect(globalCss).toContain("aurum-landing-card-reveal");
+    expect(globalCss).toContain("aurum-button-breathe");
+    expect(globalCss).toContain("@media (prefers-reduced-motion: reduce)");
+    expect(globalCss).toContain("@keyframes aurum-section-rise");
+    expect(globalCss).toContain("@keyframes aurum-reflection-reveal");
+  });
 });

@@ -60,12 +60,12 @@ export default async function Home() {
         t('references.aria4'),
     ];
     return (
-        <main>
+        <main className="aurum-landing-motion">
             <HeroIntegrated />
-            <section className="bg-white py-14 md:py-16">
+            <section className="aurum-motion-section bg-white py-14 md:py-16">
                 <div className="container">
                     <section className="mx-auto">
-                        <div className="mx-auto w-full max-w-[720px] rounded-3xl border border-stone-200 bg-gradient-to-b from-white to-stone-50 p-8 shadow-sm md:p-10">
+                        <div className="aurum-motion-card mx-auto w-full max-w-[720px] rounded-3xl border border-stone-200 bg-gradient-to-b from-white to-stone-50 p-8 shadow-sm md:p-10">
                             <div className="flex h-full flex-col justify-between gap-8">
                                 <div className="space-y-4">
                                     <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-stone-500">
@@ -82,7 +82,7 @@ export default async function Home() {
                                 <div className="pt-2">
                                     <Link
                                         href={to('/pricing')}
-                                        className="inline-flex items-center rounded-xl bg-stone-900 px-6 py-3 text-sm font-semibold text-stone-50 hover:bg-stone-800"
+                                        className="aurum-motion-button inline-flex items-center rounded-xl bg-stone-900 px-6 py-3 text-sm font-semibold text-stone-50 hover:bg-stone-800"
                                     >
                                         {trialT('cta')}
                                     </Link>
@@ -92,7 +92,7 @@ export default async function Home() {
                     </section>
                 </div>
             </section>
-            <section className="bg-stone-50/60 py-16 md:py-20 border-y border-stone-200/70">
+            <section className="aurum-motion-section aurum-motion-delay-1 bg-stone-50/60 py-16 md:py-20 border-y border-stone-200/70">
                 <div className="container">
                     <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
                         <div className="text-center lg:text-left">
@@ -107,21 +107,21 @@ export default async function Home() {
                             </p>
                             <div className="mt-6 grid gap-4">
                                 {exampleHighlights.map((item) => (
-                                    <div key={item.title} className="rounded-2xl border border-stone-200 bg-white px-5 py-4 text-left shadow-sm">
+                                    <div key={item.title} className="aurum-motion-card rounded-2xl border border-stone-200 bg-white px-5 py-4 text-left shadow-sm">
                                         <p className="text-sm font-semibold text-stone-900">{item.title}</p>
                                         <p className="mt-1 text-sm font-light leading-relaxed text-stone-600">{item.body}</p>
                                     </div>
                                 ))}
                             </div>
                         </div>
-                        <div className="rounded-[2rem] border border-stone-200 bg-white p-6 md:p-8 shadow-sm">
+                        <div className="aurum-motion-card rounded-[2rem] border border-stone-200 bg-white p-6 md:p-8 shadow-sm">
                             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-stone-500">
                                 {t('exampleSection.entryLabel')}
                             </p>
                             <p className="mt-3 rounded-2xl bg-stone-900 px-5 py-4 text-lg font-light leading-relaxed text-white">
                                 {t('exampleSection.entry')}
                             </p>
-                            <div className="mt-5 rounded-2xl border border-[#D4AF37]/25 bg-[#D4AF37]/8 px-5 py-4">
+                            <div className="aurum-motion-reveal mt-5 rounded-2xl border border-[#D4AF37]/25 bg-[#D4AF37]/8 px-5 py-4">
                                 <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-stone-500">
                                     {t('exampleSection.reflectionLabel')}
                                 </p>
@@ -133,7 +133,7 @@ export default async function Home() {
                     </div>
                 </div>
             </section>
-            <section className="py-14 md:py-16 bg-white border-y border-stone-200/70">
+            <section className="aurum-motion-section aurum-motion-delay-2 py-14 md:py-16 bg-white border-y border-stone-200/70">
                 <div className="container">
                     <div className="max-w-4xl mx-auto text-center mb-8">
                         <h2 className="text-3xl md:text-4xl font-headline text-stone-900 mb-4">
@@ -145,7 +145,7 @@ export default async function Home() {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-6xl mx-auto">
                         {studyCards.map((card, index) => (
-                            <article key={card.title} className="rounded-2xl border border-stone-200 bg-stone-50/70 p-6">
+                            <article key={card.title} className="aurum-motion-card rounded-2xl border border-stone-200 bg-stone-50/70 p-6">
                                 <p className="text-[11px] uppercase tracking-[0.14em] text-stone-500 mb-3 font-semibold">{card.eyebrow}</p>
                                 <h3 className="text-xl font-headline text-stone-900 mb-2">{card.title}</h3>
                                 <p className="text-sm text-stone-600 font-light leading-relaxed mb-3">{card.body}</p>
@@ -170,14 +170,14 @@ export default async function Home() {
                     <div className="mt-8 text-center">
                         <Link
                             href={primaryCtaHref}
-                            className="inline-flex h-12 items-center justify-center rounded-xl bg-primary px-8 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                            className="aurum-motion-button inline-flex h-12 items-center justify-center rounded-xl bg-primary px-8 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
                         >
                             {t('studySection.cta')}
                         </Link>
                     </div>
                 </div>
             </section>
-            <section id="use-cases-seo" className="py-20 md:py-24 bg-white border-y border-stone-200/70">
+            <section id="use-cases-seo" className="aurum-motion-section py-20 md:py-24 bg-white border-y border-stone-200/70">
                 <div className="container">
                     <div className="max-w-3xl mx-auto text-center mb-12">
                         <h2 className="text-3xl md:text-5xl font-headline text-stone-900 mb-4">
@@ -189,7 +189,7 @@ export default async function Home() {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {useCaseCards.map((card, index) => (
-                            <article key={card.title} className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm h-full flex flex-col">
+                            <article key={card.title} className="aurum-motion-card rounded-2xl border border-stone-200 bg-white p-6 shadow-sm h-full flex flex-col">
                                 <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-stone-100 px-3 py-1 text-[11px] uppercase tracking-[0.12em] text-stone-600 font-medium w-fit">
                                     {index === 0 && <Moon className="h-3.5 w-3.5" />}
                                     {index === 1 && <Brain className="h-3.5 w-3.5" />}
@@ -234,7 +234,7 @@ export default async function Home() {
             </section>
 
             {/* SECTION 3: Scientific social proof */}
-            <section className="py-24 md:py-32 bg-stone-100/50">
+            <section className="aurum-motion-section aurum-motion-delay-1 py-24 md:py-32 bg-stone-100/50">
                 <div className="container max-w-4xl mx-auto">
                     <div className="text-center max-w-3xl mx-auto mb-14">
                         <h2 className="text-4xl md:text-5xl font-headline text-stone-900 mb-6">{t('scientificProof.title')}</h2>
@@ -244,7 +244,7 @@ export default async function Home() {
                     </div>
                     <ul className="space-y-5 text-stone-800 font-light leading-relaxed text-lg max-w-3xl mx-auto">
                         {discoveries.map((discovery, index) => (
-                            <li key={discovery.label} className="rounded-2xl border border-stone-200 bg-white p-6">
+                            <li key={discovery.label} className="aurum-motion-card rounded-2xl border border-stone-200 bg-white p-6">
                                 <span className="font-medium text-stone-900">{discovery.label}</span> {discovery.body}
                                 <sup><a href={to(`/etudes-scientifiques#etude-${index + 1}`)} aria-label={referenceAriaLabels[index]} className="no-underline font-semibold text-stone-700"> {index + 1}</a></sup>.
                             </li>
@@ -255,7 +255,7 @@ export default async function Home() {
 
             <div id="sanctuary-content" className="bg-background text-foreground">
                 {/* SECTION 1: Problem */}
-                <section className="py-24 md:py-32 bg-stone-100/50">
+                <section className="aurum-motion-section py-24 md:py-32 bg-stone-100/50">
                     <div className="container max-w-3xl mx-auto text-center">
                         <h2 className="text-4xl md:text-5xl font-headline text-stone-900 mb-6">
                             {t('problem.title')}
@@ -269,7 +269,7 @@ export default async function Home() {
                 </section>
 
                 {/* SECTION 2: Solution */}
-                <section className="py-24 md:py-32 bg-white">
+                <section className="aurum-motion-section aurum-motion-delay-1 py-24 md:py-32 bg-white">
                     <div className="container max-w-3xl mx-auto text-center">
                         <h2 className="text-4xl md:text-5xl font-headline text-stone-900 mb-6">
                             {t('solution.title')}
@@ -281,7 +281,7 @@ export default async function Home() {
                 </section>
 
                 {/* SECTION 5: Trust & Privacy (Enhanced) */}
-                <section className="py-24 md:py-40 bg-white">
+                <section className="aurum-motion-section py-24 md:py-40 bg-white">
                     <div className="container">
                         <div className="text-center max-w-3xl mx-auto mb-20">
                             <span className="text-[#7A5D00] text-[10px] uppercase tracking-[0.3em] font-bold mb-4 block">{t('trust.eyebrow')}</span>
@@ -291,7 +291,7 @@ export default async function Home() {
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-20">
                             {trustCards.map((card, index) => (
-                                <div key={card.title} className="flex flex-col items-center text-center p-8 rounded-3xl bg-stone-50 border border-stone-100 transition-all hover:shadow-lg">
+                                <div key={card.title} className="aurum-motion-card flex flex-col items-center text-center p-8 rounded-3xl bg-stone-50 border border-stone-100 transition-all hover:shadow-lg">
                                     <div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center mb-6 text-primary">
                                         {index === 0 && <Lock className="w-6 h-6" />}
                                         {index === 1 && <Fingerprint className="w-6 h-6" />}
@@ -303,7 +303,7 @@ export default async function Home() {
                             ))}
                         </div>
 
-                        <div className="bg-stone-900 rounded-[2rem] p-8 md:p-16 text-white relative overflow-hidden">
+                        <div className="aurum-motion-card aurum-motion-sheen bg-stone-900 rounded-[2rem] p-8 md:p-16 text-white relative overflow-hidden">
                             <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
                                 <div className="max-w-xl text-center md:text-left">
                                     <h4 className="text-3xl font-headline mb-4">{t('trust.manifestoTitle')}</h4>
@@ -326,10 +326,10 @@ export default async function Home() {
                 </section>
 
                 {/* SECTION 7: CTA Final */}
-                <section className="container py-24 md:py-32 text-center border-t border-black/5">
+                <section className="aurum-motion-section container py-24 md:py-32 text-center border-t border-black/5">
                     <Link
                         href={primaryCtaHref}
-                        className="inline-flex h-14 items-center justify-center rounded-md bg-primary px-12 text-base font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                        className="aurum-motion-button inline-flex h-14 items-center justify-center rounded-md bg-primary px-12 text-base font-medium text-primary-foreground transition-colors hover:bg-primary/90"
                     >
                         {t('finalCta.button')}
                     </Link>
@@ -342,7 +342,7 @@ export default async function Home() {
                         </p>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-left">
                             {featureCards.map((card) => (
-                                <div key={card.title} className="rounded-2xl border border-stone-200 bg-white p-5">
+                                <div key={card.title} className="aurum-motion-card rounded-2xl border border-stone-200 bg-white p-5">
                                     <p className="text-[11px] uppercase tracking-[0.16em] text-stone-500 mb-2 font-semibold">{card.eyebrow}</p>
                                     <p className="text-sm text-stone-700 font-light">{card.body}</p>
                                 </div>
@@ -351,18 +351,18 @@ export default async function Home() {
                     </div>
                 </section>
 
-                <section className="container max-w-3xl pb-24 md:pb-32">
-                    <h2 className="text-4xl font-headline text-stone-900 text-center mb-12">
+                <section className="aurum-motion-section container max-w-3xl pb-24 md:pb-32">
+                    <h2 className="text-4xl font-headline text-stone-900 text-center mb-12 dark:text-stone-100">
                         {t('faqTitle')}
                     </h2>
-                    <div className="w-full divide-y divide-stone-200 border-y border-stone-200">
+                    <div className="w-full divide-y divide-stone-200 border-y border-stone-200 dark:divide-stone-700 dark:border-stone-700">
                         {faqs.map((faq, index) => (
                             <details key={index} className="group py-5">
-                                <summary className="flex cursor-pointer list-none items-center justify-between gap-6 text-left text-xl font-headline font-normal text-stone-900">
+                                <summary className="flex cursor-pointer list-none items-center justify-between gap-6 text-left text-xl font-headline font-normal text-stone-900 dark:text-stone-100">
                                     <span>{faq.question}</span>
-                                    <span className="text-2xl leading-none text-stone-400 transition-transform group-open:rotate-45">+</span>
+                                    <span className="text-2xl leading-none text-stone-400 transition-transform group-open:rotate-45 dark:text-stone-300">+</span>
                                 </summary>
-                                <p className="mt-4 text-lg font-light leading-relaxed text-foreground/80">
+                                <p className="mt-4 text-lg font-light leading-relaxed text-foreground/80 dark:text-stone-300">
                                     {faq.answer}
                                 </p>
                             </details>
@@ -370,8 +370,8 @@ export default async function Home() {
                     </div>
                 </section>
 
-                <section className="container max-w-4xl pb-24 md:pb-28">
-                    <div className="rounded-2xl border border-stone-200 bg-stone-50/60 p-6 md:p-8">
+                <section className="aurum-motion-section container max-w-4xl pb-24 md:pb-28">
+                    <div className="aurum-motion-card rounded-2xl border border-stone-200 bg-stone-50/60 p-6 md:p-8">
                         <h3 className="text-sm font-semibold tracking-wider uppercase text-stone-500 mb-4">{t('references.title')}</h3>
                         <ul className="space-y-3 text-xs text-stone-500 leading-relaxed">
                             <li id="ref1">
