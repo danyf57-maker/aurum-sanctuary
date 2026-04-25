@@ -330,12 +330,14 @@ export async function POST(request: NextRequest) {
     const userLanguage = resolveReplyLanguage(normalizedUserMessage || content, requestedLocale, content);
     const promptLanguage = resolvePromptLanguage(userLanguage, requestedLocale);
     const shortFollowUp = isConversationFollowUp && isVeryShortFollowUp(normalizedUserMessage);
+    const skipPatternPrepass = isConversationFollowUp;
+    const responseMaxTokens = shortFollowUp ? 220 : isConversationFollowUp ? 520 : 1000;
 
     // 2. Detect patterns + get existing patterns IN PARALLEL
-    logger.infoSafe('Detecting patterns (parallel)', { userId });
+    logger.infoSafe('Detecting patterns (parallel)', { userId, skipPatternPrepass });
     const [detectionResult, existingPatterns] = await Promise.all([
-      shortFollowUp ? Promise.resolve(null) : detectPatterns(content),
-      shortFollowUp ? Promise.resolve([]) : getUserPatterns(userId),
+      skipPatternPrepass ? Promise.resolve(null) : detectPatterns(content),
+      skipPatternPrepass ? Promise.resolve([]) : getUserPatterns(userId),
     ]);
 
     // 3. Select patterns for injection (max 2)
@@ -345,7 +347,7 @@ export async function POST(request: NextRequest) {
     );
 
     // 4. Format pattern context
-    const patternContext = !shortFollowUp && injectedPatterns
+    const patternContext = !skipPatternPrepass && injectedPatterns
       ? formatPatternsForContext(injectedPatterns)
       : '';
 
@@ -409,8 +411,8 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify({
         model: AI_MODEL,
         messages,
-        temperature: shortFollowUp ? 1.0 : 1.05,
-        max_tokens: shortFollowUp ? 220 : 1000,
+        temperature: shortFollowUp ? 1.0 : isConversationFollowUp ? 0.95 : 1.05,
+        max_tokens: responseMaxTokens,
         stream: true,
       }),
       signal: controller.signal,

@@ -15,4 +15,16 @@ describe("reflection streaming safeguards", () => {
     expect(source).toContain("Aurum's reply was interrupted");
     expect(source).toContain("return;");
   });
+
+  it("keeps follow-up replies fast by skipping the pattern prepass", () => {
+    const source = readFileSync(
+      join(process.cwd(), "src/app/api/reflect/route.ts"),
+      "utf8"
+    );
+
+    expect(source).toContain("const skipPatternPrepass = isConversationFollowUp;");
+    expect(source).toContain("skipPatternPrepass ? Promise.resolve(null) : detectPatterns(content)");
+    expect(source).toContain("skipPatternPrepass ? Promise.resolve([]) : getUserPatterns(userId)");
+    expect(source).toContain("isConversationFollowUp ? 520 : 1000");
+  });
 });
