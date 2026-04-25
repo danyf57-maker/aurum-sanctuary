@@ -396,6 +396,22 @@ export async function POST(request: NextRequest) {
       content: content,
     });
 
+    let persistedUserMessage = false;
+    if (entryRef && normalizedUserMessage) {
+      try {
+        await entryRef.collection('aurumConversation').add({
+          role: 'user',
+          text: normalizedUserMessage,
+          createdAt: new Date(),
+          intent,
+          skillId,
+        });
+        persistedUserMessage = true;
+      } catch (error) {
+        logger.errorSafe('Failed to persist user follow-up before reflection', error, { userId });
+      }
+    }
+
     // 6. Call DeepSeek with STREAMING
     logger.infoSafe('Generating reflection (streaming)', { userId, hasPatterns: !!patternContext, intent, skillId });
 
@@ -540,7 +556,7 @@ export async function POST(request: NextRequest) {
         if (entryRef) {
           const conversationRef = entryRef.collection('aurumConversation');
 
-          if (normalizedUserMessage) {
+          if (normalizedUserMessage && !persistedUserMessage) {
             conversationRef.add({
               role: 'user',
               text: normalizedUserMessage,

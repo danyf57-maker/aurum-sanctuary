@@ -27,4 +27,15 @@ describe("reflection streaming safeguards", () => {
     expect(source).toContain("skipPatternPrepass ? Promise.resolve([]) : getUserPatterns(userId)");
     expect(source).toContain("isConversationFollowUp ? 520 : 1000");
   });
+
+  it("persists the user follow-up before waiting for the model stream", () => {
+    const source = readFileSync(
+      join(process.cwd(), "src/app/api/reflect/route.ts"),
+      "utf8"
+    );
+
+    expect(source).toContain("let persistedUserMessage = false;");
+    expect(source).toContain("Failed to persist user follow-up before reflection");
+    expect(source).toContain("normalizedUserMessage && !persistedUserMessage");
+  });
 });

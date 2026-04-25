@@ -22,6 +22,7 @@ import { firestore as clientDb } from "@/lib/firebase/web-client";
 import { cn } from "@/lib/utils";
 import { useLocalizedHref } from "@/hooks/use-localized-href";
 import { useLocale } from '@/hooks/use-locale';
+import { extractSseDataMessages, flushSseDataMessages } from "@/lib/sse";
 
 type EntryImage = {
   id: string;
@@ -40,6 +41,8 @@ type ConversationTurn = {
 type PendingConversationTurn = ConversationTurn & {
   pending?: boolean;
 };
+
+const AURUM_CHAT_IDLE_TIMEOUT_MS = 22000;
 
 interface MagazineEntryEditorProps {
   entryId: string;
@@ -194,7 +197,25 @@ export function MagazineEntryEditor({
       textareaRef.current.style.height = "auto";
     }
 
+    let didTimeout = false;
+    let idleTimeout: ReturnType<typeof setTimeout> | null = null;
+    const controller = new AbortController();
+    const resetIdleTimeout = () => {
+      if (idleTimeout) clearTimeout(idleTimeout);
+      idleTimeout = setTimeout(() => {
+        didTimeout = true;
+        controller.abort();
+      }, AURUM_CHAT_IDLE_TIMEOUT_MS);
+    };
+    const clearIdleTimeout = () => {
+      if (idleTimeout) {
+        clearTimeout(idleTimeout);
+        idleTimeout = null;
+      }
+    };
+
     try {
+      resetIdleTimeout();
       const idToken = await user.getIdToken();
       const payload = [
         "Voici mon entrée de journal:",
@@ -207,6 +228,7 @@ export function MagazineEntryEditor({
       const response = await fetch("/api/reflect", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        signal: controller.signal,
         body: JSON.stringify({
           content: payload,
           idToken,
@@ -227,56 +249,70 @@ export function MagazineEntryEditor({
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let fullText = "";
+      let sseRemainder = "";
+
+      const handleSseMessage = (message: string) => {
+        let evt: { token?: string; replace?: string; error?: string };
+        try {
+          evt = JSON.parse(message);
+        } catch {
+          return;
+        }
+
+        if (evt.error) {
+          throw new Error(evt.error);
+        }
+
+        if (evt.token) {
+          fullText += evt.token;
+          setPendingAurumTurn((current) =>
+            current
+              ? {
+                  ...current,
+                  text: fullText,
+                }
+              : current
+          );
+        } else if (evt.replace) {
+          fullText = evt.replace;
+          setPendingAurumTurn((current) =>
+            current
+              ? {
+                  ...current,
+                  text: fullText,
+                }
+              : current
+          );
+        }
+      };
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
 
+        resetIdleTimeout();
         const chunk = decoder.decode(value, { stream: true });
-        const lines = chunk.split("\n");
-        for (const line of lines) {
-          if (!line.startsWith("data: ")) continue;
-          try {
-            const evt = JSON.parse(line.slice(6));
-            if (evt.token) {
-              fullText += evt.token;
-              setPendingAurumTurn((current) =>
-                current
-                  ? {
-                      ...current,
-                      text: fullText,
-                    }
-                  : current
-              );
-            } else if (evt.replace) {
-              fullText = evt.replace;
-              setPendingAurumTurn((current) =>
-                current
-                  ? {
-                      ...current,
-                      text: fullText,
-                    }
-                  : current
-              );
-            }
-          } catch {
-            // skip malformed
-          }
-        }
+        const parsed = extractSseDataMessages(sseRemainder, chunk);
+        sseRemainder = parsed.remainder;
+        parsed.messages.forEach(handleSseMessage);
       }
+
+      flushSseDataMessages(sseRemainder).forEach(handleSseMessage);
     } catch (error) {
       toast({
         title: "Erreur",
         description:
-          error instanceof Error
+          didTimeout || (error instanceof Error && error.name === "AbortError")
+            ? "Aurum prend plus de temps que prévu. Réessaie dans quelques instants."
+            : error instanceof Error
             ? error.message
             : "Aurum n'a pas pu répondre.",
         variant: "destructive",
       });
       setQuestion(cleanQuestion);
-      setPendingUserTurn(null);
       setPendingAurumTurn(null);
     } finally {
+      clearIdleTimeout();
       setIsAskingAurum(false);
     }
   };

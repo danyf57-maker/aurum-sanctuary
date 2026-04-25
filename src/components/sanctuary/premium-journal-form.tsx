@@ -49,6 +49,8 @@ type ConversationTurn = {
   text: string;
 };
 
+const REFLECTION_IDLE_TIMEOUT_MS = 22000;
+
 function stripPreviewMarkdown(content: string) {
   return content
     .replace(/!\[[^\]]*\]\([^)]+\)/g, '')
@@ -435,10 +437,28 @@ export function PremiumJournalForm() {
   }> => {
     if (!user) throw new Error(t('errors.signInRequired'));
 
+    let didTimeout = false;
+    let idleTimeout: ReturnType<typeof setTimeout> | null = null;
+    const controller = new AbortController();
+    const resetIdleTimeout = () => {
+      if (idleTimeout) clearTimeout(idleTimeout);
+      idleTimeout = setTimeout(() => {
+        didTimeout = true;
+        controller.abort();
+      }, REFLECTION_IDLE_TIMEOUT_MS);
+    };
+    const clearIdleTimeout = () => {
+      if (idleTimeout) {
+        clearTimeout(idleTimeout);
+        idleTimeout = null;
+      }
+    };
+
     const callReflect = (idToken: string) =>
       fetch('/api/reflect', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
         body: JSON.stringify({
           content,
           idToken,
@@ -448,38 +468,40 @@ export function PremiumJournalForm() {
         }),
       });
 
-    let idToken = await user.getIdToken();
-    let response = await callReflect(idToken);
+    try {
+      resetIdleTimeout();
+      let idToken = await user.getIdToken();
+      let response = await callReflect(idToken);
 
-    if (response.status === 401) {
-      idToken = await user.getIdToken(true);
-      response = await callReflect(idToken);
-    }
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({}));
-      if (response.status === 402 && (error?.freeLimitReached || error?.conversationLimitReached)) {
-        if (typeof error?.repliesUsed === 'number') {
-          setAurumRepliesUsed(error.repliesUsed);
-        }
-        setIsPaywallOpen(true);
-      }
       if (response.status === 401) {
-        throw new Error(t('errors.sessionExpiredReload'));
+        idToken = await user.getIdToken(true);
+        response = await callReflect(idToken);
       }
-      throw new Error(error?.error || t('errors.generatingReflection'));
-    }
 
-    if (!response.body) throw new Error(t('errors.emptyResponse'));
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        if (response.status === 402 && (error?.freeLimitReached || error?.conversationLimitReached)) {
+          if (typeof error?.repliesUsed === 'number') {
+            setAurumRepliesUsed(error.repliesUsed);
+          }
+          setIsPaywallOpen(true);
+        }
+        if (response.status === 401) {
+          throw new Error(t('errors.sessionExpiredReload'));
+        }
+        throw new Error(error?.error || t('errors.generatingReflection'));
+      }
 
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-    let fullText = '';
-    let sseRemainder = '';
-    let meta: {
-      conversationRepliesUsed?: number | null;
-      conversationRepliesLimit?: number | null;
-    } | null = null;
+      if (!response.body) throw new Error(t('errors.emptyResponse'));
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let fullText = '';
+      let sseRemainder = '';
+      let meta: {
+        conversationRepliesUsed?: number | null;
+        conversationRepliesLimit?: number | null;
+      } | null = null;
 
     const handleSseMessage = (message: string) => {
       let data: {
@@ -520,19 +542,32 @@ export function PremiumJournalForm() {
       }
     };
 
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
 
-      const chunk = decoder.decode(value, { stream: true });
-      const parsed = extractSseDataMessages(sseRemainder, chunk);
-      sseRemainder = parsed.remainder;
-      parsed.messages.forEach(handleSseMessage);
+        resetIdleTimeout();
+        const chunk = decoder.decode(value, { stream: true });
+        const parsed = extractSseDataMessages(sseRemainder, chunk);
+        sseRemainder = parsed.remainder;
+        parsed.messages.forEach(handleSseMessage);
+      }
+
+      flushSseDataMessages(sseRemainder).forEach(handleSseMessage);
+
+      return { text: fullText, meta };
+    } catch (error) {
+      if (didTimeout || (error instanceof Error && error.name === 'AbortError')) {
+        throw new Error(
+          isFr
+            ? "Aurum prend plus de temps que prévu. Réessaie dans quelques instants."
+            : "Aurum is taking longer than expected. Try again in a moment."
+        );
+      }
+      throw error;
+    } finally {
+      clearIdleTimeout();
     }
-
-    flushSseDataMessages(sseRemainder).forEach(handleSseMessage);
-
-    return { text: fullText, meta };
   };
 
   const handleRequestReflection = async (override?: { content?: string; entryId?: string | null }) => {
