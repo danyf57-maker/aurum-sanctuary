@@ -60,6 +60,29 @@ function formatTime(date?: Date) {
   });
 }
 
+function normalizeAurumChatError(error: unknown, didTimeout: boolean): string {
+  if (didTimeout || (error instanceof Error && error.name === "AbortError")) {
+    return "Aurum prend plus de temps que prévu. Réessaie dans quelques instants.";
+  }
+
+  if (!(error instanceof Error)) {
+    return "Aurum n'a pas pu répondre.";
+  }
+
+  if (
+    error.message.includes("Aurum's reply was interrupted") ||
+    error.message.includes("La réponse d'Aurum a été interrompue")
+  ) {
+    return "La réponse d'Aurum a été interrompue. Réessaie dans un instant.";
+  }
+
+  if (error.message.includes("Aurum could not reply")) {
+    return "Aurum n'a pas pu répondre. Réessaie dans un instant.";
+  }
+
+  return error.message;
+}
+
 export function MagazineEntryEditor({
   entryId,
   initialContent,
@@ -305,12 +328,7 @@ export function MagazineEntryEditor({
     } catch (error) {
       toast({
         title: "Erreur",
-        description:
-          didTimeout || (error instanceof Error && error.name === "AbortError")
-            ? "Aurum prend plus de temps que prévu. Réessaie dans quelques instants."
-            : error instanceof Error
-            ? error.message
-            : "Aurum n'a pas pu répondre.",
+        description: normalizeAurumChatError(error, didTimeout),
         variant: "destructive",
       });
       setPendingAurumTurn(null);

@@ -36,4 +36,15 @@ describe("MagazineEntryEditor Aurum chat", () => {
     expect(source).toContain("askInFlightRef.current = true");
     expect(source).toContain("askInFlightRef.current = false");
   });
+
+  it("does not surface raw English stream interruption messages in the French chat UI", () => {
+    const source = readFileSync(
+      join(process.cwd(), "src/components/sanctuary/magazine-entry-editor.tsx"),
+      "utf8"
+    );
+
+    expect(source).toContain("normalizeAurumChatError");
+    expect(source).toContain("Aurum's reply was interrupted");
+    expect(source).toContain("La réponse d'Aurum a été interrompue");
+  });
 });
