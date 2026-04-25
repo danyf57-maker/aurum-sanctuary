@@ -33,6 +33,7 @@ import { useLocale } from '@/hooks/use-locale';
 import { useFreeEntryLimit } from '@/hooks/use-free-entry-limit';
 import { FREE_AURUM_REPLY_LIMIT } from '@/lib/billing/config';
 import { resolveMessage } from '@/lib/i18n/resolve-message';
+import { extractSseDataMessages, flushSseDataMessages } from '@/lib/sse';
 
 type DraftImage = {
   id: string;
@@ -473,45 +474,48 @@ export function PremiumJournalForm() {
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
     let fullText = '';
+    let sseRemainder = '';
     let meta: {
       conversationRepliesUsed?: number | null;
       conversationRepliesLimit?: number | null;
     } | null = null;
+
+    const handleSseMessage = (message: string) => {
+      try {
+        const data = JSON.parse(message);
+        if (data.token) {
+          fullText += data.token;
+          onToken(fullText);
+        } else if (data.replace) {
+          // Anti-meta sanitized replacement
+          fullText = data.replace;
+          onToken(fullText);
+        } else if (data.done) {
+          meta = {
+            conversationRepliesUsed: typeof data.conversationRepliesUsed === 'number'
+              ? data.conversationRepliesUsed
+              : null,
+            conversationRepliesLimit: typeof data.conversationRepliesLimit === 'number'
+              ? data.conversationRepliesLimit
+              : null,
+          };
+        }
+      } catch {
+        // skip malformed
+      }
+    };
 
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
 
       const chunk = decoder.decode(value, { stream: true });
-      const lines = chunk.split('\n');
-
-      for (const line of lines) {
-        if (!line.startsWith('data: ')) continue;
-        try {
-          const data = JSON.parse(line.slice(6));
-          if (data.token) {
-            fullText += data.token;
-            onToken(fullText);
-          } else if (data.replace) {
-            // Anti-meta sanitized replacement
-            fullText = data.replace;
-            onToken(fullText);
-          } else if (data.done) {
-            meta = {
-              conversationRepliesUsed: typeof data.conversationRepliesUsed === 'number'
-                ? data.conversationRepliesUsed
-                : null,
-              conversationRepliesLimit: typeof data.conversationRepliesLimit === 'number'
-                ? data.conversationRepliesLimit
-                : null,
-            };
-          }
-          // data.done = true → stream ended, metadata available
-        } catch {
-          // skip malformed
-        }
-      }
+      const parsed = extractSseDataMessages(sseRemainder, chunk);
+      sseRemainder = parsed.remainder;
+      parsed.messages.forEach(handleSseMessage);
     }
+
+    flushSseDataMessages(sseRemainder).forEach(handleSseMessage);
 
     return { text: fullText, meta };
   };
@@ -612,9 +616,13 @@ export function PremiumJournalForm() {
       );
       const text = result.text;
       // Ensure final text is set
-      setConversationTurns((prev) =>
-        prev.map((t) => t.id === aurumTurnId ? { ...t, text } : t)
-      );
+      setConversationTurns((prev) => {
+        const existing = prev.find((t) => t.id === aurumTurnId);
+        if (existing) {
+          return prev.map((t) => t.id === aurumTurnId ? { ...t, text } : t);
+        }
+        return [...prev, { id: aurumTurnId, role: 'aurum', text }];
+      });
       if (typeof result.meta?.conversationRepliesUsed === 'number') {
         setAurumRepliesUsed(result.meta.conversationRepliesUsed);
       }

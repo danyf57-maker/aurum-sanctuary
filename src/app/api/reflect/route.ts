@@ -31,6 +31,7 @@ import {
   resolveReplyLanguage,
 } from '@/lib/ai/language';
 import { buildAurumSystemPrompt } from '@/lib/ai/aurum-system-prompts';
+import { extractSseDataMessages, flushSseDataMessages } from '@/lib/sse';
 import {
   getFreeAurumConversationState,
   getFreeEntryState,
@@ -442,36 +443,39 @@ export async function POST(request: NextRequest) {
     const encoder = new TextEncoder();
     const decoder = new TextDecoder();
     let fullText = '';
+    let deepSeekSseRemainder = '';
 
     const stream = new ReadableStream({
       async start(ctrl) {
         const reader = deepSeekBody.getReader();
+        const handleDeepSeekMessage = (data: string) => {
+          if (data === '[DONE]') return;
+
+          try {
+            const parsed = JSON.parse(data);
+            const token = parsed.choices?.[0]?.delta?.content;
+            if (token) {
+              fullText += token;
+              // SSE format: data: <json>\n\n
+              ctrl.enqueue(encoder.encode(`data: ${JSON.stringify({ token })}\n\n`));
+            }
+          } catch {
+            // Skip malformed JSON chunks
+          }
+        };
+
         try {
           while (true) {
             const { done, value } = await reader.read();
             if (done) break;
 
             const chunk = decoder.decode(value, { stream: true });
-            const lines = chunk.split('\n');
-
-            for (const line of lines) {
-              if (!line.startsWith('data: ')) continue;
-              const data = line.slice(6).trim();
-              if (data === '[DONE]') continue;
-
-              try {
-                const parsed = JSON.parse(data);
-                const token = parsed.choices?.[0]?.delta?.content;
-                if (token) {
-                  fullText += token;
-                  // SSE format: data: <json>\n\n
-                  ctrl.enqueue(encoder.encode(`data: ${JSON.stringify({ token })}\n\n`));
-                }
-              } catch {
-                // Skip malformed JSON chunks
-              }
-            }
+            const parsed = extractSseDataMessages(deepSeekSseRemainder, chunk);
+            deepSeekSseRemainder = parsed.remainder;
+            parsed.messages.forEach(handleDeepSeekMessage);
           }
+
+          flushSseDataMessages(deepSeekSseRemainder).forEach(handleDeepSeekMessage);
 
           // Send anti-meta sanitized text if needed
           const validation = validateResponse(fullText);
