@@ -440,7 +440,7 @@ export function MagazineEntryEditor({
           {images.map((image) => (
             <figure
               key={image.id}
-              className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm"
+              className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm dark:border-stone-800 dark:bg-stone-900"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -449,7 +449,7 @@ export function MagazineEntryEditor({
                 className="h-auto w-full object-cover"
               />
               {(image.caption || image.name) && (
-                <figcaption className="px-3 py-2 text-xs text-stone-500">
+                <figcaption className="px-3 py-2 text-xs text-stone-500 dark:text-stone-300">
                   {image.caption || image.name}
                 </figcaption>
               )}
@@ -462,7 +462,7 @@ export function MagazineEntryEditor({
       <div className="space-y-2">
         <label
           htmlFor="entry-tags"
-          className="text-sm font-medium text-stone-700"
+          className="text-sm font-medium text-stone-700 dark:text-stone-300"
         >
           Étiquettes
         </label>
@@ -479,7 +479,7 @@ export function MagazineEntryEditor({
       <div className="space-y-2">
         <label
           htmlFor="entry-content"
-          className="text-sm font-medium text-stone-700"
+          className="text-sm font-medium text-stone-700 dark:text-stone-300"
         >
           Contenu
         </label>
@@ -487,11 +487,11 @@ export function MagazineEntryEditor({
           id="entry-content"
           value={content}
           onChange={(event) => setContent(event.currentTarget.value)}
-          className="min-h-[360px] text-lg leading-relaxed"
+          className="min-h-[360px] text-lg leading-relaxed dark:border-stone-700 dark:bg-stone-950 dark:text-stone-100 dark:placeholder:text-stone-400"
           disabled={readOnly || isSaving || isDeleting}
         />
         {readOnly && (
-          <p className="text-xs text-amber-700">
+          <p className="text-xs text-amber-700 dark:text-amber-300">
             Cette entrée est au format chiffré legacy et n&apos;est pas éditable
             ici.
           </p>
@@ -503,7 +503,7 @@ export function MagazineEntryEditor({
         <Button
           onClick={onSave}
           disabled={readOnly || !hasChanges || isSaving || isDeleting}
-          className="bg-stone-900 text-stone-50 hover:bg-stone-800"
+          className="bg-stone-900 text-stone-50 hover:bg-stone-800 dark:bg-stone-100 dark:text-stone-950 dark:hover:bg-stone-200"
         >
           {isSaving ? (
             <>
@@ -518,7 +518,7 @@ export function MagazineEntryEditor({
           onClick={onDelete}
           variant="outline"
           disabled={readOnly || isSaving || isDeleting}
-          className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
+          className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 dark:border-red-900/70 dark:text-red-300 dark:hover:bg-red-950/40 dark:hover:text-red-200"
         >
           {isDeleting ? (
             <>
@@ -537,7 +537,7 @@ export function MagazineEntryEditor({
       {/* Golden separator */}
       <div className="relative py-2">
         <div className="h-px w-full bg-gradient-to-r from-transparent via-amber-300/60 to-transparent" />
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-3">
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-3 dark:bg-stone-900">
           <Flame className="h-4 w-4 text-amber-400" />
         </div>
       </div>
@@ -550,25 +550,25 @@ export function MagazineEntryEditor({
         className={cn(
           "relative overflow-hidden",
           "rounded-2xl",
-          "border border-amber-200/50",
-          "bg-gradient-to-b from-amber-50/40 via-white to-white",
-          "shadow-lg shadow-amber-100/30"
+          "border border-amber-200/50 dark:border-amber-900/45",
+          "bg-gradient-to-b from-amber-50/40 via-white to-white dark:from-amber-950/30 dark:via-stone-900 dark:to-stone-950",
+          "shadow-lg shadow-amber-100/30 dark:shadow-stone-950/40"
         )}
       >
         {/* Subtle glow */}
-        <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-200/10 via-transparent to-amber-200/10 rounded-2xl blur-xl -z-10" />
+        <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-200/10 via-transparent to-amber-200/10 rounded-2xl blur-xl -z-10 dark:from-amber-600/10 dark:to-amber-600/10" />
 
         {/* Header */}
-        <div className="px-5 py-4 md:px-7 md:py-5 border-b border-amber-100/60">
+        <div className="px-5 py-4 md:px-7 md:py-5 border-b border-amber-100/60 dark:border-amber-900/40">
           <div className="flex items-center gap-3">
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-amber-600 shadow-sm">
               <Flame className="h-4 w-4 text-white" />
             </div>
             <div>
-              <h3 className="font-headline text-lg text-stone-900 tracking-wide">
+              <h3 className="font-headline text-lg text-stone-900 tracking-wide dark:text-stone-100">
                 Échanges avec Aurum
               </h3>
-              <p className="text-xs text-stone-400">
+              <p className="text-xs text-stone-400 dark:text-stone-300">
                 Ton compagnon de réflexion
               </p>
             </div>
@@ -583,7 +583,7 @@ export function MagazineEntryEditor({
           )}
         >
           {!hasConversation && (
-            <p className="text-sm text-stone-400 italic text-center py-4">
+            <p className="text-sm text-stone-400 italic text-center py-4 dark:text-stone-300">
               Pose une question pour commencer l&apos;échange...
             </p>
           )}
@@ -605,12 +605,12 @@ export function MagazineEntryEditor({
                     className={cn(
                       "max-w-[92%] md:max-w-[85%] px-4 py-3 text-[15px] leading-7 whitespace-pre-wrap",
                       turn.role === "user"
-                        ? "rounded-2xl rounded-br-md bg-stone-900 text-stone-50"
-                        : "rounded-2xl rounded-bl-md bg-gradient-to-br from-amber-100 to-amber-50 border border-amber-300/70 text-stone-900 shadow-sm"
+                        ? "rounded-2xl rounded-br-md bg-stone-900 text-stone-50 dark:bg-stone-100 dark:text-stone-950"
+                        : "rounded-2xl rounded-bl-md bg-gradient-to-br from-amber-100 to-amber-50 border border-amber-300/70 text-stone-900 shadow-sm dark:from-amber-950 dark:to-stone-900 dark:border-amber-800/70 dark:text-amber-50"
                     )}
                   >
                     {turn.role === "aurum" && turn.pending && !turn.text ? (
-                      <span className="inline-flex items-center gap-1.5 text-amber-600">
+                      <span className="inline-flex items-center gap-1.5 text-amber-600 dark:text-amber-300">
                         <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
                         <span
                           className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse"
@@ -626,7 +626,7 @@ export function MagazineEntryEditor({
                     )}
                   </div>
                   {turn.createdAt && (
-                    <span className="mt-1 px-1 text-[10px] text-stone-500">
+                    <span className="mt-1 px-1 text-[10px] text-stone-500 dark:text-stone-300">
                       {formatTime(turn.createdAt)}
                     </span>
                   )}
@@ -639,7 +639,7 @@ export function MagazineEntryEditor({
         </div>
 
         {/* Input area */}
-        <div className="border-t border-amber-100/60 bg-white/80 backdrop-blur-sm px-5 py-3 md:px-7 md:py-4">
+        <div className="border-t border-amber-100/60 bg-white/80 backdrop-blur-sm px-5 py-3 dark:border-amber-900/40 dark:bg-stone-950/80 md:px-7 md:py-4">
           <div className="flex items-end gap-3">
             <textarea
               ref={textareaRef}
@@ -650,9 +650,9 @@ export function MagazineEntryEditor({
               disabled={isAskingAurum}
               rows={1}
               className={cn(
-                "flex-1 resize-none rounded-xl border border-stone-200 bg-stone-50/50",
-                "px-4 py-2.5 text-sm leading-relaxed",
-                "placeholder:text-stone-400",
+                "flex-1 resize-none rounded-xl border border-stone-200 bg-stone-50/50 dark:border-stone-700 dark:bg-stone-900",
+                "px-4 py-2.5 text-sm leading-relaxed dark:text-stone-100",
+                "placeholder:text-stone-400 dark:placeholder:text-stone-400",
                 "focus:outline-none focus:ring-2 focus:ring-amber-300/50 focus:border-amber-300",
                 "disabled:opacity-50 disabled:cursor-not-allowed",
                 "transition-all duration-200"
@@ -666,7 +666,7 @@ export function MagazineEntryEditor({
                 "transition-all duration-200",
                 question.trim() && !isAskingAurum
                   ? "bg-gradient-to-br from-amber-500 to-amber-700 text-white shadow-md shadow-amber-200/50 hover:shadow-lg hover:shadow-amber-200/60 hover:scale-105 active:scale-95"
-                  : "bg-stone-100 text-stone-300 cursor-not-allowed"
+                  : "bg-stone-100 text-stone-300 cursor-not-allowed dark:bg-stone-800 dark:text-stone-500"
               )}
             >
               {isAskingAurum ? (
@@ -676,7 +676,7 @@ export function MagazineEntryEditor({
               )}
             </button>
           </div>
-          <p className="mt-2 text-[10px] text-stone-300 text-center">
+          <p className="mt-2 text-[10px] text-stone-300 text-center dark:text-stone-400">
             Entrée pour envoyer, Shift+Entrée pour un saut de ligne
           </p>
         </div>

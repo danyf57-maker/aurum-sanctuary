@@ -215,7 +215,7 @@ export default function WritePage() {
 
   // Authenticated User View - Writing Interface
   return (
-    <div className="min-h-full bg-gradient-to-b from-stone-50 via-[#F9F7F2] to-stone-100">
+    <div className="min-h-full bg-gradient-to-b from-stone-50 via-[#F9F7F2] to-stone-100 dark:from-stone-950 dark:via-stone-950 dark:to-stone-900">
       <WelcomePresence userName={user?.displayName || undefined} />
 
       <AnimatePresence>
@@ -236,10 +236,10 @@ export default function WritePage() {
               <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-[#D4AF37]/20 to-[#C5A059]/20 mb-4">
                 <Feather className="h-5 w-5 text-[#C5A059]" />
               </div>
-              <h1 className="font-headline text-3xl md:text-4xl text-stone-900 tracking-tight mb-2">
+              <h1 className="font-headline text-3xl md:text-4xl text-stone-900 tracking-tight mb-2 dark:text-stone-100">
                 {t("authenticated.title")}
               </h1>
-              <p className="text-stone-500 text-lg">
+              <p className="text-stone-500 text-lg dark:text-stone-300">
                 {t("authenticated.subtitle")}
               </p>
             </motion.header>
@@ -250,10 +250,10 @@ export default function WritePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <div className="aurum-motion-card mb-6 rounded-2xl border border-stone-200 bg-white/60 px-5 py-4 text-center">
-                <p className="text-sm italic text-stone-600">
+              <div className="aurum-motion-card mb-6 rounded-2xl border border-stone-200 bg-white/60 px-5 py-4 text-center dark:border-stone-800 dark:bg-stone-900/60">
+                <p className="text-sm italic text-stone-600 dark:text-stone-300">
                   &ldquo;{writingQuotes[quoteIndex]?.text}&rdquo;
-                  <span className="ml-1 not-italic text-stone-500">
+                  <span className="ml-1 not-italic text-stone-500 dark:text-stone-400">
                     - {writingQuotes[quoteIndex]?.author}
                   </span>
                 </p>

@@ -805,9 +805,9 @@ export function PremiumJournalForm() {
     <>
       <div className="w-full max-w-[720px] mx-auto px-6 md:px-10 space-y-8">
         {!isPremium && (
-          <div className={`rounded-[24px] border px-5 py-4 ${isLimitReached ? 'border-amber-300 bg-amber-50' : 'border-stone-200 bg-white/70'}`}>
-            <p className="text-sm font-medium text-stone-800">{progressLabel}</p>
-            <p className="mt-1 text-sm text-stone-600">{remainingLabel}</p>
+          <div className={`rounded-[24px] border px-5 py-4 ${isLimitReached ? 'border-amber-300 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/40' : 'border-stone-200 bg-white/70 dark:border-stone-800 dark:bg-stone-900/70'}`}>
+            <p className="text-sm font-medium text-stone-800 dark:text-stone-100">{progressLabel}</p>
+            <p className="mt-1 text-sm text-stone-600 dark:text-stone-300">{remainingLabel}</p>
           </div>
         )}
         {/* Writing form */}
@@ -822,7 +822,7 @@ export function PremiumJournalForm() {
             <form
               ref={formRef}
               onSubmit={handleFormSubmit}
-              className="space-y-10 rounded-[28px] bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(248,244,234,0.82))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] p-6 md:p-10"
+              className="space-y-10 rounded-[28px] bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(248,244,234,0.82))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] dark:bg-[linear-gradient(180deg,rgba(28,25,23,0.96),rgba(12,10,9,0.92))] dark:shadow-stone-950/40 p-6 md:p-10"
             >
               <div
                 className={`relative transition-all duration-300 ${isDragActive ? 'ring-2 ring-amber-300 rounded-2xl bg-amber-50/40' : ''}`}
@@ -846,7 +846,7 @@ export function PremiumJournalForm() {
                   name="content"
                   placeholder={t('placeholders.write')}
                   value={draftContent}
-                  className="bg-transparent border-none shadow-none resize-none overflow-hidden min-h-[48vh] p-0 [font-family:var(--font-cormorant)] text-3xl leading-relaxed text-stone-800 placeholder:text-stone-400 focus:ring-0 focus:outline-none focus-visible:ring-0 caret-amber-400"
+                  className="bg-transparent border-none shadow-none resize-none overflow-hidden min-h-[48vh] p-0 [font-family:var(--font-cormorant)] text-3xl leading-relaxed text-stone-800 placeholder:text-stone-400 focus:ring-0 focus:outline-none focus-visible:ring-0 caret-amber-400 dark:text-stone-100 dark:placeholder:text-stone-400"
                   required
                   onInput={handleInput}
                 />
@@ -862,7 +862,7 @@ export function PremiumJournalForm() {
                 )}
               </div>
               <div className={`space-y-4 transition-opacity duration-400 ${isFocusMode ? 'opacity-10 hover:opacity-100' : 'opacity-80'}`}>
-                <p className="text-xs uppercase tracking-[0.18em] text-stone-500 flex items-center gap-2">
+                <p className="text-xs uppercase tracking-[0.18em] text-stone-500 flex items-center gap-2 dark:text-stone-300">
                   <ImagePlus className="h-4 w-4 text-amber-500" />
                   {t('dragAndDropHint')}
                 </p>
@@ -935,7 +935,7 @@ export function PremiumJournalForm() {
                   type="submit"
                   disabled={isSubmitting || isUploadingImage}
                   size="lg"
-                  className="aurum-motion-button border-0 bg-stone-900 text-stone-50 hover:bg-stone-800 px-10 rounded-full shadow-[0_12px_28px_rgba(30,20,8,0.24)] text-base font-semibold"
+                  className="aurum-motion-button border-0 bg-stone-900 text-stone-50 hover:bg-stone-800 dark:bg-stone-100 dark:text-stone-950 dark:hover:bg-stone-200 px-10 rounded-full shadow-[0_12px_28px_rgba(30,20,8,0.24)] text-base font-semibold"
                 >
                   {isSubmitting || isUploadingImage ? (
                     <>
@@ -958,7 +958,7 @@ export function PremiumJournalForm() {
             className="space-y-8"
           >
             {/* Premium saved confirmation */}
-            <div className="aurum-motion-card aurum-motion-reveal relative overflow-hidden rounded-[28px] bg-[linear-gradient(180deg,rgba(255,255,255,0.95),rgba(248,244,234,0.88))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] p-8 md:p-12">
+            <div className="aurum-motion-card aurum-motion-reveal relative overflow-hidden rounded-[28px] bg-[linear-gradient(180deg,rgba(255,255,255,0.95),rgba(248,244,234,0.88))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] dark:bg-[linear-gradient(180deg,rgba(28,25,23,0.96),rgba(12,10,9,0.92))] dark:shadow-stone-950/40 p-8 md:p-12">
               {/* Decorative golden glow */}
               <div className="absolute -top-20 -right-20 h-40 w-40 rounded-full bg-[#C5A059]/8 blur-3xl" />
               <div className="absolute -bottom-20 -left-20 h-40 w-40 rounded-full bg-[#D4AF37]/6 blur-3xl" />
@@ -998,10 +998,10 @@ export function PremiumJournalForm() {
                   transition={{ duration: 0.4, delay: 0.4 }}
                   className="space-y-3"
                 >
-                  <h2 className="font-headline text-3xl md:text-4xl text-stone-900 tracking-tight">
+                  <h2 className="font-headline text-3xl md:text-4xl text-stone-900 tracking-tight dark:text-stone-100">
                     {t('savedThoughtTitle')}
                   </h2>
-                  <div className="flex items-center justify-center gap-2 text-sm text-stone-500">
+                  <div className="flex items-center justify-center gap-2 text-sm text-stone-500 dark:text-stone-300">
                     <Lock className="h-3.5 w-3.5 text-[#C5A059]" />
                     <span>{t('savedThoughtSubtitle')}</span>
                   </div>
@@ -1027,7 +1027,7 @@ export function PremiumJournalForm() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.4, delay: 0.3 }}
-                    className="aurum-motion-card relative overflow-hidden rounded-[28px] bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(248,244,234,0.82))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] p-8 md:p-12 text-center"
+                    className="aurum-motion-card relative overflow-hidden rounded-[28px] bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(248,244,234,0.82))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] dark:bg-[linear-gradient(180deg,rgba(28,25,23,0.96),rgba(12,10,9,0.92))] dark:shadow-stone-950/40 p-8 md:p-12 text-center"
                   >
                     <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/3 via-transparent to-[#C5A059]/3 pointer-events-none" />
                     <div className="relative space-y-6">
@@ -1035,10 +1035,10 @@ export function PremiumJournalForm() {
                         <Eye className="h-5 w-5 text-[#C5A059]" />
                       </div>
                       <div className="space-y-2">
-                        <h3 className="font-headline text-2xl md:text-3xl text-stone-900 tracking-tight">
+                        <h3 className="font-headline text-2xl md:text-3xl text-stone-900 tracking-tight dark:text-stone-100">
                           {t('getReflection')}
                         </h3>
-                        <p className="text-stone-500 max-w-sm mx-auto leading-relaxed">
+                        <p className="text-stone-500 max-w-sm mx-auto leading-relaxed dark:text-stone-300">
                           {t('getReflectionDescription')}
                         </p>
                       </div>
@@ -1059,7 +1059,7 @@ export function PremiumJournalForm() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.97 }}
                     transition={{ duration: 0.4, ease: 'easeOut' }}
-                    className="aurum-motion-card rounded-[28px] bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(248,244,234,0.82))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] p-8 md:p-12"
+                    className="aurum-motion-card rounded-[28px] bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(248,244,234,0.82))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] dark:bg-[linear-gradient(180deg,rgba(28,25,23,0.96),rgba(12,10,9,0.92))] dark:shadow-stone-950/40 p-8 md:p-12"
                   >
                     <div className="space-y-6 py-4">
                       <ReflectionPulse />
