@@ -49,4 +49,16 @@ describe("reflection streaming safeguards", () => {
     expect(source).toContain("Failed to persist user follow-up before reflection");
     expect(source).toContain("normalizedUserMessage && !persistedUserMessage");
   });
+
+  it("falls back to the fast model if the primary stream completes without text", () => {
+    const source = readFileSync(
+      join(process.cwd(), "src/app/api/reflect/route.ts"),
+      "utf8"
+    );
+
+    expect(source).toContain("AI_FAST_MODEL");
+    expect(source).toContain("attemptModels");
+    expect(source).toContain("primary stream completed without text");
+    expect(source).toContain("model: activeModel");
+  });
 });

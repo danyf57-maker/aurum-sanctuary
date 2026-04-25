@@ -39,7 +39,7 @@ import {
 } from '@/lib/billing/aurum-access';
 import { resolveOptionalFirstName } from '@/lib/profile/first-name';
 import type { Locale } from '@/lib/locale';
-import { AI_MODEL } from '@/lib/ai/models';
+import { AI_FAST_MODEL, AI_MODEL } from '@/lib/ai/models';
 
 type AurumIntent = 'reflection' | 'conversation' | 'analysis' | 'clarify' | 'action' | 'philosophy';
 type SupportedLocale = Locale;
@@ -417,29 +417,41 @@ export async function POST(request: NextRequest) {
     // 6. Call DeepSeek with STREAMING
     logger.infoSafe('Generating reflection (streaming)', { userId, hasPatterns: !!patternContext, intent, skillId });
 
-    const controller = new AbortController();
+    const attemptModels = Array.from(new Set(
+      isConversationFollowUp
+        ? [AI_FAST_MODEL, AI_MODEL]
+        : [AI_MODEL, AI_FAST_MODEL],
+    ));
     const upstreamTimeoutMs = isConversationFollowUp
       ? CONVERSATION_UPSTREAM_TIMEOUT_MS
       : REFLECTION_UPSTREAM_TIMEOUT_MS;
-    const timeout = setTimeout(() => controller.abort(), upstreamTimeoutMs);
 
-    const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: AI_MODEL,
-        messages,
-        temperature: shortFollowUp ? 1.0 : isConversationFollowUp ? 0.95 : 1.05,
-        max_tokens: responseMaxTokens,
-        stream: true,
-      }),
-      signal: controller.signal,
-    });
+    const fetchModelStream = async (activeModel: string) => {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), upstreamTimeoutMs);
 
-    clearTimeout(timeout);
+      try {
+        return await fetch('https://api.deepseek.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${apiKey}`,
+          },
+          body: JSON.stringify({
+            model: activeModel,
+            messages,
+            temperature: shortFollowUp ? 1.0 : isConversationFollowUp ? 0.95 : 1.05,
+            max_tokens: responseMaxTokens,
+            stream: true,
+          }),
+          signal: controller.signal,
+        });
+      } finally {
+        clearTimeout(timeout);
+      }
+    };
+
+    const response = await fetchModelStream(attemptModels[0]);
 
     if (!response.ok) {
       const error = await response.text();
@@ -462,91 +474,147 @@ export async function POST(request: NextRequest) {
 
     // 7. Stream response to client via SSE
     // Background tasks (pattern update, conversation persist) run after stream ends
-    const deepSeekBody = response.body;
     const encoder = new TextEncoder();
     const decoder = new TextDecoder();
     let fullText = '';
-    let deepSeekSseRemainder = '';
-    let upstreamCompleted = false;
 
     const stream = new ReadableStream({
       async start(ctrl) {
-        const reader = deepSeekBody.getReader();
-        const handleDeepSeekMessage = (data: string) => {
-          if (data === '[DONE]') {
-            upstreamCompleted = true;
-            return;
-          }
+        let modelResponse = response;
 
-          try {
-            const parsed = JSON.parse(data);
-            const token = parsed.choices?.[0]?.delta?.content;
-            const finishReason = parsed.choices?.[0]?.finish_reason;
-            if (finishReason) {
-              upstreamCompleted = true;
-            }
-            if (token) {
-              fullText += token;
-              // SSE format: data: <json>\n\n
-              ctrl.enqueue(encoder.encode(`data: ${JSON.stringify({ token })}\n\n`));
-            }
-          } catch {
-            // Skip malformed JSON chunks
-          }
-        };
-
-        try {
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-
-            const chunk = decoder.decode(value, { stream: true });
-            const parsed = extractSseDataMessages(deepSeekSseRemainder, chunk);
-            deepSeekSseRemainder = parsed.remainder;
-            parsed.messages.forEach(handleDeepSeekMessage);
-          }
-
-          flushSseDataMessages(deepSeekSseRemainder).forEach(handleDeepSeekMessage);
-
-          if (!upstreamCompleted || !fullText.trim()) {
-            logger.errorSafe('DeepSeek reflection stream ended incomplete', undefined, {
+        for (let attemptIndex = 0; attemptIndex < attemptModels.length; attemptIndex += 1) {
+          const activeModel = attemptModels[attemptIndex];
+          if (attemptIndex > 0) {
+            logger.warnSafe('primary stream completed without text', {
               userId,
-              hasText: fullText.trim().length > 0,
-              upstreamCompleted,
+              activeModel,
+              previousModel: attemptModels[attemptIndex - 1],
             });
+            modelResponse = await fetchModelStream(activeModel);
+          }
+
+          if (!modelResponse.ok) {
+            const error = await modelResponse.text();
+            logger.errorSafe('DeepSeek reflection failed', undefined, {
+              statusCode: modelResponse.status,
+              activeModel,
+              errorPreview: error?.substring(0, 100),
+            });
+            if (attemptIndex < attemptModels.length - 1) continue;
             ctrl.enqueue(encoder.encode(`data: ${JSON.stringify({
               error: requestedLocale === 'fr'
-                ? "La réponse d'Aurum a été interrompue. Réessaie dans un instant."
-                : "Aurum's reply was interrupted. Try again in a moment.",
+                ? "Aurum n'a pas pu répondre. Réessaie dans un instant."
+                : "Aurum could not reply. Try again in a moment.",
             })}\n\n`));
             ctrl.close();
             return;
           }
 
-          // Send anti-meta sanitized text if needed
-          const validation = validateResponse(fullText);
-          if (!validation.valid && validation.correctedText) {
-            fullText = validation.correctedText;
-            // Send a replacement event so client uses sanitized version
-            ctrl.enqueue(encoder.encode(`data: ${JSON.stringify({ replace: fullText })}\n\n`));
+          if (!modelResponse.body) {
+            if (attemptIndex < attemptModels.length - 1) continue;
+            ctrl.enqueue(encoder.encode(`data: ${JSON.stringify({
+              error: requestedLocale === 'fr'
+                ? 'Réponse vide du service Aurum'
+                : 'Empty response from Aurum',
+            })}\n\n`));
+            ctrl.close();
+            return;
           }
 
-          // Send final metadata
-          ctrl.enqueue(encoder.encode(`data: ${JSON.stringify({
-            done: true,
-            intent,
-            skill_used: skillId,
-            patterns_detected: detectionResult ? detectionResult.themes.length : 0,
-            patterns_used: injectedPatterns ? injectedPatterns.patterns.length : 0,
-            conversationRepliesUsed: conversationState ? conversationState.repliesUsed + 1 : null,
-            conversationRepliesLimit: conversationState?.repliesLimit ?? null,
-          })}\n\n`));
+          const reader = modelResponse.body.getReader();
+          let deepSeekSseRemainder = '';
+          let upstreamCompleted = false;
+          let attemptText = '';
+          const handleDeepSeekMessage = (data: string) => {
+            if (data === '[DONE]') {
+              upstreamCompleted = true;
+              return;
+            }
 
-          ctrl.close();
-        } catch (err) {
-          ctrl.error(err);
-          return;
+            try {
+              const parsed = JSON.parse(data);
+              const token = parsed.choices?.[0]?.delta?.content;
+              const finishReason = parsed.choices?.[0]?.finish_reason;
+              if (finishReason) {
+                upstreamCompleted = true;
+              }
+              if (token) {
+                attemptText += token;
+                fullText += token;
+                // SSE format: data: <json>\n\n
+                ctrl.enqueue(encoder.encode(`data: ${JSON.stringify({ token })}\n\n`));
+              }
+            } catch {
+              // Skip malformed JSON chunks
+            }
+          };
+
+          try {
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+
+              const chunk = decoder.decode(value, { stream: true });
+              const parsed = extractSseDataMessages(deepSeekSseRemainder, chunk);
+              deepSeekSseRemainder = parsed.remainder;
+              parsed.messages.forEach(handleDeepSeekMessage);
+            }
+
+            flushSseDataMessages(deepSeekSseRemainder).forEach(handleDeepSeekMessage);
+
+            if (upstreamCompleted && !attemptText.trim() && attemptIndex < attemptModels.length - 1) {
+              continue;
+            }
+
+            if (!upstreamCompleted || !fullText.trim()) {
+              logger.errorSafe('DeepSeek reflection stream ended incomplete', undefined, {
+                userId,
+                hasText: fullText.trim().length > 0,
+                upstreamCompleted,
+                activeModel,
+              });
+              ctrl.enqueue(encoder.encode(`data: ${JSON.stringify({
+                error: requestedLocale === 'fr'
+                  ? "La réponse d'Aurum a été interrompue. Réessaie dans un instant."
+                  : "Aurum's reply was interrupted. Try again in a moment.",
+              })}\n\n`));
+              ctrl.close();
+              return;
+            }
+
+            break;
+          } catch (err) {
+            logger.errorSafe('DeepSeek reflection stream ended incomplete', undefined, {
+              userId,
+              hasText: fullText.trim().length > 0,
+              upstreamCompleted: false,
+              activeModel,
+            });
+            ctrl.error(err);
+            return;
+          }
         }
+
+        // Send anti-meta sanitized text if needed
+        const validation = validateResponse(fullText);
+        if (!validation.valid && validation.correctedText) {
+          fullText = validation.correctedText;
+          // Send a replacement event so client uses sanitized version
+          ctrl.enqueue(encoder.encode(`data: ${JSON.stringify({ replace: fullText })}\n\n`));
+        }
+
+        // Send final metadata
+        ctrl.enqueue(encoder.encode(`data: ${JSON.stringify({
+          done: true,
+          intent,
+          skill_used: skillId,
+          patterns_detected: detectionResult ? detectionResult.themes.length : 0,
+          patterns_used: injectedPatterns ? injectedPatterns.patterns.length : 0,
+          conversationRepliesUsed: conversationState ? conversationState.repliesUsed + 1 : null,
+          conversationRepliesLimit: conversationState?.repliesLimit ?? null,
+        })}\n\n`));
+
+        ctrl.close();
 
         // 8. Background: update patterns (non-blocking, after stream)
         if (detectionResult) {

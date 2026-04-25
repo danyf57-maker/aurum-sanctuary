@@ -84,6 +84,7 @@ export function MagazineEntryEditor({
 
   const chatEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const askInFlightRef = useRef(false);
 
   const hasChanges = useMemo(() => {
     return content !== initialContent || tags !== initialTags.join(", ");
@@ -160,6 +161,8 @@ export function MagazineEntryEditor({
   };
 
   const onAskAurum = async () => {
+    if (askInFlightRef.current || isAskingAurum) return;
+
     if (!user) {
       toast({
         title: "Connexion requise",
@@ -171,6 +174,7 @@ export function MagazineEntryEditor({
     const cleanQuestion = question.trim();
     if (!cleanQuestion) return;
 
+    askInFlightRef.current = true;
     const now = new Date();
     const optimisticUserTurn: PendingConversationTurn = {
       id: `pending-user-${Date.now()}`,
@@ -309,10 +313,10 @@ export function MagazineEntryEditor({
             : "Aurum n'a pas pu répondre.",
         variant: "destructive",
       });
-      setQuestion(cleanQuestion);
       setPendingAurumTurn(null);
     } finally {
       clearIdleTimeout();
+      askInFlightRef.current = false;
       setIsAskingAurum(false);
     }
   };
