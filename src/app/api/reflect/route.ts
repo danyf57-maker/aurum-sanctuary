@@ -71,6 +71,8 @@ const CONVERSATION_INTENT_REGEX = /(conversation en cours|utilisateur:|aurum:|re
 const LIGHT_ACKNOWLEDGEMENT_REGEX = /^(ok|okay|ok merci|merci|merci beaucoup|d'accord|dac|ça va|ca va|oui|non|peut-etre|peut-être|je ne sais pas|jsp|maybe|yes|no|thanks|thank you|i don't know|idk|vale|gracias|si|sí|no se|no sé|obrigado|obrigada|talvez|nao sei|não sei|grazie|forse|ich weiss nicht|ich weiß nicht|danke)$/;
 const STRONG_PSYCH_STRUCTURE_REGEX = /(mais|puis|ensuite|dès que|des que|quand|chaque fois|toujours|jamais|souvent|parfois|alors|sauf que|en même temps|en meme temps|pendant que|tout en|yet|but|then|when|whenever|every time|always|never|often|sometimes|while|at the same time|as soon as|pero|entonces|cuando|cada vez|siempre|mai|poi|quando|sempre|aber|dann|wenn|jedes mal|immer|mas|depois|quando|sempre)/i;
 const CORE_PAIN_REGEX = /(peur|honte|colère|colere|fatigue|épuis|epuis|culpabil|triste|tristesse|angoiss|stress|pression|bloqu|vide|solitude|aband|rejet|envahi|fear|ashamed|shame|guilt|guilty|afraid|pain|hurt|empty|alone|stuck|numb|tired|pressure|panic|anxiety|miedo|vergüenza|verguenza|culpa|vacío|vacio|rabia|fatica|vergogna|colpa|vuoto|paura|scham|schuld|leer|angst|medo|culpa|vazio|cansaço|cansaco|vergonha)/i;
+const REFLECTION_UPSTREAM_TIMEOUT_MS = 70000;
+const CONVERSATION_UPSTREAM_TIMEOUT_MS = 30000;
 
 function detectAurumIntent(content: string, userMessage?: string): AurumIntent {
   const latestText = (userMessage || content).toLowerCase();
@@ -416,7 +418,10 @@ export async function POST(request: NextRequest) {
     logger.infoSafe('Generating reflection (streaming)', { userId, hasPatterns: !!patternContext, intent, skillId });
 
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 20000);
+    const upstreamTimeoutMs = isConversationFollowUp
+      ? CONVERSATION_UPSTREAM_TIMEOUT_MS
+      : REFLECTION_UPSTREAM_TIMEOUT_MS;
+    const timeout = setTimeout(() => controller.abort(), upstreamTimeoutMs);
 
     const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
       method: 'POST',

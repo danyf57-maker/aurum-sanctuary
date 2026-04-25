@@ -49,7 +49,8 @@ type ConversationTurn = {
   text: string;
 };
 
-const REFLECTION_IDLE_TIMEOUT_MS = 22000;
+const REFLECTION_IDLE_TIMEOUT_MS = 65000;
+const CONVERSATION_IDLE_TIMEOUT_MS = 22000;
 
 function stripPreviewMarkdown(content: string) {
   return content
@@ -445,7 +446,7 @@ export function PremiumJournalForm() {
       idleTimeout = setTimeout(() => {
         didTimeout = true;
         controller.abort();
-      }, REFLECTION_IDLE_TIMEOUT_MS);
+      }, options?.userMessage ? CONVERSATION_IDLE_TIMEOUT_MS : REFLECTION_IDLE_TIMEOUT_MS);
     };
     const clearIdleTimeout = () => {
       if (idleTimeout) {

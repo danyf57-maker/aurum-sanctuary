@@ -36,4 +36,15 @@ describe("PremiumJournalForm draft hydration", () => {
     expect(source).toContain("const reflectionContent = override?.content ?? savedContent;");
     expect(source).toContain("const reflectionEntryId = override?.entryId ?? savedEntryId;");
   });
+
+  it("allows the first reflection more time than chat follow-ups before aborting", () => {
+    const source = readFileSync(
+      join(process.cwd(), "src/components/sanctuary/premium-journal-form.tsx"),
+      "utf8"
+    );
+
+    expect(source).toContain("const REFLECTION_IDLE_TIMEOUT_MS = 65000;");
+    expect(source).toContain("const CONVERSATION_IDLE_TIMEOUT_MS = 22000;");
+    expect(source).toContain("options?.userMessage ? CONVERSATION_IDLE_TIMEOUT_MS : REFLECTION_IDLE_TIMEOUT_MS");
+  });
 });

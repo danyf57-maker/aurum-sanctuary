@@ -16,6 +16,17 @@ describe("reflection streaming safeguards", () => {
     expect(source).toContain("return;");
   });
 
+  it("allows longer upstream time for the first deep reflection than for chat follow-ups", () => {
+    const source = readFileSync(
+      join(process.cwd(), "src/app/api/reflect/route.ts"),
+      "utf8"
+    );
+
+    expect(source).toContain("const REFLECTION_UPSTREAM_TIMEOUT_MS = 70000;");
+    expect(source).toContain("const CONVERSATION_UPSTREAM_TIMEOUT_MS = 30000;");
+    expect(source).toContain("const upstreamTimeoutMs = isConversationFollowUp");
+  });
+
   it("keeps follow-up replies fast by skipping the pattern prepass", () => {
     const source = readFileSync(
       join(process.cwd(), "src/app/api/reflect/route.ts"),
