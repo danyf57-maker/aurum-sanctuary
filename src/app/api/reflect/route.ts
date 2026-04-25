@@ -444,16 +444,24 @@ export async function POST(request: NextRequest) {
     const decoder = new TextDecoder();
     let fullText = '';
     let deepSeekSseRemainder = '';
+    let upstreamCompleted = false;
 
     const stream = new ReadableStream({
       async start(ctrl) {
         const reader = deepSeekBody.getReader();
         const handleDeepSeekMessage = (data: string) => {
-          if (data === '[DONE]') return;
+          if (data === '[DONE]') {
+            upstreamCompleted = true;
+            return;
+          }
 
           try {
             const parsed = JSON.parse(data);
             const token = parsed.choices?.[0]?.delta?.content;
+            const finishReason = parsed.choices?.[0]?.finish_reason;
+            if (finishReason) {
+              upstreamCompleted = true;
+            }
             if (token) {
               fullText += token;
               // SSE format: data: <json>\n\n
@@ -477,6 +485,21 @@ export async function POST(request: NextRequest) {
 
           flushSseDataMessages(deepSeekSseRemainder).forEach(handleDeepSeekMessage);
 
+          if (!upstreamCompleted || !fullText.trim()) {
+            logger.errorSafe('DeepSeek reflection stream ended incomplete', undefined, {
+              userId,
+              hasText: fullText.trim().length > 0,
+              upstreamCompleted,
+            });
+            ctrl.enqueue(encoder.encode(`data: ${JSON.stringify({
+              error: requestedLocale === 'fr'
+                ? "La réponse d'Aurum a été interrompue. Réessaie dans un instant."
+                : "Aurum's reply was interrupted. Try again in a moment.",
+            })}\n\n`));
+            ctrl.close();
+            return;
+          }
+
           // Send anti-meta sanitized text if needed
           const validation = validateResponse(fullText);
           if (!validation.valid && validation.correctedText) {
@@ -499,6 +522,7 @@ export async function POST(request: NextRequest) {
           ctrl.close();
         } catch (err) {
           ctrl.error(err);
+          return;
         }
 
         // 8. Background: update patterns (non-blocking, after stream)

@@ -14,4 +14,15 @@ describe("PremiumJournalForm draft hydration", () => {
     expect(source).toContain("hasRestoredInitialDraftRef.current = true;");
     expect(source).toContain("setDraftContent(target.value);");
   });
+
+  it("removes partial Aurum turns when the stream reports an error", () => {
+    const source = readFileSync(
+      join(process.cwd(), "src/components/sanctuary/premium-journal-form.tsx"),
+      "utf8"
+    );
+
+    expect(source).toContain("if (data.error) {");
+    expect(source).toContain("throw new Error(data.error);");
+    expect(source).toContain("setConversationTurns((prev) => prev.filter((turn) => turn.id !== aurumTurnId));");
+  });
 });

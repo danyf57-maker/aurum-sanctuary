@@ -481,27 +481,41 @@ export function PremiumJournalForm() {
     } | null = null;
 
     const handleSseMessage = (message: string) => {
+      let data: {
+        token?: string;
+        replace?: string;
+        done?: boolean;
+        error?: string;
+        conversationRepliesUsed?: number;
+        conversationRepliesLimit?: number;
+      };
       try {
-        const data = JSON.parse(message);
-        if (data.token) {
-          fullText += data.token;
-          onToken(fullText);
-        } else if (data.replace) {
-          // Anti-meta sanitized replacement
-          fullText = data.replace;
-          onToken(fullText);
-        } else if (data.done) {
-          meta = {
-            conversationRepliesUsed: typeof data.conversationRepliesUsed === 'number'
-              ? data.conversationRepliesUsed
-              : null,
-            conversationRepliesLimit: typeof data.conversationRepliesLimit === 'number'
-              ? data.conversationRepliesLimit
-              : null,
-          };
-        }
+        data = JSON.parse(message);
       } catch {
         // skip malformed
+        return;
+      }
+
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      if (data.token) {
+        fullText += data.token;
+        onToken(fullText);
+      } else if (data.replace) {
+        // Anti-meta sanitized replacement
+        fullText = data.replace;
+        onToken(fullText);
+      } else if (data.done) {
+        meta = {
+          conversationRepliesUsed: typeof data.conversationRepliesUsed === 'number'
+            ? data.conversationRepliesUsed
+            : null,
+          conversationRepliesLimit: typeof data.conversationRepliesLimit === 'number'
+            ? data.conversationRepliesLimit
+            : null,
+        };
       }
     };
 
@@ -559,6 +573,8 @@ export function PremiumJournalForm() {
         setAurumRepliesUsed(result.meta.conversationRepliesUsed);
       }
     } catch (error) {
+      setReflection(null);
+      setConversationTurns((prev) => prev.filter((turn) => turn.id !== aurumTurnId));
       const message = error instanceof Error ? error.message : t('errors.generic');
       toast({ title: t('toasts.errorTitle'), description: message, variant: 'destructive' });
     } finally {
@@ -584,6 +600,7 @@ export function PremiumJournalForm() {
     setConversationInput('');
 
     setIsContinuingConversation(true);
+    const aurumTurnId = `aurum-${Date.now()}`;
     try {
       const context = nextTurns
         .slice(-8)
@@ -600,7 +617,6 @@ export function PremiumJournalForm() {
         t('conversation.replyInstruction'),
       ].join('\n');
 
-      const aurumTurnId = `aurum-${Date.now()}`;
       const result = await streamReflection(
         conversationalInput,
         (partial) => {
@@ -627,6 +643,7 @@ export function PremiumJournalForm() {
         setAurumRepliesUsed(result.meta.conversationRepliesUsed);
       }
     } catch (error) {
+      setConversationTurns((prev) => prev.filter((turn) => turn.id !== aurumTurnId));
       const message = error instanceof Error ? error.message : t('errors.generic');
       toast({ title: t('toasts.errorTitle'), description: message, variant: 'destructive' });
     } finally {
