@@ -352,17 +352,17 @@ export default async function Home() {
                 </section>
 
                 <section className="aurum-motion-section container max-w-3xl pb-24 md:pb-32">
-                    <h2 className="text-4xl font-headline text-stone-900 text-center mb-12">
+                    <h2 className="text-4xl font-headline text-stone-900 text-center mb-12 dark:text-stone-100">
                         {t('faqTitle')}
                     </h2>
-                    <div className="w-full divide-y divide-stone-200 border-y border-stone-200">
+                    <div className="w-full divide-y divide-stone-200 border-y border-stone-200 dark:divide-stone-700 dark:border-stone-700">
                         {faqs.map((faq, index) => (
                             <details key={index} className="group py-5">
-                                <summary className="flex cursor-pointer list-none items-center justify-between gap-6 text-left text-xl font-headline font-normal text-stone-900">
+                                <summary className="flex cursor-pointer list-none items-center justify-between gap-6 text-left text-xl font-headline font-normal text-stone-900 dark:text-stone-100">
                                     <span>{faq.question}</span>
-                                    <span className="text-2xl leading-none text-stone-400 transition-transform group-open:rotate-45">+</span>
+                                    <span className="text-2xl leading-none text-stone-400 transition-transform group-open:rotate-45 dark:text-stone-300">+</span>
                                 </summary>
-                                <p className="mt-4 text-lg font-light leading-relaxed text-foreground/80">
+                                <p className="mt-4 text-lg font-light leading-relaxed text-foreground/80 dark:text-stone-300">
                                     {faq.answer}
                                 </p>
                             </details>

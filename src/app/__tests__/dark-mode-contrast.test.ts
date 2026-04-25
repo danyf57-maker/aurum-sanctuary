@@ -7,6 +7,14 @@ function readSource(file: string) {
 }
 
 describe("authenticated app dark mode contrast", () => {
+  it("keeps marketing FAQ questions visible when dark mode is active", () => {
+    const marketingPage = readSource("src/app/(marketing)/page.tsx");
+
+    expect(marketingPage).toContain("dark:text-stone-100");
+    expect(marketingPage).toContain("dark:divide-stone-700");
+    expect(marketingPage).toContain("dark:border-stone-700");
+  });
+
   it("keeps the journal header, stats, and cards readable in dark mode", () => {
     const journalPage = readSource("src/app/(app)/sanctuary/page.tsx");
     const journalCard = readSource("src/components/journal/journal-magazine-card.tsx");
