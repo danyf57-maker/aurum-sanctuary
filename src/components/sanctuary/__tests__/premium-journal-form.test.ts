@@ -25,4 +25,15 @@ describe("PremiumJournalForm draft hydration", () => {
     expect(source).toContain("throw new Error(data.error);");
     expect(source).toContain("setConversationTurns((prev) => prev.filter((turn) => turn.id !== aurumTurnId));");
   });
+
+  it("starts the first Aurum reflection automatically after a page is saved", () => {
+    const source = readFileSync(
+      join(process.cwd(), "src/components/sanctuary/premium-journal-form.tsx"),
+      "utf8"
+    );
+
+    expect(source).toContain("void handleRequestReflection({ content, entryId: result.entryId || null });");
+    expect(source).toContain("const reflectionContent = override?.content ?? savedContent;");
+    expect(source).toContain("const reflectionEntryId = override?.entryId ?? savedEntryId;");
+  });
 });

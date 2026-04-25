@@ -372,6 +372,7 @@ export function PremiumJournalForm() {
         setIsSaved(true);
         setReflection(null); // Reset reflection
         setIsActivelyTyping(false);
+        void handleRequestReflection({ content, entryId: result.entryId || null });
 
         toast({
           title: t('toasts.entrySavedTitle'),
@@ -534,15 +535,17 @@ export function PremiumJournalForm() {
     return { text: fullText, meta };
   };
 
-  const handleRequestReflection = async () => {
-    if (!savedContent) return;
+  const handleRequestReflection = async (override?: { content?: string; entryId?: string | null }) => {
+    const reflectionContent = override?.content ?? savedContent;
+    const reflectionEntryId = override?.entryId ?? savedEntryId;
+    if (!reflectionContent) return;
 
     setIsGeneratingReflection(true);
     const aurumTurnId = initialAurumTurnIdRef.current ?? `aurum-initial-${Date.now()}`;
     initialAurumTurnIdRef.current = aurumTurnId;
     try {
       const result = await streamReflection(
-        savedContent,
+        reflectionContent,
         (partial) => {
           setReflection({ text: partial, patternsUsed: 0 });
           setConversationTurns((prev) => {
@@ -555,7 +558,7 @@ export function PremiumJournalForm() {
             return [{ id: aurumTurnId, role: 'aurum', text: partial }];
           });
         },
-        { entryId: savedEntryId },
+        { entryId: reflectionEntryId },
       );
       const text = result.text;
       // Final state with complete text
@@ -1004,7 +1007,7 @@ export function PremiumJournalForm() {
                         </p>
                       </div>
                       <Button
-                        onClick={handleRequestReflection}
+                        onClick={() => void handleRequestReflection()}
                         size="lg"
                         className="group h-12 px-8 bg-gradient-to-r from-[#D4AF37] to-[#C5A059] text-stone-900 hover:from-[#C5A059] hover:to-[#D4AF37] rounded-2xl shadow-[0_8px_24px_rgba(212,175,55,0.25)] font-semibold transition-all duration-300 hover:shadow-[0_12px_32px_rgba(212,175,55,0.35)] hover:scale-[1.02]"
                       >
