@@ -150,10 +150,10 @@ export function JournalMagazineCard({
         className="group block h-full"
       >
         <Card
-          className={`overflow-hidden h-full border-l-4 ${moodBorder} bg-white transition-all duration-300 hover:shadow-xl hover:-translate-y-1`}
+          className={`overflow-hidden h-full border-l-4 ${moodBorder} bg-white transition-all duration-300 hover:shadow-xl hover:-translate-y-1 dark:border-stone-800 dark:bg-stone-900 dark:hover:shadow-stone-950/40`}
         >
           {/* Image à la une */}
-          <div className="relative aspect-[16/10] w-full bg-stone-100 overflow-hidden">
+          <div className="relative aspect-[16/10] w-full bg-stone-100 overflow-hidden dark:bg-stone-800">
             {coverImage && !imageError ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -163,7 +163,7 @@ export function JournalMagazineCard({
                 onError={() => setImageError(true)}
               />
             ) : (
-              <div className="flex h-full items-center justify-center text-stone-400">
+              <div className="flex h-full items-center justify-center text-stone-400 dark:text-stone-500">
                 <BookImage className="h-12 w-12 opacity-50" />
               </div>
             )}
@@ -175,7 +175,7 @@ export function JournalMagazineCard({
           {/* Content */}
           <CardContent className="p-5 space-y-3">
             {/* Date */}
-            <div className="flex items-center gap-3 text-xs text-stone-500">
+            <div className="flex items-center gap-3 text-xs text-stone-500 dark:text-stone-300">
               <div className="flex items-center gap-1">
                 <Calendar className="h-3.5 w-3.5" />
                 <span className="capitalize">{day}</span>
@@ -187,13 +187,13 @@ export function JournalMagazineCard({
             </div>
 
             {/* Title */}
-            <h3 className="font-headline text-xl font-semibold text-stone-900 line-clamp-2 group-hover:text-[#C5A059] transition-colors">
+            <h3 className="font-headline text-xl font-semibold text-stone-900 line-clamp-2 group-hover:text-[#C5A059] transition-colors dark:text-stone-100">
               {title}
             </h3>
 
             {/* Excerpt */}
             {excerpt && (
-              <p className="text-sm text-stone-600 line-clamp-3 leading-relaxed">
+              <p className="text-sm text-stone-600 line-clamp-3 leading-relaxed dark:text-stone-300">
                 {excerpt}
               </p>
             )}
@@ -205,7 +205,7 @@ export function JournalMagazineCard({
                   <Badge
                     key={tag}
                     variant="outline"
-                    className="text-[10px] uppercase tracking-wider font-normal bg-stone-50"
+                    className="text-[10px] uppercase tracking-wider font-normal bg-stone-50 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-300"
                   >
                     {tag}
                   </Badge>
@@ -213,7 +213,7 @@ export function JournalMagazineCard({
                 {entry.tags.length > 3 && (
                   <Badge
                     variant="outline"
-                    className="text-[10px] font-normal bg-stone-50"
+                    className="text-[10px] font-normal bg-stone-50 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-300"
                   >
                     +{entry.tags.length - 3}
                   </Badge>
@@ -223,10 +223,10 @@ export function JournalMagazineCard({
 
             {/* Mood indicator */}
             {entry.mood && (
-              <div className="pt-2 border-t border-stone-100">
-                <span className="text-xs text-stone-500 capitalize">
+              <div className="pt-2 border-t border-stone-100 dark:border-stone-800">
+                <span className="text-xs text-stone-500 capitalize dark:text-stone-300">
                   {safeLocale === "fr" ? "Humeur" : "Mood"}:{" "}
-                  <span className="font-medium text-stone-700">
+                  <span className="font-medium text-stone-700 dark:text-stone-100">
                     {entry.mood}
                   </span>
                 </span>

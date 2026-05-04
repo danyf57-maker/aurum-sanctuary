@@ -12,4 +12,14 @@ describe("guide structured data", () => {
     expect(source).toContain('"@type": "FAQPage"');
     expect(source).toContain('"@type": "HowTo"');
   });
+
+  it("keeps the final guide CTA visually framed", () => {
+    const source = readFileSync(
+      join(process.cwd(), "src/app/guides/[slug]/page.tsx"),
+      "utf8"
+    );
+
+    expect(source).not.toContain('<Button asChild variant="ghost" size="lg">');
+    expect(source).toContain("whitespace-normal");
+  });
 });

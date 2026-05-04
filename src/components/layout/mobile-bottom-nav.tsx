@@ -16,7 +16,7 @@ export function MobileBottomNav() {
   const t = useTranslations('nav');
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-stone-200/80 bg-white/95 backdrop-blur-md pb-[env(safe-area-inset-bottom)] lg:hidden">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-stone-200/80 bg-white/95 backdrop-blur-md pb-[env(safe-area-inset-bottom)] dark:border-stone-800 dark:bg-stone-950/95 lg:hidden">
       <div className="flex items-center justify-around h-16">
         {NAV_ITEMS.map((item) => {
           const isActive =
@@ -28,8 +28,8 @@ export function MobileBottomNav() {
               className={cn(
                 'relative flex flex-col items-center justify-center gap-1 flex-1 h-full transition-colors',
                 isActive
-                  ? 'text-stone-900'
-                  : 'text-stone-400 active:text-stone-600'
+                  ? 'text-stone-900 dark:text-stone-100'
+                  : 'text-stone-400 active:text-stone-600 dark:text-stone-400 dark:active:text-stone-200'
               )}
             >
               {isActive && (

@@ -55,14 +55,14 @@ function AurumExchangePreview({ exchanges, isFr }: { exchanges: AurumExchange[];
   const latestAurum = aurumMessages[0];
 
   return (
-    <div className="border-t border-amber-100/60 bg-gradient-to-br from-amber-50/40 to-white px-5 py-3">
+    <div className="border-t border-amber-100/60 bg-gradient-to-br from-amber-50/40 to-white px-5 py-3 dark:border-amber-900/40 dark:from-amber-950/35 dark:to-stone-900">
       <div className="mb-1.5 flex items-center gap-1.5">
         <Flame className="h-3 w-3 text-amber-500" />
-        <span className="text-[10px] font-medium uppercase tracking-wider text-amber-600">
+        <span className="text-[10px] font-medium uppercase tracking-wider text-amber-600 dark:text-amber-300">
           {isFr ? "Ce qu'Aurum remarque" : 'What Aurum notices'}
         </span>
       </div>
-      <p className="line-clamp-2 text-xs leading-relaxed text-stone-600">{latestAurum.text}</p>
+      <p className="line-clamp-2 text-xs leading-relaxed text-stone-600 dark:text-stone-300">{latestAurum.text}</p>
     </div>
   );
 }
@@ -233,11 +233,11 @@ function SanctuaryPageContent() {
       <div className="container max-w-7xl py-8 md:py-12">
         <header className="mb-10">
           <div className="mb-4 h-px w-10 bg-amber-600/50" />
-          <h1 className="font-headline text-4xl tracking-tight text-stone-900">
+          <h1 className="font-headline text-4xl tracking-tight text-stone-900 dark:text-stone-100">
             {isFr ? 'Journal' : 'Journal'}
           </h1>
           {totalEntries > 0 ? (
-            <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-stone-500">
+            <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-stone-500 dark:text-stone-300">
               <span className="inline-flex items-center gap-1.5">
                 <BookOpen className="h-4 w-4" />
                 {isFr
@@ -256,7 +256,7 @@ function SanctuaryPageContent() {
               )}
             </div>
           ) : (
-            <p className="mt-2 max-w-xl text-stone-500">
+            <p className="mt-2 max-w-xl text-stone-500 dark:text-stone-300">
               {isFr
                 ? "La mémoire de tes pages privées, et l'endroit où les fils récurrents commencent à devenir plus visibles."
                 : 'The memory of your private pages, and where recurring threads start to become easier to notice.'}
@@ -284,63 +284,63 @@ function SanctuaryPageContent() {
             ))}
           </motion.div>
         ) : (
-          <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
-            <div className="border-b border-stone-100 bg-gradient-to-b from-stone-50 to-white px-10 py-12 text-center">
-              <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-50 ring-1 ring-amber-200/70">
+          <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm dark:border-stone-800 dark:bg-stone-900">
+            <div className="border-b border-stone-100 bg-gradient-to-b from-stone-50 to-white px-10 py-12 text-center dark:border-stone-800 dark:from-stone-900 dark:to-stone-950">
+              <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-50 ring-1 ring-amber-200/70 dark:bg-amber-950/40 dark:ring-amber-800/60">
                 <BookOpen className="h-7 w-7 text-amber-700" />
               </div>
-              <h2 className="text-lg font-semibold text-stone-900">
+              <h2 className="text-lg font-semibold text-stone-900 dark:text-stone-100">
                 {isFr ? 'Là où tes pages gardent leur continuité' : 'Where your pages keep their continuity'}
               </h2>
-              <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-stone-500">
+              <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-stone-500 dark:text-stone-300">
                 {isFr ? (
                   <>
-                    Chaque page enregistrée depuis <span className="font-medium text-stone-700">Écrire</span> apparaît ici,
+                    Chaque page enregistrée depuis <span className="font-medium text-stone-700 dark:text-stone-200">Écrire</span> apparaît ici,
                     classée dans le temps. C&apos;est l&apos;endroit où ta mémoire se construit et où les retours deviennent repérables.
                   </>
                 ) : (
                   <>
-                    Every page you save from <span className="font-medium text-stone-700">Write</span> appears here,
+                    Every page you save from <span className="font-medium text-stone-700 dark:text-stone-200">Write</span> appears here,
                     ordered over time. This is where your memory builds and recurring threads become easier to spot.
                   </>
                 )}
               </p>
-              <p className="mx-auto mt-3 max-w-md text-xs italic text-stone-400">
+              <p className="mx-auto mt-3 max-w-md text-xs italic text-stone-400 dark:text-stone-400">
                 {isFr
                   ? '"Écrire, c\'est commencer à y voir plus clair." - Joan Didion (adapté)'
                   : '"Writing is the beginning of seeing more clearly." - Joan Didion (adapted)'}
               </p>
             </div>
 
-            <div className="grid divide-x divide-stone-100 sm:grid-cols-3">
+            <div className="grid divide-x divide-stone-100 dark:divide-stone-800 sm:grid-cols-3">
               <div className="flex flex-col items-center p-7 text-center">
-                <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">
-                  <CalendarDays className="h-4 w-4 text-stone-600" />
+                <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100 dark:bg-stone-800">
+                  <CalendarDays className="h-4 w-4 text-stone-600 dark:text-stone-300" />
                 </div>
-                <p className="text-sm font-medium text-stone-900">{isFr ? 'Chronologie' : 'Timeline'}</p>
-                <p className="mt-1.5 text-xs leading-relaxed text-stone-500">
+                <p className="text-sm font-medium text-stone-900 dark:text-stone-100">{isFr ? 'Chronologie' : 'Timeline'}</p>
+                <p className="mt-1.5 text-xs leading-relaxed text-stone-500 dark:text-stone-300">
                   {isFr
                     ? "Retrouve chaque page dans l'ordre où elle a été écrite, pour revoir comment un fil s'est formé."
                     : 'Return to every page in the order it appeared, and see how a thread began to form.'}
                 </p>
               </div>
               <div className="flex flex-col items-center p-7 text-center">
-                <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">
-                  <Heart className="h-4 w-4 text-stone-600" />
+                <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100 dark:bg-stone-800">
+                  <Heart className="h-4 w-4 text-stone-600 dark:text-stone-300" />
                 </div>
-                <p className="text-sm font-medium text-stone-900">{isFr ? 'Thèmes & humeurs' : 'Themes & moods'}</p>
-                <p className="mt-1.5 text-xs leading-relaxed text-stone-500">
+                <p className="text-sm font-medium text-stone-900 dark:text-stone-100">{isFr ? 'Thèmes & humeurs' : 'Themes & moods'}</p>
+                <p className="mt-1.5 text-xs leading-relaxed text-stone-500 dark:text-stone-300">
                   {isFr
                     ? 'Retrouve une page par humeur, thème ou période, surtout quand quelque chose commence à revenir.'
                     : 'Find a page by mood, theme, or period, especially when something starts to repeat.'}
                 </p>
               </div>
               <div className="flex flex-col items-center p-7 text-center">
-                <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">
-                  <BookOpen className="h-4 w-4 text-stone-600" />
+                <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100 dark:bg-stone-800">
+                  <BookOpen className="h-4 w-4 text-stone-600 dark:text-stone-300" />
                 </div>
-                <p className="text-sm font-medium text-stone-900">{isFr ? 'Revenir avec Aurum' : 'Revisit with Aurum'}</p>
-                <p className="mt-1.5 text-xs leading-relaxed text-stone-500">
+                <p className="text-sm font-medium text-stone-900 dark:text-stone-100">{isFr ? 'Revenir avec Aurum' : 'Revisit with Aurum'}</p>
+                <p className="mt-1.5 text-xs leading-relaxed text-stone-500 dark:text-stone-300">
                   {isFr
                     ? "Relis, modifie ou approfondis n'importe quelle page avec Aurum pour comparer ce qui a changé."
                     : 'Reopen, edit, or deepen any page with Aurum to compare what has changed.'}
@@ -348,8 +348,8 @@ function SanctuaryPageContent() {
               </div>
             </div>
 
-            <div className="flex items-center justify-center border-t border-stone-100 bg-stone-50/60 px-10 py-6">
-              <Button asChild className="bg-stone-900 text-stone-50 hover:bg-stone-800">
+            <div className="flex items-center justify-center border-t border-stone-100 bg-stone-50/60 px-10 py-6 dark:border-stone-800 dark:bg-stone-950/70">
+              <Button asChild className="bg-stone-900 text-stone-50 hover:bg-stone-800 dark:bg-stone-100 dark:text-stone-950 dark:hover:bg-stone-200">
                 <Link href={to('/sanctuary/write')}>
                   <PenSquare className="mr-2 h-4 w-4" />
                   {isFr ? 'Écrire ma première page' : 'Write my first page'}

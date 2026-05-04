@@ -14,6 +14,7 @@ import { logger } from '@/lib/logger/safe';
 import { getUserPatterns, batchUpdatePatterns, cleanupStalePatterns } from '@/lib/patterns/storage';
 import { detectPatterns, detectionToStorageFormat } from '@/lib/patterns/detect';
 import { selectPatternsForInjection, formatPatternsForContext } from '@/lib/patterns/inject';
+import type { PatternDetectionResult } from '@/lib/patterns/types';
 import {
   PSYCHOLOGIST_ANALYST_SKILL_ID,
 } from '@/lib/skills/psychologist-analyst';
@@ -31,6 +32,7 @@ import {
   resolveReplyLanguage,
 } from '@/lib/ai/language';
 import { buildAurumSystemPrompt } from '@/lib/ai/aurum-system-prompts';
+import { extractSseDataMessages, flushSseDataMessages } from '@/lib/sse';
 import {
   getFreeAurumConversationState,
   getFreeEntryState,
@@ -38,7 +40,7 @@ import {
 } from '@/lib/billing/aurum-access';
 import { resolveOptionalFirstName } from '@/lib/profile/first-name';
 import type { Locale } from '@/lib/locale';
-import { AI_MODEL } from '@/lib/ai/models';
+import { AI_FAST_MODEL, AI_MODEL } from '@/lib/ai/models';
 
 type AurumIntent = 'reflection' | 'conversation' | 'analysis' | 'clarify' | 'action' | 'philosophy';
 type SupportedLocale = Locale;
@@ -70,6 +72,8 @@ const CONVERSATION_INTENT_REGEX = /(conversation en cours|utilisateur:|aurum:|re
 const LIGHT_ACKNOWLEDGEMENT_REGEX = /^(ok|okay|ok merci|merci|merci beaucoup|d'accord|dac|ça va|ca va|oui|non|peut-etre|peut-être|je ne sais pas|jsp|maybe|yes|no|thanks|thank you|i don't know|idk|vale|gracias|si|sí|no se|no sé|obrigado|obrigada|talvez|nao sei|não sei|grazie|forse|ich weiss nicht|ich weiß nicht|danke)$/;
 const STRONG_PSYCH_STRUCTURE_REGEX = /(mais|puis|ensuite|dès que|des que|quand|chaque fois|toujours|jamais|souvent|parfois|alors|sauf que|en même temps|en meme temps|pendant que|tout en|yet|but|then|when|whenever|every time|always|never|often|sometimes|while|at the same time|as soon as|pero|entonces|cuando|cada vez|siempre|mai|poi|quando|sempre|aber|dann|wenn|jedes mal|immer|mas|depois|quando|sempre)/i;
 const CORE_PAIN_REGEX = /(peur|honte|colère|colere|fatigue|épuis|epuis|culpabil|triste|tristesse|angoiss|stress|pression|bloqu|vide|solitude|aband|rejet|envahi|fear|ashamed|shame|guilt|guilty|afraid|pain|hurt|empty|alone|stuck|numb|tired|pressure|panic|anxiety|miedo|vergüenza|verguenza|culpa|vacío|vacio|rabia|fatica|vergogna|colpa|vuoto|paura|scham|schuld|leer|angst|medo|culpa|vazio|cansaço|cansaco|vergonha)/i;
+const REFLECTION_UPSTREAM_TIMEOUT_MS = 70000;
+const CONVERSATION_UPSTREAM_TIMEOUT_MS = 45000;
 
 function detectAurumIntent(content: string, userMessage?: string): AurumIntent {
   const latestText = (userMessage || content).toLowerCase();
@@ -174,6 +178,14 @@ function buildShortFollowUpInstruction(language: ReturnType<typeof resolvePrompt
   switch (language) {
     case 'fr':
       return "La dernière relance de l'utilisateur est très courte. Ne la gonfle pas artificiellement. Reste au plus près de ce qui est dit, mais si ce bref message montre clairement une hésitation, un retrait ou un blocage, tu peux le nommer en une ligne. Réponds en 1 à 3 phrases courtes maximum.";
+    case 'es':
+      return 'La última respuesta del usuario es muy corta. No la infles artificialmente. Quédate cerca de lo dicho, pero si esa frase breve muestra claramente una duda, un retroceso o un bloqueo, puedes nombrarlo en una línea. Responde en 1 a 3 frases cortas como máximo.';
+    case 'it':
+      return "L'ultimo messaggio dell'utente è molto breve. Non gonfiarlo artificialmente. Resta vicino a ciò che è stato detto, ma se quella risposta breve mostra chiaramente esitazione, ritiro o blocco, puoi nominarlo in una riga. Rispondi in 1-3 frasi brevi al massimo.";
+    case 'de':
+      return 'Die letzte Antwort der Person ist sehr kurz. Blähe sie nicht künstlich auf. Bleibe nah an dem, was gesagt wurde; wenn diese kurze Antwort aber klar Zögern, Rückzug oder Blockade zeigt, darfst du das in einer Zeile benennen. Antworte höchstens in 1 bis 3 kurzen Sätzen.';
+    case 'pt':
+      return 'A última resposta da pessoa é muito curta. Não a aumentes artificialmente. Fica perto do que foi dito, mas se essa frase breve mostrar claramente hesitação, recuo ou bloqueio, podes nomeá-lo numa linha. Responde no máximo em 1 a 3 frases curtas.';
     case 'en':
     default:
       return 'The latest user follow-up is very short. Do not inflate it artificially. Stay close to what was said, but if that brief reply clearly shows hesitation, retreat, or blockage, you may name that in one line. Reply in 1 to 3 short sentences at most.';
@@ -189,10 +201,28 @@ function buildConversationPriorityInstruction(
   switch (language) {
     case 'fr':
       return `Dernier message de la personne, à traiter en premier : "${quotedMessage}". Réponds d'abord à cela. Le reste de la conversation n'est qu'un arrière-plan. Si ce dernier message déplace, ferme ou contredit quelque chose, pars de là.`;
+    case 'es':
+      return `Último mensaje de la persona, a tratar primero: "${quotedMessage}". Responde primero a eso. El resto de la conversación es solo contexto. Si este último mensaje desplaza, cierra o contradice algo, empieza por ahí.`;
+    case 'it':
+      return `Ultimo messaggio della persona, da trattare per primo: "${quotedMessage}". Rispondi prima a questo. Il resto della conversazione è solo sfondo. Se quest'ultimo messaggio sposta, chiude o contraddice qualcosa, parti da lì.`;
+    case 'de':
+      return `Letzte Nachricht der Person, zuerst zu behandeln: "${quotedMessage}". Antworte zuerst darauf. Der Rest des Gesprächs ist nur Hintergrund. Wenn diese letzte Nachricht etwas verschiebt, schließt oder widerspricht, beginne dort.`;
+    case 'pt':
+      return `Última mensagem da pessoa, a tratar primeiro: "${quotedMessage}". Responde primeiro a isso. O resto da conversa é apenas contexto. Se esta última mensagem desloca, fecha ou contradiz alguma coisa, começa por aí.`;
     case 'en':
     default:
       return `Latest user message, to be handled first: "${quotedMessage}". Respond to that first. The rest of the conversation is background only. If this latest message shifts, closes down, or contradicts something, start there.`;
   }
+}
+
+function persistPatternDetection(userId: string, detectionResult: PatternDetectionResult | null) {
+  if (!detectionResult) return;
+
+  const storageFormat = detectionToStorageFormat(detectionResult);
+  batchUpdatePatterns(userId, storageFormat).catch((error) => {
+    logger.errorSafe('Failed to update patterns (non-blocking)', error, { userId });
+  });
+  cleanupStalePatterns(userId).catch(() => {});
 }
 
 /**
@@ -329,13 +359,17 @@ export async function POST(request: NextRequest) {
     const userLanguage = resolveReplyLanguage(normalizedUserMessage || content, requestedLocale, content);
     const promptLanguage = resolvePromptLanguage(userLanguage, requestedLocale);
     const shortFollowUp = isConversationFollowUp && isVeryShortFollowUp(normalizedUserMessage);
+    const skipPatternPrepass = isConversationFollowUp;
+    const responseMaxTokens = shortFollowUp ? 220 : isConversationFollowUp ? 520 : 1000;
 
-    // 2. Detect patterns + get existing patterns IN PARALLEL
-    logger.infoSafe('Detecting patterns (parallel)', { userId });
-    const [detectionResult, existingPatterns] = await Promise.all([
-      shortFollowUp ? Promise.resolve(null) : detectPatterns(content),
-      shortFollowUp ? Promise.resolve([]) : getUserPatterns(userId),
-    ]);
+    // 2. Load existing patterns first. If there is nothing to inject yet, do not
+    // delay the first visible reflection on pattern detection.
+    logger.infoSafe('Preparing pattern context', { userId, skipPatternPrepass });
+    const existingPatterns = skipPatternPrepass ? [] : await getUserPatterns(userId);
+    const shouldDetectPatternsBeforeStream = !skipPatternPrepass && existingPatterns.length > 0;
+    const detectionResult = await (
+      shouldDetectPatternsBeforeStream ? detectPatterns(content) : Promise.resolve(null)
+    );
 
     // 3. Select patterns for injection (max 2)
     const injectedPatterns = selectPatternsForInjection(
@@ -344,7 +378,7 @@ export async function POST(request: NextRequest) {
     );
 
     // 4. Format pattern context
-    const patternContext = !shortFollowUp && injectedPatterns
+    const patternContext = !skipPatternPrepass && injectedPatterns
       ? formatPatternsForContext(injectedPatterns)
       : '';
 
@@ -393,29 +427,60 @@ export async function POST(request: NextRequest) {
       content: content,
     });
 
+    let persistedUserMessage = false;
+    if (entryRef && normalizedUserMessage) {
+      try {
+        await entryRef.collection('aurumConversation').add({
+          role: 'user',
+          text: normalizedUserMessage,
+          createdAt: new Date(),
+          intent,
+          skillId,
+        });
+        persistedUserMessage = true;
+      } catch (error) {
+        logger.errorSafe('Failed to persist user follow-up before reflection', error, { userId });
+      }
+    }
+
     // 6. Call DeepSeek with STREAMING
     logger.infoSafe('Generating reflection (streaming)', { userId, hasPatterns: !!patternContext, intent, skillId });
 
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 20000);
+    const attemptModels = Array.from(new Set(
+      isConversationFollowUp
+        ? [AI_FAST_MODEL, AI_MODEL]
+        : [AI_MODEL, AI_FAST_MODEL],
+    ));
+    const upstreamTimeoutMs = isConversationFollowUp
+      ? CONVERSATION_UPSTREAM_TIMEOUT_MS
+      : REFLECTION_UPSTREAM_TIMEOUT_MS;
 
-    const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: AI_MODEL,
-        messages,
-        temperature: shortFollowUp ? 1.0 : 1.05,
-        max_tokens: shortFollowUp ? 220 : 1000,
-        stream: true,
-      }),
-      signal: controller.signal,
-    });
+    const fetchModelStream = async (activeModel: string) => {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), upstreamTimeoutMs);
 
-    clearTimeout(timeout);
+      try {
+        return await fetch('https://api.deepseek.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${apiKey}`,
+          },
+          body: JSON.stringify({
+            model: activeModel,
+            messages,
+            temperature: shortFollowUp ? 1.0 : isConversationFollowUp ? 0.95 : 1.05,
+            max_tokens: responseMaxTokens,
+            stream: true,
+          }),
+          signal: controller.signal,
+        });
+      } finally {
+        clearTimeout(timeout);
+      }
+    };
+
+    const response = await fetchModelStream(attemptModels[0]);
 
     if (!response.ok) {
       const error = await response.text();
@@ -438,79 +503,168 @@ export async function POST(request: NextRequest) {
 
     // 7. Stream response to client via SSE
     // Background tasks (pattern update, conversation persist) run after stream ends
-    const deepSeekBody = response.body;
     const encoder = new TextEncoder();
     const decoder = new TextDecoder();
     let fullText = '';
 
     const stream = new ReadableStream({
       async start(ctrl) {
-        const reader = deepSeekBody.getReader();
-        try {
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
+        let modelResponse = response;
 
-            const chunk = decoder.decode(value, { stream: true });
-            const lines = chunk.split('\n');
+        for (let attemptIndex = 0; attemptIndex < attemptModels.length; attemptIndex += 1) {
+          const activeModel = attemptModels[attemptIndex];
+          if (attemptIndex > 0) {
+            logger.warnSafe('primary stream completed without text', {
+              userId,
+              activeModel,
+              previousModel: attemptModels[attemptIndex - 1],
+            });
+            modelResponse = await fetchModelStream(activeModel);
+          }
 
-            for (const line of lines) {
-              if (!line.startsWith('data: ')) continue;
-              const data = line.slice(6).trim();
-              if (data === '[DONE]') continue;
+          if (!modelResponse.ok) {
+            const error = await modelResponse.text();
+            logger.errorSafe('DeepSeek reflection failed', undefined, {
+              statusCode: modelResponse.status,
+              activeModel,
+              errorPreview: error?.substring(0, 100),
+            });
+            if (attemptIndex < attemptModels.length - 1) continue;
+            ctrl.enqueue(encoder.encode(`data: ${JSON.stringify({
+              error: requestedLocale === 'fr'
+                ? "Aurum n'a pas pu répondre. Réessaie dans un instant."
+                : "Aurum could not reply. Try again in a moment.",
+            })}\n\n`));
+            ctrl.close();
+            return;
+          }
 
-              try {
-                const parsed = JSON.parse(data);
-                const token = parsed.choices?.[0]?.delta?.content;
-                if (token) {
-                  fullText += token;
-                  // SSE format: data: <json>\n\n
-                  ctrl.enqueue(encoder.encode(`data: ${JSON.stringify({ token })}\n\n`));
-                }
-              } catch {
-                // Skip malformed JSON chunks
-              }
+          if (!modelResponse.body) {
+            if (attemptIndex < attemptModels.length - 1) continue;
+            ctrl.enqueue(encoder.encode(`data: ${JSON.stringify({
+              error: requestedLocale === 'fr'
+                ? 'Réponse vide du service Aurum'
+                : 'Empty response from Aurum',
+            })}\n\n`));
+            ctrl.close();
+            return;
+          }
+
+          const reader = modelResponse.body.getReader();
+          let deepSeekSseRemainder = '';
+          let upstreamCompleted = false;
+          let attemptText = '';
+          const handleDeepSeekMessage = (data: string) => {
+            if (data === '[DONE]') {
+              upstreamCompleted = true;
+              return;
             }
+
+            try {
+              const parsed = JSON.parse(data);
+              const token = parsed.choices?.[0]?.delta?.content;
+              const finishReason = parsed.choices?.[0]?.finish_reason;
+              if (finishReason) {
+                upstreamCompleted = true;
+              }
+              if (token) {
+                attemptText += token;
+                fullText += token;
+                // SSE format: data: <json>\n\n
+                ctrl.enqueue(encoder.encode(`data: ${JSON.stringify({ token })}\n\n`));
+              }
+            } catch {
+              // Skip malformed JSON chunks
+            }
+          };
+
+          try {
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+
+              const chunk = decoder.decode(value, { stream: true });
+              const parsed = extractSseDataMessages(deepSeekSseRemainder, chunk);
+              deepSeekSseRemainder = parsed.remainder;
+              parsed.messages.forEach(handleDeepSeekMessage);
+            }
+
+            flushSseDataMessages(deepSeekSseRemainder).forEach(handleDeepSeekMessage);
+
+            if (upstreamCompleted && !attemptText.trim() && attemptIndex < attemptModels.length - 1) {
+              continue;
+            }
+
+            if (!upstreamCompleted || !fullText.trim()) {
+              logger.errorSafe('DeepSeek reflection stream ended incomplete', undefined, {
+                userId,
+                hasText: fullText.trim().length > 0,
+                upstreamCompleted,
+                activeModel,
+              });
+              ctrl.enqueue(encoder.encode(`data: ${JSON.stringify({
+                error: requestedLocale === 'fr'
+                  ? "La réponse d'Aurum a été interrompue. Réessaie dans un instant."
+                  : "Aurum's reply was interrupted. Try again in a moment.",
+              })}\n\n`));
+              ctrl.close();
+              return;
+            }
+
+            break;
+          } catch (err) {
+            logger.errorSafe('DeepSeek reflection stream ended incomplete', undefined, {
+              userId,
+              hasText: fullText.trim().length > 0,
+              upstreamCompleted: false,
+              activeModel,
+            });
+            ctrl.error(err);
+            return;
           }
-
-          // Send anti-meta sanitized text if needed
-          const validation = validateResponse(fullText);
-          if (!validation.valid && validation.correctedText) {
-            fullText = validation.correctedText;
-            // Send a replacement event so client uses sanitized version
-            ctrl.enqueue(encoder.encode(`data: ${JSON.stringify({ replace: fullText })}\n\n`));
-          }
-
-          // Send final metadata
-          ctrl.enqueue(encoder.encode(`data: ${JSON.stringify({
-            done: true,
-            intent,
-            skill_used: skillId,
-            patterns_detected: detectionResult ? detectionResult.themes.length : 0,
-            patterns_used: injectedPatterns ? injectedPatterns.patterns.length : 0,
-            conversationRepliesUsed: conversationState ? conversationState.repliesUsed + 1 : null,
-            conversationRepliesLimit: conversationState?.repliesLimit ?? null,
-          })}\n\n`));
-
-          ctrl.close();
-        } catch (err) {
-          ctrl.error(err);
         }
 
+        // Send anti-meta sanitized text if needed
+        const validation = validateResponse(fullText);
+        if (!validation.valid && validation.correctedText) {
+          fullText = validation.correctedText;
+          // Send a replacement event so client uses sanitized version
+          ctrl.enqueue(encoder.encode(`data: ${JSON.stringify({ replace: fullText })}\n\n`));
+        }
+
+        // Send final metadata
+        ctrl.enqueue(encoder.encode(`data: ${JSON.stringify({
+          done: true,
+          intent,
+          skill_used: skillId,
+          patterns_detected: detectionResult ? detectionResult.themes.length : 0,
+          patterns_used: injectedPatterns ? injectedPatterns.patterns.length : 0,
+          conversationRepliesUsed: conversationState ? conversationState.repliesUsed + 1 : null,
+          conversationRepliesLimit: conversationState?.repliesLimit ?? null,
+        })}\n\n`));
+
+        ctrl.close();
+
         // 8. Background: update patterns (non-blocking, after stream)
-        if (detectionResult) {
-          const storageFormat = detectionToStorageFormat(detectionResult);
-          batchUpdatePatterns(userId, storageFormat).catch((error) => {
-            logger.errorSafe('Failed to update patterns (non-blocking)', error, { userId });
-          });
-          cleanupStalePatterns(userId).catch(() => {});
+        if (shouldDetectPatternsBeforeStream) {
+          persistPatternDetection(userId, detectionResult);
+        }
+
+        if (!shouldDetectPatternsBeforeStream) {
+          if (!skipPatternPrepass) {
+            detectPatterns(content).then((backgroundDetectionResult) => {
+              persistPatternDetection(userId, backgroundDetectionResult);
+            }).catch((error) => {
+              logger.errorSafe('Failed to detect patterns after reflection stream', error, { userId });
+            });
+          }
         }
 
         // Persist conversation turns
         if (entryRef) {
           const conversationRef = entryRef.collection('aurumConversation');
 
-          if (normalizedUserMessage) {
+          if (normalizedUserMessage && !persistedUserMessage) {
             conversationRef.add({
               role: 'user',
               text: normalizedUserMessage,
