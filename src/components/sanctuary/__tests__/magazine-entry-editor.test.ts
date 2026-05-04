@@ -9,7 +9,7 @@ describe("MagazineEntryEditor Aurum chat", () => {
       "utf8"
     );
 
-    expect(source).toContain("const AURUM_CHAT_IDLE_TIMEOUT_MS = 22000;");
+    expect(source).toContain("const AURUM_CHAT_IDLE_TIMEOUT_MS = 40000;");
     expect(source).toContain("controller.abort();");
     expect(source).toContain("Aurum prend plus de temps que prévu");
     expect(source).not.toContain("setQuestion(cleanQuestion);");

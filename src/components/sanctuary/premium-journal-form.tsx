@@ -50,7 +50,7 @@ type ConversationTurn = {
 };
 
 const REFLECTION_IDLE_TIMEOUT_MS = 65000;
-const CONVERSATION_IDLE_TIMEOUT_MS = 22000;
+const CONVERSATION_IDLE_TIMEOUT_MS = 40000;
 
 function stripPreviewMarkdown(content: string) {
   return content

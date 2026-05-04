@@ -42,7 +42,7 @@ type PendingConversationTurn = ConversationTurn & {
   pending?: boolean;
 };
 
-const AURUM_CHAT_IDLE_TIMEOUT_MS = 22000;
+const AURUM_CHAT_IDLE_TIMEOUT_MS = 40000;
 
 interface MagazineEntryEditorProps {
   entryId: string;

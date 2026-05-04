@@ -14,6 +14,7 @@ import { logger } from '@/lib/logger/safe';
 import { getUserPatterns, batchUpdatePatterns, cleanupStalePatterns } from '@/lib/patterns/storage';
 import { detectPatterns, detectionToStorageFormat } from '@/lib/patterns/detect';
 import { selectPatternsForInjection, formatPatternsForContext } from '@/lib/patterns/inject';
+import type { PatternDetectionResult } from '@/lib/patterns/types';
 import {
   PSYCHOLOGIST_ANALYST_SKILL_ID,
 } from '@/lib/skills/psychologist-analyst';
@@ -72,7 +73,7 @@ const LIGHT_ACKNOWLEDGEMENT_REGEX = /^(ok|okay|ok merci|merci|merci beaucoup|d'a
 const STRONG_PSYCH_STRUCTURE_REGEX = /(mais|puis|ensuite|dès que|des que|quand|chaque fois|toujours|jamais|souvent|parfois|alors|sauf que|en même temps|en meme temps|pendant que|tout en|yet|but|then|when|whenever|every time|always|never|often|sometimes|while|at the same time|as soon as|pero|entonces|cuando|cada vez|siempre|mai|poi|quando|sempre|aber|dann|wenn|jedes mal|immer|mas|depois|quando|sempre)/i;
 const CORE_PAIN_REGEX = /(peur|honte|colère|colere|fatigue|épuis|epuis|culpabil|triste|tristesse|angoiss|stress|pression|bloqu|vide|solitude|aband|rejet|envahi|fear|ashamed|shame|guilt|guilty|afraid|pain|hurt|empty|alone|stuck|numb|tired|pressure|panic|anxiety|miedo|vergüenza|verguenza|culpa|vacío|vacio|rabia|fatica|vergogna|colpa|vuoto|paura|scham|schuld|leer|angst|medo|culpa|vazio|cansaço|cansaco|vergonha)/i;
 const REFLECTION_UPSTREAM_TIMEOUT_MS = 70000;
-const CONVERSATION_UPSTREAM_TIMEOUT_MS = 30000;
+const CONVERSATION_UPSTREAM_TIMEOUT_MS = 45000;
 
 function detectAurumIntent(content: string, userMessage?: string): AurumIntent {
   const latestText = (userMessage || content).toLowerCase();
@@ -214,6 +215,16 @@ function buildConversationPriorityInstruction(
   }
 }
 
+function persistPatternDetection(userId: string, detectionResult: PatternDetectionResult | null) {
+  if (!detectionResult) return;
+
+  const storageFormat = detectionToStorageFormat(detectionResult);
+  batchUpdatePatterns(userId, storageFormat).catch((error) => {
+    logger.errorSafe('Failed to update patterns (non-blocking)', error, { userId });
+  });
+  cleanupStalePatterns(userId).catch(() => {});
+}
+
 /**
  * POST /api/reflect
  * Body: { content: string, idToken: string }
@@ -351,12 +362,14 @@ export async function POST(request: NextRequest) {
     const skipPatternPrepass = isConversationFollowUp;
     const responseMaxTokens = shortFollowUp ? 220 : isConversationFollowUp ? 520 : 1000;
 
-    // 2. Detect patterns + get existing patterns IN PARALLEL
-    logger.infoSafe('Detecting patterns (parallel)', { userId, skipPatternPrepass });
-    const [detectionResult, existingPatterns] = await Promise.all([
-      skipPatternPrepass ? Promise.resolve(null) : detectPatterns(content),
-      skipPatternPrepass ? Promise.resolve([]) : getUserPatterns(userId),
-    ]);
+    // 2. Load existing patterns first. If there is nothing to inject yet, do not
+    // delay the first visible reflection on pattern detection.
+    logger.infoSafe('Preparing pattern context', { userId, skipPatternPrepass });
+    const existingPatterns = skipPatternPrepass ? [] : await getUserPatterns(userId);
+    const shouldDetectPatternsBeforeStream = !skipPatternPrepass && existingPatterns.length > 0;
+    const detectionResult = await (
+      shouldDetectPatternsBeforeStream ? detectPatterns(content) : Promise.resolve(null)
+    );
 
     // 3. Select patterns for injection (max 2)
     const injectedPatterns = selectPatternsForInjection(
@@ -633,12 +646,18 @@ export async function POST(request: NextRequest) {
         ctrl.close();
 
         // 8. Background: update patterns (non-blocking, after stream)
-        if (detectionResult) {
-          const storageFormat = detectionToStorageFormat(detectionResult);
-          batchUpdatePatterns(userId, storageFormat).catch((error) => {
-            logger.errorSafe('Failed to update patterns (non-blocking)', error, { userId });
-          });
-          cleanupStalePatterns(userId).catch(() => {});
+        if (shouldDetectPatternsBeforeStream) {
+          persistPatternDetection(userId, detectionResult);
+        }
+
+        if (!shouldDetectPatternsBeforeStream) {
+          if (!skipPatternPrepass) {
+            detectPatterns(content).then((backgroundDetectionResult) => {
+              persistPatternDetection(userId, backgroundDetectionResult);
+            }).catch((error) => {
+              logger.errorSafe('Failed to detect patterns after reflection stream', error, { userId });
+            });
+          }
         }
 
         // Persist conversation turns

@@ -44,7 +44,7 @@ describe("PremiumJournalForm draft hydration", () => {
     );
 
     expect(source).toContain("const REFLECTION_IDLE_TIMEOUT_MS = 65000;");
-    expect(source).toContain("const CONVERSATION_IDLE_TIMEOUT_MS = 22000;");
+    expect(source).toContain("const CONVERSATION_IDLE_TIMEOUT_MS = 40000;");
     expect(source).toContain("options?.userMessage ? CONVERSATION_IDLE_TIMEOUT_MS : REFLECTION_IDLE_TIMEOUT_MS");
   });
 });

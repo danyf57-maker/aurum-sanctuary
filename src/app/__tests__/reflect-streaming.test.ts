@@ -23,7 +23,7 @@ describe("reflection streaming safeguards", () => {
     );
 
     expect(source).toContain("const REFLECTION_UPSTREAM_TIMEOUT_MS = 70000;");
-    expect(source).toContain("const CONVERSATION_UPSTREAM_TIMEOUT_MS = 30000;");
+    expect(source).toContain("const CONVERSATION_UPSTREAM_TIMEOUT_MS = 45000;");
     expect(source).toContain("const upstreamTimeoutMs = isConversationFollowUp");
   });
 
@@ -34,9 +34,21 @@ describe("reflection streaming safeguards", () => {
     );
 
     expect(source).toContain("const skipPatternPrepass = isConversationFollowUp;");
-    expect(source).toContain("skipPatternPrepass ? Promise.resolve(null) : detectPatterns(content)");
-    expect(source).toContain("skipPatternPrepass ? Promise.resolve([]) : getUserPatterns(userId)");
+    expect(source).toContain("const existingPatterns = skipPatternPrepass ? [] : await getUserPatterns(userId);");
+    expect(source).toContain("const shouldDetectPatternsBeforeStream = !skipPatternPrepass && existingPatterns.length > 0;");
     expect(source).toContain("isConversationFollowUp ? 520 : 1000");
+  });
+
+  it("does not block first reflections on pattern detection when there are no existing patterns to inject", () => {
+    const source = readFileSync(
+      join(process.cwd(), "src/app/api/reflect/route.ts"),
+      "utf8"
+    );
+
+    expect(source).toContain("const shouldDetectPatternsBeforeStream = !skipPatternPrepass && existingPatterns.length > 0;");
+    expect(source).toContain("shouldDetectPatternsBeforeStream ? detectPatterns(content) : Promise.resolve(null)");
+    expect(source).toContain("if (!shouldDetectPatternsBeforeStream) {");
+    expect(source).toContain("detectPatterns(content).then((backgroundDetectionResult)");
   });
 
   it("persists the user follow-up before waiting for the model stream", () => {
