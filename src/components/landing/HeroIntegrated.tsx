@@ -83,9 +83,9 @@ const HeroIntegrated = () => {
     [fallbackContent.placeholders, t]
   );
   const [thought, setThought] = useState("");
-  const [placeholderText, setPlaceholderText] = useState("");
+  const [placeholderText, setPlaceholderText] = useState(placeholders[0] ?? "");
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
-  const [charIndex, setCharIndex] = useState(0);
+  const [charIndex, setCharIndex] = useState(placeholders[0]?.length ?? 0);
   const [isDeleting, setIsDeleting] = useState(false);
   const hasDraft = thought.trim().length > 0;
   const draftRedirect = hasDraft
@@ -98,11 +98,11 @@ const HeroIntegrated = () => {
   const secondaryHref = user ? to("/sanctuary") : loginHref;
 
   useEffect(() => {
-    setPlaceholderText("");
+    setPlaceholderText(placeholders[0] ?? "");
     setPlaceholderIndex(0);
-    setCharIndex(0);
+    setCharIndex(placeholders[0]?.length ?? 0);
     setIsDeleting(false);
-  }, [locale]);
+  }, [locale, placeholders]);
 
   useEffect(() => {
     const current = placeholders[placeholderIndex];
@@ -126,14 +126,14 @@ const HeroIntegrated = () => {
   }, [charIndex, isDeleting, placeholderIndex, placeholders]);
 
   return (
-    <section className="bg-stone-50 py-24 md:py-32">
+    <section className="bg-stone-50 py-20 md:py-28">
       <div className="container">
         <div className="mb-6 flex justify-end">
           <LanguageSwitch compact />
         </div>
         <div className="mx-auto flex max-w-4xl flex-col items-center gap-10 text-center">
           <div className="space-y-4">
-            <p className="font-body text-xs uppercase tracking-[0.35em] text-[#8A6A00] font-semibold">
+            <p className="font-body text-xs uppercase tracking-[0.2em] text-[#8A6A00] font-semibold sm:tracking-[0.35em]">
               {resolveMessage(t("badge"), fallbackContent.badge)}
             </p>
             <h1 className="font-headline text-4xl md:text-6xl text-stone-900">
@@ -145,19 +145,34 @@ const HeroIntegrated = () => {
           </div>
 
           <div className="w-full">
-            <div className="relative rounded-3xl border border-[#D4AF37]/25 bg-white/80 p-6 md:p-8 shadow-xl">
-              <textarea
-                value={thought}
-                onChange={(event) => setThought(event.target.value)}
-                placeholder={placeholderText}
-                className="h-44 w-full resize-none bg-transparent text-lg md:text-xl font-body text-stone-800 placeholder:text-stone-400 focus:outline-none"
-              />
-              <div className="mt-3 border-t border-[#D4AF37]/20 pt-3 text-center">
-                <p className="font-body text-sm text-stone-600">
+            <div className="relative overflow-hidden rounded-3xl border border-[#D4AF37]/30 bg-white/90 shadow-xl transition-shadow focus-within:shadow-2xl focus-within:ring-2 focus-within:ring-[#D4AF37]/25">
+              <div className="border-b border-[#D4AF37]/20 px-5 py-3 text-left md:px-7">
+                <p className="font-body text-[11px] font-semibold uppercase tracking-[0.14em] text-[#8A6A00]">
                   {hasDraft
                     ? resolveMessage(t("helperWithDraft"), fallbackContent.helperWithDraft)
                     : resolveMessage(t("helper"), fallbackContent.helper)}
                 </p>
+              </div>
+              <textarea
+                aria-label={resolveMessage(t("helper"), fallbackContent.helper)}
+                value={thought}
+                onChange={(event) => setThought(event.target.value)}
+                placeholder={placeholderText || placeholders[0]}
+                className="min-h-36 w-full resize-none bg-transparent px-5 py-6 text-left text-lg font-body text-stone-800 placeholder:text-stone-400 focus:outline-none md:min-h-44 md:px-7 md:text-xl"
+              />
+              <div className="flex flex-col gap-3 border-t border-[#D4AF37]/20 bg-stone-50/70 px-5 py-4 text-left sm:flex-row sm:items-center sm:justify-between md:px-7">
+                <p className="font-body text-sm text-stone-600">
+                  {hasDraft
+                    ? locale === "fr"
+                      ? "Ton texte sera repris dans ton espace privé."
+                      : "Your text will continue inside your private space."
+                    : locale === "fr"
+                      ? "Commence par une phrase. Le reste peut attendre."
+                      : "Start with one sentence. The rest can wait."}
+                </p>
+                <span className="font-body text-xs font-semibold uppercase tracking-[0.12em] text-[#8A6A00]">
+                  {locale === "fr" ? "Privé par conception" : "Private by design"}
+                </span>
               </div>
               <div className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-[#D4AF37]/15" />
             </div>
@@ -172,8 +187,7 @@ const HeroIntegrated = () => {
                   <Link href={signupHref}>
                     {user
                       ? resolveMessage(t("ctaAuthenticated"), fallbackContent.ctaAuthenticated)
-                      : hasDraft
-                        ? resolveMessage(t("ctaContinueDraft"), fallbackContent.ctaContinueDraft)
+                      : hasDraft ? resolveMessage(t("ctaContinueDraft"), fallbackContent.ctaContinueDraft)
                         : resolveMessage(t("cta"), fallbackContent.cta)}
                   </Link>
                 </Button>
@@ -195,7 +209,7 @@ const HeroIntegrated = () => {
               <p className="mx-auto max-w-2xl font-body text-sm text-stone-500">
                 {resolveMessage(t("languages"), fallbackContent.languages)}
               </p>
-              <span className="block font-body text-xs uppercase tracking-[0.2em] text-stone-500">
+              <span className="block font-body text-xs uppercase tracking-[0.12em] text-stone-500 sm:tracking-[0.2em]">
                 {resolveMessage(t("trust"), fallbackContent.trust)}
               </span>
             </div>

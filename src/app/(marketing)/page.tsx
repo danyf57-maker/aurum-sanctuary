@@ -40,6 +40,7 @@ export default async function Home() {
     const to = (href: string) => localizeHref(href, locale);
     const primaryCtaHref = to('/signup');
     const guideLinkLabel = isFr ? 'Lire le guide lié' : 'Read the related guide';
+    const featuredUseCaseCount = 3;
     const guideLinksByIndex = [
         '/guides/overthinking-at-night',
         '/guides/charge-mentale',
@@ -204,9 +205,11 @@ export default async function Home() {
                                 <h3 className="text-2xl font-headline text-stone-900 mb-3">{card.title}</h3>
                                 <p className="text-stone-600 font-light leading-relaxed mb-6">{card.body}</p>
                                 <div className="mt-auto flex flex-col gap-2">
-                                    <Link href={primaryCtaHref} className="text-primary font-medium hover:underline">
-                                        {t('useCases.cta')}
-                                    </Link>
+                                    {index < featuredUseCaseCount ? (
+                                        <Link href={primaryCtaHref} className="text-primary font-medium hover:underline">
+                                            {t('useCases.cta')}
+                                        </Link>
+                                    ) : null}
                                     {guideLinksByIndex[index] ? (
                                         <Link
                                             href={to(guideLinksByIndex[index])}
@@ -219,6 +222,14 @@ export default async function Home() {
                                 </div>
                             </article>
                         ))}
+                    </div>
+                    <div className="mt-10 text-center">
+                        <Link
+                            href={primaryCtaHref}
+                            className="aurum-motion-button inline-flex h-12 items-center justify-center rounded-xl bg-primary px-8 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                        >
+                            {t('useCases.sectionCta')}
+                        </Link>
                     </div>
                     <p className="mt-8 text-xs text-stone-500 text-center font-light">
                         {t('useCases.note')}

@@ -205,7 +205,8 @@ const runtimeCaching = [
 const withPWA = require("@ducanh2912/next-pwa").default({
     dest: "public",
     disable: process.env.NODE_ENV === "development",
-    register: true,
+    register: false,
+    sw: "sw.js",
     skipWaiting: true,
     dynamicStartUrl: false,
     extendDefaultRuntimeCaching: false,
