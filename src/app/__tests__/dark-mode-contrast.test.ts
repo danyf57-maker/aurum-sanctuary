@@ -7,6 +7,14 @@ function readSource(file: string) {
 }
 
 describe("authenticated app dark mode contrast", () => {
+  it("keeps public marketing and guide pages in the light Aurum theme", () => {
+    const themeSync = readSource("src/components/theme/ThemeSync.tsx");
+
+    expect(themeSync).toContain("isPrivateAppPath");
+    expect(themeSync).toContain("root.classList.remove('dark')");
+    expect(themeSync).toContain("root.style.colorScheme = 'light'");
+  });
+
   it("keeps marketing FAQ questions visible when dark mode is active", () => {
     const marketingPage = readSource("src/app/(marketing)/page.tsx");
 
