@@ -13,13 +13,14 @@ describe("guide structured data", () => {
     expect(source).toContain('"@type": "HowTo"');
   });
 
-  it("keeps the final guide CTA visually framed", () => {
+  it("keeps the final guide CTA visually framed without squeezing labels", () => {
     const source = readFileSync(
       join(process.cwd(), "src/app/guides/[slug]/page.tsx"),
       "utf8"
     );
 
     expect(source).not.toContain('<Button asChild variant="ghost" size="lg">');
-    expect(source).toContain("whitespace-normal");
+    expect(source).toContain("sm:flex-row sm:flex-wrap");
+    expect(source).toContain("sm:min-w-[18rem]");
   });
 });
