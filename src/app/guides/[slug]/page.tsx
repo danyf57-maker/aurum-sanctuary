@@ -83,6 +83,10 @@ export default async function GuidePage({ params }: GuidePageProps) {
   const writeHref = `${toLocalePath("/sanctuary/write", locale)}?initial=${encodeURIComponent(
     suggestedPrompt
   )}`;
+  const guideCtaClass =
+    "w-full justify-center whitespace-normal text-center leading-snug sm:w-auto sm:min-w-[12rem]";
+  const guideSignupCtaClass =
+    "w-full justify-center whitespace-normal text-center leading-snug sm:w-auto sm:min-w-[18rem]";
   const relatedTopics =
     topic.relatedSlugs
       ?.map((slug) => getKnowledgeHubTopic(slug, locale))
@@ -321,8 +325,8 @@ export default async function GuidePage({ params }: GuidePageProps) {
                   ? "Si tu veux aller plus loin que la lecture, Aurum te permet d'écrire sans filtre, de clarifier ce qui revient, et de commencer gratuitement."
                   : "If you want to go beyond reading, Aurum gives you a private place to write freely, clarify what keeps returning, and begin for free."}
               </p>
-              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-                <Button asChild size="lg" className="min-w-0 w-full whitespace-normal text-center leading-snug">
+              <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <Button asChild size="lg" className={guideCtaClass}>
                   <Link
                     href={writeHref}
                     data-track="guide_write_prompt"
@@ -331,7 +335,7 @@ export default async function GuidePage({ params }: GuidePageProps) {
                     {isFr ? "Écrire avec ce prompt" : "Write with this prompt"}
                   </Link>
                 </Button>
-                <Button asChild variant="outline" size="lg" className="min-w-0 w-full whitespace-normal text-center leading-snug">
+                <Button asChild variant="outline" size="lg" className={guideSignupCtaClass}>
                   <Link
                     href={signupHref}
                     data-track="guide_signup"
@@ -340,7 +344,7 @@ export default async function GuidePage({ params }: GuidePageProps) {
                     {isFr ? "Commencer avec 5 entrées gratuites" : "Start with 5 free entries"}
                   </Link>
                 </Button>
-                <Button asChild variant="outline" size="lg" className="min-w-0 w-full whitespace-normal text-center leading-snug">
+                <Button asChild variant="outline" size="lg" className={guideCtaClass}>
                   <Link
                     href={pricingHref}
                     data-track="guide_pricing"
@@ -349,12 +353,12 @@ export default async function GuidePage({ params }: GuidePageProps) {
                     {isFr ? "Voir les formules" : "See pricing"}
                   </Link>
                 </Button>
-                <Button asChild variant="outline" size="lg" className="min-w-0 w-full whitespace-normal text-center leading-snug">
+                <Button asChild variant="outline" size="lg" className={guideCtaClass}>
                   <Link href={guidesHref}>
                     {isFr ? "Tous les guides" : "All guides"}
                   </Link>
                 </Button>
-                <Button asChild variant="outline" size="lg" className="min-w-0 w-full whitespace-normal text-center leading-snug">
+                <Button asChild variant="outline" size="lg" className={guideCtaClass}>
                   <Link href={manifestoHref}>
                     {isFr ? "Lire le manifeste" : "Read the manifesto"}
                   </Link>
