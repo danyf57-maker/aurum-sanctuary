@@ -19,6 +19,11 @@ describe("sitemap", () => {
       "how-to-stop-rumination",
       "journaling-for-overthinking",
       "journal-prompts-for-anxiety",
+      "pensees-recurrentes",
+      "prompts-pensees-recurrentes",
+      "conversation-qui-revient",
+      "meilleure-application-journal-pensees-recurrentes",
+      "journal-guide-charge-mentale",
       "private-diary-vs-notes-app",
       "rosebud-alternative",
     ]) {

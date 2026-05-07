@@ -15,6 +15,11 @@ Le service permet d'écrire ses réflexions, d'obtenir des analyses assistées p
 - Charge mentale: https://aurumdiary.com/guides/charge-mentale
 - Overthinking at night: https://aurumdiary.com/guides/overthinking-at-night
 - Journaling prompts for clarity: https://aurumdiary.com/guides/journaling-prompts-for-clarity
+- Pensees recurrentes: https://aurumdiary.com/guides/pensees-recurrentes
+- Prompts pensees recurrentes: https://aurumdiary.com/guides/prompts-pensees-recurrentes
+- Conversation qui revient: https://aurumdiary.com/guides/conversation-qui-revient
+- Meilleure application journal pensees recurrentes: https://aurumdiary.com/guides/meilleure-application-journal-pensees-recurrentes
+- Journal guide charge mentale: https://aurumdiary.com/guides/journal-guide-charge-mentale
 - Journal guide: https://aurumdiary.com/guides/journal-guide
 - Introspection: https://aurumdiary.com/guides/introspection
 - Confidentialite mentale: https://aurumdiary.com/guides/confidentialite-mentale

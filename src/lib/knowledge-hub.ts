@@ -19,6 +19,9 @@ export type KnowledgeHubTopic = {
   practicalSteps?: LocalizedFieldList;
   example?: LocalizedFieldList;
   howAurumHelps?: LocalizedFieldList;
+  selectionCriteria?: LocalizedFieldList;
+  suggestedPrompt?: LocalizedField;
+  relatedSlugs?: string[];
   metaTitle: LocalizedField;
   metaDescription: LocalizedField;
 };
@@ -32,6 +35,9 @@ export type LocalizedKnowledgeHubTopic = {
   practicalSteps?: string[];
   example?: string[];
   howAurumHelps?: string[];
+  selectionCriteria?: string[];
+  suggestedPrompt?: string;
+  relatedSlugs?: string[];
   metaTitle: string;
   metaDescription: string;
 };
@@ -43,6 +49,9 @@ function makeGrowthTopic({
   metaTitle,
   metaDescription,
   angle,
+  suggestedPrompt,
+  selectionCriteria,
+  relatedSlugs,
 }: {
   slug: string;
   title: LocalizedField;
@@ -50,6 +59,9 @@ function makeGrowthTopic({
   metaTitle: LocalizedField;
   metaDescription: LocalizedField;
   angle: LocalizedField;
+  suggestedPrompt?: LocalizedField;
+  selectionCriteria?: LocalizedFieldList;
+  relatedSlugs?: string[];
 }): KnowledgeHubTopic {
   return {
     slug,
@@ -113,6 +125,12 @@ function makeGrowthTopic({
         "Across several pages, Aurum makes recurring patterns easier to see so each session does not start from zero.",
       ],
     },
+    suggestedPrompt: suggestedPrompt ?? {
+      fr: "Ce qui revient est... Le fait vérifiable est... L'émotion dominante est... Ce dont j'ai besoin maintenant est...",
+      en: "What keeps returning is... The verifiable fact is... The dominant emotion is... What I need now is...",
+    },
+    selectionCriteria,
+    relatedSlugs,
     metaTitle,
     metaDescription,
   };
@@ -240,6 +258,187 @@ const growthTopics: KnowledgeHubTopic[] = [
     },
   }),
   makeGrowthTopic({
+    slug: "pensees-recurrentes",
+    title: { fr: "Pensées récurrentes", en: "Recurring thoughts" },
+    question: {
+      fr: "Comment écrire une pensée qui revient souvent sans la nourrir ?",
+      en: "How can you write a recurring thought without feeding it?",
+    },
+    metaTitle: {
+      fr: "Pensées récurrentes: écrire ce qui revient",
+      en: "Recurring thoughts: write what keeps coming back",
+    },
+    metaDescription: {
+      fr: "Une méthode douce pour poser une pensée récurrente sur la page, séparer les faits de l'histoire ajoutée, et retrouver un peu de clarté.",
+      en: "A gentle method for placing a recurring thought on the page, separating facts from added story, and regaining a little clarity.",
+    },
+    angle: {
+      fr: "Une pensée récurrente devient moins massive quand tu peux la relire comme une phrase, pas seulement la subir comme un bruit intérieur.",
+      en: "A recurring thought becomes less massive when you can reread it as a sentence, not only endure it as inner noise.",
+    },
+    suggestedPrompt: {
+      fr: "La pensée qui revient est... Le fait réel est... L'histoire que mon esprit ajoute est... Ce que cette pensée semble demander est...",
+      en: "The thought that keeps coming back is... The real fact is... The story my mind adds is... What this thought seems to ask for is...",
+    },
+    relatedSlugs: [
+      "prompts-pensees-recurrentes",
+      "meilleure-application-journal-pensees-recurrentes",
+      "journal-guide-charge-mentale",
+    ],
+  }),
+  makeGrowthTopic({
+    slug: "prompts-pensees-recurrentes",
+    title: { fr: "Prompts pour pensées récurrentes", en: "Prompts for recurring thoughts" },
+    question: {
+      fr: "Quels prompts utiliser quand la même pensée revient encore ?",
+      en: "Which prompts help when the same thought keeps coming back?",
+    },
+    metaTitle: {
+      fr: "Prompts pour pensées récurrentes et boucles mentales",
+      en: "Prompts for recurring thoughts and mental loops",
+    },
+    metaDescription: {
+      fr: "Des prompts concrets pour écrire une pensée répétitive, voir ce qu'elle contient, et fermer la page sans forcer de conclusion.",
+      en: "Concrete prompts for writing a repetitive thought, seeing what it contains, and closing the page without forcing a conclusion.",
+    },
+    angle: {
+      fr: "Un bon prompt pour une pensée récurrente ne cherche pas une grande réponse; il aide à distinguer ce qui est vrai, ce qui est imaginé, et ce qui reste sensible.",
+      en: "A useful prompt for a recurring thought does not chase a grand answer; it helps separate what is true, what is imagined, and what remains tender.",
+    },
+    suggestedPrompt: {
+      fr: "Ce qui tourne en boucle est... Ce que je sais vraiment est... Ce que je ne sais pas encore est... La phrase la plus honnête pour fermer cette page est...",
+      en: "What is looping is... What I truly know is... What I do not know yet is... The most honest sentence to close this page is...",
+    },
+    relatedSlugs: [
+      "pensees-recurrentes",
+      "meilleure-application-journal-pensees-recurrentes",
+      "journal-prompts-for-anxiety",
+    ],
+  }),
+  makeGrowthTopic({
+    slug: "conversation-qui-revient",
+    title: { fr: "Conversation qui revient", en: "Conversation that keeps replaying" },
+    question: {
+      fr: "Pourquoi une conversation continue-t-elle dans ta tête après coup ?",
+      en: "Why does a conversation keep replaying in your head afterward?",
+    },
+    metaTitle: {
+      fr: "Conversation qui revient: écrire ce qui continue dedans",
+      en: "Conversation replaying: write what continues inside",
+    },
+    metaDescription: {
+      fr: "Une méthode d'écriture pour déposer une conversation qui tourne encore dans la tête, sans juger ni dramatiser ce que tu ressens.",
+      en: "A writing method for putting down a conversation that still loops in your head, without judging or dramatizing what you feel.",
+    },
+    angle: {
+      fr: "Une conversation peut être terminée dehors et continuer longtemps dedans; l'écriture aide à voir ce qui, précisément, n'est pas encore posé.",
+      en: "A conversation can be over outside and continue for a long time inside; writing helps reveal what, exactly, is not settled yet.",
+    },
+    suggestedPrompt: {
+      fr: "La conversation qui revient est... La phrase qui me reste est... Ce que j'aurais voulu dire est... Ce que cette scène touche en moi est...",
+      en: "The conversation that keeps replaying is... The sentence that stays with me is... What I wish I had said is... What this scene touches in me is...",
+    },
+    relatedSlugs: [
+      "pensees-recurrentes",
+      "prompts-pensees-recurrentes",
+      "meilleure-application-journal-pensees-recurrentes",
+    ],
+  }),
+  makeGrowthTopic({
+    slug: "meilleure-application-journal-pensees-recurrentes",
+    title: {
+      fr: "Meilleure application de journal pour pensées récurrentes",
+      en: "Best journal app for recurring thoughts",
+    },
+    question: {
+      fr: "Quelle application choisir quand les mêmes pensées reviennent souvent ?",
+      en: "Which app should you choose when the same thoughts keep coming back?",
+    },
+    metaTitle: {
+      fr: "Meilleure application de journal pour pensées récurrentes",
+      en: "Best journal app for recurring thoughts",
+    },
+    metaDescription: {
+      fr: "Les critères pour choisir une application de journal privée quand tu veux déposer les pensées qui reviennent, les relire et repérer des motifs.",
+      en: "Criteria for choosing a private journal app when you want to write recurring thoughts, reread them, and notice patterns.",
+    },
+    angle: {
+      fr: "La meilleure application n'est pas celle qui ajoute le plus de bruit; c'est celle qui rend l'écriture privée plus simple, plus régulière et plus claire.",
+      en: "The best app is not the one that adds the most noise; it is the one that makes private writing simpler, steadier, and clearer.",
+    },
+    selectionCriteria: {
+      fr: [
+        "Un espace privé où tu peux écrire sans exposition sociale ni pression de performance.",
+        "Des prompts assez précis pour commencer, mais assez ouverts pour ne pas enfermer ce que tu ressens.",
+        "Une continuité entre les entrées afin de voir ce qui revient au fil des jours.",
+        "Une interface calme, surtout le soir, quand les pensées ont tendance à prendre plus de place.",
+        "Un passage naturel entre lecture gratuite, première écriture, puis usage régulier si l'outil t'aide vraiment.",
+      ],
+      en: [
+        "A private space where you can write without social exposure or performance pressure.",
+        "Prompts that are precise enough to begin, but open enough not to trap what you feel.",
+        "Continuity between entries so recurring themes become visible over time.",
+        "A calm interface, especially at night, when thoughts tend to take more space.",
+        "A natural path from free reading, to first writing, to regular use if the tool genuinely helps.",
+      ],
+    },
+    suggestedPrompt: {
+      fr: "La pensée que je voudrais confier à un journal privé est... Ce que j'attends d'un bon espace d'écriture est... Ce qui m'aiderait à revenir demain est...",
+      en: "The thought I would like to place in a private journal is... What I need from a good writing space is... What would help me return tomorrow is...",
+    },
+    relatedSlugs: [
+      "pensees-recurrentes",
+      "prompts-pensees-recurrentes",
+      "journal-guide-charge-mentale",
+      "private-diary-vs-notes-app",
+    ],
+  }),
+  makeGrowthTopic({
+    slug: "journal-guide-charge-mentale",
+    title: { fr: "Journal guidé pour charge mentale", en: "Guided journal for mental load" },
+    question: {
+      fr: "Comment choisir un journal guidé quand tu portes trop de choses à la fois ?",
+      en: "How do you choose a guided journal when you are carrying too many things at once?",
+    },
+    metaTitle: {
+      fr: "Journal guidé pour charge mentale: trier ce qui pèse",
+      en: "Guided journal for mental load: sort what weighs on you",
+    },
+    metaDescription: {
+      fr: "Une page pour choisir et utiliser un journal guidé quand la charge mentale mélange tâches, émotions, attentes et fatigue.",
+      en: "A page for choosing and using a guided journal when mental load mixes tasks, emotions, expectations, and fatigue.",
+    },
+    angle: {
+      fr: "Un journal guidé utile pour la charge mentale ne promet pas de tout résoudre; il aide à séparer ce qui pèse en lignes plus lisibles.",
+      en: "A useful guided journal for mental load does not promise to solve everything; it helps separate what weighs on you into more readable lines.",
+    },
+    selectionCriteria: {
+      fr: [
+        "Le journal doit distinguer les tâches réelles, les attentes implicites et les émotions qui les accompagnent.",
+        "Les prompts doivent rester courts pour ne pas ajouter une nouvelle obligation à la journée.",
+        "La confidentialité compte: certaines pensées de charge mentale ne s'écrivent vraiment que dans un espace personnel.",
+        "La page doit finir par une seule prochaine action, pas une liste impossible à tenir.",
+        "L'outil doit aider à repérer les répétitions: ce que tu portes souvent, ce que tu minimises, ce qui revient chaque semaine.",
+      ],
+      en: [
+        "The journal should separate real tasks, implicit expectations, and the emotions attached to them.",
+        "Prompts should stay short so they do not become one more obligation in the day.",
+        "Privacy matters: some mental load thoughts only become honest in a personal space.",
+        "The page should end with one next action, not an impossible list.",
+        "The tool should help reveal repetitions: what you often carry, what you minimize, what returns each week.",
+      ],
+    },
+    suggestedPrompt: {
+      fr: "Ce que je porte en ce moment est... Ce qui est réellement à faire est... Ce qui est une attente ou une pression est... La seule prochaine étape réaliste est...",
+      en: "What I am carrying right now is... What truly needs doing is... What is an expectation or pressure is... The only realistic next step is...",
+    },
+    relatedSlugs: [
+      "mental-load-journaling",
+      "charge-mentale",
+      "meilleure-application-journal-pensees-recurrentes",
+    ],
+  }),
+  makeGrowthTopic({
     slug: "private-diary-vs-notes-app",
     title: { fr: "Journal privé ou application de notes", en: "Private diary vs notes app" },
     question: {
@@ -255,9 +454,32 @@ const growthTopics: KnowledgeHubTopic[] = [
       en: "A comparison between quick notes and a private diary for reflection, privacy, and recurring patterns.",
     },
     angle: {
-      fr: "Une application de notes capture vite; un journal privé aide à comprendre ce qui revient.",
-      en: "A notes app captures quickly; a private diary helps you understand what keeps returning.",
+      fr: "Une application de notes capture vite; un journal privé aide à relire, comprendre et suivre ce qui revient.",
+      en: "A notes app captures quickly; a private diary helps you reread, understand, and follow what keeps returning.",
     },
+    selectionCriteria: {
+      fr: [
+        "Choisis une application de notes pour capturer une idée rapide, une liste ou une information à retrouver.",
+        "Choisis un journal privé pour écrire une scène, une émotion, une pensée répétitive ou une décision intime.",
+        "La vraie différence est la relecture: une note isole un fragment, un journal garde le fil entre plusieurs moments.",
+        "Pour les pensées récurrentes, la confidentialité et la continuité comptent plus que la vitesse de capture.",
+      ],
+      en: [
+        "Choose a notes app for a quick idea, a list, or information you need to find again.",
+        "Choose a private diary for a scene, an emotion, a repetitive thought, or an intimate decision.",
+        "The real difference is rereading: a note isolates a fragment, while a journal keeps a thread between moments.",
+        "For recurring thoughts, privacy and continuity matter more than capture speed.",
+      ],
+    },
+    suggestedPrompt: {
+      fr: "Cette pensée mérite plus qu'une note parce que... Ce que je veux comprendre en la relisant est... Le fil que je remarque déjà est...",
+      en: "This thought deserves more than a note because... What I want to understand when rereading it is... The thread I already notice is...",
+    },
+    relatedSlugs: [
+      "meilleure-application-journal-pensees-recurrentes",
+      "pensees-recurrentes",
+      "journal-guide-charge-mentale",
+    ],
   }),
   makeGrowthTopic({
     slug: "rosebud-alternative",
@@ -1376,6 +1598,9 @@ export function localizeKnowledgeHubTopic(
     practicalSteps: topic.practicalSteps?.[locale],
     example: topic.example?.[locale],
     howAurumHelps: topic.howAurumHelps?.[locale],
+    selectionCriteria: topic.selectionCriteria?.[locale],
+    suggestedPrompt: topic.suggestedPrompt?.[locale],
+    relatedSlugs: topic.relatedSlugs,
     metaTitle: topic.metaTitle[locale],
     metaDescription: topic.metaDescription[locale],
   };

@@ -14,6 +14,11 @@ const growthSlugs = [
   "how-to-stop-rumination",
   "journaling-for-overthinking",
   "journal-prompts-for-anxiety",
+  "pensees-recurrentes",
+  "prompts-pensees-recurrentes",
+  "conversation-qui-revient",
+  "meilleure-application-journal-pensees-recurrentes",
+  "journal-guide-charge-mentale",
   "private-diary-vs-notes-app",
   "rosebud-alternative",
 ] as const;
@@ -41,6 +46,8 @@ function guideWordCount(slug: string, locale: "en" | "fr") {
     ...(topic.practicalSteps ?? []),
     ...(topic.example ?? []),
     ...(topic.howAurumHelps ?? []),
+    ...(topic.selectionCriteria ?? []),
+    topic.suggestedPrompt ?? "",
   ]
     .join(" ")
     .split(/\s+/)

@@ -193,6 +193,9 @@ export async function buildAnalyticsReportPack(
       date: string;
       unique_identities: Set<string>;
       page_view: number;
+      guide_write_prompt_click: number;
+      guide_signup_click: number;
+      guide_pricing_click: number;
       signup: number;
       login: number;
       entry_created: number;
@@ -212,6 +215,9 @@ export async function buildAnalyticsReportPack(
       date,
       unique_identities: new Set<string>(),
       page_view: 0,
+      guide_write_prompt_click: 0,
+      guide_signup_click: 0,
+      guide_pricing_click: 0,
       signup: 0,
       login: 0,
       entry_created: 0,
@@ -239,6 +245,9 @@ export async function buildAnalyticsReportPack(
       date: row.date,
       unique_identities: row.unique_identities.size,
       page_view: row.page_view,
+      guide_write_prompt_click: row.guide_write_prompt_click,
+      guide_signup_click: row.guide_signup_click,
+      guide_pricing_click: row.guide_pricing_click,
       signup: row.signup,
       login: row.login,
       entry_created: row.entry_created,
