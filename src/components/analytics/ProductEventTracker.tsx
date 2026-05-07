@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { trackEvent } from "@/lib/analytics/client";
+import { TRACKED_EVENTS, type TrackedEventName } from "@/lib/analytics/types";
 
 function toAppPath(href: string) {
   try {
@@ -47,6 +48,10 @@ export default function ProductEventTracker() {
       if (clickable.getAttribute("data-track-disabled") === "true") return;
 
       const dataTrack = clickable.getAttribute("data-track");
+      const requestedEvent = clickable.getAttribute("data-track-event");
+      const eventName = TRACKED_EVENTS.includes(requestedEvent as TrackedEventName)
+        ? (requestedEvent as TrackedEventName)
+        : "ui_click";
       const label =
         dataTrack ||
         clickable.getAttribute("aria-label") ||
@@ -59,7 +64,7 @@ export default function ProductEventTracker() {
           : null;
 
       void trackEvent({
-        name: "ui_click",
+        name: eventName,
         params: {
           track_id: label.slice(0, 80),
           tag: clickable.tagName.toLowerCase(),
@@ -77,4 +82,3 @@ export default function ProductEventTracker() {
 
   return null;
 }
-

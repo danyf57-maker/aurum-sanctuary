@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { Cookie } from 'lucide-react';
+import { Check, Cookie } from 'lucide-react';
 import { useLocale } from '@/hooks/use-locale';
 import { localizeHref } from '@/lib/i18n/path';
 
@@ -36,25 +36,31 @@ export function CookieConsent() {
 
   return (
     <div className={cn(
-      "fixed bottom-0 left-0 right-0 z-50 p-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t",
+      "fixed bottom-3 left-3 right-3 z-50 rounded-2xl border bg-background/95 p-3 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-background/80 sm:bottom-4 sm:left-4 sm:right-4 sm:mx-auto sm:max-w-3xl sm:p-4",
       "data-[visible=true]:animate-in data-[visible=false]:animate-out data-[visible=false]:slide-out-to-bottom-full data-[visible=true]:slide-in-from-bottom-full",
       "transition-all duration-500"
     )} data-visible={isVisible}>
-      <div className="container max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="flex items-start gap-3">
-          <Cookie className="h-5 w-5 mt-1 text-primary flex-shrink-0" />
-          <p className="text-sm text-muted-foreground">
+      <div className="mx-auto flex items-start justify-between gap-3">
+        <div className="flex min-w-0 items-start gap-3">
+          <Cookie className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary sm:mt-1 sm:h-5 sm:w-5" />
+          <p className="text-xs sm:text-sm leading-relaxed text-muted-foreground">
             {isFr
-              ? "Nous utilisons des cookies essentiels et certaines technologies d'analyse pour faire fonctionner Aurum Diary, sécuriser votre session et mesurer l'usage du service. En continuant, vous acceptez notre "
-              : "We use essential cookies and certain analytics technologies to run Aurum Diary, secure your session, and measure product usage. By continuing, you accept our "}
+              ? "Cookies essentiels et mesure d'usage nous aident à faire fonctionner Aurum Diary. En continuant, vous acceptez notre "
+              : "Essential cookies and product analytics help Aurum Diary run. By continuing, you accept our "}
             <Link href={to("/privacy")} className="underline hover:text-foreground">
               {isFr ? "Politique de Confidentialité" : "Privacy Policy"}
             </Link>.
           </p>
         </div>
-        <div className="flex gap-2 flex-shrink-0">
-          <Button size="sm" onClick={() => handleConsent('accepted')}>
-            {isFr ? "Compris" : "Got it"}
+        <div className="flex flex-shrink-0 gap-2">
+          <Button
+            size="icon"
+            aria-label={isFr ? "Accepter les cookies" : "Accept cookies"}
+            onClick={() => handleConsent('accepted')}
+            className="h-9 w-9 rounded-full"
+          >
+            <Check className="h-4 w-4" />
+            <span className="sr-only">{isFr ? "Compris" : "Got it"}</span>
           </Button>
         </div>
       </div>

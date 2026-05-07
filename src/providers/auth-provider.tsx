@@ -271,7 +271,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             const legalSnap = await getDoc(legalRef);
 
             if (legalSnap.exists()) {
-              setTermsAccepted(legalSnap.data().termsAccepted);
+              const legalTermsAccepted = legalSnap.data().termsAccepted === true;
+              const pendingTermsEmail = typeof window !== 'undefined'
+                ? window.localStorage.getItem('aurum-signup-terms-email')
+                : null;
+              const shouldRestoreSignupTerms =
+                !legalTermsAccepted &&
+                !!pendingTermsEmail &&
+                !!finalUser.email &&
+                pendingTermsEmail === finalUser.email.toLowerCase();
+
+              if (shouldRestoreSignupTerms) {
+                await setDoc(legalRef, {
+                  termsAccepted: true,
+                  termsAcceptedAt: serverTimestamp(),
+                  updatedAt: serverTimestamp(),
+                }, { merge: true });
+                window.localStorage.removeItem('aurum-signup-terms-email');
+                setTermsAccepted(true);
+              } else {
+                setTermsAccepted(legalTermsAccepted);
+              }
             } else {
               setTermsAccepted(false);
             }
@@ -482,6 +502,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         updatedAt: serverTimestamp(),
         entryCount: 0,
       }, { merge: true });
+      await setDoc(doc(db, "users", cred.user.uid, "settings", "legal"), {
+        termsAccepted: true,
+        termsAcceptedAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      }, { merge: true });
+      if (typeof window !== 'undefined' && cred.user.email) {
+        window.localStorage.setItem('aurum-signup-terms-email', cred.user.email.toLowerCase());
+      }
       let verificationSent = true;
       try {
         await sendVerificationEmailWithFallback(e, cred.user);

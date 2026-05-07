@@ -23,7 +23,7 @@ export function ReflectionPulse({ className }: ReflectionPulseProps) {
   }, []);
 
   return (
-    <div className={cn('flex items-center justify-center gap-1', className)}>
+    <div className={cn('aurum-motion-reveal flex items-center justify-center gap-1', className)}>
       {steps.map((label, index) => {
         const isCompleted = index < activeStep;
         const isActive = index === activeStep;

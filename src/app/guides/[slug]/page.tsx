@@ -75,6 +75,20 @@ export default async function GuidePage({ params }: GuidePageProps) {
   }
 
   const pageUrl = absoluteUrl(`/guides/${topic.slug}`, locale);
+  const suggestedPrompt =
+    topic.suggestedPrompt ||
+    (isFr
+      ? "Ce qui revient est... Le fait vérifiable est... L'émotion dominante est... Ce dont j'ai besoin maintenant est..."
+      : "What keeps returning is... The verifiable fact is... The dominant emotion is... What I need now is...");
+  const writeHref = `${toLocalePath("/sanctuary/write", locale)}?initial=${encodeURIComponent(
+    suggestedPrompt
+  )}`;
+  const relatedTopics =
+    topic.relatedSlugs
+      ?.map((slug) => getKnowledgeHubTopic(slug, locale))
+      .filter((relatedTopic): relatedTopic is NonNullable<typeof relatedTopic> =>
+        Boolean(relatedTopic)
+      ) ?? [];
   const faqItems = [
     {
       question: topic.question,
@@ -234,6 +248,19 @@ export default async function GuidePage({ params }: GuidePageProps) {
               </section>
             ) : null}
 
+            {topic.selectionCriteria?.length ? (
+              <section className="rounded-2xl border border-stone-200 bg-white p-8">
+                <h2 className="text-2xl font-headline mb-4">
+                  {isFr ? "Critères de choix" : "Selection criteria"}
+                </h2>
+                <ul className="space-y-3 text-foreground/90 list-disc pl-6">
+                  {topic.selectionCriteria.map((criterion) => (
+                    <li key={criterion}>{criterion}</li>
+                  ))}
+                </ul>
+              </section>
+            ) : null}
+
             {topic.howAurumHelps?.length ? (
               <section className="rounded-2xl border border-stone-200 bg-white p-8">
                 <h2 className="text-2xl font-headline mb-4">
@@ -242,6 +269,28 @@ export default async function GuidePage({ params }: GuidePageProps) {
                 <div className="space-y-4 text-foreground/90">
                   {topic.howAurumHelps.map((paragraph) => (
                     <p key={paragraph}>{paragraph}</p>
+                  ))}
+                </div>
+              </section>
+            ) : null}
+
+            {relatedTopics.length ? (
+              <section className="rounded-2xl border border-stone-200 bg-white p-8">
+                <h2 className="text-2xl font-headline mb-4">
+                  {isFr ? "À lire ensuite" : "Read next"}
+                </h2>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {relatedTopics.map((relatedTopic) => (
+                    <Link
+                      key={relatedTopic.slug}
+                      href={toLocalePath(`/guides/${relatedTopic.slug}`, locale)}
+                      className="rounded-xl border border-stone-200 bg-stone-50 p-4 transition hover:border-amber-300 hover:bg-amber-50"
+                    >
+                      <h3 className="font-semibold text-stone-900">{relatedTopic.title}</h3>
+                      <p className="mt-2 text-sm leading-relaxed text-stone-700">
+                        {relatedTopic.metaDescription}
+                      </p>
+                    </Link>
                   ))}
                 </div>
               </section>
@@ -272,23 +321,40 @@ export default async function GuidePage({ params }: GuidePageProps) {
                   ? "Si tu veux aller plus loin que la lecture, Aurum te permet d'écrire sans filtre, de clarifier ce qui revient, et de commencer gratuitement."
                   : "If you want to go beyond reading, Aurum gives you a private place to write freely, clarify what keeps returning, and begin for free."}
               </p>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Button asChild size="lg">
-                  <Link href={signupHref}>
+              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+                <Button asChild size="lg" className="min-w-0 w-full whitespace-normal text-center leading-snug">
+                  <Link
+                    href={writeHref}
+                    data-track="guide_write_prompt"
+                    data-track-event="guide_write_prompt_click"
+                  >
+                    {isFr ? "Écrire avec ce prompt" : "Write with this prompt"}
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" size="lg" className="min-w-0 w-full whitespace-normal text-center leading-snug">
+                  <Link
+                    href={signupHref}
+                    data-track="guide_signup"
+                    data-track-event="guide_signup_click"
+                  >
                     {isFr ? "Commencer avec 5 entrées gratuites" : "Start with 5 free entries"}
                   </Link>
                 </Button>
-                <Button asChild variant="outline" size="lg">
-                  <Link href={pricingHref}>
+                <Button asChild variant="outline" size="lg" className="min-w-0 w-full whitespace-normal text-center leading-snug">
+                  <Link
+                    href={pricingHref}
+                    data-track="guide_pricing"
+                    data-track-event="guide_pricing_click"
+                  >
                     {isFr ? "Voir les formules" : "See pricing"}
                   </Link>
                 </Button>
-                <Button asChild variant="outline" size="lg">
+                <Button asChild variant="outline" size="lg" className="min-w-0 w-full whitespace-normal text-center leading-snug">
                   <Link href={guidesHref}>
                     {isFr ? "Tous les guides" : "All guides"}
                   </Link>
                 </Button>
-                <Button asChild variant="ghost" size="lg">
+                <Button asChild variant="outline" size="lg" className="min-w-0 w-full whitespace-normal text-center leading-snug">
                   <Link href={manifestoHref}>
                     {isFr ? "Lire le manifeste" : "Read the manifesto"}
                   </Link>

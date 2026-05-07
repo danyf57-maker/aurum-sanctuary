@@ -33,6 +33,7 @@ import { useLocale } from '@/hooks/use-locale';
 import { useFreeEntryLimit } from '@/hooks/use-free-entry-limit';
 import { FREE_AURUM_REPLY_LIMIT } from '@/lib/billing/config';
 import { resolveMessage } from '@/lib/i18n/resolve-message';
+import { extractSseDataMessages, flushSseDataMessages } from '@/lib/sse';
 
 type DraftImage = {
   id: string;
@@ -47,6 +48,9 @@ type ConversationTurn = {
   role: 'user' | 'aurum';
   text: string;
 };
+
+const REFLECTION_IDLE_TIMEOUT_MS = 65000;
+const CONVERSATION_IDLE_TIMEOUT_MS = 40000;
 
 function stripPreviewMarkdown(content: string) {
   return content
@@ -83,6 +87,7 @@ export function PremiumJournalForm() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const initialAurumTurnIdRef = useRef<string | null>(null);
+  const hasRestoredInitialDraftRef = useRef(false);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
@@ -148,6 +153,9 @@ export function PremiumJournalForm() {
 
   // Pré-remplir depuis l'URL si "initial" est fourni et non vide.
   useEffect(() => {
+    if (hasRestoredInitialDraftRef.current) return;
+    hasRestoredInitialDraftRef.current = true;
+
     const initial = searchParams.get('initial');
     if (!initial) return;
     if (draftContent.trim().length > 0) return;
@@ -367,6 +375,7 @@ export function PremiumJournalForm() {
         setIsSaved(true);
         setReflection(null); // Reset reflection
         setIsActivelyTyping(false);
+        void handleRequestReflection({ content, entryId: result.entryId || null });
 
         toast({
           title: t('toasts.entrySavedTitle'),
@@ -429,10 +438,28 @@ export function PremiumJournalForm() {
   }> => {
     if (!user) throw new Error(t('errors.signInRequired'));
 
+    let didTimeout = false;
+    let idleTimeout: ReturnType<typeof setTimeout> | null = null;
+    const controller = new AbortController();
+    const resetIdleTimeout = () => {
+      if (idleTimeout) clearTimeout(idleTimeout);
+      idleTimeout = setTimeout(() => {
+        didTimeout = true;
+        controller.abort();
+      }, options?.userMessage ? CONVERSATION_IDLE_TIMEOUT_MS : REFLECTION_IDLE_TIMEOUT_MS);
+    };
+    const clearIdleTimeout = () => {
+      if (idleTimeout) {
+        clearTimeout(idleTimeout);
+        idleTimeout = null;
+      }
+    };
+
     const callReflect = (idToken: string) =>
       fetch('/api/reflect', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
         body: JSON.stringify({
           content,
           idToken,
@@ -442,85 +469,119 @@ export function PremiumJournalForm() {
         }),
       });
 
-    let idToken = await user.getIdToken();
-    let response = await callReflect(idToken);
+    try {
+      resetIdleTimeout();
+      let idToken = await user.getIdToken();
+      let response = await callReflect(idToken);
 
-    if (response.status === 401) {
-      idToken = await user.getIdToken(true);
-      response = await callReflect(idToken);
-    }
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({}));
-      if (response.status === 402 && (error?.freeLimitReached || error?.conversationLimitReached)) {
-        if (typeof error?.repliesUsed === 'number') {
-          setAurumRepliesUsed(error.repliesUsed);
-        }
-        setIsPaywallOpen(true);
-      }
       if (response.status === 401) {
-        throw new Error(t('errors.sessionExpiredReload'));
+        idToken = await user.getIdToken(true);
+        response = await callReflect(idToken);
       }
-      throw new Error(error?.error || t('errors.generatingReflection'));
-    }
 
-    if (!response.body) throw new Error(t('errors.emptyResponse'));
-
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-    let fullText = '';
-    let meta: {
-      conversationRepliesUsed?: number | null;
-      conversationRepliesLimit?: number | null;
-    } | null = null;
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-
-      const chunk = decoder.decode(value, { stream: true });
-      const lines = chunk.split('\n');
-
-      for (const line of lines) {
-        if (!line.startsWith('data: ')) continue;
-        try {
-          const data = JSON.parse(line.slice(6));
-          if (data.token) {
-            fullText += data.token;
-            onToken(fullText);
-          } else if (data.replace) {
-            // Anti-meta sanitized replacement
-            fullText = data.replace;
-            onToken(fullText);
-          } else if (data.done) {
-            meta = {
-              conversationRepliesUsed: typeof data.conversationRepliesUsed === 'number'
-                ? data.conversationRepliesUsed
-                : null,
-              conversationRepliesLimit: typeof data.conversationRepliesLimit === 'number'
-                ? data.conversationRepliesLimit
-                : null,
-            };
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        if (response.status === 402 && (error?.freeLimitReached || error?.conversationLimitReached)) {
+          if (typeof error?.repliesUsed === 'number') {
+            setAurumRepliesUsed(error.repliesUsed);
           }
-          // data.done = true → stream ended, metadata available
-        } catch {
-          // skip malformed
+          setIsPaywallOpen(true);
         }
+        if (response.status === 401) {
+          throw new Error(t('errors.sessionExpiredReload'));
+        }
+        throw new Error(error?.error || t('errors.generatingReflection'));
       }
-    }
 
-    return { text: fullText, meta };
+      if (!response.body) throw new Error(t('errors.emptyResponse'));
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let fullText = '';
+      let sseRemainder = '';
+      let meta: {
+        conversationRepliesUsed?: number | null;
+        conversationRepliesLimit?: number | null;
+      } | null = null;
+
+    const handleSseMessage = (message: string) => {
+      let data: {
+        token?: string;
+        replace?: string;
+        done?: boolean;
+        error?: string;
+        conversationRepliesUsed?: number;
+        conversationRepliesLimit?: number;
+      };
+      try {
+        data = JSON.parse(message);
+      } catch {
+        // skip malformed
+        return;
+      }
+
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      if (data.token) {
+        fullText += data.token;
+        onToken(fullText);
+      } else if (data.replace) {
+        // Anti-meta sanitized replacement
+        fullText = data.replace;
+        onToken(fullText);
+      } else if (data.done) {
+        meta = {
+          conversationRepliesUsed: typeof data.conversationRepliesUsed === 'number'
+            ? data.conversationRepliesUsed
+            : null,
+          conversationRepliesLimit: typeof data.conversationRepliesLimit === 'number'
+            ? data.conversationRepliesLimit
+            : null,
+        };
+      }
+    };
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        resetIdleTimeout();
+        const chunk = decoder.decode(value, { stream: true });
+        const parsed = extractSseDataMessages(sseRemainder, chunk);
+        sseRemainder = parsed.remainder;
+        parsed.messages.forEach(handleSseMessage);
+      }
+
+      flushSseDataMessages(sseRemainder).forEach(handleSseMessage);
+
+      return { text: fullText, meta };
+    } catch (error) {
+      if (didTimeout || (error instanceof Error && error.name === 'AbortError')) {
+        throw new Error(
+          isFr
+            ? "Aurum prend plus de temps que prévu. Réessaie dans quelques instants."
+            : "Aurum is taking longer than expected. Try again in a moment."
+        );
+      }
+      throw error;
+    } finally {
+      clearIdleTimeout();
+    }
   };
 
-  const handleRequestReflection = async () => {
-    if (!savedContent) return;
+  const handleRequestReflection = async (override?: { content?: string; entryId?: string | null }) => {
+    const reflectionContent = override?.content ?? savedContent;
+    const reflectionEntryId = override?.entryId ?? savedEntryId;
+    if (!reflectionContent) return;
 
     setIsGeneratingReflection(true);
     const aurumTurnId = initialAurumTurnIdRef.current ?? `aurum-initial-${Date.now()}`;
     initialAurumTurnIdRef.current = aurumTurnId;
     try {
       const result = await streamReflection(
-        savedContent,
+        reflectionContent,
         (partial) => {
           setReflection({ text: partial, patternsUsed: 0 });
           setConversationTurns((prev) => {
@@ -533,7 +594,7 @@ export function PremiumJournalForm() {
             return [{ id: aurumTurnId, role: 'aurum', text: partial }];
           });
         },
-        { entryId: savedEntryId },
+        { entryId: reflectionEntryId },
       );
       const text = result.text;
       // Final state with complete text
@@ -551,6 +612,8 @@ export function PremiumJournalForm() {
         setAurumRepliesUsed(result.meta.conversationRepliesUsed);
       }
     } catch (error) {
+      setReflection(null);
+      setConversationTurns((prev) => prev.filter((turn) => turn.id !== aurumTurnId));
       const message = error instanceof Error ? error.message : t('errors.generic');
       toast({ title: t('toasts.errorTitle'), description: message, variant: 'destructive' });
     } finally {
@@ -576,6 +639,7 @@ export function PremiumJournalForm() {
     setConversationInput('');
 
     setIsContinuingConversation(true);
+    const aurumTurnId = `aurum-${Date.now()}`;
     try {
       const context = nextTurns
         .slice(-8)
@@ -592,7 +656,6 @@ export function PremiumJournalForm() {
         t('conversation.replyInstruction'),
       ].join('\n');
 
-      const aurumTurnId = `aurum-${Date.now()}`;
       const result = await streamReflection(
         conversationalInput,
         (partial) => {
@@ -608,13 +671,18 @@ export function PremiumJournalForm() {
       );
       const text = result.text;
       // Ensure final text is set
-      setConversationTurns((prev) =>
-        prev.map((t) => t.id === aurumTurnId ? { ...t, text } : t)
-      );
+      setConversationTurns((prev) => {
+        const existing = prev.find((t) => t.id === aurumTurnId);
+        if (existing) {
+          return prev.map((t) => t.id === aurumTurnId ? { ...t, text } : t);
+        }
+        return [...prev, { id: aurumTurnId, role: 'aurum', text }];
+      });
       if (typeof result.meta?.conversationRepliesUsed === 'number') {
         setAurumRepliesUsed(result.meta.conversationRepliesUsed);
       }
     } catch (error) {
+      setConversationTurns((prev) => prev.filter((turn) => turn.id !== aurumTurnId));
       const message = error instanceof Error ? error.message : t('errors.generic');
       toast({ title: t('toasts.errorTitle'), description: message, variant: 'destructive' });
     } finally {
@@ -737,9 +805,9 @@ export function PremiumJournalForm() {
     <>
       <div className="w-full max-w-[720px] mx-auto px-6 md:px-10 space-y-8">
         {!isPremium && (
-          <div className={`rounded-[24px] border px-5 py-4 ${isLimitReached ? 'border-amber-300 bg-amber-50' : 'border-stone-200 bg-white/70'}`}>
-            <p className="text-sm font-medium text-stone-800">{progressLabel}</p>
-            <p className="mt-1 text-sm text-stone-600">{remainingLabel}</p>
+          <div className={`rounded-[24px] border px-5 py-4 ${isLimitReached ? 'border-amber-300 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/40' : 'border-stone-200 bg-white/70 dark:border-stone-800 dark:bg-stone-900/70'}`}>
+            <p className="text-sm font-medium text-stone-800 dark:text-stone-100">{progressLabel}</p>
+            <p className="mt-1 text-sm text-stone-600 dark:text-stone-300">{remainingLabel}</p>
           </div>
         )}
         {/* Writing form */}
@@ -754,7 +822,7 @@ export function PremiumJournalForm() {
             <form
               ref={formRef}
               onSubmit={handleFormSubmit}
-              className="space-y-10 rounded-[28px] bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(248,244,234,0.82))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] p-6 md:p-10"
+              className="space-y-10 rounded-[28px] bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(248,244,234,0.82))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] dark:bg-[linear-gradient(180deg,rgba(28,25,23,0.96),rgba(12,10,9,0.92))] dark:shadow-stone-950/40 p-6 md:p-10"
             >
               <div
                 className={`relative transition-all duration-300 ${isDragActive ? 'ring-2 ring-amber-300 rounded-2xl bg-amber-50/40' : ''}`}
@@ -778,7 +846,7 @@ export function PremiumJournalForm() {
                   name="content"
                   placeholder={t('placeholders.write')}
                   value={draftContent}
-                  className="bg-transparent border-none shadow-none resize-none overflow-hidden min-h-[48vh] p-0 [font-family:var(--font-cormorant)] text-3xl leading-relaxed text-stone-800 placeholder:text-stone-400 focus:ring-0 focus:outline-none focus-visible:ring-0 caret-amber-400"
+                  className="bg-transparent border-none shadow-none resize-none overflow-hidden min-h-[48vh] p-0 [font-family:var(--font-cormorant)] text-3xl leading-relaxed text-stone-800 placeholder:text-stone-400 focus:ring-0 focus:outline-none focus-visible:ring-0 caret-amber-400 dark:text-stone-100 dark:placeholder:text-stone-400"
                   required
                   onInput={handleInput}
                 />
@@ -794,7 +862,7 @@ export function PremiumJournalForm() {
                 )}
               </div>
               <div className={`space-y-4 transition-opacity duration-400 ${isFocusMode ? 'opacity-10 hover:opacity-100' : 'opacity-80'}`}>
-                <p className="text-xs uppercase tracking-[0.18em] text-stone-500 flex items-center gap-2">
+                <p className="text-xs uppercase tracking-[0.18em] text-stone-500 flex items-center gap-2 dark:text-stone-300">
                   <ImagePlus className="h-4 w-4 text-amber-500" />
                   {t('dragAndDropHint')}
                 </p>
@@ -867,7 +935,7 @@ export function PremiumJournalForm() {
                   type="submit"
                   disabled={isSubmitting || isUploadingImage}
                   size="lg"
-                  className="border-0 bg-stone-900 text-stone-50 hover:bg-stone-800 px-10 rounded-full shadow-[0_12px_28px_rgba(30,20,8,0.24)] text-base font-semibold"
+                  className="aurum-motion-button border-0 bg-stone-900 text-stone-50 hover:bg-stone-800 dark:bg-stone-100 dark:text-stone-950 dark:hover:bg-stone-200 px-10 rounded-full shadow-[0_12px_28px_rgba(30,20,8,0.24)] text-base font-semibold"
                 >
                   {isSubmitting || isUploadingImage ? (
                     <>
@@ -890,7 +958,7 @@ export function PremiumJournalForm() {
             className="space-y-8"
           >
             {/* Premium saved confirmation */}
-            <div className="relative overflow-hidden rounded-[28px] bg-[linear-gradient(180deg,rgba(255,255,255,0.95),rgba(248,244,234,0.88))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] p-8 md:p-12">
+            <div className="aurum-motion-card aurum-motion-reveal relative overflow-hidden rounded-[28px] bg-[linear-gradient(180deg,rgba(255,255,255,0.95),rgba(248,244,234,0.88))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] dark:bg-[linear-gradient(180deg,rgba(28,25,23,0.96),rgba(12,10,9,0.92))] dark:shadow-stone-950/40 p-8 md:p-12">
               {/* Decorative golden glow */}
               <div className="absolute -top-20 -right-20 h-40 w-40 rounded-full bg-[#C5A059]/8 blur-3xl" />
               <div className="absolute -bottom-20 -left-20 h-40 w-40 rounded-full bg-[#D4AF37]/6 blur-3xl" />
@@ -930,10 +998,10 @@ export function PremiumJournalForm() {
                   transition={{ duration: 0.4, delay: 0.4 }}
                   className="space-y-3"
                 >
-                  <h2 className="font-headline text-3xl md:text-4xl text-stone-900 tracking-tight">
+                  <h2 className="font-headline text-3xl md:text-4xl text-stone-900 tracking-tight dark:text-stone-100">
                     {t('savedThoughtTitle')}
                   </h2>
-                  <div className="flex items-center justify-center gap-2 text-sm text-stone-500">
+                  <div className="flex items-center justify-center gap-2 text-sm text-stone-500 dark:text-stone-300">
                     <Lock className="h-3.5 w-3.5 text-[#C5A059]" />
                     <span>{t('savedThoughtSubtitle')}</span>
                   </div>
@@ -959,7 +1027,7 @@ export function PremiumJournalForm() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.4, delay: 0.3 }}
-                    className="relative overflow-hidden rounded-[28px] bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(248,244,234,0.82))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] p-8 md:p-12 text-center"
+                    className="aurum-motion-card relative overflow-hidden rounded-[28px] bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(248,244,234,0.82))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] dark:bg-[linear-gradient(180deg,rgba(28,25,23,0.96),rgba(12,10,9,0.92))] dark:shadow-stone-950/40 p-8 md:p-12 text-center"
                   >
                     <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/3 via-transparent to-[#C5A059]/3 pointer-events-none" />
                     <div className="relative space-y-6">
@@ -967,17 +1035,17 @@ export function PremiumJournalForm() {
                         <Eye className="h-5 w-5 text-[#C5A059]" />
                       </div>
                       <div className="space-y-2">
-                        <h3 className="font-headline text-2xl md:text-3xl text-stone-900 tracking-tight">
+                        <h3 className="font-headline text-2xl md:text-3xl text-stone-900 tracking-tight dark:text-stone-100">
                           {t('getReflection')}
                         </h3>
-                        <p className="text-stone-500 max-w-sm mx-auto leading-relaxed">
+                        <p className="text-stone-500 max-w-sm mx-auto leading-relaxed dark:text-stone-300">
                           {t('getReflectionDescription')}
                         </p>
                       </div>
                       <Button
-                        onClick={handleRequestReflection}
+                        onClick={() => void handleRequestReflection()}
                         size="lg"
-                        className="group h-12 px-8 bg-gradient-to-r from-[#D4AF37] to-[#C5A059] text-stone-900 hover:from-[#C5A059] hover:to-[#D4AF37] rounded-2xl shadow-[0_8px_24px_rgba(212,175,55,0.25)] font-semibold transition-all duration-300 hover:shadow-[0_12px_32px_rgba(212,175,55,0.35)] hover:scale-[1.02]"
+                        className="aurum-motion-button group h-12 px-8 bg-gradient-to-r from-[#D4AF37] to-[#C5A059] text-stone-900 hover:from-[#C5A059] hover:to-[#D4AF37] rounded-2xl shadow-[0_8px_24px_rgba(212,175,55,0.25)] font-semibold transition-all duration-300 hover:shadow-[0_12px_32px_rgba(212,175,55,0.35)] hover:scale-[1.02]"
                       >
                         <Eye className="mr-2 h-4.5 w-4.5 transition-transform group-hover:scale-110" />
                         {t('revealReflection')}
@@ -991,7 +1059,7 @@ export function PremiumJournalForm() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.97 }}
                     transition={{ duration: 0.4, ease: 'easeOut' }}
-                    className="rounded-[28px] bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(248,244,234,0.82))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] p-8 md:p-12"
+                    className="aurum-motion-card rounded-[28px] bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(248,244,234,0.82))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] dark:bg-[linear-gradient(180deg,rgba(28,25,23,0.96),rgba(12,10,9,0.92))] dark:shadow-stone-950/40 p-8 md:p-12"
                   >
                     <div className="space-y-6 py-4">
                       <ReflectionPulse />
@@ -1034,7 +1102,7 @@ export function PremiumJournalForm() {
                 </div>
 
                 {/* Conversation continuation */}
-                <div className="rounded-[24px] bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(248,244,234,0.82))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] p-4 md:rounded-[28px] md:p-6 space-y-3">
+                <div className="aurum-motion-card rounded-[24px] bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(248,244,234,0.82))] shadow-[0_10px_30px_rgba(43,34,19,0.06)] p-4 md:rounded-[28px] md:p-6 space-y-3">
                   <div className="flex items-center justify-between gap-3">
                     <h4 className="truncate font-headline text-base text-stone-900 md:text-lg">
                       {resolveMessage(t('continueWithAurum'), premiumFormFallback.continueWithAurum)}
@@ -1068,7 +1136,7 @@ export function PremiumJournalForm() {
                         <Button
                           type="button"
                           onClick={() => setIsPaywallOpen(true)}
-                          className="bg-gradient-to-r from-[#D4AF37] to-[#C5A059] text-stone-900 hover:from-[#C5A059] hover:to-[#D4AF37] rounded-xl px-6 font-semibold shadow-[0_6px_18px_rgba(212,175,55,0.2)] transition-all duration-300 hover:shadow-[0_8px_24px_rgba(212,175,55,0.3)]"
+                          className="aurum-motion-button bg-gradient-to-r from-[#D4AF37] to-[#C5A059] text-stone-900 hover:from-[#C5A059] hover:to-[#D4AF37] rounded-xl px-6 font-semibold shadow-[0_6px_18px_rgba(212,175,55,0.2)] transition-all duration-300 hover:shadow-[0_8px_24px_rgba(212,175,55,0.3)]"
                         >
                           {t('unlockConversation')}
                         </Button>
@@ -1091,7 +1159,7 @@ export function PremiumJournalForm() {
                           type="button"
                           onClick={handleContinueConversation}
                           disabled={isContinuingConversation || !conversationInput.trim()}
-                          className="w-full rounded-xl px-6 font-semibold shadow-[0_6px_18px_rgba(212,175,55,0.2)] transition-all duration-300 bg-gradient-to-r from-[#D4AF37] to-[#C5A059] text-stone-900 hover:from-[#C5A059] hover:to-[#D4AF37] hover:shadow-[0_8px_24px_rgba(212,175,55,0.3)] disabled:opacity-100 disabled:bg-[#D8BF6B] disabled:text-stone-700 disabled:shadow-none sm:w-auto"
+                          className="aurum-motion-button w-full rounded-xl px-6 font-semibold shadow-[0_6px_18px_rgba(212,175,55,0.2)] transition-all duration-300 bg-gradient-to-r from-[#D4AF37] to-[#C5A059] text-stone-900 hover:from-[#C5A059] hover:to-[#D4AF37] hover:shadow-[0_8px_24px_rgba(212,175,55,0.3)] disabled:opacity-100 disabled:bg-[#D8BF6B] disabled:text-stone-700 disabled:shadow-none sm:w-auto"
                         >
                           {isContinuingConversation ? (
                             <>
@@ -1141,7 +1209,7 @@ export function PremiumJournalForm() {
               <button
                 onClick={handleNewEntry}
                 type="button"
-                className="group w-full rounded-2xl border border-stone-200 bg-white/70 px-4 py-4 text-center transition-colors duration-300 hover:border-[#C5A059]/35 hover:bg-[#C5A059]/5"
+                className="aurum-motion-button group w-full rounded-2xl border border-stone-200 bg-white/70 px-4 py-4 text-center transition-colors duration-300 hover:border-[#C5A059]/35 hover:bg-[#C5A059]/5"
               >
                 <p className="font-headline text-lg text-stone-500 transition-colors duration-300 group-hover:text-stone-700 md:text-xl">
                   {resolveMessage(t('openNewWritingSpace'), premiumFormFallback.openNewWritingSpace)}

@@ -42,7 +42,7 @@ export function LanguageSwitch({ className, compact = false }: LanguageSwitchPro
   return (
     <div
       className={cn(
-        "inline-flex items-center rounded-full border border-stone-200 bg-white p-1 shadow-sm",
+        "inline-flex items-center rounded-full border border-stone-200 bg-white p-1 shadow-sm dark:border-stone-700 dark:bg-stone-900",
         compact ? "gap-1" : "gap-1.5",
         className
       )}
@@ -60,8 +60,8 @@ export function LanguageSwitch({ className, compact = false }: LanguageSwitchPro
               "rounded-full px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.08em] transition-colors",
               compact ? "min-w-9" : "min-w-10",
               active
-                ? "bg-stone-900 text-white"
-                : "text-stone-500 hover:bg-stone-100 hover:text-stone-900"
+                ? "bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950"
+                : "text-stone-500 hover:bg-stone-100 hover:text-stone-900 dark:text-stone-300 dark:hover:bg-stone-800 dark:hover:text-stone-50"
             )}
             aria-pressed={active}
           >

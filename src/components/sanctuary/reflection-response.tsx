@@ -29,17 +29,18 @@ export function ReflectionResponse({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className={cn("w-full", className)}
+      className={cn("aurum-motion-reveal w-full", className)}
     >
       <div
         className={cn(
           "relative",
-          "bg-gradient-to-br from-amber-50 via-amber-50/80 to-white",
+          "aurum-motion-card",
+          "bg-gradient-to-br from-amber-50 via-amber-50/80 to-white dark:from-amber-950 dark:via-stone-900 dark:to-stone-950",
           "backdrop-blur-sm",
           "rounded-2xl",
-          "border-2 border-amber-300/60",
+          "border-2 border-amber-300/60 dark:border-amber-800/70",
           "p-8 md:p-10",
-          "shadow-lg shadow-amber-100/50"
+          "shadow-lg shadow-amber-100/50 dark:shadow-stone-950/40"
         )}
       >
         {/* Golden accent line at top */}
@@ -47,7 +48,7 @@ export function ReflectionResponse({
 
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">
-          <h3 className="font-headline text-lg text-amber-800 tracking-wide uppercase">
+          <h3 className="font-headline text-lg text-amber-800 tracking-wide uppercase dark:text-amber-300">
             {t("title")}
           </h3>
         </div>
@@ -55,13 +56,13 @@ export function ReflectionResponse({
         {/* Reflection text */}
         <MarkdownLite
           content={reflection}
-          className="space-y-4 text-lg leading-relaxed text-stone-800 font-light"
+          className="space-y-4 text-lg leading-relaxed text-stone-800 font-light dark:text-stone-100"
         />
 
         {/* Subtle footer (patterns used, if any) */}
         {patternsUsed > 0 && (
-          <div className="mt-6 pt-6 border-t border-amber-200/50">
-            <p className="text-xs text-amber-600/70 italic">
+          <div className="mt-6 pt-6 border-t border-amber-200/50 dark:border-amber-800/50">
+            <p className="text-xs text-amber-600/70 italic dark:text-amber-300/80">
               {t("patternsUsed", { count: patternsUsed })}
             </p>
           </div>

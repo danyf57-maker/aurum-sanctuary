@@ -137,13 +137,13 @@ export default function EntryDiagnosticPage() {
   if (!user || !entry) {
     return (
       <div className="container mx-auto max-w-4xl py-8 md:py-12">
-        <Button asChild variant="ghost" className="mb-4 pl-0 text-stone-600 hover:text-stone-900">
+        <Button asChild variant="ghost" className="mb-4 pl-0 text-stone-600 hover:text-stone-900 dark:text-stone-200 dark:hover:text-stone-50">
           <Link href={to('/sanctuary')}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             {isFr ? 'Retour au journal' : 'Back to journal'}
           </Link>
         </Button>
-        <div className="rounded-3xl border border-stone-200 bg-white p-8 text-center text-stone-600">
+        <div className="rounded-3xl border border-stone-200 bg-white p-8 text-center text-stone-600 dark:border-stone-800 dark:bg-stone-900 dark:text-stone-300">
           {isFr ? 'Page introuvable ou inaccessible.' : 'Entry not found or inaccessible.'}
         </div>
       </div>
@@ -153,21 +153,21 @@ export default function EntryDiagnosticPage() {
   return (
     <div className="container mx-auto max-w-4xl py-8 md:py-12">
       <div className="mb-8">
-        <Button asChild variant="ghost" className="mb-4 pl-0 text-stone-600 hover:text-stone-900">
+        <Button asChild variant="ghost" className="mb-4 pl-0 text-stone-600 hover:text-stone-900 dark:text-stone-200 dark:hover:text-stone-50">
           <Link href={to('/sanctuary')}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             {isFr ? 'Retour au journal' : 'Back to journal'}
           </Link>
         </Button>
-        <h1 className="font-headline text-4xl tracking-tight text-stone-900">
+        <h1 className="font-headline text-4xl tracking-tight text-stone-900 dark:text-stone-100">
           {isFr ? 'Page et diagnostic' : 'Page and reflection'}
         </h1>
-        <p className="mt-2 text-stone-600">
+        <p className="mt-2 text-stone-600 dark:text-stone-300">
           {isFr ? 'Relis, ecris, et vois ce qu’Aurum remarque.' : 'Read, write, and see what Aurum notices.'}
         </p>
       </div>
 
-      <div className="rounded-3xl border border-stone-200 bg-white p-5 shadow-sm md:p-8">
+      <div className="rounded-3xl border border-stone-200 bg-white p-5 shadow-sm dark:border-stone-800 dark:bg-stone-900 md:p-8">
         <MagazineEntryEditor
           entryId={entry.id}
           initialContent={entry.content}

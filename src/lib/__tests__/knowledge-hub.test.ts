@@ -14,8 +14,24 @@ const growthSlugs = [
   "how-to-stop-rumination",
   "journaling-for-overthinking",
   "journal-prompts-for-anxiety",
+  "pensees-recurrentes",
+  "prompts-pensees-recurrentes",
+  "conversation-qui-revient",
+  "meilleure-application-journal-pensees-recurrentes",
+  "journal-guide-charge-mentale",
   "private-diary-vs-notes-app",
   "rosebud-alternative",
+] as const;
+
+const scienceSlugs = [
+  "journaling-scientifique",
+  "bienfaits-ecriture-expressive",
+  "ecriture-et-clarte-mentale",
+  "journaling-et-rumination",
+  "ecriture-manuscrite-ou-clavier",
+  "journal-intime-et-emotions",
+  "prompts-ecriture-expressive",
+  "ecriture-et-recits-personnels",
 ] as const;
 
 function guideWordCount(slug: string, locale: "en" | "fr") {
@@ -30,6 +46,8 @@ function guideWordCount(slug: string, locale: "en" | "fr") {
     ...(topic.practicalSteps ?? []),
     ...(topic.example ?? []),
     ...(topic.howAurumHelps ?? []),
+    ...(topic.selectionCriteria ?? []),
+    topic.suggestedPrompt ?? "",
   ]
     .join(" ")
     .split(/\s+/)
@@ -45,5 +63,10 @@ describe("priority guide content depth", () => {
   it.each(growthSlugs)("%s exists with useful bilingual launch content", (slug) => {
     expect(guideWordCount(slug, "en")).toBeGreaterThanOrEqual(250);
     expect(guideWordCount(slug, "fr")).toBeGreaterThanOrEqual(250);
+  });
+
+  it.each(scienceSlugs)("%s exists as a substantial bilingual science guide", (slug) => {
+    expect(guideWordCount(slug, "en")).toBeGreaterThanOrEqual(450);
+    expect(guideWordCount(slug, "fr")).toBeGreaterThanOrEqual(450);
   });
 });

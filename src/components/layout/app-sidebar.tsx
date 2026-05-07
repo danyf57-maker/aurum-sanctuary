@@ -59,7 +59,7 @@ export function AppSidebar() {
       initial={false}
       animate={{ width: isCollapsed ? 80 : 280 }}
       className={cn(
-        "relative hidden lg:flex h-screen flex-col border-r border-stone-200/80 bg-gradient-to-b from-stone-50 to-white text-stone-900 transition-all duration-300 ease-in-out z-40 overflow-hidden supports-[height:100dvh]:h-dvh",
+        "relative hidden lg:flex h-screen flex-col border-r border-stone-200/80 bg-gradient-to-b from-stone-50 to-white text-stone-900 transition-all duration-300 ease-in-out z-40 overflow-hidden dark:border-stone-800 dark:from-stone-950 dark:to-stone-900 dark:text-stone-100 supports-[height:100dvh]:h-dvh",
         isCollapsed ? "w-20" : "w-[280px]"
       )}
     >
@@ -87,7 +87,7 @@ export function AppSidebar() {
       {/* Navigation */}
       <nav className="flex-1 px-4 space-y-1.5">
         {!isCollapsed && (
-          <p className="px-4 pb-2 text-[11px] font-semibold uppercase tracking-[0.17em] text-stone-500/90">
+          <p className="px-4 pb-2 text-[11px] font-semibold uppercase tracking-[0.17em] text-stone-500/90 dark:text-stone-400">
             Navigation
           </p>
         )}
@@ -100,16 +100,16 @@ export function AppSidebar() {
                 className={cn(
                   "group flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-200 relative border",
                   isActive
-                    ? "bg-white text-stone-900 border-amber-200/80 shadow-sm shadow-stone-900/5"
-                    : "text-stone-600 border-transparent hover:border-stone-200/70 hover:bg-white/75 hover:text-stone-900"
+                    ? "bg-white text-stone-900 border-amber-200/80 shadow-sm shadow-stone-900/5 dark:bg-stone-900 dark:text-stone-100 dark:border-amber-800/70"
+                    : "text-stone-600 border-transparent hover:border-stone-200/70 hover:bg-white/75 hover:text-stone-900 dark:text-stone-300 dark:hover:border-stone-700 dark:hover:bg-stone-800/70 dark:hover:text-stone-50"
                 )}
               >
                 <item.icon
                   className={cn(
                     "h-5 w-5 shrink-0",
                     isActive
-                      ? "text-amber-600"
-                      : "text-stone-400 group-hover:text-stone-900"
+                      ? "text-amber-600 dark:text-amber-300"
+                      : "text-stone-400 group-hover:text-stone-900 dark:text-stone-500 dark:group-hover:text-stone-100"
                   )}
                 />
 
@@ -127,7 +127,7 @@ export function AppSidebar() {
                       <span
                         className={cn(
                           "text-[10px] mt-1 uppercase tracking-[0.14em] opacity-70 font-medium",
-                          isActive ? "text-stone-500" : "text-stone-500/90"
+                          isActive ? "text-stone-500 dark:text-stone-300" : "text-stone-500/90 dark:text-stone-400"
                         )}
                       >
                         {t(item.descKey)}
@@ -155,11 +155,11 @@ export function AppSidebar() {
       </nav>
 
       {/* Footer Area */}
-      <div className="p-4 space-y-2 border-t border-stone-200/80 bg-white/50">
+      <div className="p-4 space-y-2 border-t border-stone-200/80 bg-white/50 dark:border-stone-800 dark:bg-stone-950/50">
         {user ? (
           <button
             onClick={() => logout()}
-            className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-stone-600 hover:bg-red-50 hover:text-red-600 transition-all duration-200"
+            className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-stone-600 hover:bg-red-50 hover:text-red-600 transition-all duration-200 dark:text-stone-300 dark:hover:bg-red-950/40 dark:hover:text-red-300"
           >
             <LogOut className="h-5 w-5 shrink-0" />
             {!isCollapsed && (
@@ -169,7 +169,7 @@ export function AppSidebar() {
         ) : (
           <Link
             href={to("/login")}
-            className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-stone-600 hover:bg-stone-900/5 hover:text-stone-900 transition-all duration-200"
+            className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-stone-600 hover:bg-stone-900/5 hover:text-stone-900 transition-all duration-200 dark:text-stone-300 dark:hover:bg-stone-800 dark:hover:text-stone-50"
           >
             <LogIn className="h-5 w-5 shrink-0" />
             {!isCollapsed && <span className="font-semibold text-sm">{t("signIn")}</span>}
@@ -178,9 +178,9 @@ export function AppSidebar() {
 
         {/* User Info (Mini) */}
         {!isCollapsed && user && (
-          <div className="mt-4 px-4 py-3 rounded-2xl bg-white border border-stone-200/80 shadow-sm">
+          <div className="mt-4 px-4 py-3 rounded-2xl bg-white border border-stone-200/80 shadow-sm dark:border-stone-800 dark:bg-stone-900">
             <div className="flex items-center gap-3">
-              <div className="h-9 w-9 rounded-full bg-stone-200 flex items-center justify-center text-xs font-bold text-stone-600 overflow-hidden">
+              <div className="h-9 w-9 rounded-full bg-stone-200 flex items-center justify-center text-xs font-bold text-stone-600 overflow-hidden dark:bg-stone-800 dark:text-stone-200">
                 {user.photoURL ? (
                   <img
                     src={user.photoURL}
@@ -192,10 +192,10 @@ export function AppSidebar() {
                 )}
               </div>
               <div className="flex flex-col min-w-0">
-                <span className="text-base font-semibold truncate text-stone-900 leading-none">
+                <span className="text-base font-semibold truncate text-stone-900 leading-none dark:text-stone-100">
                   {(user.displayName ?? "") || t("user")}
                 </span>
-                <span className="text-xs text-stone-500 truncate mt-1">
+                <span className="text-xs text-stone-500 truncate mt-1 dark:text-stone-300">
                   {t("memberAurum")}
                 </span>
               </div>
@@ -208,11 +208,11 @@ export function AppSidebar() {
         </div>
 
         {!isCollapsed && (
-          <div className="mt-2 px-4 py-3 rounded-xl border border-amber-200/70 bg-amber-50/50">
-            <p className="text-[10px] uppercase tracking-[0.14em] text-stone-500 font-semibold">
+          <div className="mt-2 px-4 py-3 rounded-xl border border-amber-200/70 bg-amber-50/50 dark:border-amber-900/50 dark:bg-amber-950/25">
+            <p className="text-[10px] uppercase tracking-[0.14em] text-stone-500 font-semibold dark:text-stone-300">
               {t("tip")}
             </p>
-            <p className="mt-1 text-xs leading-relaxed text-stone-600">
+            <p className="mt-1 text-xs leading-relaxed text-stone-600 dark:text-stone-300">
               {t("tipText")}
             </p>
           </div>
@@ -222,7 +222,7 @@ export function AppSidebar() {
       {/* Collapse Toggle */}
       <button
         onClick={toggleSidebar}
-        className="absolute bottom-24 -right-3 h-6 w-6 rounded-full border border-border bg-white shadow-sm flex items-center justify-center hover:bg-stone-50 transition-colors z-50 lg:flex hidden"
+        className="absolute bottom-24 -right-3 h-6 w-6 rounded-full border border-border bg-white shadow-sm flex items-center justify-center hover:bg-stone-50 transition-colors z-50 dark:bg-stone-900 dark:hover:bg-stone-800 lg:flex hidden"
       >
         {isCollapsed ? (
           <ChevronRight className="h-3 w-3" />

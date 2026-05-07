@@ -59,6 +59,11 @@ describe('Reply language rules', () => {
     expect(resolveReplyLanguage(portugueseSample, 'en')).toBe('pt');
   });
 
+  it('detects short Portuguese chat follow-ups before falling back to the app locale', () => {
+    expect(resolveReplyLanguage('O que mais te chamou atenção no que escrevi?', 'fr')).toBe('pt');
+    expect(resolveReplyLanguage('Estou me sentindo sobrecarregado.', 'fr')).toBe('pt');
+  });
+
   it('resolves a concrete prompt language when the reply language is ambiguous', () => {
     expect(resolvePromptLanguage('same-as-user', 'fr')).toBe('fr');
     expect(resolvePromptLanguage('same-as-user', 'en')).toBe('en');

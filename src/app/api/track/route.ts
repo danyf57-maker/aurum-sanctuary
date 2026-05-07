@@ -6,6 +6,21 @@ import { TRACKED_EVENTS, type TrackedEventName } from '@/lib/analytics/types';
 import { logger } from '@/lib/logger/safe';
 import { getActiveEmailAttribution, EMAIL_ATTRIBUTION_WINDOW_HOURS } from '@/lib/onboarding/email-attribution';
 
+export const runtime = 'nodejs';
+
+function hasFirebaseAdminRuntime() {
+  return Boolean(
+    process.env.FIREBASE_SERVICE_ACCOUNT_KEY ||
+      process.env.FIREBASE_SERVICE_ACCOUNT_KEY_B64 ||
+      process.env.GOOGLE_APPLICATION_CREDENTIALS ||
+      process.env.GOOGLE_CLOUD_PROJECT ||
+      process.env.GCLOUD_PROJECT ||
+      process.env.GCP_PROJECT ||
+      process.env.FIREBASE_CONFIG ||
+      process.env.K_SERVICE
+  );
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { clientId, name, params, path } = await request.json();
@@ -17,6 +32,14 @@ export async function POST(request: NextRequest) {
     const eventName = String(name) as TrackedEventName;
     if (!TRACKED_EVENTS.includes(eventName)) {
       return NextResponse.json({ message: `Unsupported event name: ${eventName}` }, { status: 400 });
+    }
+
+    if (!hasFirebaseAdminRuntime()) {
+      return NextResponse.json({
+        success: true,
+        skipped: true,
+        message: "Tracking accepted without persistence because Firebase Admin is not configured.",
+      });
     }
 
     const sessionCookie = (await cookies()).get('__session')?.value;
