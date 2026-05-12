@@ -4,8 +4,6 @@ import {
   LOCALE_COOKIE_NAME,
   type Locale,
   normalizeLocale,
-  resolveLocaleFromAcceptLanguage,
-  resolveLocaleFromCountry,
 } from '@/lib/locale';
 import {
   detectPathLocale,
@@ -15,46 +13,32 @@ import {
 
 const protectedRoutes = ['/admin'];
 const authRoutes = ['/login', '/signup', '/forgot-password'];
+const PUBLIC_FILE = /\.[^/]+$/;
 
 export function middleware(request: NextRequest) {
   const { nextUrl, cookies } = request;
   const pathname = nextUrl.pathname;
+
+  if (PUBLIC_FILE.test(pathname)) {
+    return NextResponse.next();
+  }
+
   const pathLocale = detectPathLocale(pathname);
   const normalizedPath = stripLocalePrefix(pathname);
 
   const forcedLang = normalizeLocale(nextUrl.searchParams.get('lang'));
-  const localeFromCookie = normalizeLocale(cookies.get(LOCALE_COOKIE_NAME)?.value);
-  const country =
-    request.headers.get('x-vercel-ip-country') ||
-    request.headers.get('cf-ipcountry') ||
-    request.headers.get('x-country-code');
-  const localeFromCountry = resolveLocaleFromCountry(country);
-  const localeFromAccept = resolveLocaleFromAcceptLanguage(
-    request.headers.get('accept-language')
-  );
-
-  const resolvedLocale: Locale =
-    forcedLang || pathLocale || localeFromCookie || localeFromCountry || localeFromAccept;
+  const resolvedLocale: Locale = 'fr';
 
   if (normalizedPath === '/sanctuary/chat') {
     const url = nextUrl.clone();
-    url.pathname = pathLocale === 'fr' ? '/fr/sanctuary/write' : '/sanctuary/write';
+    url.pathname = '/fr/sanctuary/write';
     const response = NextResponse.redirect(url, 308);
-    setLocaleCookie(response, pathLocale || resolvedLocale);
+    setLocaleCookie(response, resolvedLocale);
     return response;
   }
 
-  // Canonical EN routing: /en/* -> /*
-  if (pathLocale === 'en') {
-    const url = nextUrl.clone();
-    url.pathname = normalizedPath;
-    const response = NextResponse.redirect(url);
-    setLocaleCookie(response, 'en');
-    return response;
-  }
-
-  // Explicit language overrides via ?lang=
-  if (forcedLang === 'fr' && pathLocale !== 'fr') {
+  // French-only product routing: /en/* and unprefixed pages now resolve to /fr/*.
+  if (pathLocale === 'en' || !pathLocale) {
     const url = nextUrl.clone();
     url.pathname = toLocalePath(normalizedPath, 'fr');
     const response = NextResponse.redirect(url);
@@ -62,20 +46,10 @@ export function middleware(request: NextRequest) {
     return response;
   }
 
-  if (forcedLang === 'en' && pathLocale === 'fr') {
+  // Remove obsolete English override parameters from French URLs.
+  if (forcedLang === 'en') {
     const url = nextUrl.clone();
-    url.pathname = normalizedPath;
-    const response = NextResponse.redirect(url);
-    setLocaleCookie(response, 'en');
-    return response;
-  }
-
-  // Final routing rule:
-  // - EN => /
-  // - FR => /fr/*
-  if (!pathLocale && resolvedLocale === 'fr') {
-    const url = nextUrl.clone();
-    url.pathname = toLocalePath(normalizedPath, 'fr');
+    url.searchParams.delete('lang');
     const response = NextResponse.redirect(url);
     setLocaleCookie(response, 'fr');
     return response;
@@ -83,8 +57,8 @@ export function middleware(request: NextRequest) {
 
   const sessionToken = cookies.get('__session')?.value;
   const hasLikelySession = isLikelyFirebaseSessionCookie(sessionToken);
-  const localeForPath: Locale = pathLocale || resolvedLocale;
-  const localePrefix = localeForPath === 'fr' ? '/fr' : '';
+  const localeForPath: Locale = 'fr';
+  const localePrefix = '/fr';
 
   const isProtectedRoute = protectedRoutes.some((route) => normalizedPath.startsWith(route));
   const isAuthRoute = authRoutes.some((route) => normalizedPath.startsWith(route));
@@ -108,22 +82,13 @@ export function middleware(request: NextRequest) {
   requestHeaders.set('x-aurum-locale', localeForPath);
   requestHeaders.set('x-aurum-path', normalizedPath);
 
-  const response =
-    pathLocale === 'fr'
-      ? (() => {
-          const rewriteUrl = nextUrl.clone();
-          rewriteUrl.pathname = normalizedPath;
-          return NextResponse.rewrite(rewriteUrl, {
-            request: {
-              headers: requestHeaders,
-            },
-          });
-        })()
-      : NextResponse.next({
-          request: {
-            headers: requestHeaders,
-          },
-        });
+  const rewriteUrl = nextUrl.clone();
+  rewriteUrl.pathname = normalizedPath;
+  const response = NextResponse.rewrite(rewriteUrl, {
+    request: {
+      headers: requestHeaders,
+    },
+  });
   setLocaleCookie(response, localeForPath);
   return response;
 }

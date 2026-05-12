@@ -27,6 +27,7 @@ export function CookieConsent() {
 
   const handleConsent = (consent: 'accepted' | 'declined') => {
     localStorage.setItem(COOKIE_CONSENT_KEY, consent);
+    window.dispatchEvent(new Event('aurum:cookie-consent-updated'));
     setIsVisible(false);
   };
 
@@ -38,7 +39,7 @@ export function CookieConsent() {
     <div className={cn(
       "fixed bottom-3 left-3 right-3 z-50 rounded-2xl border bg-background/95 p-3 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-background/80 sm:bottom-4 sm:left-4 sm:right-4 sm:mx-auto sm:max-w-3xl sm:p-4",
       "data-[visible=true]:animate-in data-[visible=false]:animate-out data-[visible=false]:slide-out-to-bottom-full data-[visible=true]:slide-in-from-bottom-full",
-      "transition-all duration-500"
+      "transition-transform duration-500"
     )} data-visible={isVisible}>
       <div className="mx-auto flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-start gap-3">

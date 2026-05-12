@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { AuthButton } from '@/components/auth/auth-button';
 import { MobileNav } from './mobile-nav';
-import { LanguageSwitch } from './language-switch';
 import { stripLocalePrefix } from '@/i18n/routing';
 import { useLocalizedHref } from '@/hooks/use-localized-href';
 import { useTranslations } from 'next-intl';
@@ -55,7 +54,6 @@ export function Header() {
             </Link>
           </div>
           <div className="flex flex-1 items-center justify-end space-x-2">
-            <LanguageSwitch className="hidden sm:inline-flex" compact />
             <AuthButton />
           </div>
         </div>
@@ -96,7 +94,6 @@ export function Header() {
         <MobileNav />
 
         <div className="flex flex-1 items-center justify-end space-x-2">
-          <LanguageSwitch className="hidden sm:inline-flex" compact />
           {isAppPage && (
             <div className="hidden lg:flex items-center gap-4 mr-4">
               {currentSection && (

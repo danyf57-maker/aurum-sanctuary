@@ -1,7 +1,7 @@
 import type { Locale } from '@/lib/locale';
 
-export const I18N_LOCALES = ['en', 'fr'] as const;
-export const I18N_DEFAULT_LOCALE: Locale = 'en';
+export const I18N_LOCALES = ['fr'] as const;
+export const I18N_DEFAULT_LOCALE: Locale = 'fr';
 
 export function detectPathLocale(pathname: string): Locale | null {
   if (pathname === '/fr' || pathname.startsWith('/fr/')) return 'fr';

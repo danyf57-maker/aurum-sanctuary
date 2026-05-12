@@ -59,6 +59,7 @@ function makeSignupSchema(v: Record<string, string>) {
 function SignupPage() {
   const { user, signUpWithEmail, signInWithGoogle, loading: authLoading } = useAuth();
   const locale = useLocale();
+  const isFr = locale === "fr";
   const to = (href: string) => localizeHref(href, locale);
   const tSign = useTranslations("signup");
   const signupSchema = makeSignupSchema({
@@ -332,6 +333,8 @@ function SignupPage() {
                 name="email"
                 type="email"
                 placeholder={tSign("emailPlaceholder")}
+                autoComplete="email"
+                spellCheck={false}
                 required
                 disabled={loading}
               />
@@ -348,6 +351,7 @@ function SignupPage() {
                   name="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
+                  autoComplete="new-password"
                   required
                   disabled={loading}
                   className="pr-10"
@@ -356,6 +360,11 @@ function SignupPage() {
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label={
+                    showPassword
+                      ? isFr ? "Masquer le mot de passe" : "Hide password"
+                      : isFr ? "Afficher le mot de passe" : "Show password"
+                  }
                   disabled={loading}
                 >
                   {showPassword ? (
@@ -381,6 +390,7 @@ function SignupPage() {
                   name="confirmPassword"
                   type={showConfirmPassword ? "text" : "password"}
                   placeholder="••••••••"
+                  autoComplete="new-password"
                   required
                   disabled={loading}
                   className="pr-10"
@@ -389,6 +399,11 @@ function SignupPage() {
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label={
+                    showConfirmPassword
+                      ? isFr ? "Masquer le mot de passe" : "Hide password"
+                      : isFr ? "Afficher le mot de passe" : "Show password"
+                  }
                   disabled={loading}
                 >
                   {showConfirmPassword ? (

@@ -42,6 +42,7 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const passwordToggleLabel = showPassword ? 'Hide password' : 'Show password';
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
@@ -127,6 +128,7 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
                 placeholder={t('yourName')}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                autoComplete="given-name"
                 required
                 disabled={isLoading}
               />
@@ -137,6 +139,8 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
               placeholder={t('email')}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
+              spellCheck={false}
               required
               disabled={isLoading}
             />
@@ -147,6 +151,7 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
                 placeholder={t('password')}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
                 required
                 disabled={isLoading}
                 className="pr-10"
@@ -155,6 +160,7 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600"
+                aria-label={passwordToggleLabel}
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>

@@ -25,7 +25,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"],
         lastModified: Date | string = now
     ): MetadataRoute.Sitemap =>
-        (["en", "fr"] as const).map((locale: Locale) => ({
+        (["fr"] as const).map((locale: Locale) => ({
             url: absoluteUrl(route || "/", locale),
             lastModified,
             changeFrequency,

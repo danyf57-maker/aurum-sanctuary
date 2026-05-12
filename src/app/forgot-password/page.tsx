@@ -82,6 +82,8 @@ export default function ForgotPasswordPage() {
                                     name="email"
                                     type="email"
                                     placeholder={t('emailPlaceholder')}
+                                    autoComplete="email"
+                                    spellCheck={false}
                                     required
                                     disabled={loading}
                                 />

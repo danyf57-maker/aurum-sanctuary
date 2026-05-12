@@ -27,6 +27,20 @@ describe("homepage performance constraints", () => {
     expect(layoutSource).not.toContain("messages={messages}");
   });
 
+  it("uses the locale-stripped path when selecting client-side messages", () => {
+    const layoutSource = readFileSync(
+      join(process.cwd(), "src/app/layout.tsx"),
+      "utf8"
+    );
+
+    expect(layoutSource).toContain(
+      "selectClientMessages(messages as Messages, normalizedPathname)"
+    );
+    expect(layoutSource).not.toContain(
+      "selectClientMessages(messages as Messages, pathname)"
+    );
+  });
+
   it("keeps the marketing homepage server-first with interaction in small islands", () => {
     const homepageSource = readFileSync(
       join(process.cwd(), "src/app/(marketing)/page.tsx"),

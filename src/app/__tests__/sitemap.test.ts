@@ -5,11 +5,11 @@ describe("sitemap", () => {
   it("includes the scientific references pages linked from the homepage", async () => {
     const urls = (await sitemap()).map((entry) => entry.url);
 
-    expect(urls).toContain("https://aurumdiary.com/etudes-scientifiques");
     expect(urls).toContain("https://aurumdiary.com/fr/etudes-scientifiques");
+    expect(urls).not.toContain("https://aurumdiary.com/etudes-scientifiques");
   });
 
-  it("includes the new organic growth guides in both languages", async () => {
+  it("includes the new organic growth guides in French only", async () => {
     const urls = (await sitemap()).map((entry) => entry.url);
 
     for (const slug of [
@@ -27,12 +27,12 @@ describe("sitemap", () => {
       "private-diary-vs-notes-app",
       "rosebud-alternative",
     ]) {
-      expect(urls).toContain(`https://aurumdiary.com/guides/${slug}`);
       expect(urls).toContain(`https://aurumdiary.com/fr/guides/${slug}`);
+      expect(urls).not.toContain(`https://aurumdiary.com/guides/${slug}`);
     }
   });
 
-  it("includes the science of writing guides in both languages", async () => {
+  it("includes the science of writing guides in French only", async () => {
     const urls = (await sitemap()).map((entry) => entry.url);
 
     for (const slug of [
@@ -45,8 +45,8 @@ describe("sitemap", () => {
       "prompts-ecriture-expressive",
       "ecriture-et-recits-personnels",
     ]) {
-      expect(urls).toContain(`https://aurumdiary.com/guides/${slug}`);
       expect(urls).toContain(`https://aurumdiary.com/fr/guides/${slug}`);
+      expect(urls).not.toContain(`https://aurumdiary.com/guides/${slug}`);
     }
   });
 });

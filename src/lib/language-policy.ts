@@ -4,7 +4,7 @@ export type ProductLocale = (typeof PRODUCT_LOCALES)[number];
 export const REFLECTION_LANGUAGES = ['en', 'fr', 'es', 'it', 'de', 'pt'] as const;
 export type ReflectionLanguage = (typeof REFLECTION_LANGUAGES)[number];
 
-export const DEFAULT_PRODUCT_LOCALE: ProductLocale = 'en';
+export const DEFAULT_PRODUCT_LOCALE: ProductLocale = 'fr';
 
 export const REFLECTION_LANGUAGE_LABELS: Record<ReflectionLanguage, string> = {
   en: 'English',

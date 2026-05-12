@@ -15,7 +15,6 @@ import {
 import { useAuth } from "@/providers/auth-provider";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
-import { LanguageSwitch } from "./language-switch";
 import { useLocalizedHref } from "@/hooks/use-localized-href";
 import { stripLocalePrefix } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
@@ -202,10 +201,6 @@ export function AppSidebar() {
             </div>
           </div>
         )}
-
-        <div className={cn("pt-1 pb-1", isCollapsed ? "px-2" : "px-4")}>
-          <LanguageSwitch compact className="w-full justify-center" />
-        </div>
 
         {!isCollapsed && (
           <div className="mt-2 px-4 py-3 rounded-xl border border-amber-200/70 bg-amber-50/50 dark:border-amber-900/50 dark:bg-amber-950/25">

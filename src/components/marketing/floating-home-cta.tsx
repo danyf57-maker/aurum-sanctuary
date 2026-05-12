@@ -26,14 +26,13 @@ export function FloatingHomeCta() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  if (!visible) {
+    return null;
+  }
+
   return (
     <div
-      className={`fixed bottom-8 right-8 z-[100] transition-all duration-300 ease-out ${
-        visible
-          ? "translate-y-0 opacity-100"
-          : "pointer-events-none translate-y-8 opacity-0"
-      }`}
-      aria-hidden={!visible}
+      className="fixed bottom-8 right-8 z-[100] translate-y-0 opacity-100 transition-transform duration-300 ease-out"
     >
       <Link
         href={href}

@@ -5,10 +5,10 @@ import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/providers/auth-provider';
 import { Suspense } from 'react';
-import Script from 'next/script';
 import dynamic from 'next/dynamic';
 import { headers } from 'next/headers';
 import ProductEventTracker from '@/components/analytics/ProductEventTracker';
+import ConsentScripts from '@/components/analytics/ConsentScripts';
 import { CookieConsent } from '@/components/legal/CookieConsent';
 import { TermsModal } from '@/components/auth/TermsModal';
 import { ThemeSync } from '@/components/theme/ThemeSync';
@@ -41,7 +41,6 @@ const dawning = Dawning_of_a_New_Day({
   display: 'swap',
 });
 
-const GTM_CONTAINER_ID = 'GTM-WNDQPP94';
 const GoogleAnalytics = dynamic(() => import('@/components/analytics/GoogleAnalytics'), {
   loading: () => null,
 });
@@ -203,8 +202,6 @@ export const viewport: Viewport = {
   themeColor: "#1c1917",
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
   viewportFit: "cover",
 };
 
@@ -218,7 +215,10 @@ export default async function RootLayout({
   const messages = await getMessages();
   const headerStore = await headers();
   const pathname = headerStore.get('x-aurum-path') || '/';
-  const clientMessages = selectClientMessages(messages as Messages, pathname);
+  const normalizedPathname = pathname.replace(/^\/(fr|en)(?=\/|$)/, '') || '/';
+  const shouldLoadGoogleOneTap =
+    normalizedPathname.startsWith('/login') || normalizedPathname.startsWith('/signup');
+  const clientMessages = selectClientMessages(messages as Messages, normalizedPathname);
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
@@ -253,20 +253,10 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning={true}>
       <head>
-        <Script id="gtm-init" strategy="lazyOnload">
-          {`
-            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-            })(window,document,'script','dataLayer','${GTM_CONTAINER_ID}');
-          `}
-        </Script>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        {/* Le script GSI est maintenant dans GoogleAnalytics.tsx */}
       </head>
       <body
         className={cn(
@@ -277,21 +267,13 @@ export default async function RootLayout({
         )}
         suppressHydrationWarning={true}
       >
-        <noscript>
-          <iframe
-            title="Google Tag Manager"
-            src={`https://www.googletagmanager.com/ns.html?id=${GTM_CONTAINER_ID}`}
-            height="0"
-            width="0"
-            style={{ display: 'none', visibility: 'hidden' }}
-          />
-        </noscript>
         <NextIntlClientProvider locale={locale} messages={clientMessages}>
           <AuthProvider>
             <ThemeSync />
             <TermsModal />
+            <ConsentScripts />
             <Suspense fallback={null}>
-              <GoogleAnalytics />
+              {shouldLoadGoogleOneTap ? <GoogleAnalytics /> : null}
               <ProductEventTracker />
             </Suspense>
             {children}

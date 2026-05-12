@@ -10,7 +10,7 @@ const cspReportOnly = [
     "img-src 'self' data: blob: https:",
     "font-src 'self' data: https://fonts.gstatic.com",
     "connect-src 'self' https://api.deepseek.com https://www.google-analytics.com https://region1.google-analytics.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firebasestorage.googleapis.com https://*.googleapis.com https://*.gstatic.com https://api.stripe.com",
-    "frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://accounts.google.com",
+    "frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://accounts.google.com https://aurum-diary-prod.firebaseapp.com",
     "worker-src 'self' blob:",
 ].join("; ");
 

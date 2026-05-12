@@ -8,12 +8,12 @@ function readSource(file: string) {
 
 describe("landing audit regressions", () => {
   it("makes the hero writing field feel actionable instead of empty", () => {
-    const hero = readSource("src/components/landing/HeroIntegrated.tsx");
+    const hero = readSource("src/components/landing/HeroDraftBox.tsx");
 
     expect(hero).toContain("aria-label");
     expect(hero).toContain("min-h-36");
     expect(hero).toContain("border-b border-[#D4AF37]/20");
-    expect(hero).toContain("hasDraft ? resolveMessage(t(\"ctaContinueDraft\")");
+    expect(hero).toContain("hasDraft ? content.ctaContinueDraft");
     expect(hero).not.toContain("h-44 w-full resize-none");
   });
 
@@ -36,8 +36,8 @@ describe("landing audit regressions", () => {
   it("reduces repeated signup CTAs inside the use-case card grid", () => {
     const marketingPage = readSource("src/app/(marketing)/page.tsx");
 
-    expect(marketingPage).toContain("const featuredUseCaseCount = 3");
-    expect(marketingPage).toContain("index < featuredUseCaseCount");
+    expect(marketingPage).toContain("const FEATURED_USE_CASE_COUNT = 3");
+    expect(marketingPage).toContain("index < FEATURED_USE_CASE_COUNT");
     expect(marketingPage).toContain("useCases.sectionCta");
   });
 });

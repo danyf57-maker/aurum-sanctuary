@@ -7,6 +7,14 @@ function readSource(file: string) {
 }
 
 describe("authenticated app dark mode contrast", () => {
+  it("keeps public marketing and guide pages in the light Aurum theme", () => {
+    const themeSync = readSource("src/components/theme/ThemeSync.tsx");
+
+    expect(themeSync).toContain("isPrivateAppPath");
+    expect(themeSync).toContain("root.classList.remove('dark')");
+    expect(themeSync).toContain("root.style.colorScheme = 'light'");
+  });
+
   it("keeps marketing FAQ questions visible when dark mode is active", () => {
     const marketingPage = readSource("src/app/(marketing)/page.tsx");
 
@@ -40,7 +48,6 @@ describe("authenticated app dark mode contrast", () => {
 
   it("keeps the app chrome and writing placeholder coherent in dark mode", () => {
     const header = readSource("src/components/layout/header.tsx");
-    const languageSwitch = readSource("src/components/layout/language-switch.tsx");
     const appSidebar = readSource("src/components/layout/app-sidebar.tsx");
     const mobileBottomNav = readSource("src/components/layout/mobile-bottom-nav.tsx");
     const writePage = readSource("src/app/(app)/sanctuary/write/page.tsx");
@@ -48,8 +55,6 @@ describe("authenticated app dark mode contrast", () => {
 
     expect(header).toContain("dark:border-stone-700");
     expect(header).toContain("dark:text-stone-200");
-    expect(languageSwitch).toContain("dark:bg-stone-900");
-    expect(languageSwitch).toContain("dark:text-stone-300");
     expect(appSidebar).toContain("dark:from-stone-950");
     expect(appSidebar).toContain("dark:text-stone-300");
     expect(mobileBottomNav).toContain("dark:bg-stone-950/95");

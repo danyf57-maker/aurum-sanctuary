@@ -250,6 +250,8 @@ function LoginForm() {
                 type="email"
                 placeholder={t("emailPlaceholder")}
                 defaultValue={prefilledEmail}
+                autoComplete="email"
+                spellCheck={false}
                 required
                 disabled={loading}
               />
@@ -258,7 +260,7 @@ function LoginForm() {
 
             <div className="space-y-2">
               <Label htmlFor="password">{t("password")}</Label>
-              <Input id="password" name="password" type="password" placeholder="••••••••" required disabled={loading} />
+              <Input id="password" name="password" type="password" placeholder="••••••••" autoComplete="current-password" required disabled={loading} />
               {errors.password && <p className="text-sm text-destructive">{errors.password}</p>}
             </div>
 

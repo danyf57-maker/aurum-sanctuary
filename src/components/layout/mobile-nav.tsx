@@ -7,7 +7,6 @@ import { Menu, PenSquare, BookOpenText, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
-import { LanguageSwitch } from './language-switch';
 import { stripLocalePrefix } from '@/i18n/routing';
 import { useLocalizedHref } from '@/hooks/use-localized-href';
 import { useTranslations } from 'next-intl';
@@ -62,9 +61,6 @@ export function MobileNav() {
             <span className="font-bold font-headline text-2xl leading-none">Aurum</span>
           </MobileLink>
           <div className="my-4 h-[calc(100vh-8rem)] pb-10">
-            <div className="mb-4 px-3">
-              <LanguageSwitch compact />
-            </div>
             <div className="flex flex-col space-y-1.5 pr-4">
               <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-stone-500">
                 {tMobileNav('quickNavigation')}
