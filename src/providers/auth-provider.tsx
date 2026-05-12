@@ -8,6 +8,7 @@ import {
   sendEmailVerification,
   signInWithPopup,
   signInWithRedirect,
+  getRedirectResult,
   GoogleAuthProvider,
   fetchSignInMethodsForEmail,
   signInWithEmailAndPassword,
@@ -158,6 +159,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         await ensureAuthPersistence();
       } catch (error) {
         logger.errorSafe('Failed to initialize auth persistence', error);
+      }
+
+      try {
+        await getRedirectResult(firebaseAuth);
+      } catch (error) {
+        logger.errorSafe('Failed to complete Google redirect sign-in', error);
       }
 
       if (isCancelled) return;
