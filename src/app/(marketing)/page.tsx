@@ -45,6 +45,12 @@ type MarketingExampleHighlight = {
     body: string;
 };
 
+type MarketingTestimonial = {
+    quote: string;
+    name: string;
+    context: string;
+};
+
 type ScientificDiscovery = {
     label: string;
     body: string;
@@ -168,6 +174,35 @@ function ExampleSection({
                             </p>
                         </div>
                     </div>
+                </div>
+            </div>
+        </section>
+    );
+}
+
+function SocialProofSection({ t, testimonials }: { t: Translate; testimonials: MarketingTestimonial[] }) {
+    return (
+        <section className="aurum-motion-section bg-white py-16 md:py-20">
+            <div className="container">
+                <div className="mx-auto mb-10 max-w-3xl text-center">
+                    <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-stone-500">
+                        {t('socialProof.eyebrow')}
+                    </p>
+                    <h2 className="font-headline text-3xl text-stone-900 md:text-4xl">
+                        {t('socialProof.title')}
+                    </h2>
+                    <p className="mt-4 text-lg font-light text-stone-600">{t('socialProof.subtitle')}</p>
+                </div>
+                <div className="mx-auto grid max-w-6xl grid-cols-1 gap-5 md:grid-cols-3">
+                    {testimonials.map((item) => (
+                        <article key={item.name} className="aurum-motion-card rounded-2xl border border-stone-200 bg-stone-50/70 p-6">
+                            <p className="text-base font-light leading-relaxed text-stone-800">“{item.quote}”</p>
+                            <div className="mt-5 border-t border-stone-200 pt-4">
+                                <p className="text-sm font-semibold text-stone-900">{item.name}</p>
+                                <p className="mt-1 text-xs uppercase tracking-[0.14em] text-stone-500">{item.context}</p>
+                            </div>
+                        </article>
+                    ))}
                 </div>
             </div>
         </section>
@@ -522,6 +557,7 @@ export default async function Home() {
     const faqs = t.raw('faqs') as MarketingFaq[];
     const studyCards = t.raw('studyCards') as MarketingStudyCard[];
     const exampleHighlights = t.raw('exampleSection.highlights') as MarketingExampleHighlight[];
+    const testimonials = t.raw('socialProof.testimonials') as MarketingTestimonial[];
     const useCaseCards = t.raw('useCases.cards') as MarketingCard[];
     const trustCards = t.raw('trust.cards') as MarketingCard[];
     const featureCards = t.raw('finalCta.cards') as MarketingCard[];
@@ -538,6 +574,7 @@ export default async function Home() {
             <HeroIntegrated />
             <TrialSection trialT={trialT} to={to} />
             <ExampleSection t={t} highlights={exampleHighlights} />
+            <SocialProofSection t={t} testimonials={testimonials} />
             <StudySection
                 t={t}
                 cards={studyCards}
@@ -558,8 +595,8 @@ export default async function Home() {
             <div id="sanctuary-content" className="bg-background text-foreground">
                 <ProblemSolutionSections t={t} />
                 <TrustSection t={t} cards={trustCards} />
-                <FinalCtaSection t={t} cards={featureCards} primaryCtaHref={primaryCtaHref} />
                 <FaqSection t={t} faqs={faqs} />
+                <FinalCtaSection t={t} cards={featureCards} primaryCtaHref={primaryCtaHref} />
                 <ReferencesSection t={t} />
             </div>
 

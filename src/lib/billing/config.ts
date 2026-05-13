@@ -22,8 +22,8 @@ export const FREE_AURUM_REPLY_LIMIT = 8;
 export const ANNUAL_UPGRADE_ELIGIBILITY_DAYS = 90;
 
 export const PUBLIC_PRICING = {
-  currencyCode: 'USD',
-  currencySymbol: '$',
+  currencyCode: 'EUR',
+  currencySymbol: '€',
   monthlyAmount: 13,
   yearlyAmount: 129,
 } as const;

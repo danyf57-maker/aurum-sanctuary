@@ -420,7 +420,7 @@
     "existingAccountBannerBody": "Open this page in Safari or Chrome, then sign in there. If your account works in Safari, go back to Safari. If it works in Chrome, go back to Chrome.",
     "existingAccountBannerCta": "Go to sign in",
     "firstName": "First name",
-    "firstNamePlaceholder": "Daniel",
+    "firstNamePlaceholder": "Your first name",
     "emailPlaceholder": "you@example.com",
     "password": "Password",
     "passwordHint": "At least 8 characters, 1 uppercase, 1 lowercase, 1 digit",
@@ -431,7 +431,7 @@
     "privacy": "privacy policy",
     "creating": "Creating...",
     "create": "Create account",
-    "emailNote": "A verification email will activate your private reflection space.",
+    "emailNote": "A verification email will activate your private reflection space. 5 sessions are free to discover Aurum.",
     "alreadyAccount": "Already have an account?",
     "signIn": "Sign in",
     "checkEmail": "Check your inbox to activate your private reflection space.",
@@ -460,15 +460,16 @@
     "checkoutNoUrl": "No payment URL received.",
     "offerPending": "Offer in preparation. Contact us at aurumdiary.com to be notified.",
     "title": "Choose your plan",
-    "subtitle": "Private writing, deep psychological reading, and inner patterns that become clearer over time.",
+    "subtitle": "Start with 5 free sessions, then activate Premium with 7 days free if you want to continue.",
     "recommended": "Recommended",
     "stripeNote": "Subscriptions are handled by Stripe. Cancel anytime.",
+    "taxIncluded": "Tax included where applicable",
     "currentPlan": "Current plan",
     "comingSoon": "Coming soon",
     "monthly": {
       "name": "Monthly",
       "period": "/month",
-      "description": "Private writing, deep psychological reading, and emotional clarity, billed monthly.",
+      "description": "The complete Aurum experience, with private writing and guided reflections, billed monthly.",
       "cta": "Choose monthly"
     },
     "yearly": {
@@ -479,21 +480,56 @@
     },
     "features": {
       "entries": "Unlimited private encrypted writing",
-      "conversations": "Unlimited psychological readings with Aurum",
+      "conversations": "Unlimited guided reflections with Aurum",
       "history": "Your full history and how it evolves over time",
       "export": "Export your writing and reflections",
       "reflections": "Recurring patterns and in-depth reflections"
     },
     "trial": {
-      "badge": "FREE TRIAL",
-      "title": "7 days free before the first charge",
-      "body": "Your trial starts when you confirm Stripe Checkout. It lasts exactly 7 days, meaning 7 x 24 hours.",
+      "badge": "5 SESSIONS + 7 DAYS FREE",
+      "title": "Discover Aurum before you pay",
+      "body": "You can start with 5 free sessions. If you want to continue with Premium, your 7-day trial starts when you confirm Stripe Checkout.",
       "bullet1": "Full Aurum access during the trial",
       "bullet2": "The timer starts when checkout is confirmed",
       "bullet3": "Access stays active until the exact end time",
       "bullet4": "If you do not cancel before the end, the paid subscription starts automatically",
       "note": "Example: if you activate your trial on March 7 at 2:32 PM, it ends on March 14 at 2:32 PM."
-    }
+    },
+    "reassurance": {
+      "items": [
+        {
+          "title": "Keep the thread",
+          "body": "Premium keeps your reflections available and helps you see what returns from one page to the next."
+        },
+        {
+          "title": "No medical promise",
+          "body": "Aurum is not therapy. It is a private journal for writing, clarifying, and rereading with more distance."
+        },
+        {
+          "title": "You stay in control",
+          "body": "You can cancel anytime, export your pages, or request account deletion."
+        }
+      ]
+    },
+    "faqTitle": "Questions before Premium",
+    "faqs": [
+      {
+        "question": "What happens after the 5 free sessions?",
+        "answer": "You can activate Premium with 7 days free to keep receiving guided reflections and continue your writing thread."
+      },
+      {
+        "question": "Can I cancel during the trial?",
+        "answer": "Yes. The subscription is handled by Stripe and you can cancel before the 7 free days end."
+      },
+      {
+        "question": "Does Aurum replace therapy?",
+        "answer": "No. Aurum is a private guided journal. It helps clarify what you write, without diagnosis or clinical care."
+      },
+      {
+        "question": "Do my texts stay private?",
+        "answer": "Your pages stay in an encrypted private space. Aurum does not sell your data."
+      }
+    ]
   },
   "hero": {
     "badge": "PRIVATE WRITING • WHAT KEEPS RETURNING",
@@ -501,7 +537,7 @@
     "subtitle": "You reread the same message. You replay the same conversation. You feel that something is still there, even when everything is over.",
     "helper": "Write what keeps coming back. Aurum opens it inside your private page.",
     "helperWithDraft": "Create your account to open this text inside your private page.",
-    "cta": "Open a private page",
+    "cta": "Start free",
     "ctaContinueDraft": "Create my account to continue",
     "ctaSecondary": "I already have an account",
     "ctaSecondaryGuest": "I already have an account",
@@ -511,7 +547,7 @@
     "languagesBadge": "Aurum replies in your language",
     "interfaceLanguage": "On your first visit, Aurum opens in your browser language. After that, it keeps the language you choose.",
     "languages": "Write in English, French, Spanish, Italian, German, or Portuguese.",
-    "trust": "7 days free • Private by design • Cancel anytime.",
+    "trust": "5 free sessions • 7 days free with Premium • Cancel anytime.",
     "placeholders": {
       "0": "I read the message again, even though I knew it would hurt...",
       "1": "The conversation is over, but it is still happening inside me...",
@@ -775,7 +811,7 @@
     },
     "floatingCta": {
       "cta": "Start for free",
-      "label": "No commitment • Private"
+      "label": "5 free sessions • Private"
     },
     "returningUser": {
       "checkingCta": "Opening...",
@@ -832,12 +868,34 @@
         }
       ]
     },
+    "socialProof": {
+      "eyebrow": "Used to write without filtering",
+      "title": "Simple, human, concrete feedback.",
+      "subtitle": "Aurum is still young. Early feedback points to one thing: the reflection helps name what used to feel unclear.",
+      "testimonials": [
+        {
+          "quote": "I started when I kept replaying a conversation. The reflection did not give advice. It helped me see what was actually hurting.",
+          "name": "Claire",
+          "context": "evening rumination"
+        },
+        {
+          "quote": "It is not a productivity app. It is a calm place where I can set down what I cannot say yet.",
+          "name": "Maelys",
+          "context": "private writing"
+        },
+        {
+          "quote": "The reflection felt surprisingly accurate. It noticed the pattern without putting a label on me.",
+          "name": "Thomas",
+          "context": "recurring patterns"
+        }
+      ]
+    },
     "useCases": {
       "title": "Start where it still hurts",
       "subtitle": "A message reread. A conversation replayed. A quiet evening that does not feel peaceful. Write the real moment before it takes all the space.",
       "note": "Private writing can help you set down what loops. Aurum adds guided reflection to make the pattern easier to see.",
       "cta": "Start writing privately",
-      "sectionCta": "Open a private page",
+      "sectionCta": "Start free",
       "cards": [
         {
           "badge": "Replay",
@@ -942,7 +1000,7 @@
     "finalCta": {
       "button": "Start writing privately",
       "buttonAuthenticated": "Continue writing",
-      "note": "7 days free • Private by design • Cancel anytime",
+      "note": "5 free sessions • 7 days free with Premium • Cancel anytime",
       "subtitle": "Write the thing that keeps returning. Read what Aurum reflects back. See whether the pattern becomes easier to hold.",
       "cards": [
         {
@@ -1139,9 +1197,9 @@
     "cta": "Enter your sanctuary"
   },
   "trialOffer": {
-    "badge": "7 DAYS FREE",
-    "title": "Start with 7 days of private guided reflection.",
-    "body": "Write what keeps looping, receive a reflection after each page, and begin noticing the emotional patterns you keep coming back to before your first charge.",
+    "badge": "5 FREE SESSIONS",
+    "title": "Start without paying.",
+    "body": "Discover Aurum with 5 free sessions. If you want to continue, Premium starts with 7 days free.",
     "cta": "View plans"
   },
   "paywall": {

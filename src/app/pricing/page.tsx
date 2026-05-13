@@ -24,7 +24,7 @@ export const dynamic = 'force-dynamic';
 // Preferred naming; fallback keeps backward compatibility with existing env vars.
 const PRICE_ID_MONTHLY = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY || process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO;
 const PRICE_ID_YEARLY = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_YEARLY || process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PREMIUM;
-const formatPrice = (amount: number) => `${PUBLIC_PRICING.currencySymbol}${amount}`;
+const formatPrice = (amount: number) => `${amount} ${PUBLIC_PRICING.currencySymbol}`;
 
 const buildPlans = (t: ReturnType<typeof useTranslations>) => [
     {
@@ -107,6 +107,8 @@ export default function PricingPage() {
     const t = useTranslations("pricing");
     const to = (href: string) => localizeHref(href, locale);
     const plans = buildPlans(t);
+    const reassurance = t.raw("reassurance.items") as { title: string; body: string }[];
+    const faqs = t.raw("faqs") as { question: string; answer: string }[];
 
     const startCheckout = async (priceId: string | null | undefined) => {
         if (!priceId || priceId.includes('xxx')) {
@@ -204,6 +206,11 @@ export default function PricingPage() {
                                         <span className="text-4xl font-bold">{plan.price}</span>
                                         <span className="text-muted-foreground">{plan.period}</span>
                                     </div>
+                                    {locale === 'fr' && (
+                                        <p className="text-xs text-muted-foreground">
+                                            {t("taxIncluded")}
+                                        </p>
+                                    )}
                                 </CardHeader>
                                 <CardContent className="flex-1">
                                     <ul className="space-y-4">
@@ -230,6 +237,30 @@ export default function PricingPage() {
                                 </CardFooter>
                             </Card>
                         ))}
+                    </div>
+                    <div className="mx-auto mt-14 grid max-w-5xl gap-5 md:grid-cols-3">
+                        {reassurance.map((item) => (
+                            <div key={item.title} className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
+                                <h2 className="font-headline text-xl text-stone-900">{item.title}</h2>
+                                <p className="mt-2 text-sm leading-relaxed text-stone-600">{item.body}</p>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="mx-auto mt-14 max-w-3xl rounded-2xl border border-stone-200 bg-white p-6 shadow-sm md:p-8">
+                        <h2 className="mb-6 text-center font-headline text-3xl text-stone-900">
+                            {t("faqTitle")}
+                        </h2>
+                        <div className="divide-y divide-stone-200 border-y border-stone-200">
+                            {faqs.map((faq) => (
+                                <details key={faq.question} className="group py-4">
+                                    <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-left font-medium text-stone-900">
+                                        <span>{faq.question}</span>
+                                        <span className="text-xl leading-none text-stone-400 transition-transform group-open:rotate-45">+</span>
+                                    </summary>
+                                    <p className="mt-3 text-sm leading-relaxed text-stone-600">{faq.answer}</p>
+                                </details>
+                            ))}
+                        </div>
                     </div>
                 </div>
                 <div className="text-center mt-16 text-sm text-muted-foreground">

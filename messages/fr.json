@@ -420,7 +420,7 @@
     "existingAccountBannerBody": "Ouvre cette page dans Safari ou dans Chrome, puis connecte-toi là-bas. Si ton compte marche dans Safari, retourne dans Safari. S'il marche dans Chrome, retourne dans Chrome.",
     "existingAccountBannerCta": "Aller à la connexion",
     "firstName": "Prénom",
-    "firstNamePlaceholder": "Daniel",
+    "firstNamePlaceholder": "Ton prénom",
     "emailPlaceholder": "vous@exemple.com",
     "password": "Mot de passe",
     "passwordHint": "Au moins 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre",
@@ -431,7 +431,7 @@
     "privacy": "politique de confidentialité",
     "creating": "Création...",
     "create": "Créer un compte",
-    "emailNote": "Un email de vérification activera votre espace de réflexion privé.",
+    "emailNote": "Un email de vérification activera votre espace de réflexion privé. 5 sessions sont offertes pour découvrir Aurum.",
     "alreadyAccount": "Vous avez déjà un compte ?",
     "signIn": "Se connecter",
     "checkEmail": "Vérifiez votre boîte de réception pour activer votre espace de réflexion privé.",
@@ -459,16 +459,17 @@
     "checkoutSessionError": "Impossible de créer la session de paiement.",
     "checkoutNoUrl": "Aucune URL de paiement reçue.",
     "offerPending": "Offre en préparation. Contacte-nous sur aurumdiary.com pour être prévenu.",
-    "title": "Choisissez votre formule",
-    "subtitle": "Une écriture privée, une lecture psychologique profonde, et des motifs intérieurs qui deviennent plus lisibles dans le temps.",
+    "title": "Choisis ta formule",
+    "subtitle": "Commence avec 5 sessions offertes, puis active Premium avec 7 jours gratuits si tu veux continuer.",
     "recommended": "Recommandé",
-    "stripeNote": "Les abonnements sont gérés via Stripe. Résiliation possible à tout moment.",
+    "stripeNote": "Les abonnements sont gérés via Stripe. Prix TTC pour la France. Résiliation possible à tout moment.",
+    "taxIncluded": "TTC pour la France",
     "currentPlan": "Plan actuel",
     "comingSoon": "Bientôt disponible",
     "monthly": {
       "name": "Mensuel",
       "period": "/mois",
-      "description": "L’expérience Aurum complète, avec écriture privée et lecture psychologique profonde, facturée au mois.",
+      "description": "L’expérience Aurum complète, avec écriture privée et reflets guidés, facturée au mois.",
       "cta": "Choisir mensuel"
     },
     "yearly": {
@@ -479,21 +480,56 @@
     },
     "features": {
       "entries": "Écriture privée et chiffrée illimitée",
-      "conversations": "Lectures psychologiques illimitées avec Aurum",
+      "conversations": "Reflets guidés illimités avec Aurum",
       "history": "Mémoire complète de tes pages et de leur évolution",
       "export": "Export de tes écrits et reflets",
       "reflections": "Motifs récurrents et reflets approfondis"
     },
     "trial": {
-      "badge": "ESSAI OFFERT",
-      "title": "7 jours offerts avant la première facturation",
-      "body": "Ton essai commence au moment où tu confirmes Stripe Checkout. Il dure exactement 7 jours, soit 7 x 24 heures.",
+      "badge": "5 SESSIONS + 7 JOURS OFFERTS",
+      "title": "Découvre Aurum avant de payer",
+      "body": "Tu peux commencer avec 5 sessions offertes. Si tu veux continuer avec Premium, l'essai de 7 jours commence au moment où tu confirmes Stripe Checkout.",
       "bullet1": "Accès complet à Aurum pendant l'essai",
       "bullet2": "Le compteur démarre à la confirmation du checkout",
       "bullet3": "L'accès reste actif jusqu'à l'heure exacte de fin",
       "bullet4": "Si tu n'annules pas avant la fin, l'abonnement payant prend le relais automatiquement",
       "note": "Exemple : si tu actives ton essai le 7 mars à 14:32, il se termine le 14 mars à 14:32."
-    }
+    },
+    "reassurance": {
+      "items": [
+        {
+          "title": "Pour continuer le fil",
+          "body": "Premium garde tes reflets disponibles et t'aide à voir ce qui revient d'une page à l'autre."
+        },
+        {
+          "title": "Sans promesse médicale",
+          "body": "Aurum n'est pas une thérapie. C'est un journal privé pour écrire, clarifier et relire avec plus de distance."
+        },
+        {
+          "title": "Tu gardes la main",
+          "body": "Tu peux résilier à tout moment, exporter tes pages ou demander la suppression de ton compte."
+        }
+      ]
+    },
+    "faqTitle": "Questions avant de passer Premium",
+    "faqs": [
+      {
+        "question": "Que se passe-t-il après les 5 sessions offertes ?",
+        "answer": "Tu peux activer Premium avec 7 jours gratuits pour continuer à recevoir des reflets guidés et garder ton fil d'écriture."
+      },
+      {
+        "question": "Puis-je annuler pendant l'essai ?",
+        "answer": "Oui. L'abonnement est géré via Stripe et tu peux l'annuler avant la fin des 7 jours gratuits."
+      },
+      {
+        "question": "Aurum remplace-t-il une thérapie ?",
+        "answer": "Non. Aurum est un journal privé guidé. Il aide à clarifier ce que tu écris, sans diagnostic ni prise en charge clinique."
+      },
+      {
+        "question": "Mes textes restent-ils privés ?",
+        "answer": "Tes pages restent dans un espace privé chiffré. Aurum ne vend pas tes données."
+      }
+    ]
   },
   "hero": {
     "badge": "JOURNAL PRIVÉ • PENSÉES QUI TOURNENT",
@@ -501,7 +537,7 @@
     "subtitle": "Un message. Une dispute. Une phrase qui fait mal. Tu y penses, tu repenses, et ça prend toute la place.",
     "helper": "Écris ce qui tourne dans ta tête. Aurum t'aide à y voir plus clair.",
     "helperWithDraft": "Crée ton compte pour ouvrir ce texte dans ta page privée.",
-    "cta": "Ouvrir une page privée",
+    "cta": "Essayer gratuitement",
     "ctaContinueDraft": "Créer mon compte pour continuer",
     "ctaSecondary": "J'ai déjà un compte",
     "ctaSecondaryGuest": "J'ai déjà un compte",
@@ -511,7 +547,7 @@
     "languagesBadge": "Tu écris. Aurum t'aide à comprendre.",
     "interfaceLanguage": "Au premier chargement, Aurum suit la langue de ton navigateur. Ensuite, il garde la langue que tu choisis.",
     "languages": "Écris en français, anglais, espagnol, italien, allemand ou portugais.",
-    "trust": "7 jours gratuits • Privé par conception • Résiliable à tout moment.",
+    "trust": "5 sessions offertes • 7 jours gratuits avec Premium • Résiliable à tout moment.",
     "placeholders": {
       "0": "Je n'arrête pas de penser à ce message...",
       "1": "Je rejoue la conversation dans ma tête...",
@@ -774,8 +810,8 @@
       }
     },
     "floatingCta": {
-      "cta": "Commencer gratuitement",
-      "label": "Sans engagement • Privé"
+      "cta": "Essayer gratuitement",
+      "label": "5 sessions offertes • Privé"
     },
     "returningUser": {
       "checkingCta": "Ouverture...",
@@ -832,12 +868,34 @@
         }
       ]
     },
+    "socialProof": {
+      "eyebrow": "Ils l'utilisent pour écrire sans se filtrer",
+      "title": "Des retours simples, humains, concrets.",
+      "subtitle": "Aurum est encore jeune. Les premiers retours montrent surtout une chose : le reflet aide à nommer ce qui restait flou.",
+      "testimonials": [
+        {
+          "quote": "J'ai commencé quand je tournais en boucle sur une conversation. Le reflet ne m'a pas donné de conseil, il m'a aidée à voir ce qui me faisait vraiment mal.",
+          "name": "Claire",
+          "context": "rumination du soir"
+        },
+        {
+          "quote": "Ce n'est pas une app de productivité. C'est un endroit calme où je peux déposer ce que je n'arrive pas encore à dire.",
+          "name": "Maëlys",
+          "context": "écriture privée"
+        },
+        {
+          "quote": "J'ai été surpris par la justesse du retour. Il a repéré le schéma sans me coller une étiquette.",
+          "name": "Thomas",
+          "context": "motifs récurrents"
+        }
+      ]
+    },
     "useCases": {
       "title": "Les problèmes que tu connais déjà",
       "subtitle": "Aurum est fait pour les moments simples, mais lourds : quand tu penses trop, quand tu gardes tout pour toi, quand tu ne sais pas encore ce que tu ressens.",
       "note": "L'écriture privée peut aider à poser ce qui tourne. Aurum ajoute un reflet guidé pour rendre le problème plus visible.",
       "cta": "Commencer à écrire en privé",
-      "sectionCta": "Ouvrir une page privée",
+      "sectionCta": "Essayer gratuitement",
       "cards": [
         {
           "badge": "Conversation",
@@ -942,7 +1000,7 @@
     "finalCta": {
       "button": "Commencer à écrire en privé",
       "buttonAuthenticated": "Continuer à écrire",
-      "note": "7 jours gratuits • Privé par conception • Résiliable à tout moment",
+      "note": "5 sessions offertes • 7 jours gratuits avec Premium • Résiliable à tout moment",
       "subtitle": "Écris ce qui tourne. Lis ce qu'Aurum te montre. Reviens plus tard et repère ce qui se répète.",
       "cards": [
         {
@@ -1139,10 +1197,10 @@
     "cta": "Entrer dans le Sanctuaire"
   },
   "trialOffer": {
-    "badge": "7 JOURS OFFERTS",
-    "title": "Essaie Aurum pendant 7 jours.",
-    "body": "Écris ce qui te pèse. Lis ce qu'Aurum te montre. Vois si tes pensées deviennent plus claires avant de payer.",
-    "cta": "Voir les 7 jours gratuits"
+    "badge": "5 SESSIONS OFFERTES",
+    "title": "Commence sans payer.",
+    "body": "Découvre Aurum avec 5 sessions offertes. Si tu veux continuer, Premium commence par 7 jours gratuits.",
+    "cta": "Voir les formules"
   },
   "paywall": {
     "close": "Fermer",

@@ -174,7 +174,7 @@ export default async function EtudesScientifiquesPage() {
               href={writeHref}
               className="mt-5 inline-flex rounded-xl bg-[#D4AF37] px-5 py-3 text-sm font-semibold text-stone-950 transition-colors hover:bg-[#D4AF37]/90"
             >
-              {isFr ? "Ouvrir une page privée" : "Open a private page"}
+              {isFr ? "Essayer gratuitement" : "Start free"}
             </Link>
           </div>
 
