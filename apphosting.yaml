@@ -60,12 +60,12 @@ env:
       - BUILD
       - RUNTIME
   - variable: NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY
-    value: price_1T9kWBREu3GIrDilO5pdUMB4
+    value: price_1T6WWiKP1iVKF5bkaWN40cLs
     availability:
       - BUILD
       - RUNTIME
   - variable: NEXT_PUBLIC_STRIPE_PRICE_ID_YEARLY
-    value: price_1T9kWBREu3GIrDilWeGaZMQz
+    value: price_1T6WcWKP1iVKF5bkNTzX8XBO
     availability:
       - BUILD
       - RUNTIME
