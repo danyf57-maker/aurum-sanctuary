@@ -66,6 +66,7 @@ export async function POST(req: NextRequest) {
         // 2. Validate environment variables
         const monthlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY || process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO;
         const yearlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_YEARLY || process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PREMIUM;
+        const monthlyDiscountCouponId = process.env.STRIPE_MONTHLY_DISCOUNT_COUPON_ID || 'XwIdSJ70';
         const allowedPriceIds = [
             process.env.STRIPE_PRICE_ID, // legacy single-price fallback
             monthlyPriceId,
@@ -120,6 +121,7 @@ export async function POST(req: NextRequest) {
             !hasStripeSubscription;
         const hasConsumedTrial = !!userData.trialConsumedAt && !legacyNoCardTrial;
         const shouldApplyTrial = STRIPE_TRIAL_DAYS > 0 && !hasConsumedTrial;
+        const shouldApplyMonthlyDiscount = selectedPriceId === monthlyPriceId && !!monthlyDiscountCouponId;
 
         // 4. Create Checkout Session
         const session = await stripe.checkout.sessions.create({
@@ -144,7 +146,9 @@ export async function POST(req: NextRequest) {
                 },
                 ...(shouldApplyTrial ? { trial_period_days: STRIPE_TRIAL_DAYS } : {}),
             },
-            allow_promotion_codes: true, // Allow discount codes
+            ...(shouldApplyMonthlyDiscount
+                ? { discounts: [{ coupon: monthlyDiscountCouponId }] }
+                : { allow_promotion_codes: true }),
             billing_address_collection: 'auto',
         });
 
@@ -160,6 +164,7 @@ export async function POST(req: NextRequest) {
             priceId: selectedPriceId,
             trialApplied: shouldApplyTrial,
             trialDays: shouldApplyTrial ? STRIPE_TRIAL_DAYS : 0,
+            monthlyDiscountApplied: shouldApplyMonthlyDiscount,
             legacyNoCardTrial,
         });
 

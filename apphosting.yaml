@@ -69,6 +69,10 @@ env:
     availability:
       - BUILD
       - RUNTIME
+  - variable: STRIPE_MONTHLY_DISCOUNT_COUPON_ID
+    value: XwIdSJ70
+    availability:
+      - RUNTIME
   - variable: NEXT_PUBLIC_APP_URL
     value: https://aurumdiary.com
     availability:
