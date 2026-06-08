@@ -7,6 +7,7 @@ const publicAurumCopyFiles = [
   "messages/fr.json",
   "src/app/manifeste/page.tsx",
   "src/app/methodologie/page.tsx",
+  "src/app/contact/page.tsx",
   "src/app/privacy/page.tsx",
   "src/app/terms/page.tsx",
 ];

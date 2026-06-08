@@ -12,6 +12,7 @@ Le service permet d'écrire ses réflexions, d'obtenir des analyses assistées p
 - Auteur (Alma): https://aurumdiary.com/auteur
 - Blog: https://aurumdiary.com/blog
 - Knowledge Hub: https://aurumdiary.com/guides
+- Contact: https://aurumdiary.com/contact
 - Charge mentale: https://aurumdiary.com/guides/charge-mentale
 - Overthinking at night: https://aurumdiary.com/guides/overthinking-at-night
 - Journaling prompts for clarity: https://aurumdiary.com/guides/journaling-prompts-for-clarity

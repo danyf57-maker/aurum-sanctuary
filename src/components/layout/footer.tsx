@@ -51,7 +51,7 @@ export function Footer() {
               <ul className="mt-4 space-y-2">
                 <li><Link href={to('/terms')} className="text-sm text-muted-foreground hover:text-foreground">{isFr ? "Conditions d'Utilisation" : "Terms of Use"}</Link></li>
                 <li><Link href={to('/privacy')} className="text-sm text-muted-foreground hover:text-foreground">{isFr ? "Politique de Confidentialité" : "Privacy Policy"}</Link></li>
-                <li><a href="mailto:contact@aurumdiary.com" className="text-sm text-muted-foreground hover:text-foreground">contact@aurumdiary.com</a></li>
+                <li><Link href={to('/contact')} className="text-sm text-muted-foreground hover:text-foreground">{isFr ? "Contact" : "Contact"}</Link></li>
               </ul>
             </div>
             <div>

@@ -6,7 +6,9 @@ describe("sitemap", () => {
     const urls = (await sitemap()).map((entry) => entry.url);
 
     expect(urls).toContain("https://aurumdiary.com/fr/etudes-scientifiques");
+    expect(urls).toContain("https://aurumdiary.com/fr/contact");
     expect(urls).not.toContain("https://aurumdiary.com/etudes-scientifiques");
+    expect(urls).not.toContain("https://aurumdiary.com/contact");
   });
 
   it("includes the new organic growth guides in French only", async () => {
