@@ -10,6 +10,16 @@ type LocalizedFieldList = {
   en: string[];
 };
 
+type LocalizedFaqItem = {
+  question: LocalizedField;
+  answer: LocalizedField;
+};
+
+type KnowledgeHubSource = {
+  label: string;
+  href: string;
+};
+
 export type KnowledgeHubTopic = {
   slug: string;
   title: LocalizedField;
@@ -21,6 +31,8 @@ export type KnowledgeHubTopic = {
   howAurumHelps?: LocalizedFieldList;
   selectionCriteria?: LocalizedFieldList;
   suggestedPrompt?: LocalizedField;
+  faq?: LocalizedFaqItem[];
+  sources?: KnowledgeHubSource[];
   relatedSlugs?: string[];
   metaTitle: LocalizedField;
   metaDescription: LocalizedField;
@@ -37,6 +49,8 @@ export type LocalizedKnowledgeHubTopic = {
   howAurumHelps?: string[];
   selectionCriteria?: string[];
   suggestedPrompt?: string;
+  faq?: { question: string; answer: string }[];
+  sources?: KnowledgeHubSource[];
   relatedSlugs?: string[];
   metaTitle: string;
   metaDescription: string;
@@ -1150,7 +1164,613 @@ const scienceWritingTopics: KnowledgeHubTopic[] = [
   },
 ];
 
+const commonScienceSources: KnowledgeHubSource[] = [
+  {
+    label:
+      "Pennebaker, J. W., & Beall, S. K. (1986). Confronting a traumatic event: Toward an understanding of inhibition and disease.",
+    href: "https://doi.org/10.1037/0021-843X.95.3.274",
+  },
+  {
+    label:
+      "Baikie, K. A., & Wilhelm, K. (2005). Emotional and physical health benefits of expressive writing.",
+    href: "https://doi.org/10.1192/apt.11.5.338",
+  },
+  {
+    label:
+      "Sohal, M., Singh, P., Dhillon, B. S., & Gill, H. S. (2022). Efficacy of journaling in the management of mental illness: a systematic review and meta-analysis.",
+    href: "https://doi.org/10.1136/fmch-2021-001154",
+  },
+];
+
+const seoArticleTopics: KnowledgeHubTopic[] = [
+  {
+    slug: "journaling-scientifique",
+    title: {
+      fr: "Est-ce que le journaling est prouvé scientifiquement ?",
+      en: "Is journaling evidence-based?",
+    },
+    question: {
+      fr: "Est-ce que le journaling est prouvé scientifiquement ?",
+      en: "Is journaling evidence-based?",
+    },
+    shortAnswer: {
+      fr: "Oui, plusieurs études suggèrent que l'écriture personnelle peut aider certaines personnes à mettre des expériences en mots, à prendre du recul et à mieux organiser ce qu'elles ressentent. Mais la recherche ne dit pas que le journaling soigne, guérit ou remplace une thérapie.",
+      en: "Yes, several studies suggest that personal writing may help some people put experiences into words, gain distance, and organize what they feel more clearly. But the research does not say that journaling heals, cures, or replaces therapy.",
+    },
+    deepDive: {
+      fr: [
+        "Quand les études parlent d'écriture expressive, elles ne parlent pas seulement de tenir un joli journal. Elles parlent souvent d'un exercice simple: écrire pendant un temps court sur une expérience importante, difficile ou chargée émotionnellement.",
+        "Dans les travaux fondateurs de James W. Pennebaker et Sandra K. Beall, les participants écrivaient sur des événements personnels difficiles ou sur des sujets neutres. Cette ligne de recherche a ensuite inspiré de nombreuses études sur le lien entre écriture, émotions, stress, santé subjective et mise en sens.",
+        "Le point le plus solide est celui-ci: écrire peut rendre une expérience plus lisible. Une pensée vague devient une phrase. Une émotion confuse devient quelque chose que l'on peut relire. Un événement qui tourne en boucle peut être séparé en faits, émotions, interprétations et besoins.",
+        "Les résultats restent nuancés. Certaines études suggèrent que l'écriture expressive peut soutenir la mise en mots, la compréhension personnelle et certains aspects du bien-être. Une revue de Baikie et Wilhelm décrit par exemple un protocole classique: écrire 15 à 20 minutes, sur 3 à 5 sessions, au sujet d'événements stressants ou émotionnels.",
+        "Une revue systématique et méta-analyse publiée en 2022 dans Family Medicine and Community Health conclut aussi que plusieurs formes de journaling peuvent avoir des effets intéressants dans certains contextes. Mais les effets varient selon les personnes, les formats d'écriture, les populations et les situations.",
+        "Ce que l'on peut dire prudemment: le journaling peut aider certaines personnes à mettre de l'ordre dans ce qu'elles ressentent; l'écriture expressive peut soutenir la mise en mots d'une expérience chargée; une pratique courte et répétée peut aider à voir ce qui revient.",
+        "Ce qu'il ne faut pas dire: le journaling guérit, remplace une thérapie, réduit automatiquement l'anxiété, ou suffit quand la détresse est forte. La bonne lecture est plus simple: écrire peut être un appui, pas une solution universelle.",
+        "Aurum retient cette valeur prudente: un espace privé pour poser ce qui revient, garder une trace et commencer à y voir plus clair, sans diagnostic, sans promesse médicale, sans exposition.",
+      ],
+      en: [
+        "When studies discuss expressive writing, they are not only talking about keeping a beautiful diary. They often describe a simple exercise: writing for a short time about an important, difficult, or emotionally charged experience.",
+        "In foundational work by James W. Pennebaker and Sandra K. Beall, participants wrote either about difficult personal events or neutral topics. That line of research later inspired many studies on writing, emotion, stress, subjective health, and meaning-making.",
+        "The strongest point is simple: writing can make an experience more readable. A vague thought becomes a sentence. A confused emotion becomes something you can reread. A looping event can be separated into facts, emotions, interpretations, and needs.",
+        "The results are nuanced. Some studies suggest expressive writing may support wording, personal understanding, and some aspects of well-being. Baikie and Wilhelm describe a common protocol: writing for 15 to 20 minutes across 3 to 5 sessions about stressful or emotional events.",
+        "A 2022 systematic review and meta-analysis in Family Medicine and Community Health also found that several journaling formats can show interesting effects in some contexts. But effects vary by person, writing format, population, and situation.",
+        "What can be said carefully: journaling may help some people organize what they feel; expressive writing may support putting a charged experience into words; short repeated writing may help recurring patterns become easier to see.",
+        "What should not be said: journaling cures, replaces therapy, automatically reduces anxiety, or is enough when distress is strong. A better reading is simpler: writing can be a support, not a universal solution.",
+        "Aurum keeps that careful value: a private space to place what keeps returning, keep a trace, and begin seeing more clearly, without diagnosis, medical promises, or exposure.",
+      ],
+    },
+    practicalSteps: {
+      fr: [
+        "Choisis une pensée qui revient souvent.",
+        "Écris pendant 10 minutes sans corriger.",
+        "Note ce qui est un fait.",
+        "Note ce qui est une interprétation.",
+        "Termine par une phrase qui commence par: \"Ce que je comprends un peu mieux, c'est...\"",
+      ],
+      en: [
+        "Choose one thought that keeps returning.",
+        "Write for 10 minutes without editing.",
+        "Name what is a fact.",
+        "Name what is an interpretation.",
+        "End with a sentence beginning: \"What I understand a little better is...\"",
+      ],
+    },
+    example: {
+      fr: [
+        "Une page utile peut commencer très simplement: ce qui s'est passé, ce que j'ai ressenti, ce que je continue à rejouer, ce que je n'ai pas encore dit, ce que je peux reconnaître maintenant sans tout résoudre.",
+        "Phrase de clôture: \"Pour maintenant, je peux laisser cette pensée sur la page. Je n'ai pas besoin de tout régler ce soir.\"",
+      ],
+      en: [
+        "A useful page can begin simply: what happened, what I felt, what I keep replaying, what I have not said yet, and what I can recognize now without solving everything.",
+        "Closing sentence: \"For now, I can leave this thought on the page. I do not need to solve everything tonight.\"",
+      ],
+    },
+    howAurumHelps: {
+      fr: [
+        "Aurum n'est pas une thérapie, un outil de diagnostic ou un service médical. C'est un espace privé pour écrire ce qui revient, garder une trace et recevoir un reflet guidé centré sur tes propres mots.",
+        "La différence avec une note simple, c'est la continuité. Une note isolée garde une pensée. Un journal privé peut montrer ce qui revient au fil du temps: les mêmes situations, les mêmes tensions, les mêmes besoins, les mêmes phrases.",
+      ],
+      en: [
+        "Aurum is not therapy, a diagnostic tool, or a medical service. It is a private space for writing what keeps returning, keeping a trace, and receiving guided reflection centered on your own words.",
+        "The difference from a simple note is continuity. One note stores a thought. A private journal can show what returns over time: the same situations, tensions, needs, and sentences.",
+      ],
+    },
+    faq: [
+      {
+        question: {
+          fr: "Est-ce que le journaling est une méthode prouvée ?",
+          en: "Is journaling a proven method?",
+        },
+        answer: {
+          fr: "Le journaling et l'écriture expressive ont été étudiés dans plusieurs contextes. Les résultats suggèrent des bénéfices possibles pour certaines personnes, notamment autour de la mise en mots, de la prise de recul et de la construction de sens. Mais les effets varient.",
+          en: "Journaling and expressive writing have been studied in several contexts. Results suggest possible benefits for some people, especially around wording, distance, and meaning-making. But effects vary.",
+        },
+      },
+      {
+        question: {
+          fr: "Est-ce que le journaling remplace une thérapie ?",
+          en: "Does journaling replace therapy?",
+        },
+        answer: {
+          fr: "Non. Le journaling peut soutenir la réflexion personnelle, mais il ne remplace pas un professionnel de santé, une thérapie ou un accompagnement humain, surtout si la détresse est forte ou persistante.",
+          en: "No. Journaling can support personal reflection, but it does not replace professional care, therapy, or human support, especially when distress is strong or persistent.",
+        },
+      },
+    ],
+    sources: [
+      ...commonScienceSources,
+      {
+        label:
+          "Spera, S. P., Buhrfeind, E. D., & Pennebaker, J. W. (1994). Expressive writing and coping with job loss.",
+        href: "https://doi.org/10.2307/256708",
+      },
+    ],
+    relatedSlugs: [
+      "bienfaits-ecriture-expressive",
+      "journaling-et-rumination",
+      "comment-ecrire-ce-que-je-ressens",
+    ],
+    metaTitle: {
+      fr: "Est-ce que le journaling est prouvé scientifiquement ?",
+      en: "Is journaling evidence-based?",
+    },
+    metaDescription: {
+      fr: "Ce que la recherche dit vraiment sur le journaling, l'écriture expressive, la clarté personnelle et leurs limites.",
+      en: "What research actually says about journaling, expressive writing, personal clarity, and their limits.",
+    },
+  },
+  {
+    slug: "bienfaits-ecriture-expressive",
+    title: {
+      fr: "Écriture expressive: définition, méthode et limites",
+      en: "Expressive writing: definition, method, and limits",
+    },
+    question: {
+      fr: "Qu'est-ce que l'écriture expressive ?",
+      en: "What is expressive writing?",
+    },
+    shortAnswer: {
+      fr: "L'écriture expressive est une pratique d'écriture personnelle qui consiste à écrire sur ce que l'on vit intérieurement: émotions, pensées, souvenirs, tensions, contradictions, besoins. Elle ne cherche pas le style. Elle cherche la mise en mots.",
+      en: "Expressive writing is a personal writing practice focused on inner experience: emotions, thoughts, memories, tensions, contradictions, and needs. It does not seek style. It seeks wording.",
+    },
+    deepDive: {
+      fr: [
+        "Dans un journal classique, on peut raconter sa journée, noter des souvenirs, garder une trace ou écrire librement. L'écriture expressive est plus précise: elle invite à entrer dans ce qui pèse, ce qui revient ou ce qui n'a pas encore trouvé de mots.",
+        "Elle peut porter sur une conversation que tu rejoues, un message que tu relis, une émotion qui reste floue, une charge mentale qui prend trop de place, un événement difficile ou un besoin que tu n'arrives pas à dire.",
+        "Les protocoles scientifiques les plus connus demandent souvent d'écrire pendant 15 à 20 minutes, plusieurs fois, sur une expérience émotionnelle ou stressante. Mais pour un usage quotidien, il vaut mieux commencer plus simplement.",
+        "Ce que l'écriture expressive peut soutenir: mettre des mots sur une émotion, distinguer un fait d'une interprétation, repérer une phrase qui revient, voir un besoin que l'on minimisait, transformer une boucle en texte relisible.",
+        "La prudence est essentielle. Les études ne permettent pas de dire que l'écriture guérit, qu'elle fonctionne pour tout le monde ou qu'elle remplace un accompagnement. Les effets varient selon la personne, le sujet choisi, le moment et le niveau de détresse.",
+        "Si l'écriture augmente fortement la détresse, il vaut mieux arrêter, choisir un sujet plus simple, ou parler à une personne qualifiée ou de confiance. Un bon journal n'oblige pas à tout ouvrir. Il donne un endroit où poser une chose à la fois.",
+      ],
+      en: [
+        "In a classic diary, you can describe your day, keep memories, store a trace, or write freely. Expressive writing is more specific: it invites you into what weighs on you, what returns, or what has not yet found words.",
+        "It can focus on a conversation you replay, a message you reread, an unclear emotion, mental load taking too much space, a difficult event, or a need you cannot say yet.",
+        "The best-known research protocols often ask people to write for 15 to 20 minutes, several times, about an emotional or stressful experience. For daily use, it is better to begin more simply.",
+        "Expressive writing may support naming an emotion, separating a fact from an interpretation, spotting a returning sentence, seeing a minimized need, and turning a loop into rereadable text.",
+        "Caution matters. The research does not allow us to say writing cures, works for everyone, or replaces support. Effects vary by person, topic, moment, and level of distress.",
+        "If writing sharply increases distress, stop, choose a simpler subject, or speak with a qualified or trusted person. A good journal does not force everything open. It gives one thing at a time a place.",
+      ],
+    },
+    practicalSteps: {
+      fr: [
+        "Choisis un sujet présent, mais pas écrasant.",
+        "Écris 10 à 15 minutes sans corriger le style.",
+        "Décris d'abord les faits.",
+        "Ajoute ce que tu ressens.",
+        "Termine par une phrase de clôture.",
+      ],
+      en: [
+        "Choose a present topic, but not an overwhelming one.",
+        "Write for 10 to 15 minutes without editing style.",
+        "Describe the facts first.",
+        "Add what you feel.",
+        "End with a closing sentence.",
+      ],
+    },
+    example: {
+      fr: [
+        "Prompt: \"Ce qui prend trop de place aujourd'hui, c'est... Le fait observable est... L'histoire que mon esprit ajoute est... Ce que je peux laisser sur la page est...\"",
+        "Phrase de clôture: \"Je ne comprends pas tout, mais je vois mieux ce qui me touche.\"",
+      ],
+      en: [
+        "Prompt: \"What is taking too much space today is... The observable fact is... The story my mind adds is... What I can leave on the page is...\"",
+        "Closing sentence: \"I do not understand everything, but I can see more clearly what this touches.\"",
+      ],
+    },
+    howAurumHelps: {
+      fr: [
+        "Aurum part d'une idée simple: tu peux écrire ce qui revient dans un espace privé, puis relire ce qui apparaît dans tes mots.",
+        "Ce n'est pas une thérapie ou un diagnostic. C'est un journal privé guidé, construit pour aider à mettre des mots, garder une trace et voir les motifs qui reviennent avec le temps.",
+      ],
+      en: [
+        "Aurum starts from a simple idea: you can write what keeps returning in a private space, then reread what appears in your words.",
+        "It is not therapy or diagnosis. It is a private guided journal built to help you put things into words, keep a trace, and see recurring patterns over time.",
+      ],
+    },
+    faq: [
+      {
+        question: {
+          fr: "Quelle est la différence entre écriture expressive et journal intime ?",
+          en: "What is the difference between expressive writing and a diary?",
+        },
+        answer: {
+          fr: "Le journal intime peut parler de tout. L'écriture expressive se concentre davantage sur l'expérience intérieure: émotions, tensions, interprétations, besoins et sens possible.",
+          en: "A diary can be about anything. Expressive writing focuses more on inner experience: emotions, tensions, interpretations, needs, and possible meaning.",
+        },
+      },
+      {
+        question: {
+          fr: "Est-ce que l'écriture expressive peut faire du mal ?",
+          en: "Can expressive writing feel harmful?",
+        },
+        answer: {
+          fr: "Elle peut devenir difficile si le sujet est trop lourd ou si l'écriture tourne en boucle. Il faut pouvoir arrêter, fermer la page et chercher du soutien humain si la détresse est forte.",
+          en: "It can become difficult if the topic is too heavy or if writing loops. You should be able to stop, close the page, and seek human support if distress is strong.",
+        },
+      },
+    ],
+    sources: commonScienceSources,
+    relatedSlugs: [
+      "journaling-scientifique",
+      "prompts-ecriture-expressive",
+      "journaling-et-rumination",
+    ],
+    metaTitle: {
+      fr: "Écriture expressive: définition, méthode et limites",
+      en: "Expressive writing: definition, method, and limits",
+    },
+    metaDescription: {
+      fr: "L'écriture expressive consiste à mettre une expérience en mots. Définition, méthode simple, bénéfices possibles et limites.",
+      en: "Expressive writing means putting an experience into words. Definition, simple method, possible benefits, and limits.",
+    },
+  },
+  {
+    slug: "journaling-et-rumination",
+    title: {
+      fr: "Journaling et rumination: écrire sans tourner en boucle",
+      en: "Journaling and rumination: write without looping",
+    },
+    question: {
+      fr: "Est-ce que le journaling aide quand on rumine ?",
+      en: "Does journaling help when you ruminate?",
+    },
+    shortAnswer: {
+      fr: "Le journaling peut aider certaines personnes quand une pensée tourne en boucle, à condition de ne pas simplement répéter la même inquiétude. Une page utile transforme la rumination en structure: faits, interprétations, émotions, besoins, prochaine action ou clôture.",
+      en: "Journaling may help some people when a thought loops, as long as it does not simply repeat the same worry. A useful page turns rumination into structure: facts, interpretations, emotions, needs, next action, or closure.",
+    },
+    deepDive: {
+      fr: [
+        "La rumination répète. Elle revient au même point. Elle pose souvent les mêmes questions: pourquoi j'ai dit ça, pourquoi cette personne a répondu comme ça, et si j'avais fait autrement, qu'est-ce que ça veut dire ?",
+        "La réflexion avance. Elle distingue. Elle peut dire: voilà le fait, voilà ce que j'imagine, voilà ce que je ressens, voilà ce que je peux faire, voilà ce que je laisse pour demain.",
+        "La recherche sur l'écriture expressive montre des résultats nuancés. Une étude de Sloan, Marx, Epstein et Dobbs a examiné le lien entre style ruminatif et écriture expressive. Les résultats suggèrent que l'effet de l'écriture peut varier selon la manière dont une personne rumine.",
+        "Cela ne veut pas dire que le journaling soigne la rumination. Cela veut dire qu'il faut regarder le cadre. Une page peut aider si elle transforme la boucle en carte courte. Elle aide moins si elle rejoue la même scène sous dix formes différentes.",
+        "Quand une pensée revient, commence par ne pas lui demander une réponse totale. Donne-lui une forme: fait, boucle, émotion, histoire ajoutée, besoin, clôture.",
+        "Si tu termines la page avec plus de confusion, plus d'urgence et plus d'accusations contre toi, le cadre n'est pas bon. Raccourcis l'exercice, reviens au fait observable, puis ferme la page.",
+        "Si la rumination est envahissante, persistante ou liée à une détresse forte, l'écriture ne doit pas rester le seul appui. Parler à une personne qualifiée ou de confiance peut être nécessaire.",
+      ],
+      en: [
+        "Rumination repeats. It returns to the same point. It often asks the same questions: why did I say that, why did they answer that way, what if I had done differently, what does it mean?",
+        "Reflection moves forward. It separates. It can say: here is the fact, here is what I imagine, here is what I feel, here is what I can do, here is what I leave for tomorrow.",
+        "Research on expressive writing is nuanced. A study by Sloan, Marx, Epstein, and Dobbs examined links between ruminative style and expressive writing. Results suggest that writing effects can vary depending on how someone ruminates.",
+        "That does not mean journaling cures rumination. It means the frame matters. A page may help if it turns the loop into a short map. It helps less if it replays the same scene in ten different forms.",
+        "When a thought returns, do not ask it for a total answer first. Give it a form: fact, loop, emotion, added story, need, closure.",
+        "If you end the page with more confusion, urgency, and self-accusation, the frame is not working. Shorten the exercise, return to the observable fact, then close the page.",
+        "If rumination is invasive, persistent, or tied to strong distress, writing should not be the only support. Speaking to a qualified or trusted person may be necessary.",
+      ],
+    },
+    practicalSteps: {
+      fr: [
+        "Écris la pensée répétitive en une phrase brute.",
+        "Ajoute: fait réel, histoire ajoutée, émotion, besoin.",
+        "Cherche une action réelle; s'il n'y en a pas, écris une limite.",
+        "Ferme la page avec: \"ce sujet est noté pour maintenant.\"",
+        "Reviens-y demain si une action concrète apparaît.",
+      ],
+      en: [
+        "Write the repetitive thought as one raw sentence.",
+        "Add: real fact, added story, emotion, need.",
+        "Look for a real action; if there is none, write a boundary.",
+        "Close the page with: \"this topic is noted for now.\"",
+        "Return tomorrow if a concrete action appears.",
+      ],
+    },
+    example: {
+      fr: [
+        "Exemple: \"Fait: elle n'a pas répondu depuis hier. Boucle: je relis mon message. Émotion: je me sens exposé. Histoire ajoutée: j'imagine que j'ai trop dit. Besoin: retrouver mon calme avant d'agir. Clôture: je n'envoie rien ce soir.\"",
+        "Prompt: \"La phrase qui revient, c'est... Le fait, sans interprétation, c'est... Ce que j'imagine peut-être, c'est... La chose que je laisse sur la page pour ce soir, c'est...\"",
+      ],
+      en: [
+        "Example: \"Fact: she has not replied since yesterday. Loop: I reread my message. Emotion: I feel exposed. Added story: I imagine I said too much. Need: recover calm before acting. Closure: I send nothing tonight.\"",
+        "Prompt: \"The sentence that returns is... The fact, without interpretation, is... What I may be imagining is... What I leave on the page tonight is...\"",
+      ],
+    },
+    howAurumHelps: {
+      fr: [
+        "Aurum est construit pour l'écriture privée et la continuité. Tu peux poser la pensée qui revient, puis revenir plus tard voir si le même thème apparaît ailleurs.",
+        "La valeur n'est pas de conclure à ta place. La valeur est de rendre la boucle plus visible: ce qui revient, ce qui pèse, ce qui reste flou, ce qui demande une limite.",
+      ],
+      en: [
+        "Aurum is built for private writing and continuity. You can place the returning thought, then come back later to see whether the same theme appears elsewhere.",
+        "The value is not deciding for you. The value is making the loop more visible: what returns, what weighs, what remains unclear, and what asks for a boundary.",
+      ],
+    },
+    faq: [
+      {
+        question: {
+          fr: "Est-ce que journaling et rumination sont compatibles ?",
+          en: "Are journaling and rumination compatible?",
+        },
+        answer: {
+          fr: "Oui, si l'écriture a un cadre. Le journaling est utile quand il distingue et ferme la boucle. Il est moins utile s'il répète la même inquiétude sans fin.",
+          en: "Yes, if writing has a frame. Journaling helps when it separates and closes the loop. It helps less if it repeats the same worry endlessly.",
+        },
+      },
+      {
+        question: {
+          fr: "Que faire si écrire me fait me sentir pire ?",
+          en: "What if writing makes me feel worse?",
+        },
+        answer: {
+          fr: "Arrête l'exercice, choisis un sujet plus neutre, reviens au corps ou parle à une personne de confiance. Si la détresse est forte, cherche un soutien professionnel.",
+          en: "Stop the exercise, choose a more neutral topic, return to the body, or speak to someone you trust. If distress is strong, seek professional support.",
+        },
+      },
+    ],
+    sources: [
+      {
+        label:
+          "Sloan, D. M., Marx, B. P., Epstein, E. M., & Dobbs, J. L. (2008). Expressive writing buffers against maladaptive rumination.",
+        href: "https://doi.org/10.1037/1528-3542.8.2.302",
+      },
+      {
+        label:
+          "Trapnell, P. D., & Campbell, J. D. (1999). Distinguishing rumination from reflection.",
+        href: "https://doi.org/10.1037/0022-3514.76.2.284",
+      },
+      {
+        label:
+          "Takano, K., & Tanno, Y. (2009). Self-rumination, self-reflection, and depression.",
+        href: "https://doi.org/10.1016/j.brat.2008.12.008",
+      },
+      commonScienceSources[2],
+    ],
+    relatedSlugs: [
+      "journaling-scientifique",
+      "comment-vider-sa-tete-quand-on-a-trop-de-choses-en-tete",
+      "prompts-ecriture-expressive",
+    ],
+    metaTitle: {
+      fr: "Journaling et rumination: écrire sans tourner en boucle",
+      en: "Journaling and rumination: write without looping",
+    },
+    metaDescription: {
+      fr: "Le journaling peut clarifier une pensée qui revient, mais il peut aussi nourrir la rumination sans cadre.",
+      en: "Journaling can clarify a returning thought, but without a frame it can also feed rumination.",
+    },
+  },
+  {
+    slug: "comment-vider-sa-tete-quand-on-a-trop-de-choses-en-tete",
+    title: {
+      fr: "Comment vider sa tête quand on a trop de choses en tête ?",
+      en: "How to clear your head when you have too many thoughts",
+    },
+    question: {
+      fr: "Comment vider sa tête quand on a trop de choses en tête ?",
+      en: "How do you clear your head when you have too many thoughts?",
+    },
+    shortAnswer: {
+      fr: "Pour vider ta tête, commence par sortir les pensées de ta tête. Écris tout ce qui prend de la place, puis sépare les éléments: choses à faire, inquiétudes, émotions, décisions, attentes des autres. Ensuite, choisis une seule prochaine action ou une phrase de clôture.",
+      en: "To clear your head, start by moving thoughts out of your head. Write everything taking space, then separate the elements: tasks, worries, emotions, decisions, and other people's expectations. Then choose one next action or closing sentence.",
+    },
+    deepDive: {
+      fr: [
+        "Quand on dit \"j'ai trop de choses en tête\", ce n'est pas toujours une seule pensée. C'est souvent un mélange: tâches non terminées, messages auxquels répondre, décisions en attente, conversations rejouées, peurs vagues, besoins non dits, fatigue.",
+        "Dans la tête, tout arrive en même temps. Une tâche peut avoir le même poids qu'une peur. Une petite décision peut se mélanger à une émotion ancienne. C'est pour cela que penser plus fort ne suffit pas toujours.",
+        "Prends une page et divise ce qui tourne en quatre catégories: ce que je dois faire, ce que je ressens, ce que j'imagine, ce qui peut attendre.",
+        "La recherche sur l'écriture expressive suggère que mettre une expérience en mots peut aider certaines personnes à l'organiser. D'autres recherches sur le cognitive offloading montrent aussi que les humains utilisent des supports externes pour réduire la charge de certaines opérations mentales.",
+        "Dit simplement: quand tout reste dans la tête, la tête doit tout porter. Quand tu écris, une partie du poids passe sur la page. Cela ne veut pas dire que l'écriture règle le problème. Cela veut dire qu'elle peut rendre le problème plus lisible.",
+        "Parfois, la charge mentale n'est pas seulement une question de tâches. Elle cache une émotion: peur de ne pas être assez, impression de porter trop seul, besoin de repos, colère de devoir anticiper pour tout le monde.",
+      ],
+      en: [
+        "When someone says \"I have too many things in my head\", it is not always one thought. It is often a mix: unfinished tasks, messages to answer, pending decisions, replayed conversations, vague fears, unsaid needs, and fatigue.",
+        "In the mind, everything arrives at once. A task can feel as heavy as a fear. A small decision can mix with an old emotion. That is why thinking harder is not always enough.",
+        "Take one page and divide what is spinning into four categories: what I need to do, what I feel, what I imagine, and what can wait.",
+        "Research on expressive writing suggests that putting an experience into words may help some people organize it. Research on cognitive offloading also shows that people use external supports to reduce the load of some mental operations.",
+        "Simply put: when everything stays in the head, the head has to carry everything. When you write, part of the weight moves to the page. That does not mean writing solves the problem. It means it can make the problem more readable.",
+        "Sometimes mental load is not only about tasks. It hides an emotion: fear of not being enough, feeling like you carry too much alone, a need for rest, or anger at having to anticipate everything.",
+      ],
+    },
+    practicalSteps: {
+      fr: [
+        "Écris tout ce qui prend de la place pendant 5 à 10 minutes.",
+        "Sépare les lignes en quatre colonnes: à faire, ressenti, imaginé, peut attendre.",
+        "Entoure ce qui est vraiment urgent.",
+        "Choisis une seule prochaine action réaliste.",
+        "Ferme avec: \"le reste reste sur la page pour maintenant.\"",
+      ],
+      en: [
+        "Write everything taking space for 5 to 10 minutes.",
+        "Separate the lines into four columns: to do, felt, imagined, can wait.",
+        "Circle what is truly urgent.",
+        "Choose one realistic next action.",
+        "Close with: \"the rest stays on the page for now.\"",
+      ],
+    },
+    example: {
+      fr: [
+        "Exemple: à faire: appeler le dentiste, finir le dossier, répondre à Paul. Ressenti: pression, fatigue, peur d'oublier. J'imagine: si je ne fais pas tout aujourd'hui, je vais décevoir. Peut attendre: ranger les photos, choisir le cadeau, relire ce message.",
+        "Phrase finale: \"Ce soir, je réponds seulement à Paul. Le reste reste sur la page.\"",
+      ],
+      en: [
+        "Example: to do: call the dentist, finish the file, answer Paul. Felt: pressure, fatigue, fear of forgetting. Imagined: if I do not do everything today, I will disappoint people. Can wait: sort photos, choose the gift, reread that message.",
+        "Final sentence: \"Tonight, I only answer Paul. The rest stays on the page.\"",
+      ],
+    },
+    howAurumHelps: {
+      fr: [
+        "Aurum donne un endroit privé pour poser ce qui tourne, sans transformer tes pensées en contenu public ou en tâches dispersées.",
+        "Tu peux écrire la liste, mais aussi ce qu'il y a dessous. Puis, au fil des pages, tu peux voir ce qui revient: la même pression, les mêmes attentes, les mêmes moments où ton esprit se remplit.",
+      ],
+      en: [
+        "Aurum gives you a private place to put what is spinning, without turning your thoughts into public content or scattered tasks.",
+        "You can write the list, but also what sits underneath it. Across pages, you can see what returns: the same pressure, expectations, and moments when your mind fills up.",
+      ],
+    },
+    faq: [
+      {
+        question: {
+          fr: "Comment vider sa tête rapidement ?",
+          en: "How do you clear your head quickly?",
+        },
+        answer: {
+          fr: "Écris tout ce qui tourne pendant 5 à 10 minutes, puis choisis une seule prochaine action. Le but n'est pas de tout traiter, mais de sortir le flou de la tête.",
+          en: "Write everything spinning for 5 to 10 minutes, then choose one next action. The goal is not handling everything, but moving the blur out of your head.",
+        },
+      },
+      {
+        question: {
+          fr: "Que faire si ma liste me stresse encore plus ?",
+          en: "What if my list stresses me more?",
+        },
+        answer: {
+          fr: "Réduis la liste à trois lignes: ce qui est urgent, ce qui peut attendre, ce que je ressens. Puis choisis une seule action réaliste.",
+          en: "Reduce the list to three lines: what is urgent, what can wait, and what I feel. Then choose one realistic action.",
+        },
+      },
+    ],
+    sources: [
+      commonScienceSources[1],
+      commonScienceSources[2],
+      {
+        label:
+          "Risko, E. F., & Gilbert, S. J. (2016). Cognitive offloading.",
+        href: "https://doi.org/10.1016/j.tics.2016.07.002",
+      },
+      {
+        label:
+          "Gilbert, S. J., et al. (2023). Outsourcing memory to external tools: A review of intention offloading.",
+        href: "https://doi.org/10.3758/s13423-022-02139-4",
+      },
+    ],
+    relatedSlugs: [
+      "mental-load-journaling",
+      "journaling-et-rumination",
+      "comment-ecrire-ce-que-je-ressens",
+    ],
+    metaTitle: {
+      fr: "Comment vider sa tête quand on a trop de pensées",
+      en: "How to clear your head when you have too many thoughts",
+    },
+    metaDescription: {
+      fr: "Une méthode simple pour poser ce qui tourne dans la tête, séparer les pensées et retrouver un peu de clarté.",
+      en: "A simple method to place what is spinning in your head, separate thoughts, and regain some clarity.",
+    },
+  },
+  {
+    slug: "comment-ecrire-ce-que-je-ressens",
+    title: {
+      fr: "Comment écrire ce que je ressens quand ce n'est pas clair ?",
+      en: "How to write what you feel when it is not clear",
+    },
+    question: {
+      fr: "Comment écrire ce que je ressens ?",
+      en: "How do I write what I feel?",
+    },
+    shortAnswer: {
+      fr: "Pour écrire ce que tu ressens, ne commence pas par chercher le mot parfait. Commence par décrire ce qui est observable: la situation, la sensation dans le corps, la phrase qui revient, ce que tu aurais voulu dire. Ensuite seulement, propose un mot d'émotion.",
+      en: "To write what you feel, do not start by looking for the perfect word. Start by describing what is observable: the situation, the body sensation, the sentence that returns, and what you wanted to say. Only then suggest an emotion word.",
+    },
+    deepDive: {
+      fr: [
+        "Une émotion n'arrive pas toujours avec une étiquette claire. Parfois, tu ressens seulement une tension dans la poitrine, une boule dans le ventre, une fatigue lourde, une envie de fuir, une irritation ou une scène qui revient.",
+        "Le piège est de vouloir conclure trop vite. Si tu écris \"je suis triste\" alors que tu es surtout fatigué, la page peut sonner faux. Si tu écris \"je suis en colère\" alors que tu es surtout blessé, tu risques de passer à côté de ce qui compte.",
+        "Commence par cinq phrases: ce qui s'est passé, ce que je remarque dans mon corps, la phrase qui tourne, l'émotion possible, le besoin possible.",
+        "Des recherches sur l'affect labeling, c'est-à-dire le fait de mettre des émotions en mots, suggèrent que nommer une émotion peut modifier la manière dont elle est traitée. Il faut rester prudent: ces recherches ne disent pas qu'écrire un mot règle une émotion.",
+        "Dans la vie quotidienne, cela donne une idée simple: une émotion sans mot prend toute la place. Une émotion nommée devient un élément que l'on peut observer.",
+        "Si tu ne trouves pas le bon mot, utilise des mots approximatifs: ça ressemble à de la tristesse, c'est peut-être de la colère, je crois que c'est surtout de la fatigue, je ne sais pas encore.",
+        "Certaines émotions sont trop fortes pour être ouvertes d'un coup. Dans ce cas, écris autour, pas dedans. Une bonne pratique d'écriture respecte ton rythme. Elle ne force pas une confession.",
+      ],
+      en: [
+        "An emotion does not always arrive with a clear label. Sometimes you only feel chest tension, a knot in the stomach, heavy fatigue, an urge to leave, irritation, or a scene that returns.",
+        "The trap is concluding too quickly. If you write \"I am sad\" when you are mostly tired, the page can feel false. If you write \"I am angry\" when you are mostly hurt, you may miss what matters.",
+        "Begin with five sentences: what happened, what I notice in my body, the sentence that is spinning, the possible emotion, and the possible need.",
+        "Research on affect labeling, meaning putting emotions into words, suggests that naming an emotion may change how it is processed. Caution matters: this research does not say writing one word solves an emotion.",
+        "In daily life, the idea is simple: an emotion without a word takes all the space. A named emotion becomes something you can observe.",
+        "If you cannot find the right word, use approximate words: it feels like sadness, maybe it is anger, I think it is mainly fatigue, I do not know yet.",
+        "Some emotions are too strong to open all at once. In that case, write around them, not inside them. A good writing practice respects your pace. It does not force confession.",
+      ],
+    },
+    practicalSteps: {
+      fr: [
+        "Écris la situation en une phrase.",
+        "Note la sensation la plus présente dans ton corps.",
+        "Écris la phrase qui revient.",
+        "Ajoute: \"peut-être que je ressens...\"",
+        "Termine par: \"ce dont j'aurais peut-être besoin, c'est...\"",
+      ],
+      en: [
+        "Write the situation in one sentence.",
+        "Name the most present body sensation.",
+        "Write the sentence that returns.",
+        "Add: \"maybe I feel...\"",
+        "End with: \"what I may need is...\"",
+      ],
+    },
+    example: {
+      fr: [
+        "Exemple: \"Je ne sais pas encore si c'est de la tristesse, de la colère ou de la fatigue. Mais je sens que quelque chose est resté bloqué.\"",
+        "Prompt: \"Ce que je ressens sans savoir le nommer, c'est... La sensation la plus présente dans mon corps, c'est... Le mot le plus proche serait...\"",
+      ],
+      en: [
+        "Example: \"I do not know yet whether this is sadness, anger, or fatigue. But I can feel that something stayed stuck.\"",
+        "Prompt: \"What I feel without knowing how to name it is... The most present sensation in my body is... The closest word would be...\"",
+      ],
+    },
+    howAurumHelps: {
+      fr: [
+        "Aurum donne une page privée pour écrire avant de devoir expliquer. Tu peux commencer avec un mot flou, une sensation, une scène, une phrase incomplète.",
+        "Ensuite, Aurum peut t'aider à repérer ce qui apparaît dans tes propres mots: une émotion, une tension, une contradiction, un besoin qui revient.",
+      ],
+      en: [
+        "Aurum gives you a private page to write before you have to explain. You can begin with a blurry word, a sensation, a scene, or an incomplete sentence.",
+        "Then Aurum can help you notice what appears in your own words: an emotion, a tension, a contradiction, or a recurring need.",
+      ],
+    },
+    faq: [
+      {
+        question: {
+          fr: "Comment savoir ce que je ressens vraiment ?",
+          en: "How do I know what I really feel?",
+        },
+        answer: {
+          fr: "Commence par ce qui est observable: situation, corps, phrase qui revient. Le mot d'émotion vient ensuite. Tu n'as pas besoin de trouver le mot parfait au début.",
+          en: "Start with what is observable: situation, body, returning sentence. The emotion word comes next. You do not need the perfect word at the start.",
+        },
+      },
+      {
+        question: {
+          fr: "Que faire si l'émotion est trop forte ?",
+          en: "What if the emotion is too strong?",
+        },
+        answer: {
+          fr: "Raccourcis la page. Écris seulement une phrase. Arrête si tu te sens trop activé émotionnellement. Cherche du soutien humain si le poids est trop fort.",
+          en: "Shorten the page. Write only one sentence. Stop if you feel too emotionally activated. Seek human support if the weight is too strong.",
+        },
+      },
+    ],
+    sources: [
+      {
+        label:
+          "Lieberman, M. D., et al. (2007). Putting feelings into words: affect labeling disrupts amygdala activity in response to affective stimuli.",
+        href: "https://doi.org/10.1111/j.1467-9280.2007.01916.x",
+      },
+      {
+        label:
+          "Lieberman, M. D., et al. (2011). Subjective responses to emotional stimuli during labeling, reappraisal, and distraction.",
+        href: "https://doi.org/10.1037/a0023503",
+      },
+      commonScienceSources[1],
+    ],
+    relatedSlugs: [
+      "emotional-clarity-journal",
+      "journal-intime-et-emotions",
+      "bienfaits-ecriture-expressive",
+    ],
+    metaTitle: {
+      fr: "Comment écrire ce que je ressens quand ce n'est pas clair",
+      en: "How to write what you feel when it is not clear",
+    },
+    metaDescription: {
+      fr: "Une méthode simple pour mettre des mots sur une émotion floue, sans se juger ni forcer une conclusion.",
+      en: "A simple method to put words on an unclear emotion without judging yourself or forcing a conclusion.",
+    },
+  },
+];
+
+const seoArticleSlugs = new Set(seoArticleTopics.map((topic) => topic.slug));
+
 export const knowledgeHubTopics: KnowledgeHubTopic[] = [
+  ...seoArticleTopics,
   {
     slug: "charge-mentale",
     title: { fr: "Charge mentale", en: "Mental load" },
@@ -1577,8 +2197,8 @@ export const knowledgeHubTopics: KnowledgeHubTopic[] = [
       en: "Adopt a 5-minute routine to write, clear your mind, and move to action without pressure.",
     },
   },
-  ...growthTopics,
-  ...scienceWritingTopics,
+  ...growthTopics.filter((topic) => !seoArticleSlugs.has(topic.slug)),
+  ...scienceWritingTopics.filter((topic) => !seoArticleSlugs.has(topic.slug)),
 ];
 
 export function getKnowledgeHubTopicBase(slug: string) {
@@ -1600,6 +2220,11 @@ export function localizeKnowledgeHubTopic(
     howAurumHelps: topic.howAurumHelps?.[locale],
     selectionCriteria: topic.selectionCriteria?.[locale],
     suggestedPrompt: topic.suggestedPrompt?.[locale],
+    faq: topic.faq?.map((item) => ({
+      question: item.question[locale],
+      answer: item.answer[locale],
+    })),
+    sources: topic.sources,
     relatedSlugs: topic.relatedSlugs,
     metaTitle: topic.metaTitle[locale],
     metaDescription: topic.metaDescription[locale],

@@ -38,6 +38,8 @@ describe("sitemap", () => {
     for (const slug of [
       "journaling-scientifique",
       "bienfaits-ecriture-expressive",
+      "comment-vider-sa-tete-quand-on-a-trop-de-choses-en-tete",
+      "comment-ecrire-ce-que-je-ressens",
       "ecriture-et-clarte-mentale",
       "journaling-et-rumination",
       "ecriture-manuscrite-ou-clavier",

@@ -26,6 +26,8 @@ const growthSlugs = [
 const scienceSlugs = [
   "journaling-scientifique",
   "bienfaits-ecriture-expressive",
+  "comment-vider-sa-tete-quand-on-a-trop-de-choses-en-tete",
+  "comment-ecrire-ce-que-je-ressens",
   "ecriture-et-clarte-mentale",
   "journaling-et-rumination",
   "ecriture-manuscrite-ou-clavier",
@@ -47,6 +49,8 @@ function guideWordCount(slug: string, locale: "en" | "fr") {
     ...(topic.example ?? []),
     ...(topic.howAurumHelps ?? []),
     ...(topic.selectionCriteria ?? []),
+    ...(topic.faq?.flatMap((item) => [item.question, item.answer]) ?? []),
+    ...(topic.sources?.map((source) => source.label) ?? []),
     topic.suggestedPrompt ?? "",
   ]
     .join(" ")

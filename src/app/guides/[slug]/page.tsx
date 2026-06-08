@@ -93,7 +93,7 @@ export default async function GuidePage({ params }: GuidePageProps) {
       .filter((relatedTopic): relatedTopic is NonNullable<typeof relatedTopic> =>
         Boolean(relatedTopic)
       ) ?? [];
-  const faqItems = [
+  const faqItems = topic.faq?.length ? topic.faq : [
     {
       question: topic.question,
       answer: topic.shortAnswer,
@@ -297,6 +297,28 @@ export default async function GuidePage({ params }: GuidePageProps) {
                     </Link>
                   ))}
                 </div>
+              </section>
+            ) : null}
+
+            {topic.sources?.length ? (
+              <section className="rounded-2xl border border-stone-200 bg-white p-8">
+                <h2 className="text-2xl font-headline mb-4">
+                  {isFr ? "Sources scientifiques" : "Scientific sources"}
+                </h2>
+                <ul className="space-y-3 text-sm leading-relaxed text-stone-700">
+                  {topic.sources.map((source) => (
+                    <li key={source.href}>
+                      <a
+                        href={source.href}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="font-medium text-[#806116] underline-offset-4 hover:underline"
+                      >
+                        {source.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
               </section>
             ) : null}
 
