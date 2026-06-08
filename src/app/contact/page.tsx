@@ -106,7 +106,7 @@ export default async function ContactPage() {
             </h1>
             <p className="mt-6 text-lg leading-8 text-stone-700">
               {isFr
-                ? "Pour une question, une demande de partenariat ou une ressource editoriale, vous pouvez nous ecrire directement."
+                ? "Pour une question, une demande de partenariat ou une ressource éditoriale, vous pouvez nous écrire directement."
                 : "For a question, partnership request, or editorial resource, you can write to us directly."}
             </p>
             <a
@@ -129,7 +129,7 @@ export default async function ContactPage() {
             </h2>
             <p className="text-sm leading-6 text-stone-700">
               {isFr
-                ? "Pour une question sur votre compte, l'ecriture dans Aurum, l'abonnement ou vos donnees."
+                ? "Pour une question sur votre compte, l'écriture dans Aurum, l'abonnement ou vos données."
                 : "For questions about your account, writing in Aurum, subscriptions, or your data."}
             </p>
           </div>
@@ -140,7 +140,7 @@ export default async function ContactPage() {
             </h2>
             <p className="text-sm leading-6 text-stone-700">
               {isFr
-                ? "Pour proposer une collaboration, citer une ressource Aurum ou parler d'ecriture personnelle."
+                ? "Pour proposer une collaboration, citer une ressource Aurum ou parler d'écriture personnelle."
                 : "For collaborations, editorial citations, or conversations about personal writing."}
             </p>
           </div>
@@ -151,7 +151,7 @@ export default async function ContactPage() {
             </h2>
             <p className="text-sm leading-6 text-stone-700">
               {isFr
-                ? "Pour exercer un droit, poser une question sur la confidentialite ou signaler un probleme."
+                ? "Pour exercer un droit, poser une question sur la confidentialité ou signaler un problème."
                 : "For privacy rights, privacy questions, or issue reports."}
             </p>
           </div>
@@ -166,7 +166,7 @@ export default async function ContactPage() {
             </h2>
             <p className="mt-4 text-sm leading-7 text-stone-700">
               {isFr
-                ? "Ajoutez le sujet dans l'objet du message. Cela aide a repondre plus vite: support, partenariat, presse, confidentialite ou ressource editoriale."
+                ? "Ajoutez le sujet dans l'objet du message. Cela aide à répondre plus vite: support, partenariat, presse, confidentialité ou ressource éditoriale."
                 : "Add the topic to the subject line. It helps us answer faster: support, partnership, press, privacy, or editorial resource."}
             </p>
           </div>
@@ -182,7 +182,7 @@ export default async function ContactPage() {
               href={privacyHref}
               className="flex items-center justify-between border-b border-stone-200 py-4 text-sm font-medium text-stone-900 hover:text-amber-800"
             >
-              {isFr ? "Lire la politique de confidentialite" : "Read the privacy policy"}
+              {isFr ? "Lire la politique de confidentialité" : "Read the privacy policy"}
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
           </div>
