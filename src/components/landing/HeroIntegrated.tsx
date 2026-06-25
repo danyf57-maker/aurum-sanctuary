@@ -18,6 +18,17 @@ export default async function HeroIntegrated() {
     languages: t("languages"),
     trust: t("trust"),
     placeholders: [t("placeholders.0"), t("placeholders.1"), t("placeholders.2")],
+    preview: {
+      label: t("preview.label"),
+      title: t("preview.title"),
+      pointTitle: t("preview.pointTitle"),
+      point: t("preview.point"),
+      patternTitle: t("preview.patternTitle"),
+      pattern: t("preview.pattern"),
+      questionTitle: t("preview.questionTitle"),
+      question: t("preview.question"),
+      cta: t("preview.cta"),
+    },
   };
 
   return (

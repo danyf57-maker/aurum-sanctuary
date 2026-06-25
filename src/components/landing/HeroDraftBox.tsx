@@ -19,6 +19,17 @@ export type HeroDraftBoxContent = {
   languages: string;
   trust: string;
   placeholders: string[];
+  preview: {
+    label: string;
+    title: string;
+    pointTitle: string;
+    point: string;
+    patternTitle: string;
+    pattern: string;
+    questionTitle: string;
+    question: string;
+    cta: string;
+  };
 };
 
 type HeroDraftBoxProps = {
@@ -34,7 +45,9 @@ export default function HeroDraftBox({ locale, content }: HeroDraftBoxProps) {
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(content.placeholders[0]?.length ?? 0);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
   const hasDraft = thought.trim().length > 0;
+  const canPreview = hasDraft && !user;
   const draftRedirect = hasDraft
     ? `/sanctuary/write?initial=${encodeURIComponent(thought)}`
     : "/sanctuary/write";
@@ -49,6 +62,7 @@ export default function HeroDraftBox({ locale, content }: HeroDraftBoxProps) {
     setPlaceholderIndex(0);
     setCharIndex(content.placeholders[0]?.length ?? 0);
     setIsDeleting(false);
+    setShowPreview(false);
   }, [content.placeholders, locale]);
 
   useEffect(() => {
@@ -107,23 +121,78 @@ export default function HeroDraftBox({ locale, content }: HeroDraftBoxProps) {
       </div>
 
       <div className="mt-6 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-        <Button
-          asChild
-          size="lg"
-          className="h-12 rounded-xl bg-[#D4AF37] px-8 text-stone-900 hover:bg-[#D4AF37]/90 md:h-14"
-        >
-          <Link href={signupHref}>
-            {user
-              ? content.ctaAuthenticated
-              : hasDraft ? content.ctaContinueDraft : content.cta}
-          </Link>
-        </Button>
+        {canPreview ? (
+          <Button
+            type="button"
+            size="lg"
+            onClick={() => setShowPreview(true)}
+            className="h-12 rounded-xl bg-[#D4AF37] px-8 text-stone-900 hover:bg-[#D4AF37]/90 md:h-14"
+          >
+            {content.ctaContinueDraft}
+          </Button>
+        ) : (
+          <Button
+            asChild
+            size="lg"
+            className="h-12 rounded-xl bg-[#D4AF37] px-8 text-stone-900 hover:bg-[#D4AF37]/90 md:h-14"
+          >
+            <Link href={signupHref}>
+              {user ? content.ctaAuthenticated : content.cta}
+            </Link>
+          </Button>
+        )}
         <Link href={secondaryHref} className="font-body text-sm text-stone-600 transition-colors hover:text-stone-900">
           {user
             ? content.ctaSecondaryAuthenticated
             : hasDraft ? content.ctaSecondaryGuest : content.ctaSecondary}
         </Link>
       </div>
+
+      {showPreview && (
+        <div className="mt-7 rounded-3xl border border-[#D4AF37]/30 bg-white px-5 py-5 text-left shadow-lg md:px-7 md:py-6">
+          <p className="font-body text-[11px] font-semibold uppercase tracking-[0.18em] text-[#8A6A00]">
+            {content.preview.label}
+          </p>
+          <h2 className="mt-2 font-headline text-2xl text-stone-900">
+            {content.preview.title}
+          </h2>
+          <div className="mt-5 grid gap-4 md:grid-cols-3">
+            <div className="rounded-2xl bg-stone-50 px-4 py-4">
+              <p className="font-body text-xs font-semibold uppercase tracking-[0.12em] text-stone-500">
+                {content.preview.pointTitle}
+              </p>
+              <p className="mt-2 font-body text-sm leading-relaxed text-stone-700">
+                {content.preview.point}
+              </p>
+            </div>
+            <div className="rounded-2xl bg-stone-50 px-4 py-4">
+              <p className="font-body text-xs font-semibold uppercase tracking-[0.12em] text-stone-500">
+                {content.preview.patternTitle}
+              </p>
+              <p className="mt-2 font-body text-sm leading-relaxed text-stone-700">
+                {content.preview.pattern}
+              </p>
+            </div>
+            <div className="rounded-2xl bg-[#D4AF37]/10 px-4 py-4">
+              <p className="font-body text-xs font-semibold uppercase tracking-[0.12em] text-[#8A6A00]">
+                {content.preview.questionTitle}
+              </p>
+              <p className="mt-2 font-body text-sm leading-relaxed text-stone-800">
+                {content.preview.question}
+              </p>
+            </div>
+          </div>
+          <div className="mt-5">
+            <Button
+              asChild
+              className="rounded-xl bg-stone-900 px-5 text-stone-50 hover:bg-stone-800"
+            >
+              <Link href={signupHref}>{content.preview.cta}</Link>
+            </Button>
+          </div>
+        </div>
+      )}
+
       <div className="mt-4 space-y-3 text-center">
         <div className="flex justify-center">
           <span className="inline-flex items-center rounded-full border border-[#8A6A00]/35 bg-[#D4AF37]/10 px-4 py-2 font-body text-[11px] font-semibold uppercase tracking-[0.22em] text-stone-700">

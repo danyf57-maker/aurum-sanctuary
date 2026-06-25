@@ -533,12 +533,12 @@
   },
   "hero": {
     "badge": "JOURNAL PRIVÉ • PENSÉES QUI TOURNENT",
-    "title": "Quand une pensée revient encore et encore.",
-    "subtitle": "Un message. Une dispute. Une phrase qui fait mal. Tu y penses, tu repenses, et ça prend toute la place.",
-    "helper": "Écris ce qui tourne dans ta tête. Aurum t'aide à y voir plus clair.",
-    "helperWithDraft": "Crée ton compte pour ouvrir ce texte dans ta page privée.",
-    "cta": "Essayer gratuitement",
-    "ctaContinueDraft": "Créer mon compte pour continuer",
+    "title": "Écris ce qui tourne. Aurum t'aide à voir ce qui revient.",
+    "subtitle": "Une phrase suffit. Aurum te renvoie un reflet simple : ce qui pèse, ce qui se répète, et une question pour continuer.",
+    "helper": "Écris une phrase vraie. Tu peux voir un premier reflet avant de créer ton compte.",
+    "helperWithDraft": "Ton premier reflet est prêt à apparaître.",
+    "cta": "Commencer à écrire",
+    "ctaContinueDraft": "Voir mon premier reflet",
     "ctaSecondary": "J'ai déjà un compte",
     "ctaSecondaryGuest": "J'ai déjà un compte",
     "ctaAuthenticated": "Continuer à écrire",
@@ -552,6 +552,17 @@
       "0": "Je n'arrête pas de penser à ce message...",
       "1": "Je rejoue la conversation dans ma tête...",
       "2": "Je sens que quelque chose me pèse, mais je ne sais pas quoi..."
+    },
+    "preview": {
+      "label": "Premier reflet",
+      "title": "Ce que ta phrase commence à montrer",
+      "pointTitle": "Ce qui ressort",
+      "point": "Il y a quelque chose qui reste ouvert. Ton texte cherche déjà un endroit où le poser.",
+      "patternTitle": "Ce qui revient",
+      "pattern": "Une scène, un message ou une sensation prend plus de place que prévu.",
+      "questionTitle": "Question douce",
+      "question": "Si cette pensée voulait protéger quelque chose en toi, ce serait quoi ?",
+      "cta": "Garder ce reflet dans mon espace privé"
     },
     "quotes": {
       "0": {

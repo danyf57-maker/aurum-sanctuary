@@ -533,12 +533,12 @@
   },
   "hero": {
     "badge": "PRIVATE WRITING • WHAT KEEPS RETURNING",
-    "title": "When your mind keeps returning to the same place.",
-    "subtitle": "You reread the same message. You replay the same conversation. You feel that something is still there, even when everything is over.",
-    "helper": "Write what keeps coming back. Aurum opens it inside your private page.",
-    "helperWithDraft": "Create your account to open this text inside your private page.",
-    "cta": "Start free",
-    "ctaContinueDraft": "Create my account to continue",
+    "title": "Write what keeps looping. Aurum helps you see what keeps returning.",
+    "subtitle": "One sentence is enough. Aurum gives you a simple reflection: what feels heavy, what repeats, and one question to continue.",
+    "helper": "Write one honest sentence. You can see a first reflection before creating your account.",
+    "helperWithDraft": "Your first reflection is ready to appear.",
+    "cta": "Start writing",
+    "ctaContinueDraft": "See my first reflection",
     "ctaSecondary": "I already have an account",
     "ctaSecondaryGuest": "I already have an account",
     "ctaAuthenticated": "Continue writing",
@@ -552,6 +552,17 @@
       "0": "I read the message again, even though I knew it would hurt...",
       "1": "The conversation is over, but it is still happening inside me...",
       "2": "My chest feels tight and I do not know what I am carrying..."
+    },
+    "preview": {
+      "label": "First reflection",
+      "title": "What your sentence is starting to show",
+      "pointTitle": "What stands out",
+      "point": "Something still feels open. Your text is already looking for a place to set it down.",
+      "patternTitle": "What returns",
+      "pattern": "A scene, a message, or a body feeling is taking more space than expected.",
+      "questionTitle": "Gentle question",
+      "question": "If this thought was trying to protect something in you, what might it be?",
+      "cta": "Keep this reflection in my private space"
     },
     "quotes": {
       "0": {

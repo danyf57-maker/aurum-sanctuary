@@ -13,7 +13,9 @@ describe("landing audit regressions", () => {
     expect(hero).toContain("aria-label");
     expect(hero).toContain("min-h-36");
     expect(hero).toContain("border-b border-[#D4AF37]/20");
-    expect(hero).toContain("hasDraft ? content.ctaContinueDraft");
+    expect(hero).toContain("setShowPreview(true)");
+    expect(hero).toContain("content.preview.question");
+    expect(hero).toContain("content.preview.cta");
     expect(hero).not.toContain("h-44 w-full resize-none");
   });
 
