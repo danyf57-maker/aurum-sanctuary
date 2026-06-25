@@ -831,28 +831,28 @@
       "writeCtaArrow": "Continuer à écrire"
     },
     "studySection": {
-      "title": "Ce que l'écriture peut clarifier",
-      "subtitle": "Les études sur l'écriture expressive montrent un point utile : poser les mots peut aider certaines personnes à organiser ce qu'elles vivent, prendre du recul et repérer les schémas qui reviennent.",
+      "title": "Ce que l'écriture clarifie",
+      "subtitle": "L'écriture expressive donne une méthode simple : poser les faits, nommer ce qui pèse, créer de la distance et repérer les schémas qui reviennent. Les résultats varient selon les personnes, mais le bénéfice recherché est concret : moins de bruit, plus de clarté.",
       "cta": "Déposer ce qui tourne",
       "ctaAuthenticated": "Continuer à écrire"
     },
     "studyCards": [
       {
-        "eyebrow": "Dans les études",
+        "eyebrow": "Bénéfice étudié",
         "title": "Quelques lignes peuvent réduire le bruit mental",
-        "body": "Dans beaucoup d'études, les personnes écrivent 15 à 20 minutes sur une expérience importante pour mieux la structurer.",
+        "body": "Écrire 15 à 20 minutes sur une expérience importante transforme un mélange intérieur en éléments clairs et lisibles.",
         "example": "À tester : écris le fait principal, puis la décision ou l'idée à garder."
       },
       {
-        "eyebrow": "Dans les études",
+        "eyebrow": "Bénéfice étudié",
         "title": "Les mots créent de la distance",
         "body": "Quand tu écris ce qui s'est passé et ce que tu as ressenti, l'expérience devient souvent plus lisible et moins mélangée.",
         "example": "À tester : écris le fait, le ressenti, puis ce qui mérite une action."
       },
       {
-        "eyebrow": "Dans les études",
+        "eyebrow": "Bénéfice étudié",
         "title": "Les répétitions deviennent des signaux",
-        "body": "Écrire plusieurs fois peut aider à voir les thèmes, réactions ou besoins qui reviennent souvent.",
+        "body": "Page après page, les thèmes, réactions et besoins récurrents deviennent visibles et reconnaissables.",
         "example": "À tester : note le thème principal de chaque page cette semaine."
       }
     ],
@@ -882,7 +882,7 @@
     "socialProof": {
       "eyebrow": "Ils l'utilisent pour clarifier plus vite",
       "title": "Des bénéfices directs, humains, concrets.",
-      "subtitle": "Aurum est encore jeune. Les premiers retours pointent vers la même chose : moins de brouillard, plus de recul, des repères plus faciles à relire.",
+      "subtitle": "Les retours convergent vers le même bénéfice : moins de brouillard, plus de recul, et des décisions plus simples à retrouver.",
       "testimonials": [
         {
           "quote": "J'écris quelques lignes et je repars avec une phrase qui décide quoi faire ensuite. Ça coupe la boucle.",
@@ -966,7 +966,7 @@
     },
     "scientificProof": {
       "title": "Pourquoi écrire crée de la clarté",
-      "subtitle": "Les études ne disent pas que l'écriture règle tout. Elles montrent une idée utile : mettre des mots sur ce qu'on vit peut aider certaines personnes à organiser leur expérience, prendre du recul et reconnaître les schémas qui reviennent.",
+      "subtitle": "Les études ne promettent pas de tout régler. Elles montrent une mécanique utile : mettre des mots sur ce qu'on vit rend l'expérience lisible, crée de la distance et rend visibles les schémas qui reviennent.",
       "discoveries": [
         {
           "label": "Idée n°1 :",
@@ -974,13 +974,13 @@
         },
         {
           "label": "Idée n°2 :",
-          "body": "Écrire plusieurs fois peut aider à voir les thèmes qui reviennent, au lieu de repartir de zéro à chaque page"
+          "body": "Écrire plusieurs fois rend les thèmes récurrents plus visibles, au lieu de repartir de zéro à chaque page"
         }
       ]
     },
     "problem": {
       "title": "Les problèmes que tu connais déjà.",
-      "body": "Trop d'idées ouvertes. Des décisions qui restent en arrière-plan. La même scène qui revient. Une page seule peut aider à déposer. Plusieurs pages créent un fil clair."
+      "body": "Trop d'idées ouvertes. Des décisions qui restent en arrière-plan. La même scène qui revient. Une page dépose le bruit. Plusieurs pages créent un fil clair."
     },
     "solution": {
       "title": "Chaque page devient un repère exploitable.",

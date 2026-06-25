@@ -831,28 +831,28 @@
       "writeCtaArrow": "Continue writing"
     },
     "studySection": {
-      "title": "What writing can clarify",
-      "subtitle": "Research on expressive writing points to a useful idea: putting words down can help some people organize what they live through, create distance, and notice recurring patterns.",
+      "title": "What writing clarifies",
+      "subtitle": "Expressive writing gives you a simple method: set down the facts, name what weighs on you, create distance, and spot returning patterns. Results vary, but the target benefit is concrete: less noise, more clarity.",
       "cta": "Set down what circles",
       "ctaAuthenticated": "Continue writing"
     },
     "studyCards": [
       {
-        "eyebrow": "Research finding",
+        "eyebrow": "Studied benefit",
         "title": "A few lines can reduce mental noise",
-        "body": "Many studies use 15 to 20 minutes of writing around one meaningful experience to structure it more clearly.",
+        "body": "Writing for 15 to 20 minutes about a meaningful experience turns an inner mix into clear, readable pieces.",
         "example": "Try this: write the main fact, then the decision or idea worth keeping."
       },
       {
-        "eyebrow": "Research finding",
+        "eyebrow": "Studied benefit",
         "title": "Words create distance",
         "body": "Describing what happened and naming what you felt often makes the experience more readable and less tangled.",
         "example": "Try this: write the fact, the feeling, then what deserves action."
       },
       {
-        "eyebrow": "Research finding",
+        "eyebrow": "Studied benefit",
         "title": "Repetition becomes a signal",
-        "body": "Reviews suggest that repeated writing can help themes, reactions, or needs become easier to recognize over time.",
+        "body": "Page after page, recurring themes, reactions, and needs become visible and recognizable.",
         "example": "Try this: note the main theme of each page this week."
       }
     ],
@@ -882,7 +882,7 @@
     "socialProof": {
       "eyebrow": "Used to clarify faster",
       "title": "Direct, human, concrete benefits.",
-      "subtitle": "Aurum is still young. Early feedback points to the same thing: less fog, more distance, and reference points that are easier to reread.",
+      "subtitle": "The feedback points to the same benefit: less fog, more distance, and decisions that are easier to find again.",
       "testimonials": [
         {
           "quote": "I write a few lines and leave with one sentence that decides what to do next. It cuts the loop.",
@@ -966,7 +966,7 @@
     },
     "scientificProof": {
       "title": "Why writing creates clarity",
-      "subtitle": "Research does not say writing fixes everything. It points to a useful idea: putting experience into words can help some people organize it, create distance, and recognize recurring patterns.",
+      "subtitle": "Research does not promise to fix everything. It shows a useful mechanism: putting experience into words makes it readable, creates distance, and makes recurring patterns visible.",
       "discoveries": [
         {
           "label": "Finding #1:",
@@ -974,13 +974,13 @@
         },
         {
           "label": "Finding #2:",
-          "body": "Repeated writing can help recurring themes become visible, instead of starting from zero on every page"
+          "body": "Repeated writing makes recurring themes more visible, instead of starting from zero on every page"
         }
       ]
     },
     "problem": {
       "title": "The problems you already know.",
-      "body": "Too many open ideas. Decisions sitting in the background. The same scene returning again. One page can help you set things down. Several pages create a clear thread."
+      "body": "Too many open ideas. Decisions sitting in the background. The same scene returning again. One page sets down the noise. Several pages create a clear thread."
     },
     "solution": {
       "title": "Each page becomes a useful reference point.",
