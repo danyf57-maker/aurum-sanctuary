@@ -532,37 +532,37 @@
     ]
   },
   "hero": {
-    "badge": "JOURNAL PRIVÉ • PENSÉES QUI TOURNENT",
-    "title": "Écris ce qui tourne. Aurum t'aide à voir ce qui revient.",
-    "subtitle": "Une phrase suffit. Aurum te renvoie un reflet simple : ce qui pèse, ce qui se répète, et une question pour continuer.",
-    "helper": "Écris une phrase vraie. Tu peux voir un premier reflet avant de créer ton compte.",
-    "helperWithDraft": "Ton premier reflet est prêt à apparaître.",
-    "cta": "Commencer à écrire",
-    "ctaContinueDraft": "Voir mon premier reflet",
+    "badge": "JOURNAL PRIVÉ • CLARTÉ • RECUL",
+    "title": "Transforme le bruit mental en clarté en quelques minutes.",
+    "subtitle": "Dépose ce qui tourne. Repère les boucles. Garde les décisions utiles. Aurum transforme ton bruit mental en repères clairs et privés.",
+    "helper": "Écris la pensée qui prend trop de place. Aurum t'aide à voir ce qui compte.",
+    "helperWithDraft": "Ton premier repère clair est prêt.",
+    "cta": "Transformer mon bruit mental en clarté",
+    "ctaContinueDraft": "Voir mon repère clair",
     "ctaSecondary": "J'ai déjà un compte",
     "ctaSecondaryGuest": "J'ai déjà un compte",
     "ctaAuthenticated": "Continuer à écrire",
     "ctaSecondaryAuthenticated": "Ouvrir mon journal",
     "ctaLoading": "Ouverture...",
-    "languagesBadge": "Tu écris. Aurum t'aide à comprendre.",
+    "languagesBadge": "Tu écris. Aurum structure ce qui revient.",
     "interfaceLanguage": "Au premier chargement, Aurum suit la langue de ton navigateur. Ensuite, il garde la langue que tu choisis.",
     "languages": "Écris en français, anglais, espagnol, italien, allemand ou portugais.",
-    "trust": "5 sessions offertes • 7 jours gratuits avec Premium • Résiliable à tout moment.",
+    "trust": "5 sessions offertes • Espace privé chiffré • Sans promesse médicale.",
     "placeholders": {
-      "0": "Je n'arrête pas de penser à ce message...",
-      "1": "Je rejoue la conversation dans ma tête...",
-      "2": "Je sens que quelque chose me pèse, mais je ne sais pas quoi..."
+      "0": "Ce qui tourne dans ma tête, c'est...",
+      "1": "La décision que je dois clarifier, c'est...",
+      "2": "Ce qui revient cette semaine, c'est..."
     },
     "preview": {
-      "label": "Premier reflet",
-      "title": "Ce que ta phrase commence à montrer",
+      "label": "Premier repère",
+      "title": "Ce que ton bruit mental peut devenir",
       "pointTitle": "Ce qui ressort",
-      "point": "Il y a quelque chose qui reste ouvert. Ton texte cherche déjà un endroit où le poser.",
-      "patternTitle": "Ce qui revient",
-      "pattern": "Une scène, un message ou une sensation prend plus de place que prévu.",
-      "questionTitle": "Question douce",
-      "question": "Si cette pensée voulait protéger quelque chose en toi, ce serait quoi ?",
-      "cta": "Garder ce reflet dans mon espace privé"
+      "point": "Une idée importante se détache. Aurum la reformule en repère clair.",
+      "patternTitle": "La boucle visible",
+      "pattern": "Un thème revient. Tu peux le suivre au lieu de le garder en arrière-plan.",
+      "questionTitle": "Question utile",
+      "question": "Quelle décision devient plus simple quand tu relis cette page ?",
+      "cta": "Garder ce repère dans mon espace privé"
     },
     "quotes": {
       "0": {
@@ -822,7 +822,7 @@
     },
     "floatingCta": {
       "cta": "Essayer gratuitement",
-      "label": "5 sessions offertes • Privé"
+      "label": "Clarifier ce qui tourne • Privé"
     },
     "returningUser": {
       "checkingCta": "Ouverture...",
@@ -831,165 +831,165 @@
       "writeCtaArrow": "Continuer à écrire"
     },
     "studySection": {
-      "title": "Ce que disent les études, simplement",
-      "subtitle": "Écrire ce qui est difficile peut aider certaines personnes à mettre de l'ordre dans leurs pensées. Pas besoin d'écrire parfaitement. Le plus important est de poser les mots.",
-      "cta": "Commencer à écrire en privé",
+      "title": "Ce que l'écriture peut clarifier",
+      "subtitle": "Les études sur l'écriture expressive montrent un point utile : poser les mots peut aider certaines personnes à organiser ce qu'elles vivent, prendre du recul et repérer les schémas qui reviennent.",
+      "cta": "Déposer ce qui tourne",
       "ctaAuthenticated": "Continuer à écrire"
     },
     "studyCards": [
       {
         "eyebrow": "Dans les études",
-        "title": "Écrire un peu peut déjà aider",
-        "body": "Dans beaucoup d'études, les personnes écrivent 15 à 20 minutes sur quelque chose d'important ou difficile.",
-        "example": "À tester : écris ce qui s'est passé, sans chercher une belle phrase."
+        "title": "Quelques lignes peuvent réduire le bruit mental",
+        "body": "Dans beaucoup d'études, les personnes écrivent 15 à 20 minutes sur une expérience importante pour mieux la structurer.",
+        "example": "À tester : écris le fait principal, puis la décision ou l'idée à garder."
       },
       {
         "eyebrow": "Dans les études",
-        "title": "Les mots rendent le problème plus clair",
-        "body": "Quand tu écris ce qui s'est passé et ce que tu as ressenti, le mélange dans ta tête peut devenir plus facile à regarder.",
-        "example": "À tester : écris le fait, puis ce que ça t'a fait."
+        "title": "Les mots créent de la distance",
+        "body": "Quand tu écris ce qui s'est passé et ce que tu as ressenti, l'expérience devient souvent plus lisible et moins mélangée.",
+        "example": "À tester : écris le fait, le ressenti, puis ce qui mérite une action."
       },
       {
         "eyebrow": "Dans les études",
-        "title": "Quand ça revient, il y a peut-être un schéma",
-        "body": "Écrire plusieurs fois peut aider à voir les pensées, les peurs ou les situations qui reviennent souvent.",
-        "example": "À tester : note la pensée qui revient le plus cette semaine."
+        "title": "Les répétitions deviennent des signaux",
+        "body": "Écrire plusieurs fois peut aider à voir les thèmes, réactions ou besoins qui reviennent souvent.",
+        "example": "À tester : note le thème principal de chaque page cette semaine."
       }
     ],
     "exampleSection": {
       "eyebrow": "Comment Aurum aide",
-      "title": "Tu écris. Aurum te montre ce qui ressort.",
-      "subtitle": "Aurum ne te juge pas et ne te donne pas de diagnostic. Il t'aide à voir la pensée qui revient, le problème qui pèse, ou le besoin caché dans tes mots.",
+      "title": "Ton bruit mental devient une carte courte.",
+      "subtitle": "Aurum transforme chaque page en bénéfices concrets : clarté rapide, recul, patterns visibles, charge mentale réduite et décisions plus simples.",
       "entryLabel": "Ce que tu écris",
-      "entry": "Je relis encore le message. Je sais que ça me fait mal, mais j'y retourne quand même, comme si la prochaine lecture allait enfin donner un sens à tout ça.",
-      "reflectionLabel": "Ce qu'Aurum peut te montrer",
-      "reflection": "Tu reviens à ce message parce qu'une partie de toi cherche encore une réponse. Ce qui semble faire mal, ce n'est pas seulement le message. C'est le moment où tu t'es senti mis de côté.",
+      "entry": "Cette semaine, j'ai mieux vu ce qui me donne de l'énergie. Les matins où j'écris avant de commencer, mes décisions sont plus simples.",
+      "reflectionLabel": "Ce qu'Aurum organise",
+      "reflection": "Un repère apparaît : écrire le matin réduit le flou avant les premières décisions. Tu peux suivre ce lien entre rituel, énergie et décisions dans tes prochaines pages.",
       "highlights": [
         {
-          "title": "Le problème devient plus clair",
-          "body": "Aurum t'aide à passer de « je vais mal » à « voilà ce qui me pèse »."
+          "title": "Clarté rapide",
+          "body": "Tu passes d'un texte brut à quelques repères utiles en quelques minutes."
         },
         {
-          "title": "Tu n'as pas besoin de bien écrire",
-          "body": "Une phrase suffit pour commencer. Tu peux écrire comme ça vient."
+          "title": "Recul immédiat",
+          "body": "Ce qui tournait en boucle devient une page que tu peux regarder à distance."
         },
         {
-          "title": "Les schémas deviennent visibles",
-          "body": "Plus tu écris, plus tu peux voir ce qui revient souvent dans ta vie."
+          "title": "Patterns visibles",
+          "body": "Plus tu écris, plus les sujets, besoins et choix récurrents deviennent évidents."
         }
       ]
     },
     "socialProof": {
-      "eyebrow": "Ils l'utilisent pour écrire sans se filtrer",
-      "title": "Des retours simples, humains, concrets.",
-      "subtitle": "Aurum est encore jeune. Les premiers retours montrent surtout une chose : le reflet aide à nommer ce qui restait flou.",
+      "eyebrow": "Ils l'utilisent pour clarifier plus vite",
+      "title": "Des bénéfices directs, humains, concrets.",
+      "subtitle": "Aurum est encore jeune. Les premiers retours pointent vers la même chose : moins de brouillard, plus de recul, des repères plus faciles à relire.",
       "testimonials": [
         {
-          "quote": "J'ai commencé quand je tournais en boucle sur une conversation. Le reflet ne m'a pas donné de conseil, il m'a aidée à voir ce qui me faisait vraiment mal.",
+          "quote": "J'écris quelques lignes et je repars avec une phrase qui décide quoi faire ensuite. Ça coupe la boucle.",
           "name": "Claire",
-          "context": "rumination du soir"
+          "context": "clarté d'action"
         },
         {
-          "quote": "Ce n'est pas une app de productivité. C'est un endroit calme où je peux déposer ce que je n'arrive pas encore à dire.",
+          "quote": "J'aime avoir un endroit privé où mes pages ne disparaissent pas. Je vois plus vite ce qui revient dans mes semaines.",
           "name": "Maëlys",
-          "context": "écriture privée"
+          "context": "patterns visibles"
         },
         {
-          "quote": "J'ai été surpris par la justesse du retour. Il a repéré le schéma sans me coller une étiquette.",
+          "quote": "Aurum m'aide à prendre du recul sans me coller une étiquette. Je garde le signal, pas tout le bruit.",
           "name": "Thomas",
-          "context": "motifs récurrents"
+          "context": "recul rapide"
         }
       ]
     },
     "useCases": {
-      "title": "Les problèmes que tu connais déjà",
-      "subtitle": "Aurum est fait pour les moments simples, mais lourds : quand tu penses trop, quand tu gardes tout pour toi, quand tu ne sais pas encore ce que tu ressens.",
-      "note": "L'écriture privée peut aider à poser ce qui tourne. Aurum ajoute un reflet guidé pour rendre le problème plus visible.",
-      "cta": "Commencer à écrire en privé",
+      "title": "Les bénéfices concrets d'Aurum",
+      "subtitle": "Un espace privé pour réduire le bruit mental, repérer les boucles et relire les décisions utiles.",
+      "note": "Aurum n'est pas une thérapie et ne pose aucun diagnostic. C'est un journal privé qui transforme l'écriture en repères exploitables.",
+      "cta": "Transformer mon bruit mental en clarté",
       "sectionCta": "Essayer gratuitement",
       "cards": [
         {
-          "badge": "Conversation",
-          "title": "Tu rejoues une conversation.",
-          "body": "Tu repenses à ce que l'autre a dit. Tu imagines ce que tu aurais dû répondre. Et ça recommence.",
+          "badge": "Clarté",
+          "title": "Tu sors du flou plus vite.",
+          "body": "Après chaque page, Aurum fait ressortir l'idée importante à garder.",
           "cta": "Commencer gratuitement →"
         },
         {
-          "badge": "Message",
-          "title": "Tu relis un message.",
-          "body": "Tu sais qu'il n'a pas changé. Mais tu le rouvres quand même, comme si une réponse allait apparaître.",
+          "badge": "Charge mentale",
+          "title": "Tu décharges ce qui tourne.",
+          "body": "Ce qui occupait ton attention devient une page structurée, pas une boucle ouverte.",
           "cta": "Commencer gratuitement →"
         },
         {
-          "badge": "Nuit",
-          "title": "Tu veux dormir, mais ta tête continue.",
-          "body": "Le corps est fatigué. Mais les pensées parlent encore, surtout quand tout devient calme.",
+          "badge": "Recul",
+          "title": "Tu regardes la situation à distance.",
+          "body": "Ce qui était mélangé devient plus lisible quand tu le poses puis le relis.",
           "cta": "Commencer gratuitement →"
         },
         {
-          "badge": "Flou",
-          "title": "Tu sens quelque chose, mais tu ne sais pas quoi.",
-          "body": "Tu dis « ça va », mais à l'intérieur ce n'est pas clair. Il faut d'abord trouver les mots.",
+          "badge": "Patterns",
+          "title": "Tu repères les boucles récurrentes.",
+          "body": "Aurum t'aide à voir les sujets, besoins et réactions qui reviennent dans ton journal.",
           "cta": "Commencer gratuitement →"
-        },
-        {
-          "badge": "Répétition",
-          "title": "Tu retombes dans le même schéma.",
-          "body": "Même type de relation. Même peur. Même réaction. Aurum t'aide à le voir plus tôt.",
-          "cta": "Ouvrir mon journal →"
-        },
-        {
-          "badge": "Corps",
-          "title": "Ton corps sait avant ta tête.",
-          "body": "Poitrine serrée, ventre lourd, gorge bloquée. Écris d'abord ça, simplement.",
-          "cta": "Créer mon espace →"
-        },
-        {
-          "badge": "Trop-plein",
-          "title": "Tu gardes trop de choses dedans.",
-          "body": "Quand tout reste dans la tête, tout devient plus grand. La page donne un endroit où le poser.",
-          "cta": "Revenir au calme →"
-        },
-        {
-          "badge": "Solitude",
-          "title": "Tu n'as pas envie d'en parler tout de suite.",
-          "body": "Avant de le dire à quelqu'un, tu peux l'écrire en privé et comprendre ce que tu veux vraiment dire.",
-          "cta": "Retrouver de l'énergie →"
         },
         {
           "badge": "Décision",
-          "title": "Tu ne sais pas quoi faire.",
-          "body": "Aurum ne choisit pas à ta place. Il t'aide à voir ce que tu ressens et ce qui compte pour toi.",
+          "title": "Tu clarifies la prochaine action.",
+          "body": "Tu distingues ce qui dépend de toi, ce qui compte, et ce qui peut attendre.",
+          "cta": "Ouvrir mon journal →"
+        },
+        {
+          "badge": "Continuité",
+          "title": "Tu ne repars pas de zéro.",
+          "body": "Chaque page ajoute un repère à ton historique personnel.",
+          "cta": "Créer mon espace →"
+        },
+        {
+          "badge": "Confidentialité",
+          "title": "Tu écris sans public.",
+          "body": "Ton espace reste privé et chiffré. Tu peux écrire sans performance.",
+          "cta": "Revenir au calme →"
+        },
+        {
+          "badge": "Langues",
+          "title": "Tu écris dans la langue qui vient.",
+          "body": "Aurum accompagne tes pages en français, anglais, espagnol, italien, allemand ou portugais.",
+          "cta": "Retrouver de l'énergie →"
+        },
+        {
+          "badge": "Rituel",
+          "title": "Tu gardes un point d'appui simple.",
+          "body": "Quelques lignes suffisent pour déposer, clarifier et reprendre ton fil.",
           "cta": "Clarifier ma décision →"
         }
       ]
     },
     "scientificProof": {
-      "title": "Pourquoi écrire peut aider",
-      "subtitle": "Les études ne disent pas que l'écriture règle tout. Elles disent quelque chose de plus simple : mettre des mots sur ce qu'on vit peut aider certaines personnes à mieux organiser leurs pensées et leurs émotions.",
+      "title": "Pourquoi écrire crée de la clarté",
+      "subtitle": "Les études ne disent pas que l'écriture règle tout. Elles montrent une idée utile : mettre des mots sur ce qu'on vit peut aider certaines personnes à organiser leur expérience, prendre du recul et reconnaître les schémas qui reviennent.",
       "discoveries": [
         {
           "label": "Idée n°1 :",
-          "body": "Quand une pensée reste seulement dans ta tête, elle tourne. Quand tu l'écris, tu peux la regarder de l'extérieur"
+          "body": "Quand une expérience est écrite, elle devient plus facile à relire, nommer et organiser"
         },
         {
           "label": "Idée n°2 :",
-          "body": "Écrire plusieurs fois peut aider à voir les problèmes qui reviennent souvent, au lieu de les vivre comme s'ils étaient nouveaux à chaque fois"
+          "body": "Écrire plusieurs fois peut aider à voir les thèmes qui reviennent, au lieu de repartir de zéro à chaque page"
         }
       ]
     },
     "problem": {
-      "title": "Le vrai problème : tout reste dans ta tête.",
-      "body": "Tu penses au même message. Tu rejoues la même scène. Tu gardes les mêmes questions pour toi. Plus tu tournes autour, plus ça prend de place."
+      "title": "Les problèmes que tu connais déjà.",
+      "body": "Trop d'idées ouvertes. Des décisions qui restent en arrière-plan. La même scène qui revient. Une page seule peut aider à déposer. Plusieurs pages créent un fil clair."
     },
     "solution": {
-      "title": "La solution : le sortir de ta tête, en privé.",
-      "body": "Aurum te donne une page privée pour écrire ce qui pèse. Ensuite, il te renvoie les points importants : ce qui revient, ce qui fait mal, ce que tu sembles chercher. Tu vois le problème plus clairement, sans être jugé."
+      "title": "Chaque page devient un repère exploitable.",
+      "body": "Aurum garde les points importants : idées fortes, thèmes récurrents, questions utiles et décisions à revoir. Ton espace privé gagne en valeur à mesure que tu écris."
     },
     "trust": {
       "eyebrow": "Confiance",
       "title": "Ton journal n'est pas du contenu.",
-      "subtitle": "Ce que tu écris peut être très personnel. Aurum est conçu pour rester privé, sans publicité et sans vente de tes pensées.",
+      "subtitle": "Ce que tu écris peut être très personnel. Aurum est conçu pour garder ton espace privé, sans publicité et sans vente de tes pensées.",
       "cards": [
         {
           "title": "Chiffré par défaut",
@@ -1005,24 +1005,24 @@
         }
       ],
       "manifestoTitle": "Notre manifeste de confiance",
-      "manifestoBody": "« Nous ne vendons pas de publicité. Nous ne vendons pas tes données. Nous protégeons un espace privé pour ce que tu n'es pas encore prêt à dire à voix haute. Ton journal n'est pas un produit. C'est ton terrain intérieur. »",
+      "manifestoBody": "« Nous ne vendons pas de publicité. Nous ne vendons pas tes données. Nous protégeons un espace privé pour écrire, comprendre et garder une trace claire de ce qui compte pour toi. Ton journal n'est pas un produit. C'est ton terrain intérieur. »",
       "seal": "Sceau de confiance"
     },
     "finalCta": {
-      "button": "Commencer à écrire en privé",
+      "button": "Transformer mon bruit mental en clarté",
       "buttonAuthenticated": "Continuer à écrire",
       "note": "5 sessions offertes • 7 jours gratuits avec Premium • Résiliable à tout moment",
-      "subtitle": "Écris ce qui tourne. Lis ce qu'Aurum te montre. Reviens plus tard et repère ce qui se répète.",
+      "subtitle": "Dépose ce qui tourne. Garde les repères importants. Reviens plus tard avec plus de recul.",
       "cards": [
         {
           "title": "writing",
           "eyebrow": "Écriture",
-          "body": "Une page privée pour poser ce qui tourne dans ta tête."
+          "body": "Une page privée pour déposer ce qui occupe ton attention aujourd'hui."
         },
         {
           "title": "analysis",
           "eyebrow": "Réflexion",
-          "body": "Un retour simple sur ce qui ressort dans tes mots."
+          "body": "Un retour simple pour transformer tes mots en clarté, recul et patterns visibles."
         },
         {
           "title": "privacy",
@@ -1032,7 +1032,7 @@
         {
           "title": "continuity",
           "eyebrow": "Continuité",
-          "body": "Avec le temps, tu vois mieux ce qui revient souvent."
+          "body": "Avec le temps, tu vois mieux ce qui change, ce qui revient et ce qui mérite une décision."
         }
       ]
     },
@@ -1043,12 +1043,12 @@
         "answer": "Non. Aurum est un journal privé guidé. Il peut t'aider à écrire, clarifier et repérer des schémas récurrents, mais il ne remplace pas un professionnel de santé, un diagnostic, ni une prise en charge clinique."
       },
       {
-        "question": "Que dois-je écrire quand je me sens submergé ?",
-        "answer": "Commence par la vérité la plus simple : ce qui s'est passé, l'endroit où ça serre dans ton corps, et la pensée qui revient. Tu n'as pas besoin d'une page parfaite. Une phrase honnête suffit pour commencer."
+        "question": "Que dois-je écrire pour commencer ?",
+        "answer": "Commence par une phrase simple : ce qui s'est passé, ce que tu veux retenir, ou ce que tu veux mieux comprendre. Tu n'as pas besoin d'une page parfaite."
       },
       {
         "question": "Pourquoi écrire aide parfois ?",
-        "answer": "Parce qu'une pensée dans la tête peut tourner en rond. Sur une page, elle devient plus visible. Tu peux mieux voir ce qui s'est passé, ce que tu ressens, et ce qui revient souvent."
+        "answer": "Parce qu'une expérience écrite devient plus facile à relire. Tu peux mieux voir ce qui s'est passé, ce que tu ressens, ce qui compte et ce qui revient souvent."
       },
       {
         "question": "Mon journal est-il vraiment privé ?",
@@ -1056,7 +1056,7 @@
       },
       {
         "question": "Que se passe-t-il après avoir écrit ?",
-        "answer": "Aurum te renvoie ce qui ressort dans tes mots : la pensée qui revient, le problème qui pèse, ou le besoin qui semble important. Ce n'est pas un diagnostic. C'est une aide pour y voir plus clair."
+        "answer": "Aurum te renvoie les repères importants de ta page : idée centrale, thème récurrent, question utile ou lien avec ton historique. Ce n'est pas un diagnostic. C'est une aide pour y voir plus clair."
       },
       {
         "question": "Et si ce que j'écris est trop lourd ?",
@@ -1171,11 +1171,7 @@
     "noise": {
       "title": "Le Bruit",
       "body": "Notifications, fragments de tâches, doutes persistants. Votre esprit sature, étouffé par le chaos numérique.",
-      "lines": [
-        "Toujours plus vite.",
-        "Trop d'informations.",
-        "Aucun répit."
-      ]
+      "lines": ["Toujours plus vite.", "Trop d'informations.", "Aucun répit."]
     },
     "sanctuary": {
       "title": "Le Sanctuaire",
@@ -1215,11 +1211,11 @@
   },
   "paywall": {
     "close": "Fermer",
-    "title": "Laisse tes reflets continuer à se déployer",
-    "intro": "Continue avec l'expérience complète de réflexion Aurum :",
-    "benefit1": "Recevoir une lecture psychologique profonde après chaque page",
-    "benefit2": "Voir les thèmes récurrents et les motifs émotionnels devenir plus reconnaissables dans le temps",
-    "benefit3": "Continuer à faire grandir ton historique privé et ta carte de clarté",
+    "title": "Continue à construire ton journal clair",
+    "intro": "Continue avec l'expérience complète Aurum :",
+    "benefit1": "Transformer chaque page en repères simples à relire",
+    "benefit2": "Voir les thèmes récurrents devenir plus reconnaissables dans le temps",
+    "benefit3": "Faire grandir ton historique privé et ta carte de clarté",
     "reassurance": "Privé par conception. Pas de publicité, pas de vente de données, pas de pression.",
     "subscribe": "Activer mes 7 jours offerts",
     "loading": "Chargement...",
@@ -1230,9 +1226,9 @@
     "unknownError": "Une erreur est survenue.",
     "trialBadge": "ESSAI OFFERT",
     "trialTitle": "Que débloquent les 7 jours ?",
-    "trialBody": "L'essai commence quand tu confirmes Stripe Checkout et ouvre l'expérience complète de réflexion Aurum pendant exactement 7 jours.",
+    "trialBody": "L'essai commence quand tu confirmes Stripe Checkout et ouvre l'expérience complète Aurum pendant exactement 7 jours.",
     "trialBullet1": "Les reflets guidés et Magazine sont accessibles immédiatement",
-    "trialBullet2": "Ton historique privé et tes motifs récurrents continuent de se construire pendant l'essai",
+    "trialBullet2": "Ton historique privé et tes repères récurrents continuent de se construire pendant l'essai",
     "trialBullet3": "Tu peux annuler avant la fin si tu ne veux pas être facturé",
     "trialNote": "Exemple : activation le 10 mars 2026 à 14:32 = fin le 17 mars 2026 à 14:32."
   }
