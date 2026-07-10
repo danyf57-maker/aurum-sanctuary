@@ -94,11 +94,19 @@ function SignupPage() {
     );
   }, []);
   const rawRedirectUrl = searchParams.get("redirect");
-  const redirectAfterGoogle =
+  const unsafeRedirectUrl =
     rawRedirectUrl && rawRedirectUrl.startsWith("/") && !rawRedirectUrl.startsWith("//")
       ? rawRedirectUrl
       : "/sanctuary/write";
-  const loginHref = to("/login");
+  const authRoutePrefixes = ["/login", "/signup", "/forgot-password", "/fr/login", "/fr/signup", "/fr/forgot-password"];
+  const redirectAfterGoogle = authRoutePrefixes.some((route) => unsafeRedirectUrl.startsWith(route))
+    || unsafeRedirectUrl === "/dashboard"
+    || unsafeRedirectUrl.startsWith("/dashboard?")
+    ? "/sanctuary/write"
+    : unsafeRedirectUrl;
+  const loginHref = rawRedirectUrl
+    ? to(`/login?redirect=${encodeURIComponent(redirectAfterGoogle)}`)
+    : to("/login");
   const signupFallback = locale === "fr"
     ? {
         title: "Creer un compte",
@@ -463,7 +471,7 @@ function SignupPage() {
         <CardFooter className="flex justify-center">
           <p className="text-sm text-muted-foreground">
             {tSign("alreadyAccount")}{" "}
-            <Link href={to("/login")} className="text-primary hover:underline">
+            <Link href={loginHref} className="text-primary hover:underline">
               {tSign("signIn")}
             </Link>
           </p>

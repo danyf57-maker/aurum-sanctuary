@@ -54,8 +54,8 @@ export default function VerifyEmailClient() {
           </CardTitle>
           <CardDescription>
             {txt(
-              "Ouvrez votre espace d'écriture privé pour écrire librement et recevoir une lecture psychologique profonde de ce qui revient dans le temps.",
-              'Open your private writing space to write freely and receive a deep psychological reading of what keeps returning over time.'
+              "Ouvrez votre espace privé pour écrire librement, recevoir un reflet guidé et mieux voir ce qui revient dans le temps.",
+              'Open your private space to write freely, receive a guided reflection, and see more clearly what keeps returning over time.'
             )}
           </CardDescription>
         </CardHeader>

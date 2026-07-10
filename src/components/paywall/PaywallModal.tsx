@@ -42,6 +42,7 @@ export function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
                 },
+                body: JSON.stringify({ plan: 'monthly', source: 'paywall_modal' }),
             });
 
             if (!response.ok) {

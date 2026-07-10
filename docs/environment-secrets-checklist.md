@@ -41,8 +41,8 @@ This checklist prevents cross-environment leakage between `dev`, `staging`, and 
 ## Required in `aurum-diary-prod`
 
 - `STRIPE_SECRET_KEY` (must be `sk_live_...`)
-- `NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY` (live USD monthly price)
-- `NEXT_PUBLIC_STRIPE_PRICE_ID_YEARLY` (live USD yearly price)
+- `NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY` (live EUR monthly price)
+- `NEXT_PUBLIC_STRIPE_PRICE_ID_YEARLY` (live EUR yearly price)
 - `ANALYTICS_EXPORT_SECRET` (shared with GitHub Actions for scheduled analytics CSV emails)
 - other production secrets already used by App Hosting
 

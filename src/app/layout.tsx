@@ -148,17 +148,17 @@ export async function generateMetadata(): Promise<Metadata> {
   const alternates = buildAlternates("/", locale);
 
   const title = isFr
-    ? "Aurum | Journal privé guidé pour les pensées qui reviennent"
-    : "Aurum Diary | Private guided journal for thoughts that keep coming back";
+    ? "Aurum | Journal privé pour écrire, comprendre et garder une trace claire"
+    : "Aurum Diary | Private journal for writing, clarity, and a clear personal trace";
   const description = isFr
-    ? "Écris ce qui tourne en boucle. Aurum est un journal privé guidé pour clarifier ce que tu ressens et mieux comprendre les schémas qui reviennent."
-    : "Write what keeps looping. Aurum is a private guided journal for emotional clarity, recurring patterns, and the thoughts you cannot seem to leave alone.";
+    ? "Écris quelques lignes. Aurum transforme tes pages en repères clairs: ce qui compte, ce qui revient, et ce qui évolue avec le temps."
+    : "Write a few lines. Aurum turns your pages into clear reference points: what matters, what returns, and what changes over time.";
   const ogTitle = isFr
-    ? "Aurum | Journal privé guidé pour les pensées qui reviennent"
-    : "Aurum Diary | Private guided journal for thoughts that keep coming back";
+    ? "Aurum | Écris. Comprends. Garde une trace claire."
+    : "Aurum Diary | Write. Understand. Keep a clear trace.";
   const ogDescription = isFr
-    ? "Écris ce qui revient avant que ça prenne toute la place."
-    : "Write what keeps coming back before it takes all the space.";
+    ? "Un espace privé pour transformer tes pages en repères utiles."
+    : "A private space to turn your pages into useful reference points.";
 
   return {
     title,
@@ -224,8 +224,8 @@ export default async function RootLayout({
     '@type': 'SoftwareApplication',
     name: 'Aurum',
     description: isFr
-      ? "Un journal privé guidé pour écrire ce qui revient et mieux voir les schémas qui prennent de la place."
-      : "A private guided journal for writing what keeps coming back and seeing recurring patterns more clearly.",
+      ? "Un journal privé guidé pour écrire, comprendre et garder une trace claire de ce qui compte."
+      : "A private guided journal for writing, understanding, and keeping a clear trace of what matters.",
     applicationCategory: ['LifestyleApplication', 'ProductivityApplication'],
     operatingSystem: 'Web, iOS, Android',
     offers: {
@@ -237,15 +237,15 @@ export default async function RootLayout({
       ? [
           "Espace de réflexion privée chiffré en AES-256",
           "Écriture privée pour clarifier ce que l'on vit",
-          "Motifs récurrents visibles dans le temps",
-          "Suivi des émotions et de leur évolution",
+          "Repères récurrents visibles dans le temps",
+          "Historique personnel et carte de clarté",
           "Alternative privée à Rosebud",
         ]
       : [
           "AES-256 encrypted private reflection space",
           "Private writing for clearer reflection",
-          "Recurring patterns visible over time",
-          "Mood and emotion tracking",
+          "Recurring reference points visible over time",
+          "Personal history and clarity map",
           "Private alternative to Rosebud",
         ]
   };

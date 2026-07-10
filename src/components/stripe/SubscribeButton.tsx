@@ -46,6 +46,7 @@ export function SubscribeButton({
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
                 },
+                body: JSON.stringify({ plan: 'monthly', source: 'subscribe_button' }),
             });
 
             if (!response.ok) {

@@ -9,11 +9,10 @@ import { cn } from '@/lib/utils';
 import { useAuth } from '@/providers/auth-provider';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
-import { trackEvent } from '@/lib/analytics/client';
 import { useLocale } from '@/hooks/use-locale';
-import { localizeHref } from '@/lib/i18n/path';
+import { useLocalizedHref } from '@/hooks/use-localized-href';
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { PricingOfferBlock } from '@/components/marketing/pricing-offer-block';
 import { useToast } from '@/hooks/use-toast';
 import { TrialExplainerCard } from '@/components/marketing/trial-explainer-card';
@@ -25,6 +24,7 @@ export const dynamic = 'force-dynamic';
 const PRICE_ID_MONTHLY = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY || process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO;
 const PRICE_ID_YEARLY = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_YEARLY || process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PREMIUM;
 const formatPrice = (amount: number) => `${amount} ${PUBLIC_PRICING.currencySymbol}`;
+type BillingPlan = 'monthly' | 'yearly';
 
 const buildPlans = (t: ReturnType<typeof useTranslations>) => [
     {
@@ -41,6 +41,7 @@ const buildPlans = (t: ReturnType<typeof useTranslations>) => [
         ],
         cta: t("monthly.cta"),
         isRecommended: false,
+        planKey: 'monthly' as const,
         priceId: PRICE_ID_MONTHLY,
     },
     {
@@ -57,6 +58,7 @@ const buildPlans = (t: ReturnType<typeof useTranslations>) => [
         ],
         cta: t("yearly.cta"),
         isRecommended: true,
+        planKey: 'yearly' as const,
         priceId: PRICE_ID_YEARLY,
     }
 ];
@@ -100,17 +102,21 @@ function SubscribeButton({
 export default function PricingPage() {
     const auth = useAuth();
     const user = auth ? auth.user : null;
+    const authLoading = auth ? auth.loading : true;
     const router = useRouter();
     const { toast } = useToast();
     const [loadingPriceId, setLoadingPriceId] = useState<string | null>(null);
+    const automaticCheckoutStarted = useRef(false);
     const locale = useLocale();
     const t = useTranslations("pricing");
-    const to = (href: string) => localizeHref(href, locale);
-    const plans = buildPlans(t);
+    const to = useLocalizedHref();
+    const plans = useMemo(() => buildPlans(t), [t]);
     const reassurance = t.raw("reassurance.items") as { title: string; body: string }[];
     const faqs = t.raw("faqs") as { question: string; answer: string }[];
 
-    const startCheckout = async (priceId: string | null | undefined) => {
+    const startCheckout = useCallback(async (planKey: BillingPlan) => {
+        const selectedPlan = plans.find((plan) => plan.planKey === planKey);
+        const priceId = selectedPlan?.priceId;
         if (!priceId || priceId.includes('xxx')) {
             toast({
                 title: t("comingSoon"),
@@ -120,18 +126,13 @@ export default function PricingPage() {
             return;
         }
 
-        setLoadingPriceId(priceId);
-        void trackEvent({
-            name: "checkout_start",
-            params: { priceId, source: "pricing_page" },
-        });
-
         if (!user) {
-            router.push(to('/login'));
-            setLoadingPriceId(null);
+            const returnPath = to(`/pricing?checkout=${planKey}`);
+            router.push(to(`/signup?redirect=${encodeURIComponent(returnPath)}`));
             return;
         }
 
+        setLoadingPriceId(priceId);
         try {
             const token = await user.getIdToken();
             const response = await fetch('/api/stripe/create-checkout-session', {
@@ -140,7 +141,7 @@ export default function PricingPage() {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
                 },
-                body: JSON.stringify({ priceId }),
+                body: JSON.stringify({ plan: planKey, source: 'pricing_page' }),
             });
 
             if (!response.ok) {
@@ -164,7 +165,24 @@ export default function PricingPage() {
         } finally {
             setLoadingPriceId(null);
         }
-    };
+    }, [plans, router, t, to, toast, user]);
+
+    useEffect(() => {
+        if (authLoading || !user || automaticCheckoutStarted.current) return;
+
+        const currentUrl = new URL(window.location.href);
+        const pendingPlan = currentUrl.searchParams.get('checkout');
+        if (pendingPlan !== 'monthly' && pendingPlan !== 'yearly') return;
+
+        automaticCheckoutStarted.current = true;
+        currentUrl.searchParams.delete('checkout');
+        window.history.replaceState(
+            {},
+            '',
+            `${currentUrl.pathname}${currentUrl.search}${currentUrl.hash}`
+        );
+        void startCheckout(pendingPlan);
+    }, [authLoading, startCheckout, user]);
 
     return (
         <div className="bg-stone-50/50 min-h-screen">
@@ -226,7 +244,7 @@ export default function PricingPage() {
                                             cta={plan.cta}
                                             isRecommended={plan.isRecommended}
                                             loading={loadingPriceId === plan.priceId}
-                                            onClick={() => void startCheckout(plan.priceId)}
+                                            onClick={() => void startCheckout(plan.planKey)}
                                         />
                                         {!plan.priceId && (
                                             <p className="mt-2 text-center text-xs text-stone-500">

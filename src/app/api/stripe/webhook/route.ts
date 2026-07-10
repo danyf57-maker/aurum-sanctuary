@@ -314,16 +314,6 @@ export async function POST(req: NextRequest) {
             case 'checkout.session.completed': {
                 const session = event.data.object as Stripe.Checkout.Session;
                 logger.infoSafe('Checkout session completed', { checkoutSessionId: session.id });
-                const userId = session.metadata?.firebaseUid || null;
-                await trackServerEvent('checkout_start', {
-                    userId,
-                    params: {
-                        checkoutSessionId: session.id,
-                        amountTotal: session.amount_total,
-                        currency: session.currency,
-                    },
-                    path: '/pricing',
-                });
 
                 // The subscription.created event will handle the Firestore update
                 // This is just for logging

@@ -43,7 +43,7 @@ function LoginForm() {
     const ua = navigator.userAgent || "";
     return /FBAN|FBAV|Instagram|Line|LinkedInApp|Snapchat|Twitter|GSA|WebView|wv/i.test(ua);
   }, []);
-  const authRoutePrefixes = ["/login", "/signup", "/forgot-password"];
+  const authRoutePrefixes = ["/login", "/signup", "/forgot-password", "/fr/login", "/fr/signup", "/fr/forgot-password"];
 
   const rawRedirectUrl = searchParams.get("redirect") ?? searchParams.get("callbackUrl");
   const unsafeRedirectUrl =
@@ -55,6 +55,9 @@ function LoginForm() {
     || unsafeRedirectUrl.startsWith("/dashboard?")
     ? "/sanctuary/write"
     : unsafeRedirectUrl;
+  const signupHref = rawRedirectUrl
+    ? to(`/signup?redirect=${encodeURIComponent(redirectUrl)}`)
+    : to("/signup");
   const verified = searchParams.get("verified");
   const checkEmail = searchParams.get("check_email");
   const existingAccount = searchParams.get("existing");
@@ -277,7 +280,7 @@ function LoginForm() {
         </CardContent>
         <CardFooter className="flex justify-center">
           <p className="text-sm text-muted-foreground">
-            {t("noAccount")} <Link href={to("/signup")} className="text-primary hover:underline">{t("signUp")}</Link>
+            {t("noAccount")} <Link href={signupHref} className="text-primary hover:underline">{t("signUp")}</Link>
           </p>
         </CardFooter>
       </Card>

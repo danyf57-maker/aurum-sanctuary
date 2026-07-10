@@ -13,6 +13,9 @@ import { auth, firestore as db } from '@/lib/firebase/admin';
 import { logger } from '@/lib/logger/safe';
 import { rateLimit, RateLimitPresets } from '@/lib/rate-limit';
 import { STRIPE_TRIAL_DAYS } from '@/lib/billing/config';
+import { trackServerEvent } from '@/lib/analytics/server';
+
+type BillingPlan = 'monthly' | 'yearly';
 
 export async function POST(req: NextRequest) {
     try {
@@ -61,11 +64,22 @@ export async function POST(req: NextRequest) {
         }
 
         const body = await req.json().catch(() => ({}));
-        const requestedPriceId = typeof body?.priceId === 'string' ? body.priceId.trim() : '';
+        const rawPlan = typeof body?.plan === 'string' ? body.plan : null;
+        if (rawPlan && rawPlan !== 'monthly' && rawPlan !== 'yearly') {
+            return NextResponse.json(
+                { error: 'Invalid billing plan' },
+                { status: 400 }
+            );
+        }
+        const requestedPlan: BillingPlan = rawPlan === 'yearly' ? 'yearly' : 'monthly';
+        const checkoutSource = body?.source === 'pricing_page' || body?.source === 'paywall_modal' || body?.source === 'subscribe_button'
+            ? body.source
+            : 'unknown';
 
         // 2. Validate environment variables
         const monthlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY || process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO;
         const yearlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_YEARLY || process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PREMIUM;
+        const monthlyDiscountCouponId = process.env.STRIPE_MONTHLY_DISCOUNT_COUPON_ID?.trim();
         const allowedPriceIds = [
             process.env.STRIPE_PRICE_ID, // legacy single-price fallback
             monthlyPriceId,
@@ -80,7 +94,18 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        const selectedPriceId = requestedPriceId || allowedPriceIds[0];
+        const planPriceIds: Record<BillingPlan, string | undefined> = {
+            monthly: monthlyPriceId,
+            yearly: yearlyPriceId,
+        };
+        const selectedPlan: BillingPlan = requestedPlan;
+        const selectedPriceId = planPriceIds[selectedPlan];
+        if (!selectedPriceId) {
+            return NextResponse.json(
+                { error: 'Selected plan is not configured' },
+                { status: 500 }
+            );
+        }
         if (!allowedPriceIds.includes(selectedPriceId)) {
             return NextResponse.json(
                 { error: 'Invalid price ID' },
@@ -120,6 +145,7 @@ export async function POST(req: NextRequest) {
             !hasStripeSubscription;
         const hasConsumedTrial = !!userData.trialConsumedAt && !legacyNoCardTrial;
         const shouldApplyTrial = STRIPE_TRIAL_DAYS > 0 && !hasConsumedTrial;
+        const shouldApplyMonthlyDiscount = selectedPriceId === monthlyPriceId && !!monthlyDiscountCouponId;
 
         // 4. Create Checkout Session
         const session = await stripe.checkout.sessions.create({
@@ -144,7 +170,9 @@ export async function POST(req: NextRequest) {
                 },
                 ...(shouldApplyTrial ? { trial_period_days: STRIPE_TRIAL_DAYS } : {}),
             },
-            allow_promotion_codes: true, // Allow discount codes
+            ...(shouldApplyMonthlyDiscount
+                ? { discounts: [{ coupon: monthlyDiscountCouponId }] }
+                : { allow_promotion_codes: true }),
             billing_address_collection: 'auto',
         });
 
@@ -154,12 +182,25 @@ export async function POST(req: NextRequest) {
             updatedAt: new Date(),
         }, { merge: true });
 
+        await trackServerEvent('checkout_start', {
+            userId,
+            path: checkoutSource === 'pricing_page' ? '/pricing' : '/sanctuary/write',
+            params: {
+                checkoutSessionId: session.id,
+                plan: selectedPlan,
+                source: checkoutSource,
+                trialApplied: shouldApplyTrial,
+            },
+        });
+
         logger.infoSafe('Checkout session created', {
             userId,
             checkoutSessionId: session.id,
             priceId: selectedPriceId,
+            plan: selectedPlan,
             trialApplied: shouldApplyTrial,
             trialDays: shouldApplyTrial ? STRIPE_TRIAL_DAYS : 0,
+            monthlyDiscountApplied: shouldApplyMonthlyDiscount,
             legacyNoCardTrial,
         });
 
