@@ -10,7 +10,7 @@ function readProvidedSecret(request: NextRequest) {
     return authHeader.slice(7);
   }
 
-  return request.nextUrl.searchParams.get("secret");
+  return null;
 }
 
 export async function requireAnalyticsExportAccess(request: NextRequest) {

@@ -44,6 +44,9 @@ This checklist prevents cross-environment leakage between `dev`, `staging`, and 
 - `NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY` (live EUR monthly price)
 - `NEXT_PUBLIC_STRIPE_PRICE_ID_YEARLY` (live EUR yearly price)
 - `ANALYTICS_EXPORT_SECRET` (shared with GitHub Actions for scheduled analytics CSV emails)
+- `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` (required for fail-closed verification-email abuse limits)
+- `WHATSAPP_APP_SECRET` (required if the WhatsApp webhook is deployed)
+- `WHATSAPP_SEND_ENABLED` must remain `false` unless `WHATSAPP_APP_SECRET` and WhatsApp access credentials are configured.
 - other production secrets already used by App Hosting
 
 ## Guardrails
@@ -52,3 +55,4 @@ This checklist prevents cross-environment leakage between `dev`, `staging`, and 
 - Never point `NEXT_PUBLIC_FIREBASE_PROJECT_ID` from `develop`/`staging` to prod.
 - Keep OAuth client IDs domain-scoped per environment.
 - Mirror `ANALYTICS_EXPORT_SECRET` into the GitHub repository secret of the same name when scheduled analytics emails are enabled.
+- Analytics automation must send `ANALYTICS_EXPORT_SECRET` in an HTTP header; query-string secrets are not accepted.

@@ -1,6 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createHash } from "node:crypto";
 import { auth } from "@/lib/firebase/admin";
 import { sendVerificationEmailForUser } from "@/lib/auth/verification-email";
+import { rateLimit, RateLimitPresets } from "@/lib/rate-limit";
+
+function getClientAddress(request: NextRequest) {
+  const forwarded = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+  return forwarded || request.headers.get("x-real-ip")?.trim() || "unknown";
+}
+
+function hashIdentifier(value: string) {
+  return createHash("sha256").update(value).digest("hex");
+}
 
 function isAllowedOrigin(request: NextRequest) {
   const requestOrigin = request.headers.get("origin");
@@ -28,6 +39,19 @@ export async function POST(request: NextRequest) {
 
     if (!email || !email.includes("@")) {
       return NextResponse.json({ error: "Invalid email" }, { status: 400 });
+    }
+
+    const ipRate = await rateLimit(
+      RateLimitPresets.verificationEmail(`ip:${hashIdentifier(getClientAddress(request))}`)
+    );
+    const emailRate = await rateLimit(
+      RateLimitPresets.verificationEmail(`email:${hashIdentifier(email)}`)
+    );
+    if (!ipRate.success || !emailRate.success) {
+      return NextResponse.json(
+        { ok: true, sent: false, throttled: true },
+        { status: 429, headers: { "Retry-After": "3600" } }
+      );
     }
 
     try {

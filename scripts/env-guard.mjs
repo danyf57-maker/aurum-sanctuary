@@ -21,6 +21,8 @@ const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || process.env.GOO
 const cloudProject = process.env.GOOGLE_CLOUD_PROJECT || "";
 const appUrl = process.env.NEXT_PUBLIC_APP_URL || "";
 const stripeKey = process.env.STRIPE_SECRET_KEY || "";
+const whatsappSendEnabled = process.env.WHATSAPP_SEND_ENABLED === "true";
+const whatsappAppSecret = process.env.WHATSAPP_APP_SECRET || "";
 
 const isProdProject = /(^|[-_])prod($|[-_])|aurum-diary-prod/.test(projectId);
 const isLocalUrl = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(appUrl);
@@ -43,6 +45,10 @@ if (stripeKey.startsWith("sk_test_") && isProdProject) {
 
 if (isProdProject && isLocalUrl) {
   errors.push("Production Firebase project paired with a localhost NEXT_PUBLIC_APP_URL.");
+}
+
+if (whatsappSendEnabled && !whatsappAppSecret) {
+  errors.push("WHATSAPP_SEND_ENABLED=true requires WHATSAPP_APP_SECRET for webhook signature verification.");
 }
 
 if (!isProdProject && isProdUrl) {

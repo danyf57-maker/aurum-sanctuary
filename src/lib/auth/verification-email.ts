@@ -136,10 +136,26 @@ export async function sendVerificationEmailForUser(
   }
 
   const auditRef = db.collection("users").doc(params.uid).collection("auth").doc("verificationEmail");
-  const auditSnap = await auditRef.get();
-  const lastSentAtRaw = auditSnap.exists ? (auditSnap.data()?.lastSentAt as string | undefined) : undefined;
-  const lastSentAt = lastSentAtRaw ? new Date(lastSentAtRaw) : null;
-  if (lastSentAt && Date.now() - lastSentAt.getTime() < RESEND_COOLDOWN_MS) {
+  const now = new Date();
+  const claim = await db.runTransaction(async (transaction) => {
+    const auditSnap = await transaction.get(auditRef);
+    const lastSentAtRaw = auditSnap.exists
+      ? (auditSnap.data()?.lastSentAt as string | undefined)
+      : undefined;
+    const lastSentAt = lastSentAtRaw ? new Date(lastSentAtRaw) : null;
+    if (lastSentAt && now.getTime() - lastSentAt.getTime() < RESEND_COOLDOWN_MS) {
+      return false;
+    }
+
+    transaction.set(
+      auditRef,
+      { lastSentAt: now.toISOString(), sendClaimedAt: now.toISOString() },
+      { merge: true }
+    );
+    return true;
+  });
+
+  if (!claim) {
     return { sent: false, throttled: true };
   }
 
@@ -155,7 +171,7 @@ export async function sendVerificationEmailForUser(
     text: copy.text,
   });
 
-  const nowIso = new Date().toISOString();
+  const nowIso = now.toISOString();
   await auditRef.set(
     {
       lastSentAt: nowIso,

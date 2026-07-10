@@ -31,6 +31,9 @@ export interface RateLimitConfig {
    * Namespace for the rate limit (e.g., 'api:reflect')
    */
   namespace: string;
+
+  /** Reject requests when the limiter cannot be reached. */
+  failOpen?: boolean;
 }
 
 export interface RateLimitResult {
@@ -45,11 +48,12 @@ export interface RateLimitResult {
  * Uses sliding window algorithm
  */
 export async function rateLimit(config: RateLimitConfig): Promise<RateLimitResult> {
-  // If Redis is not configured, allow the request (fail open)
+  // Most endpoints fail open for availability; security-sensitive presets can opt out.
+  const failOpen = config.failOpen ?? true;
   if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
     console.warn('Rate limiting disabled: Upstash Redis not configured');
     return {
-      success: true,
+      success: failOpen,
       limit: config.limit,
       remaining: config.limit,
       reset: Date.now() + config.window * 1000,
@@ -94,10 +98,9 @@ export async function rateLimit(config: RateLimitConfig): Promise<RateLimitResul
       reset: now + windowMs,
     };
   } catch (error) {
-    // On Redis error, fail open (allow request) to avoid breaking the app
-    console.error('Rate limit error (failing open):', error);
+    console.error(`Rate limit error (${failOpen ? 'failing open' : 'failing closed'}):`, error);
     return {
-      success: true,
+      success: failOpen,
       limit: config.limit,
       remaining: config.limit,
       reset: now + windowMs,
@@ -178,5 +181,14 @@ export const RateLimitPresets = {
     limit: 10,
     window: 60, // 1 minute
     namespace: 'api:auth',
+  }),
+
+  /** Verification emails are an unauthenticated provider-facing side effect. */
+  verificationEmail: (identifier: string): RateLimitConfig => ({
+    identifier,
+    limit: 5,
+    window: 3600,
+    namespace: 'api:auth:verification-email',
+    failOpen: false,
   }),
 };
